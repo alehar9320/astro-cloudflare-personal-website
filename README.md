@@ -1,20 +1,56 @@
-# Astro Starter Kit: Portfolio
+# Alexander Härenstam - Personal Website
 
+Welcome to the repository for my personal website! I'm **Alexander Härenstam**, a Product Manager at IFS focusing on Developer Experience, based in Stockholm, Sweden. 
+
+This website serves as my digital portfolio, showcasing my professional journey, skills, projects, and publications.
+
+## 🚀 Technologies
+
+This project is built with a modern web stack designed for speed, SEO, and developer experience:
+
+- **[Astro](https://astro.build/)**: The web framework for building fast, content-focused websites.
+- **[Cloudflare Pages](https://pages.cloudflare.com/)**: For fast, secure, and globally distributed hosting.
+- **HTML/CSS/JS**: Vanilla web technologies, prioritizing lean bundles and performance.
+
+## 🛠 Features
+
+- **Responsive Design**: Fast and accessible UI mapped to look great on desktop, tablet, and mobile devices.
+- **Professional Portfolio**: Highlights my work experience, including my role at IFS, Ericsson, and other ventures.
+- **Skills & Education**: A detailed breakdown of my technical, design, and product management skills, backed by my academic background from Chalmers University of Technology.
+- **SEO Optimized**: Standard Astro best practices with fast load times and clean, accessible HTML out of the box.
+
+## 💻 Local Development
+
+To run this project locally on your machine, follow these steps:
+
+### Prerequisites
+
+- Node.js (v18 or higher)
+- npm or another package manager (yarn, pnpm)
+
+### Installation
+
+1. Clone the repository (if applicable):
+   ```sh
+   git clone https://github.com/alehar9320/astro-cloudflare-personal-website.git
+   cd astro-cloudflare-personal-website
+   ```
+
+2. Install dependencies:
+   ```sh
+   npm install
+   ```
+
+### Running the App
+
+Start the local development server:
 ```sh
-npm create astro@latest -- --template portfolio
+npm run dev
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/portfolio)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/portfolio)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/portfolio/devcontainer.json)
+Navigate to `http://localhost:4321` in your browser to view the site as you make changes. The site will automatically reload upon saving modifications.
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
-
-![portfolio](https://user-images.githubusercontent.com/357379/210779178-a98f0fb7-6b1a-4068-894c-8e1403e26654.jpg)
-
-## 🧞 Commands
-
-All commands are run from the root of the project, from a terminal:
+### Available Commands
 
 | Command                   | Action                                           |
 | :------------------------ | :----------------------------------------------- |
@@ -23,8 +59,16 @@ All commands are run from the root of the project, from a terminal:
 | `npm run build`           | Build your production site to `./dist/`          |
 | `npm run preview`         | Preview your build locally, before deploying     |
 | `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
 
-## 👀 Want to learn more?
+## 🌐 Deployment
 
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+This project is structured to be deployed on **Cloudflare**. To deploy modifications, simply push changes to the main branch connected to your Cloudflare Pages instance. Cloudflare will automatically build using `npm run build` and deploy the output directory (`./dist/`).
+
+## 📬 Contact & Connect
+
+- **LinkedIn:** [Alexander Härenstam](https://www.linkedin.com/in/alehar/)
+- **Location:** Stockholm, Sweden
+
+---
+
+*This site's data and structure are continuously refined to reflect current achievements and responsibilities in the tech industry.*
