@@ -4,13 +4,13 @@ publishDate: 2023-01-01 00:00:00
 img: /assets/stock-3.jpg
 img_alt: Analytics graphs
 description: |
-  Spearheaded a key capability for IFS Cloud ensuring features are grounded in genuine customer needs, preventing over-engineering and optimizing development resources.
+  Spearheading a critical IFS Cloud capability that ensures roadmap decisions are grounded in telemetry, optimizing R&D resources and preventing over-engineering.
 tags:
   - Analytics
   - User Behavior
   - Product Strategy
 ---
 
-Spearheading the User Behavior Analytics Platform: This key capability for IFS Cloud ensures features are grounded in genuine customer needs, preventing over-engineering and optimizing development resources.
+Strategic Leadership of the User Behavior Analytics Platform: This core capability for IFS Cloud ensures that every feature is grounded in genuine customer needs. By implementing this platform, we've optimized development resources and ensured that our R&D efforts are laser-focused on high-value functionality.
 
-Understanding how users interact with our applications allows us to make data-driven decisions that align with business objectives and dramatically improve the user experience. By capturing telemetry and usage data, product teams can iterate more effectively.
+Understanding how users navigate complex enterprise software allowed us to make data-driven decisions that align with global business objectives. By capturing granular telemetry, we've enabled product teams to iterate with confidence, directly impacting the quality and adoption of the IFS Cloud ecosystem.

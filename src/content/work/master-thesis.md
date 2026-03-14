@@ -4,7 +4,7 @@ publishDate: 2017-06-01 00:00:00
 img: /assets/stock-1.jpg
 img_alt: Business structure concept
 description: |
-  Master Thesis: Business Model Innovation for a digital future. Exploring the opportunities and barriers of digitalization.
+  Master Thesis @ Chalmers: A strategic exploration into the keys for digital transformation success—identifying scalable growth opportunities through data-driven innovation.
 tags:
   - Research
   - Digitalization
