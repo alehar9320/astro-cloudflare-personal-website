@@ -59,7 +59,7 @@ const projects = (await getCollection("work"))
 		</div>
 
 		<main class="wrapper stack gap-20 lg:gap-48">
-			<!-- <section class="section with-background with-cta">
+			<section class="section with-background with-cta">
 				<header class="section-header stack gap-2 lg:gap-4">
 					<h3>Selected Work</h3>
 					<p>
@@ -81,38 +81,51 @@ const projects = (await getCollection("work"))
 				</div>
 
 				<div class="cta">
-					<CallToAction href="/work/">
+					<CallToAction href="/work">
 						View All
 						<Icon icon="arrow-right" size="1.2em" />
 					</CallToAction>
 				</div>
-			</section> -->
+			</section>
 
-			<!-- <section class="section with-background bg-variant">
+			<section class="section with-background bg-variant">
 				<header class="section-header stack gap-2 lg:gap-4">
 					<h3>Mentions</h3>
 					<p>
-						I have been fortunate enough to receive praise for my work in several publications. Take
-						a look below to learn more.
+						External links, publications, and professional
+						affiliations.
 					</p>
 				</header>
 
 				<div class="gallery">
 					<Grid variant="small">
-						{
-							['Medium', 'BuzzFeed', 'The Next Web', 'awwwards.', 'TechCrunch'].map((brand) => (
-								<li class="mention-card">
-									<p>{brand}</p>
-								</li>
-							))
-						}
+						<li class="mention-card">
+							<a
+								href="https://blog.ifs.com/author/alexander-harenstam/"
+								target="_blank"
+								rel="noopener noreferrer">IFS Blog Author</a
+							>
+						</li>
+						<li class="mention-card">
+							<a
+								href="https://www.chalmers.se/"
+								target="_blank"
+								rel="noopener noreferrer">Chalmers University</a
+							>
+						</li>
+						<li class="mention-card">
+							<a
+								href="https://zeroheight.com/events/design-system-awards/"
+								target="_blank"
+								rel="noopener noreferrer"
+								>Zeroheight Design System Awards</a
+							>
+						</li>
 					</Grid>
 				</div>
 			</section>
 		</main>
-
-		<ContactCTA />-->
-		</main>
+		<ContactCTA />
 	</div>
 </BaseLayout>
 
