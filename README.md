@@ -1,6 +1,12 @@
 # Alexander Härenstam - Personal Website
 
+[![Built with Astro](https://img.shields.io/badge/Astro-0C1120?style=for-the-badge&logo=astro&logoColor=white)](https://astro.build/)
+[![Deployed on Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://pages.cloudflare.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
+
 Welcome to the repository for my personal website! I'm **Alexander Härenstam**, a Product Manager at IFS focusing on Developer Experience, based in Stockholm, Sweden. 
+
+**🌍 Live Site:** [https://me.alehar.workers.dev](https://me.alehar.workers.dev)
 
 This website serves as my digital portfolio, showcasing my professional journey, skills, projects, and publications.
 
