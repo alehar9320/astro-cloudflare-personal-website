@@ -14,6 +14,7 @@ tags:
 Digital developments have significantly affected the market environment over the last decade. A sense of urgency has put concepts related to business transformation in high demand. Among these concepts, a popular term has been business model innovation; the strategic and innovative re-arrangement of business activities.
 
 My thesis revolved around business model innovation, and the opportunities and barriers that digitalization creates. This was done by:
+
 1. Academically mapping out what it means to transform a business with the help of digitalization.
 2. Studying a specific business case where digitalization was part of changing the business model.
 3. Identifying the gap between what theory stipulates and the business case at hand.

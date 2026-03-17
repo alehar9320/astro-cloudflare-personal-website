@@ -1,0 +1,27 @@
+# AI Agent Rules for this Project
+
+## Core Tech Stack
+- **Framework**: Astro (v4+)
+- **Language**: TypeScript (strict mode enabled)
+- **Deployment**: Cloudflare Pages (via `@astrojs/cloudflare` adapter)
+- **Package Manager**: npm
+- **Styling**: Vanilla CSS (no Tailwind unless explicitly requested)
+
+## Important Context
+Before generating content or making author-specific decisions, **always** read the files in the `context/` directory (e.g., author information, background). This ensures the content aligns with the actual person the site represents.
+
+## Code Quality Standards
+- **Linter**: ESLint (astro plugin) -> Run `npm run lint` or `npm run lint:fix`
+- **Formatter**: Prettier -> Run `npm run format`
+- **Testing**: Vitest -> Run `npm run test`
+
+## Formatting & Conventions
+- Use explicit types wherever possible.
+- Avoid inline styles; use Astro's built-in `<style>` blocks.
+- Follow a modular approach for components.
+- When generating UI components, prioritize clean, semantic HTML and accessibility.
+
+## Commands
+- **Dev Server**: `npm run dev`
+- **Build**: `npm run build`
+- **Type Check**: `npm run astro check`

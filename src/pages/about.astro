@@ -1,145 +1,133 @@
 ---
-import ContactCTA from "../components/ContactCTA.astro";
-import Hero from "../components/Hero.astro";
-import BaseLayout from "../layouts/BaseLayout.astro";
+import ContactCTA from '../components/ContactCTA.astro';
+import Hero from '../components/Hero.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
-<BaseLayout
-	title="About | Alexander Härenstam"
-	description="About Alexander Härenstam Lorem Ipsum"
->
-	<div class="stack gap-20">
-		<main class="wrapper about">
-			<Hero
-				title="About"
-				tagline="Thanks for stopping by. Read below to learn more about myself and my background."
-			>
-				<!--<img
+<BaseLayout title="About | Alexander Härenstam" description="About Alexander Härenstam Lorem Ipsum">
+  <div class="stack gap-20">
+    <main class="wrapper about">
+      <Hero
+        title="About"
+        tagline="Thanks for stopping by. Read below to learn more about myself and my background."
+      >
+        <!--<img
 					width="1553"
 					height="873"
 					src="/assets/at-work.jpg"
 					alt="Alexander Härenstam at work with a colleague"
 				/>-->
-			</Hero>
+      </Hero>
 
-			<section>
-				<h2 class="section-title">Background</h2>
-				<div class="content">
-					<p>
-						I am a strategic Product Leader with a proven track
-						record of delivering multi-million dollar business value
-						through Industrial AI and digital transformation. With a
-						unique blend of technical expertise in software
-						engineering and strategic insight in innovation
-						management, I bridge the gap between complex technology
-						and scalable market success.
-					</p>
-					<p>
-						In my current role at IFS, I lead strategic initiatives
-						that empower global engineering teams and drive
-						efficiency across the IFS Cloud ecosystem. From scaling
-						design systems that deliver 30x ROI to spearheading
-						AI-first developer tools and agentic industrial AI
-						capabilities, I thrive on navigating ambiguity and
-						transforming disruption into competitive advantage.
-					</p>
-					<p>
-						Collaboration and data-driven decision-making are at the
-						core of my approach. I believe in fostering
-						high-performing cross-functional teams that prioritize
-						customer-centricity and empathy. My background allows me
-						to communicate effectively with both C-suite
-						stakeholders and engineering teams, aligning visions to
-						create digital solutions that truly resonate.
-					</p>
-				</div>
-			</section>
-			<section>
-				<h2 class="section-title">Education</h2>
-				<div class="content">
-					<p>
-						<b>M.Sc. Management and Economics of Innovation</b>,
-						Chalmers University of Technology (2015 - 2017)
-					</p>
-					<p>
-						<b>B.Sc. Software Engineering</b>, Chalmers University
-						of Technology (2012 - 2015)
-					</p>
-				</div>
-			</section>
-			<section>
-				<h2 class="section-title">Skills</h2>
-				<div class="content">
-					<p>
-						Product Management, Software Development, Design
-						Thinking, Strategic Thinking, Technological Innovation,
-						Developer Experience, Business Analysis
-					</p>
-				</div>
-			</section>
-		</main>
+      <section>
+        <h2 class="section-title">Background</h2>
+        <div class="content">
+          <p>
+            I am a strategic Product Leader with a proven track record of delivering multi-million
+            dollar business value through Industrial AI and digital transformation. With a unique
+            blend of technical expertise in software engineering and strategic insight in innovation
+            management, I bridge the gap between complex technology and scalable market success.
+          </p>
+          <p>
+            In my current role at IFS, I lead strategic initiatives that empower global engineering
+            teams and drive efficiency across the IFS Cloud ecosystem. From scaling design systems
+            that deliver 30x ROI to spearheading AI-first developer tools and agentic industrial AI
+            capabilities, I thrive on navigating ambiguity and transforming disruption into
+            competitive advantage.
+          </p>
+          <p>
+            Collaboration and data-driven decision-making are at the core of my approach. I believe
+            in fostering high-performing cross-functional teams that prioritize customer-centricity
+            and empathy. My background allows me to communicate effectively with both C-suite
+            stakeholders and engineering teams, aligning visions to create digital solutions that
+            truly resonate.
+          </p>
+        </div>
+      </section>
+      <section>
+        <h2 class="section-title">Education</h2>
+        <div class="content">
+          <p>
+            <b>M.Sc. Management and Economics of Innovation</b>, Chalmers University of Technology
+            (2015 - 2017)
+          </p>
+          <p>
+            <b>B.Sc. Software Engineering</b>, Chalmers University of Technology (2012 - 2015)
+          </p>
+        </div>
+      </section>
+      <section>
+        <h2 class="section-title">Skills</h2>
+        <div class="content">
+          <p>
+            Product Management, Software Development, Design Thinking, Strategic Thinking,
+            Technological Innovation, Developer Experience, Business Analysis
+          </p>
+        </div>
+      </section>
+    </main>
 
-		<ContactCTA />
-	</div>
+    <ContactCTA />
+  </div>
 </BaseLayout>
 
 <style>
-	.about {
-		display: flex;
-		flex-direction: column;
-		gap: 3.5rem;
-	}
+  .about {
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+  }
 
-	img {
-		margin-top: 1.5rem;
-		border-radius: 1.5rem;
-		box-shadow: var(--shadow-md);
-	}
+  img {
+    margin-top: 1.5rem;
+    border-radius: 1.5rem;
+    box-shadow: var(--shadow-md);
+  }
 
-	section {
-		display: flex;
-		flex-direction: column;
-		gap: 0.5rem;
-		color: var(--gray-200);
-	}
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--gray-200);
+  }
 
-	.section-title {
-		grid-column-start: 1;
-		font-size: var(--text-xl);
-		color: var(--gray-0);
-	}
+  .section-title {
+    grid-column-start: 1;
+    font-size: var(--text-xl);
+    color: var(--gray-0);
+  }
 
-	.content {
-		grid-column: 2 / 4;
-		display: flex;
-		flex-direction: column;
-		gap: 1.5rem;
-	}
+  .content {
+    grid-column: 2 / 4;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
 
-	.content :global(a) {
-		text-decoration: 1px solid underline transparent;
-		text-underline-offset: 0.25em;
-		transition: text-decoration-color var(--theme-transition);
-	}
+  .content :global(a) {
+    text-decoration: 1px solid underline transparent;
+    text-underline-offset: 0.25em;
+    transition: text-decoration-color var(--theme-transition);
+  }
 
-	.content :global(a:hover),
-	.content :global(a:focus) {
-		text-decoration-color: currentColor;
-	}
+  .content :global(a:hover),
+  .content :global(a:focus) {
+    text-decoration-color: currentColor;
+  }
 
-	@media (min-width: 50em) {
-		.about {
-			display: grid;
-			grid-template-columns: 1fr 60% 1fr;
-		}
+  @media (min-width: 50em) {
+    .about {
+      display: grid;
+      grid-template-columns: 1fr 60% 1fr;
+    }
 
-		.about > :global(:first-child) {
-			grid-column-start: 2;
-		}
+    .about > :global(:first-child) {
+      grid-column-start: 2;
+    }
 
-		section {
-			display: contents;
-			font-size: var(--text-lg);
-		}
-	}
+    section {
+      display: contents;
+      font-size: var(--text-lg);
+    }
+  }
 </style>

@@ -11,11 +11,26 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "generate-types": "wrangler types"
+    "generate-types": "wrangler types",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "prepare": "husky"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.1.1",
     "astro": "^6.0.4",
     "wrangler": "^4.73.0"
+  },
+  "devDependencies": {
+    "@typescript-eslint/parser": "^8.57.0",
+    "@vitest/ui": "^4.1.0",
+    "eslint": "^10.0.3",
+    "eslint-plugin-astro": "^1.6.0",
+    "jsdom": "^29.0.0",
+    "lint-staged": "^16.4.0",
+    "prettier": "^3.8.1",
+    "prettier-plugin-astro": "^0.14.1",
+    "typescript-eslint": "^8.57.0",
+    "vitest": "^4.1.0"
   }
 }
