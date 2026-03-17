@@ -14,7 +14,8 @@
     "generate-types": "wrangler types",
     "lint": "eslint .",
     "format": "prettier --write .",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "vitest run"
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.1.1",
