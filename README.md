@@ -4,7 +4,7 @@
 [![Deployed on Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)](https://pages.cloudflare.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
-Welcome to the repository for my personal website! I'm **Alexander Härenstam**, a Product Manager at IFS focusing on Developer Experience, based in Stockholm, Sweden. 
+Welcome to the repository for my personal website! I'm **Alexander Härenstam**, a Product Manager at IFS focusing on Developer Experience, based in Stockholm, Sweden.
 
 **🌍 Live Site:** [https://me.alehar.workers.dev](https://me.alehar.workers.dev)
 
@@ -37,6 +37,7 @@ To run this project locally on your machine, follow these steps:
 ### Installation
 
 1. Clone the repository (if applicable):
+
    ```sh
    git clone https://github.com/alehar9320/astro-cloudflare-personal-website.git
    cd astro-cloudflare-personal-website
@@ -50,6 +51,7 @@ To run this project locally on your machine, follow these steps:
 ### Running the App
 
 Start the local development server:
+
 ```sh
 npm run dev
 ```
@@ -58,13 +60,13 @@ Navigate to `http://localhost:4321` in your browser to view the site as you make
 
 ### Available Commands
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
+| Command             | Action                                           |
+| :------------------ | :----------------------------------------------- |
+| `npm install`       | Installs dependencies                            |
+| `npm run dev`       | Starts local dev server at `localhost:4321`      |
+| `npm run build`     | Build your production site to `./dist/`          |
+| `npm run preview`   | Preview your build locally, before deploying     |
+| `npm run astro ...` | Run CLI commands like `astro add`, `astro check` |
 
 ## 🌐 Deployment
 
@@ -77,4 +79,4 @@ This project is structured to be deployed on **Cloudflare**. To deploy modificat
 
 ---
 
-*This site's data and structure are continuously refined to reflect current achievements and responsibilities in the tech industry.*
+_This site's data and structure are continuously refined to reflect current achievements and responsibilities in the tech industry._

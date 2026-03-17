@@ -41,7 +41,7 @@ Product @IFS | Developer Experience
 IFS
 
 Chalmers University of Technology
-Greater Stockholm Metropolitan Area  Contact info
+Greater Stockholm Metropolitan Area Contact info
 500+ connections
 Open to
 
@@ -60,9 +60,8 @@ Tell non-profits you're interested in getting involved with your time and skills
 
 Get started
 
-
 Suggested for youSuggested for you
- Private to you Private to you
+Private to you Private to you
 
 Stand out to employers
 Enhance your profile, craft standout messages, and assess job fit with Premium.
@@ -77,7 +76,7 @@ Find people who can provide guidance and help you find potential opportunities.
 Find people who can provide guidance and help you find potential opportunities.
 Search for people
 AnalyticsAnalytics
- Private to you Private to you
+Private to you Private to you
 
 48 profile views
 48 profile views
@@ -120,9 +119,9 @@ It’s an honor to be recognized among the best in the industry! Being nominated
 𝗡𝗼𝘄 𝘄𝗲 𝗻𝗲𝗲𝗱 𝘆𝗼𝘂𝗿 𝗵𝗲𝗹𝗽 𝘁𝗼 𝗯𝗿𝗶𝗻𝗴 𝘁𝗵𝗶𝘀 𝗮𝘄𝗮𝗿𝗱 𝗵𝗼𝗺𝗲. 💪
 
 Please show your support by voting for IFS in the Design System Awards. Every vote counts and your support means the world to us 💜
-https://ifs.link/Bl4T7J 
+https://ifs.link/Bl4T7J
 
-hashtag#VoteForIFS hashtag#ProudlyIFS 
+hashtag#VoteForIFS hashtag#ProudlyIFS
 
 Finalists
 zeroheight.com
@@ -151,26 +150,26 @@ Posts
 
 Comments
 Loaded 9 Posts posts
-View Alexander Härenstam’s  graphic link
+View Alexander Härenstam’s graphic link
 Alexander HärenstamAlexander Härenstam
-   • YouVerified • You
+• YouVerified • You
 Product @IFS | Developer ExperienceProduct @IFS | Developer Experience
-9mo • Edited •  9 months ago • Edited • Visible to anyone on or off LinkedIn
+9mo • Edited • 9 months ago • Edited • Visible to anyone on or off LinkedIn
 
 🚨 Are you — or someone you know — a tech-forward undergrad with an AI-first mindset and a passion for building better developer experiences?
 
 I’m looking to hire a Product Management Undergraduate Trainee – Developer Experience, to be based out of IFS Colombo 🇱🇰. A curious, motivated, and confident undergraduate who is on top of the latest trends and uses AI to solve real problems.
 
 You might be studying tech, business, or design — what matters most is that you:
- ✅ Enjoy finding the right problem to solve, not just solutions
- ✅ Care about improving how developers work
- ✅ AI-first mindset with familiarity of using AI tools (like ChatGPT, Copilot, Perplexity, etc.) as part of your workflow
- ✅ Can operate confidently in a fast-paced, global virtual environment — with English as your working language
+✅ Enjoy finding the right problem to solve, not just solutions
+✅ Care about improving how developers work
+✅ AI-first mindset with familiarity of using AI tools (like ChatGPT, Copilot, Perplexity, etc.) as part of your workflow
+✅ Can operate confidently in a fast-paced, global virtual environment — with English as your working language
 
 You’ll work on real initiatives that impact global engineering teams — from research and automation to internal tooling and productivity insights.
 
 🔗 Learn more and apply:
- https://lnkd.in/dBa3dwSK
+https://lnkd.in/dBa3dwSK
 
 hashtag#ProductManagement hashtag#DeveloperExperience hashtag#AIFirst hashtag#Internship hashtag#JoinIFS
 …more
@@ -181,29 +180,26 @@ likelovesupport
 32
 7 reposts
 
-
-
-
-View Alexander Härenstam’s  graphic link
+View Alexander Härenstam’s graphic link
 Alexander HärenstamAlexander Härenstam
-   • YouVerified • You
+• YouVerified • You
 Product @IFS | Developer ExperienceProduct @IFS | Developer Experience
-10mo •  10 months ago • Visible to anyone on or off LinkedIn
+10mo • 10 months ago • Visible to anyone on or off LinkedIn
 
 Exciting times as IFS Cloud customers can now make use of more than 200+ hashtag#industrialAI capabilities with the latest 25R1 release.
 
 Consumer AI experiences are great, but it's when it's rolled out for hard-to-solve enterprise and social impact use cases that I believe we'll see the greatest societal benefits ✨🚀
 …more
-View Christian Pedersen’s  graphic link
+View Christian Pedersen’s graphic link
 Christian PedersenChristian Pedersen
-   • FollowingPremium • Following
+• FollowingPremium • Following
 Chief Product Officer @ IFS | Leader in Industrial AIChief Product Officer @ IFS | Leader in Industrial AI
 200+ AI-based capabilities now available in IFS Cloud 25R1! With hashtag#IndustrialAI and sustainability at its core, this new release incorporates agentic industrial AI capabilities that enable customers to rapidly drive value from Industrial AI at scale.
 
-The IFS team's ability to deliver AI in the industrial setting is rooted in solving real, complex industrial challenges. IFS.ai isn’t speculative; it’s already helping the world’s largest industrial companies navigate and lead at a time where supply chains and production have been challenged. 
+The IFS team's ability to deliver AI in the industrial setting is rooted in solving real, complex industrial challenges. IFS.ai isn’t speculative; it’s already helping the world’s largest industrial companies navigate and lead at a time where supply chains and production have been challenged.
 
 Our specialized focus, inherent agentic capabilities, and agile integration of AI advancements allows us to offer tailored solutions that align closely with the unique challenges and requirements of these complex industries. This is embodied by the new features available in 25R1.
- 
+
 Our mission is to power the next industrial revolution with AI, and I am so proud of the impactful advancements we are bringing to customers in 25R1 💜
 https://ifs.link/T5Xjtc
 …more
@@ -212,10 +208,6 @@ No alternative text description for this image
 Activate to view larger image,
 likecelebrate
 6
-
-
-
-
 
 Show all posts
 ExperienceExperience
@@ -268,51 +260,52 @@ Göteborg, SverigeGöteborg, Sverige
 Invativa is a specialist consulting company helping others create and improve their digital business. This is done by identifying how digital technology can be applied to improve the business model; digitalization.
 
 My thesis revolved around business model innovation, and the opportunities and barriers that digitalization creates. This was done by:
-1) Academically mapping out what it means to transform a business with the help of digitalization.
-2) Studying a specific business case where digitalization was part of changing the business model.
-3) Identifying the gap between what theory stipulates and the business case at hand.Invativa is a specialist consulting company helping others create and improve their digital business. This is done by identifying how digital technology can be applied to improve the business model; digitalization. My thesis revolved around business model innovation, and the opportunities and barriers that digitalization creates. This was done by: 1) Academically mapping out what it means to transform a business with the help of digitalization. 2) Studying a specific business case where digitalization was part of changing the business model. 3) Identifying the gap between what theory stipulates and the business case at hand.…see more
-Ericsson logo
-Ericsson
-Ericsson
-1 yr 3 mos1 yr 3 mos
-Lindholmen, GöteborgLindholmen, Göteborg
-Sofware Developer
-Sofware Developer
-Part-timePart-time
-Aug 2015 - Aug 2016 · 1 yr 1 moAug 2015 to Aug 2016 · 1 yr 1 mo
-Part-time job and third-time renewed summer internship: responsible for further development of an internal Java application used in the day-to-day work of full-time employees.Part-time job and third-time renewed summer internship: responsible for further development of an internal Java application used in the day-to-day work of full-time employees.
-Software Engineer
-Software Engineer
-InternshipInternship
-Jun 2015 - Aug 2015 · 3 mosJun 2015 to Aug 2015 · 3 mos
-Summer internship: responsible for further development of an internal Java application used in the day-to-day work of full-time employees. The goal was to extend user interface functionality to allow the display of multiple files, side-by-side, instead of just one. Thus, the work involved a pre-study with user interviews, development, as well as testing and deployment.Summer internship: responsible for further development of an internal Java application used in the day-to-day work of full-time employees. The goal was to extend user interface functionality to allow the display of multiple files, side-by-side, instead of just one. Thus, the work involved a pre-study with user interviews, development, as well as testing and deployment.…see more
-Ericsson logo
-Software Engineer
-Software Engineer
-Ericsson · InternshipEricsson · Internship
-Jun 2014 - Aug 2014 · 3 mosJun 2014 to Aug 2014 · 3 mos
-Lindholmen, GöteborgLindholmen, Göteborg
-Summer internship where I completed several pre-defined tasks together with another intern. Carried out in a Linux-based environment. Tasks involved parsing of text using Python-regex as well as minor adjustments to a Perl-based application.Summer internship where I completed several pre-defined tasks together with another intern. Carried out in a Linux-based environment. Tasks involved parsing of text using Python-regex as well as minor adjustments to a Perl-based application.…see more
-EducationEducation
-Chalmers University of Technology logo
-Chalmers University of Technology
-Chalmers University of Technology
-Master of Science (M.Sc.), Management and Economics of InnovationMaster of Science (M.Sc.), Management and Economics of Innovation
-2015 - 20172015 - 2017
-Activities and societies: I-Academy 2017. A training and development programme for Industrial Engineering and Management students in their 3rd to 5th year. Consists of six workshops during the spring.
-1) NOVA - modern recruiting method
-2) Trendie - future scenario planning
-3) PWC - advanced Excel
-4) McKinsey&Company - case interview training
-5) IDI - emotional intelligence
-6) H&M - leadership.Activities and societies: I-Academy 2017. A training and development programme for Industrial Engineering and Management students in their 3rd to 5th year. Consists of six workshops during the spring. 1) NOVA - modern recruiting method 2) Trendie - future scenario planning 3) PWC - advanced Excel 4) McKinsey&Company - case interview training 5) IDI - emotional intelligence 6) H&M - leadership.
-Through a combination of an advanced level of business management and economics in relation to engineering knowledge, students are trained in analyzing, understanding and skilfully managing innovation processes in companies and other areas of society. The programme focuses on how and why companies innovate to compete and how companies can reap financial returns from their investments in innovation.Through a combination of an advanced level of business management and economics in relation to engineering knowledge, students are trained in analyzing, understanding and skilfully managing innovation processes in companies and other areas of society. The programme focuses on how and why companies innovate to compete and how companies can reap financial returns from their investments in innovation.
-Chalmers University of Technology logo
-Chalmers University of Technology
-Chalmers University of Technology
-Bachelor's degree, Software EngineeringBachelor's degree, Software Engineering
-2012 - 20152012 - 2015
-The first three years the study mainly consists of software development and mathematics, which is the basis of the engineering degree. In parallel, students gain knowledge in communication with both clients and end users and develop the ability to work in projects. In order to promote a sustainable society, it is important that people with different skills work together. In grade 3, a bachelor thesis is completed together with students from other programs. The work is done in project form, which is both a personal challenge and a splendid opportunity to practice the skills to work in different roles in a group. The last two years then provide a specialization to the education by specializing with any of the information technology's master's programs.The first three years the study mainly consists of software development and mathematics, which is the basis of the engineering degree. In parallel, students gain knowledge in communication with both clients and end users and develop the ability to work in projects. In order to promote a sustainable society, it is important that people with different skills work together. In grade 3, a bachelor thesis is completed together with students from other programs. The work is done in project form, which is both a personal challenge and a splendid opportunity to practice the skills to work in different roles in a group. The last two years then provide a specialization to the education by specializing with any of the information technology's master's programs.
+
+1. Academically mapping out what it means to transform a business with the help of digitalization.
+2. Studying a specific business case where digitalization was part of changing the business model.
+3. Identifying the gap between what theory stipulates and the business case at hand.Invativa is a specialist consulting company helping others create and improve their digital business. This is done by identifying how digital technology can be applied to improve the business model; digitalization. My thesis revolved around business model innovation, and the opportunities and barriers that digitalization creates. This was done by: 1) Academically mapping out what it means to transform a business with the help of digitalization. 2) Studying a specific business case where digitalization was part of changing the business model. 3) Identifying the gap between what theory stipulates and the business case at hand.…see more
+   Ericsson logo
+   Ericsson
+   Ericsson
+   1 yr 3 mos1 yr 3 mos
+   Lindholmen, GöteborgLindholmen, Göteborg
+   Sofware Developer
+   Sofware Developer
+   Part-timePart-time
+   Aug 2015 - Aug 2016 · 1 yr 1 moAug 2015 to Aug 2016 · 1 yr 1 mo
+   Part-time job and third-time renewed summer internship: responsible for further development of an internal Java application used in the day-to-day work of full-time employees.Part-time job and third-time renewed summer internship: responsible for further development of an internal Java application used in the day-to-day work of full-time employees.
+   Software Engineer
+   Software Engineer
+   InternshipInternship
+   Jun 2015 - Aug 2015 · 3 mosJun 2015 to Aug 2015 · 3 mos
+   Summer internship: responsible for further development of an internal Java application used in the day-to-day work of full-time employees. The goal was to extend user interface functionality to allow the display of multiple files, side-by-side, instead of just one. Thus, the work involved a pre-study with user interviews, development, as well as testing and deployment.Summer internship: responsible for further development of an internal Java application used in the day-to-day work of full-time employees. The goal was to extend user interface functionality to allow the display of multiple files, side-by-side, instead of just one. Thus, the work involved a pre-study with user interviews, development, as well as testing and deployment.…see more
+   Ericsson logo
+   Software Engineer
+   Software Engineer
+   Ericsson · InternshipEricsson · Internship
+   Jun 2014 - Aug 2014 · 3 mosJun 2014 to Aug 2014 · 3 mos
+   Lindholmen, GöteborgLindholmen, Göteborg
+   Summer internship where I completed several pre-defined tasks together with another intern. Carried out in a Linux-based environment. Tasks involved parsing of text using Python-regex as well as minor adjustments to a Perl-based application.Summer internship where I completed several pre-defined tasks together with another intern. Carried out in a Linux-based environment. Tasks involved parsing of text using Python-regex as well as minor adjustments to a Perl-based application.…see more
+   EducationEducation
+   Chalmers University of Technology logo
+   Chalmers University of Technology
+   Chalmers University of Technology
+   Master of Science (M.Sc.), Management and Economics of InnovationMaster of Science (M.Sc.), Management and Economics of Innovation
+   2015 - 20172015 - 2017
+   Activities and societies: I-Academy 2017. A training and development programme for Industrial Engineering and Management students in their 3rd to 5th year. Consists of six workshops during the spring.
+4. NOVA - modern recruiting method
+5. Trendie - future scenario planning
+6. PWC - advanced Excel
+7. McKinsey&Company - case interview training
+8. IDI - emotional intelligence
+9. H&M - leadership.Activities and societies: I-Academy 2017. A training and development programme for Industrial Engineering and Management students in their 3rd to 5th year. Consists of six workshops during the spring. 1) NOVA - modern recruiting method 2) Trendie - future scenario planning 3) PWC - advanced Excel 4) McKinsey&Company - case interview training 5) IDI - emotional intelligence 6) H&M - leadership.
+   Through a combination of an advanced level of business management and economics in relation to engineering knowledge, students are trained in analyzing, understanding and skilfully managing innovation processes in companies and other areas of society. The programme focuses on how and why companies innovate to compete and how companies can reap financial returns from their investments in innovation.Through a combination of an advanced level of business management and economics in relation to engineering knowledge, students are trained in analyzing, understanding and skilfully managing innovation processes in companies and other areas of society. The programme focuses on how and why companies innovate to compete and how companies can reap financial returns from their investments in innovation.
+   Chalmers University of Technology logo
+   Chalmers University of Technology
+   Chalmers University of Technology
+   Bachelor's degree, Software EngineeringBachelor's degree, Software Engineering
+   2012 - 20152012 - 2015
+   The first three years the study mainly consists of software development and mathematics, which is the basis of the engineering degree. In parallel, students gain knowledge in communication with both clients and end users and develop the ability to work in projects. In order to promote a sustainable society, it is important that people with different skills work together. In grade 3, a bachelor thesis is completed together with students from other programs. The work is done in project form, which is both a personal challenge and a splendid opportunity to practice the skills to work in different roles in a group. The last two years then provide a specialization to the education by specializing with any of the information technology's master's programs.The first three years the study mainly consists of software development and mathematics, which is the basis of the engineering degree. In parallel, students gain knowledge in communication with both clients and end users and develop the ability to work in projects. In order to promote a sustainable society, it is important that people with different skills work together. In grade 3, a bachelor thesis is completed together with students from other programs. The work is done in project form, which is both a personal challenge and a splendid opportunity to practice the skills to work in different roles in a group. The last two years then provide a specialization to the education by specializing with any of the information technology's master's programs.
 
 Show all 3 educations
 Licenses & certificationsLicenses & certifications
@@ -338,16 +331,12 @@ Associated with Chalmers University of Technology
 Developed an Android application for the company Lidköpings Stenhuggeri which is a masoning firm. The application's goal is to simplify the paper-work within the company.Developed an Android application for the company Lidköpings Stenhuggeri which is a masoning firm. The application's goal is to simplify the paper-work within the company.
 Other contributorsOther contributors
 
-
-
 5
 Display OS
 Display OS
 Sep 2016 - Jan 2017Sep 2016 - Jan 2017
 Our vision is a future where we are more and more dependent upon information. Thus, we have created a platform that allows you to get all the information you need, in just a glance, right when you need it. No matter if it's displayed on your tv, your fridge or projected on your wall. This is all made possible by combining a user-friendly GUI with API:s from the world-wide web.Our vision is a future where we are more and more dependent upon information. Thus, we have created a platform that allows you to get all the information you need, in just a glance, right when you need it. No matter if it's displayed on your tv, your fridge or projected on your wall. This is all made possible by combining a user-friendly GUI with API:s from the world-wide web.
 Other contributorsOther contributors
-
-
 
 Show all 5 projects
 VolunteeringVolunteering
@@ -381,7 +370,7 @@ Business Model Innovation for a digital future (Master Thesis)
 Business Model Innovation for a digital future (Master Thesis)
 Chalmers University of Technology · Jan 1, 2017Chalmers University of Technology · Jan 1, 2017
 Show publication
-Digital developments have significantly affected the market environment over the last decade. A sense of urgency has put concepts related to business transformation in high demand. Among these concepts, a popular term has been business model innovation; the strategic and innovative re-arrangement of business activities. Compared to industries’ previous investments in digital initiatives, which focused on turning manual tasks digital, turning the structure of a company digital impacts how the business itself is set up. The thesis initially clarifies the two terms of business model innovation and digitalization. It then explores where and how digitalization is affecting business model innovation as a concept. The theoretical framework is applied to a study of a large established firm that is looking to innovate its business model, with a focus on how to become more digital. 
+Digital developments have significantly affected the market environment over the last decade. A sense of urgency has put concepts related to business transformation in high demand. Among these concepts, a popular term has been business model innovation; the strategic and innovative re-arrangement of business activities. Compared to industries’ previous investments in digital initiatives, which focused on turning manual tasks digital, turning the structure of a company digital impacts how the business itself is set up. The thesis initially clarifies the two terms of business model innovation and digitalization. It then explores where and how digitalization is affecting business model innovation as a concept. The theoretical framework is applied to a study of a large established firm that is looking to innovate its business model, with a focus on how to become more digital.
 
 The objective of the thesis is captured through the following research questions:
 • What are the opportunities and barriers to business model innovation in the context of digitalization?
@@ -396,8 +385,6 @@ Chalmers University of Technology · Jan 1, 2015Chalmers University of Technolog
 Show publication
 Not long after the release of smart watches and Android Wear we sought to explore the different ways of communicating through small graphical interfaces (a smartwatch). Hence, we developed an application for Android together with a companion app that allowed users to send live drawings to one another.Not long after the release of smart watches and Android Wear we sought to explore the different ways of communicating through small graphical interfaces (a smartwatch). Hence, we developed an application for Android together with a companion app that allowed users to send live drawings to one another.
 Other authorsOther authors
-
-
 
 5
 Show all 3 publications
@@ -461,7 +448,7 @@ Public profile & URL
 www.linkedin.com/in/alehar
 
 Who your viewers also viewedWho your viewers also viewed
- Private to you Private to you
+Private to you Private to you
 
 Product Manager at IFS
 Product Manager at IFS
