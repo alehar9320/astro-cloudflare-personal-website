@@ -25,6 +25,11 @@ const iconLinks: {
     href: 'https://blog.ifs.com/author/alexander-harenstam/',
     icon: 'pencil-line',
   },
+  {
+    label: 'GitHub',
+    href: 'https://github.com/alehar9320',
+    icon: 'github-logo',
+  },
 ];
 
 /** Test if a link is pointing to the current page. */
@@ -36,7 +41,7 @@ const isCurrentPage = (href: string) => {
 };
 ---
 
-<nav>
+<nav aria-label="Main">
   <div class="menu-header">
     <a href="/" class="site-title">
       <Icon icon="terminal-window" color="var(--accent-regular)" size="1.6em" gradient />

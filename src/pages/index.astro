@@ -49,10 +49,10 @@ const projects = (await getCollection('work'))
       <Skills />
     </div>
 
-    <main class="wrapper stack gap-20 lg:gap-48">
+    <main id="main-content" class="wrapper stack gap-20 lg:gap-48">
       <section class="section with-background with-cta">
         <header class="section-header stack gap-2 lg:gap-4">
-          <h3>Selected Work</h3>
+          <h2>Selected Work</h2>
           <p>Take a look below at some of my featured work for clients from the past few years.</p>
         </header>
 
@@ -78,7 +78,7 @@ const projects = (await getCollection('work'))
 
       <section class="section with-background bg-variant">
         <header class="section-header stack gap-2 lg:gap-4">
-          <h3>Mentions</h3>
+          <h2>Mentions</h2>
           <p>External links, publications, and professional affiliations.</p>
         </header>
 
@@ -195,7 +195,7 @@ const projects = (await getCollection('work'))
     color: var(--gray-300);
   }
 
-  .section-header h3 {
+  .section-header h2 {
     font-size: var(--text-2xl);
   }
 
@@ -215,7 +215,7 @@ const projects = (await getCollection('work'))
       font-size: var(--text-lg);
     }
 
-    .section-header h3 {
+    .section-header h2 {
       font-size: var(--text-4xl);
     }
 
