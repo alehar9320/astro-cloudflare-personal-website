@@ -91,9 +91,19 @@ const { title, description } = Astro.props;
         }
       }
 
+      /* Theme implementation: Minimalism, Northern Lights aesthetics, Glassmorphism */
       .backgrounds {
         min-height: 100%;
         isolation: isolate;
+        position: relative;
+      }
+
+      .backgrounds::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
         background:
 					/*noise*/
           url('/assets/backgrounds/noise.png') top center/220px repeat,
@@ -107,6 +117,8 @@ const { title, description } = Astro.props;
           /*header1*/ var(--bg-svg-blend-mode),
           /*header2*/ normal,
           /*base*/ normal;
+        /* Rotate default template's purple (-280deg) to marine blue (-210deg). Difference (-70deg) */
+        filter: hue-rotate(-70deg);
       }
       @media (forced-colors: active) {
         /* Deactivate custom backgrounds for high contrast users. */
