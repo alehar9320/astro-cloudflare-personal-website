@@ -1,5 +1,6 @@
 /* Global variables */
 :root {
+  /* Theme Inspired by Minimalism, Northern Lights, and Glassmorphism */
   /* Colors */
   --gray-0: #090b11;
   --gray-50: #141925;
@@ -16,10 +17,10 @@
   --gray-999_40: hsla(var(--gray-999-basis), 0.4);
   --gray-999: #ffffff;
 
-  --accent-light: #c561f6;
-  --accent-regular: #7611a6;
-  --accent-dark: #1c0056;
-  --accent-overlay: hsla(280, 89%, 67%, 0.33);
+  --accent-light: #00d2ff;
+  --accent-regular: #0066cc;
+  --accent-dark: #002266;
+  --accent-overlay: hsla(210, 100%, 40%, 0.33);
   --accent-subtle-overlay: var(--accent-overlay);
   --accent-text-over: var(--gray-999);
 
@@ -38,11 +39,15 @@
   );
   --gradient-accent-orange: linear-gradient(
     150deg,
-    #ca7879,
+    #00d2ff,
     var(--accent-regular),
     var(--accent-dark)
   );
-  --gradient-stroke: linear-gradient(180deg, var(--gray-900), var(--gray-700));
+  --gradient-stroke: linear-gradient(
+    135deg,
+    hsla(var(--gray-999-basis), 0.15),
+    hsla(var(--gray-999-basis), 0.05)
+  );
 
   /* Shadows */
   --shadow-sm:
@@ -92,16 +97,16 @@
   --gray-999-basis: 225, 31%, 5%;
   --gray-999: #090b11;
 
-  --accent-light: #1c0056;
-  --accent-regular: #7611a6;
-  --accent-dark: #c561f6;
-  --accent-overlay: hsla(280, 89%, 67%, 0.33);
-  --accent-subtle-overlay: hsla(281, 81%, 36%, 0.33);
+  --accent-light: #002266;
+  --accent-regular: #0066cc;
+  --accent-dark: #00d2ff;
+  --accent-overlay: hsla(210, 100%, 40%, 0.33);
+  --accent-subtle-overlay: hsla(210, 100%, 20%, 0.33);
   --accent-text-over: var(--gray-0);
 
   --link-color: var(--accent-dark);
 
-  --gradient-stop-1: #4c11c6;
+  --gradient-stop-1: #004099;
   --gradient-subtle: linear-gradient(150deg, var(--gray-900) 19%, var(--gray-999) 81%);
   --gradient-accent-orange: linear-gradient(
     150deg,
@@ -109,7 +114,11 @@
     var(--accent-regular),
     var(--accent-light)
   );
-  --gradient-stroke: linear-gradient(180deg, var(--gray-600), var(--gray-800));
+  --gradient-stroke: linear-gradient(
+    135deg,
+    hsla(var(--gray-999-basis), 0.2),
+    hsla(var(--gray-999-basis), 0.05)
+  );
 
   --shadow-sm:
     0px 6px 3px rgba(255, 255, 255, 0.01), 0px 4px 2px rgba(255, 255, 255, 0.01),

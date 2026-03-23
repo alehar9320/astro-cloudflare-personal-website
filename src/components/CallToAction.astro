@@ -21,9 +21,15 @@ const { href } = Astro.props;
     line-height: 1.1;
     border-radius: 999rem;
     overflow: hidden;
-    background: var(--gradient-accent-orange);
+    background-image: var(--gradient-accent-orange);
+    background-size: 300% 300%;
+    background-position: 0% 50%;
     box-shadow: var(--shadow-md);
     white-space: nowrap;
+    transition:
+      background-position 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+      transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+      box-shadow 0.3s ease;
   }
 
   @media (min-width: 20em) {
@@ -32,7 +38,22 @@ const { href } = Astro.props;
     }
   }
 
-  /* Overlay for hover effects. */
+  a:focus,
+  a:hover {
+    background-position: 100% 50%;
+    transform: translateY(-3px) scale(1.02);
+    box-shadow:
+      0 12px 30px -5px hsla(210, 100%, 50%, 0.6),
+      var(--shadow-md);
+  }
+
+  a:active {
+    background-position: 50% 50%;
+    transform: translateY(0) scale(0.97);
+    box-shadow: var(--shadow-sm);
+  }
+
+  /* Overlay for standard static hover effect no longer needed, using animated gradient */
   a::after {
     content: '';
     position: absolute;
@@ -40,11 +61,6 @@ const { href } = Astro.props;
     pointer-events: none;
     transition: background-color var(--theme-transition);
     mix-blend-mode: overlay;
-  }
-
-  a:focus::after,
-  a:hover::after {
-    background-color: hsla(var(--gray-999-basis), 0.3);
   }
 
   @media (min-width: 50em) {

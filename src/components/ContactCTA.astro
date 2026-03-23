@@ -17,10 +17,12 @@ import Icon from './Icon.astro';
     flex-direction: column;
     align-items: center;
     gap: 3rem;
-    border-top: 1px solid var(--gray-800);
-    border-bottom: 1px solid var(--gray-800);
+    border-top: 1px solid hsla(var(--gray-999-basis), 0.2);
+    border-bottom: 1px solid hsla(var(--gray-999-basis), 0.2);
     padding: 5rem 1.5rem;
-    background-color: var(--gray-999_40);
+    background: hsla(var(--gray-999-basis), 0.05);
+    backdrop-filter: blur(32px) saturate(120%);
+    -webkit-backdrop-filter: blur(32px) saturate(120%);
     box-shadow: var(--shadow-sm);
   }
 

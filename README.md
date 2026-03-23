@@ -25,6 +25,14 @@ This project is built with a modern web stack designed for speed, SEO, and devel
 - **Skills & Education**: A detailed breakdown of my technical, design, and product management skills, backed by my academic background from Chalmers University of Technology.
 - **SEO Optimized**: Standard Astro best practices with fast load times and clean, accessible HTML out of the box.
 
+## 🎨 Design & Aesthetics
+
+The project's visual language and theme adhere to the following core principles:
+
+- **Minimalism**: Clean, uncluttered layouts that prioritize readability and typography.
+- **Northern Lights**: Dynamic, flowing marine blue and cyan gradient backgrounds explicitly designed to evoke the aurora borealis.
+- **Glassmorphism**: Subtle frosted-glass effects, carefully blended translucent backgrounds, and overlay masking create a sense of depth and a modern, premium feel.
+
 ## 💻 Local Development
 
 To run this project locally on your machine, follow these steps:
