@@ -1,5 +1,6 @@
 ---
 import Icon from './Icon.astro';
+import versionData from '../data/version.json';
 
 const currentYear = new Date().getFullYear();
 ---
@@ -11,6 +12,7 @@ const currentYear = new Date().getFullYear();
       <Icon icon="rocket-launch" size="1.2em" />
     </p>
     <p>&copy; {currentYear} Alexander Härenstam</p>
+    <p><a href="/whats-new" class="version-link">v{versionData.version}</a></p>
   </div>
   <p class="socials">
     <a href="https://www.linkedin.com/in/alehar/"> LinkedIn</a>
@@ -61,6 +63,19 @@ const currentYear = new Date().getFullYear();
     justify-content: center;
     gap: 1rem;
     flex-wrap: wrap;
+  }
+
+  .version-link {
+    font-family: var(--font-brand);
+    font-size: var(--text-sm);
+    color: var(--gray-400);
+    text-decoration: none;
+    transition: color var(--theme-transition);
+  }
+
+  .version-link:hover,
+  .version-link:focus {
+    color: var(--gray-200);
   }
 
   /* Source icon link styling: keep visual weight minimal */
