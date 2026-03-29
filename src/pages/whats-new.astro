@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContactCTA from '../components/ContactCTA.astro';
+import Hero from '../components/Hero.astro';
+import { Content as ChangelogContent } from '../../CHANGELOG.md';
+---
+
+<BaseLayout title="What's New | Alexander Härenstam" description="Changelog and recent updates">
+  <div class="stack gap-20">
+    <main class="wrapper stack gap-8">
+      <Hero
+        title="What's New"
+        tagline="A continuously updated release log of improvements, tweaks, and new features."
+        align="start"
+      />
+
+      <div class="content markdown-content">
+        <ChangelogContent />
+      </div>
+    </main>
+    <ContactCTA />
+  </div>
+</BaseLayout>
+
+<style>
+  .content {
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 1.5rem;
+    padding: 2.5rem;
+    box-shadow: var(--shadow-sm);
+  }
+
+  :global(.markdown-content h1) {
+    font-size: var(--text-3xl);
+    margin-bottom: 2rem;
+    color: var(--gray-0);
+  }
+
+  :global(.markdown-content h2) {
+    font-size: var(--text-xl);
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    color: var(--gray-100);
+  }
+
+  :global(.markdown-content ul) {
+    margin-left: 1.5rem;
+    list-style-type: disc;
+    margin-bottom: 2rem;
+    color: var(--gray-300);
+  }
+
+  :global(.markdown-content li) {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+  }
+</style>
