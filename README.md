@@ -8,7 +8,7 @@
 [![Code Style: Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=for-the-badge&logo=prettier)](https://github.com/prettier/prettier)
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/alehar9320/astro-cloudflare-personal-website/ci.yml?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/alehar9320/astro-cloudflare-personal-website/actions)
 [![Codecov](https://img.shields.io/codecov/c/github/alehar9320/astro-cloudflare-personal-website?style=for-the-badge&logo=codecov)](https://codecov.io/gh/alehar9320/astro-cloudflare-personal-website)
-[![Snyk Vulnerabilities](https://img.shields.io/snyk/vulnerabilities/github/alehar9320/astro-cloudflare-personal-website?style=for-the-badge&logo=snyk&logoColor=white)](https://app.snyk.io/org/alehar9320/projects)
+[![Snyk Security](https://img.shields.io/badge/Snyk-security-9043C6?style=for-the-badge&logo=snyk&logoColor=white)](https://snyk.io/test/github/alehar9320/astro-cloudflare-personal-website)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](https://opensource.org/licenses/MIT)
 
 </div>
