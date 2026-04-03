@@ -1,24 +1,62 @@
 ---
+
 ---
 
 <div id="chat-container" class="chat-container">
   <button id="chat-toggle" class="chat-toggle" aria-label="Open chat">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/></svg>
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"></path></svg
+    >
   </button>
 
   <div id="chat-window" class="chat-window hidden">
     <div class="chat-header">
       <span>Chat with Alexander's AI</span>
       <button id="chat-close" class="chat-close" aria-label="Close chat">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg
+        >
       </button>
     </div>
     <div id="chat-messages" class="chat-messages"></div>
     <div id="typing-indicator" class="typing-indicator hidden">Alexander is typing...</div>
     <form id="chat-form" class="chat-form">
-      <input type="text" id="chat-input" placeholder="Ask me something..." required autocomplete="off" />
+      <input
+        type="text"
+        id="chat-input"
+        placeholder="Ask me something..."
+        required
+        autocomplete="off"
+      />
       <button type="submit" aria-label="Send message">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"/><path d="M22 2 11 13"/></svg>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          ><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg
+        >
       </button>
     </form>
   </div>
