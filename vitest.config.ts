@@ -8,6 +8,18 @@ export default defineConfig({
       provider: 'v8',
       reporter: ['text', 'lcov'],
       reportsDirectory: './coverage',
+      all: true,
+      include: ['src/**/*'],
+      exclude: [
+        'src/**/*.d.ts',
+        'src/**/*.test.ts',
+        'src/**/*.spec.ts',
+        'src/**/__tests__/**',
+        'src/**/*.astro',
+        'src/content/**',
+        'src/data/**',
+        'src/styles/**',
+      ],
     },
   },
 });
