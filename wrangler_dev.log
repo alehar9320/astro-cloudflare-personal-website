@@ -1,0 +1,14 @@
+
+ ⛅️ wrangler 4.78.0 (update available 4.80.0)
+─────────────────────────────────────────────
+
+Cloudflare collects anonymous telemetry about your usage of Wrangler. Learn more at https://github.com/cloudflare/workers-sdk/tree/main/packages/wrangler/telemetry.md
+
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mThe entry-point file at "@astrojs/cloudflare/entrypoints/server" was not found.[0m
+
+
+  This might mean that your entry-point file needs to be generated (which is the general case when a framework is being used).
+  If that's the case please run your project's build command and try again.
+
+
+🪵  Logs were written to "/home/jules/.config/.wrangler/logs/wrangler-2026-04-03_15-17-19_872.log"
