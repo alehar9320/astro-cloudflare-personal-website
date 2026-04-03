@@ -1,14 +1,39 @@
 
  ⛅️ wrangler 4.78.0 (update available 4.80.0)
 ─────────────────────────────────────────────
+Using redirected Wrangler configuration.
+ - Configuration being used: "dist/server/wrangler.json"
+ - Original user's configuration: "wrangler.jsonc"
+ - Deploy configuration file: ".wrangler/deploy/config.json"
+Your Worker has access to the following bindings:
+Binding             Resource          Mode
+env.SESSION         KV Namespace      local
+env.IMAGES          Images            local
+env.ASSETS          Assets            local
 
-Cloudflare collects anonymous telemetry about your usage of Wrangler. Learn more at https://github.com/cloudflare/workers-sdk/tree/main/packages/wrangler/telemetry.md
+Attaching additional modules:
+┌───────────────────────────────────────────────────────────┬──────┬──────────┐
+│ Name                                                      │ Type │ Size     │
+├───────────────────────────────────────────────────────────┼──────┼──────────┤
+│ chunks/_virtual_astro_server-island-manifest_CFl7y3Qj.mjs │ esm  │ 0.22 KiB │
+├───────────────────────────────────────────────────────────┼──────┼──────────┤
+│ chunks/_virtual_astro_session-driver_Csu6PJY6.mjs         │ esm  │ 2.92 KiB │
+├───────────────────────────────────────────────────────────┼──────┼──────────┤
+│ chunks/noop-entrypoint_DsBX4kaI.mjs                       │ esm  │ 0.10 KiB │
+├───────────────────────────────────────────────────────────┼──────┼──────────┤
+│ virtual_astro_middleware.mjs                              │ esm  │ 0.12 KiB │
+├───────────────────────────────────────────────────────────┼──────┼──────────┤
+│ Total (4 modules)                                         │      │ 3.35 KiB │
+└───────────────────────────────────────────────────────────┴──────┴──────────┘
+⎔ Starting local server...
+[wrangler:info] Ready on http://localhost:4321
+⎔ Reloading local server...
 
-[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mThe entry-point file at "@astrojs/cloudflare/entrypoints/server" was not found.[0m
+[31m✘ [41;31m[[41;97mERROR[41;31m][0m [1mENOENT: no such file or directory, scandir '/app/dist/client'[0m
 
 
-  This might mean that your entry-point file needs to be generated (which is the general case when a framework is being used).
-  If that's the case please run your project's build command and try again.
-
-
-🪵  Logs were written to "/home/jules/.config/.wrangler/logs/wrangler-2026-04-03_15-17-19_872.log"
+[32mIf you think this is a bug then please create an issue at https://github.com/cloudflare/workers-sdk/issues/new/choose[0m
+Note that there is a newer version of Wrangler available (4.80.0). Consider checking whether upgrading resolves this error.
+? Would you like to report this error to Cloudflare? Wrangler's output and the error details will be shared with the Wrangler team to help us diagnose and fix the issue.
+🤖 Using fallback value in non-interactive context: no
+🪵  Logs were written to "/home/jules/.config/.wrangler/logs/wrangler-2026-04-03_15-41-56_429.log"
