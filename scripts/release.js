@@ -72,31 +72,19 @@ try {
 
 fs.writeFileSync('CHANGELOG.md', changelogEntry + existingChangelog);
 
-// Git operations
+// Output version and changelog for GitHub Release
+// Set output variables for workflow access using GitHub Actions format
+console.log(`\n::set-output name=version::${version}`);
+console.log(`\n::set-output name=changelog::${encodeURIComponent(changelogEntry)}`);
+console.log(`\n::notice title=Release Version::${version}`);
+
+// Save changelog to a temporary file for workflow access
+const tempChangelogPath = '/tmp/changelog.txt';
 try {
-  execSync('git config user.name "github-actions[bot]"');
-  execSync('git config user.email "github-actions[bot]@users.noreply.github.com"');
-
-  execSync('git add CHANGELOG.md src/data/version.json');
-
-  // Only commit if there are changes
-  const status = execSync('git status --porcelain').toString().trim();
-  if (status) {
-    execSync(`git commit -m "chore: release ${version} [skip ci]"`);
-    execSync(`git tag ${version}`);
-
-    // Only push if in a CI environment to prevent accidental local pushes
-    if (process.env.GITHUB_ACTIONS) {
-      execSync('git push origin main');
-      execSync('git push origin --tags');
-      console.log(`Successfully released version ${version}`);
-    } else {
-      console.log(`Local run complete. Version ${version} prepared but not pushed.`);
-    }
-  } else {
-    console.log('No files to commit.');
-  }
-} catch (error) {
-  console.error('Error during git operations:', error.stdout ? error.stdout.toString() : error);
-  process.exit(1);
+  fs.writeFileSync(tempChangelogPath, changelogEntry);
+  console.log(`Changelog saved to ${tempChangelogPath}`);
+} catch (e) {
+  console.warn(`Could not write changelog to temp file: ${e.message}`);
 }
+
+console.log(`Successfully prepared version ${version}`);

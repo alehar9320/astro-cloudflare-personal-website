@@ -113,6 +113,29 @@ jobs:
 
       - name: Increment Version & Generate Changelog
         run: node scripts/release.js
+        id: release
+
+      - name: Extract Release Info
+        run: |
+          VERSION=$(node -e "const now = new Date(); const YYYY = now.getUTCFullYear(); const MM = String(now.getUTCMonth() + 1).padStart(2, '0'); const DD = String(now.getUTCDate()).padStart(2, '0'); const HH = String(now.getUTCHours()).padStart(2, '0'); const mm = String(now.getUTCMinutes()).padStart(2, '0'); console.log(\`\${YYYY}.\${MM}.\${DD}.\${HH}\${mm}\`);")
+          echo "RELEASE_VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "RELEASE_CHANGELOG<<EOF" >> $GITHUB_ENV
+          cat CHANGELOG.md | head -50 >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Create Git Tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git tag ${{ env.RELEASE_VERSION }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.RELEASE_VERSION }}
+          body: ${{ env.RELEASE_CHANGELOG }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Project
         run: npm run build
