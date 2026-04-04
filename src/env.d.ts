@@ -12,4 +12,5 @@ interface Env {
   AI: {
     run: (model: string, input: unknown) => Promise<ReadableStream>;
   };
+  CHAT_STORE: KVNamespace;
 }
