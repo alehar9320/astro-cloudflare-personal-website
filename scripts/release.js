@@ -72,6 +72,18 @@ try {
 
 fs.writeFileSync('CHANGELOG.md', changelogEntry + existingChangelog);
 
-// Output version for GitHub Release (workflow recalculates version and reads CHANGELOG.md)
+// Write outputs to GitHub Actions for workflow consumption
+const githubOutput = process.env.GITHUB_OUTPUT;
+if (githubOutput) {
+  try {
+    fs.appendFileSync(githubOutput, `version=${version}\n`);
+    fs.appendFileSync(githubOutput, `changelog=${encodeURIComponent(changelogEntry)}\n`);
+    console.log('Outputs written to GITHUB_OUTPUT');
+  } catch (e) {
+    console.warn(`Could not write to GITHUB_OUTPUT: ${e.message}`);
+  }
+}
+
+// Output version for GitHub Release
 console.log(`\n::notice title=Release Version::${version}`);
 console.log(`Successfully prepared version ${version}`);
