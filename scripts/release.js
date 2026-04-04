@@ -72,19 +72,6 @@ try {
 
 fs.writeFileSync('CHANGELOG.md', changelogEntry + existingChangelog);
 
-// Output version and changelog for GitHub Release
-// Set output variables for workflow access using GitHub Actions format
-console.log(`\n::set-output name=version::${version}`);
-console.log(`\n::set-output name=changelog::${encodeURIComponent(changelogEntry)}`);
+// Output version for GitHub Release (workflow recalculates version and reads CHANGELOG.md)
 console.log(`\n::notice title=Release Version::${version}`);
-
-// Save changelog to a temporary file for workflow access
-const tempChangelogPath = '/tmp/changelog.txt';
-try {
-  fs.writeFileSync(tempChangelogPath, changelogEntry);
-  console.log(`Changelog saved to ${tempChangelogPath}`);
-} catch (e) {
-  console.warn(`Could not write changelog to temp file: ${e.message}`);
-}
-
 console.log(`Successfully prepared version ${version}`);
