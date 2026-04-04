@@ -1,13 +1,48 @@
 import type { APIRoute } from 'astro';
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  const { messages } = await request.json();
-
   const ai = locals.runtime?.env?.AI;
+  const store = locals.runtime?.env?.CHAT_STORE;
 
   if (!ai) {
     return new Response(JSON.stringify({ error: 'AI binding not found' }), {
       status: 500,
+      headers: { 'content-type': 'application/json' },
+    });
+  }
+
+  // Basic Security: Client IP-based rate limiting
+  const ip = request.headers.get('cf-connecting-ip') || 'anonymous';
+  const rateLimitKey = `chat-limit:${ip}`;
+
+  if (store) {
+    const currentCount = parseInt((await store.get(rateLimitKey)) || '0');
+    if (currentCount >= 20) {
+      // 20 requests per hour limit
+      return new Response(JSON.stringify({ error: 'Rate limit exceeded. Try again in an hour.' }), {
+        status: 429,
+        headers: { 'content-type': 'application/json' },
+      });
+    }
+    // Increment counter with 1 hour expiration
+    await store.put(rateLimitKey, (currentCount + 1).toString(), { expirationTtl: 3600 });
+  }
+
+  const body = await request.json();
+  const { messages } = body;
+
+  // Validation: Check message size and count
+  if (!Array.isArray(messages) || messages.length > 10) {
+    return new Response(JSON.stringify({ error: 'Invalid message history' }), {
+      status: 400,
+      headers: { 'content-type': 'application/json' },
+    });
+  }
+
+  const lastMessage = messages[messages.length - 1]?.content;
+  if (typeof lastMessage !== 'string' || lastMessage.length > 500) {
+    return new Response(JSON.stringify({ error: 'Message too long' }), {
+      status: 400,
       headers: { 'content-type': 'application/json' },
     });
   }
