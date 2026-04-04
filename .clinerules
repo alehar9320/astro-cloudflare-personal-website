@@ -12,8 +12,27 @@ Before generating content or making author-specific decisions, **always** read t
 
 ## Code Quality Standards
 - **Linter**: ESLint (astro plugin) -> Run `npm run lint` or `npm run lint:fix`
-- **Formatter**: Prettier -> Run `npm run format`
+- **Formatter**: Prettier (MANDATORY) -> Run `npm run format` and verify with `npm run format:check`
 - **Testing**: Vitest -> Run `npm run test`
+
+## Formatting & Code Style (CRITICAL)
+
+**All code changes MUST be formatted with Prettier before commit or PR submission.**
+
+- Use `npm run format` to apply prettier formatting
+- Use `npm run format:check` to validate formatting (CI enforces this)
+- Prettier covers: `.js`, `.ts`, `.astro`, `.css`, `.md`, `.json`
+- Configuration: `.prettierrc.json` + `prettier-plugin-astro`
+- **Non-compliant formatting will fail CI checks and block PRs**
+
+### Before You Submit Code:
+1. ✅ Run `npm run format` (apply formatting)
+2. ✅ Run `npm run format:check` (verify compliance)
+3. ✅ Run `npm run lint` (check linting)
+4. ✅ Run `npm run test` (if applicable)
+5. ✅ Run `npm run build` (ensure build succeeds)
+
+For detailed formatting guidance, see `.github/copilot-instructions.md`.
 
 ## Formatting & Conventions
 - Use explicit types wherever possible.
@@ -25,3 +44,5 @@ Before generating content or making author-specific decisions, **always** read t
 - **Dev Server**: `npm run dev`
 - **Build**: `npm run build`
 - **Type Check**: `npm run astro check`
+- **Format**: `npm run format` (REQUIRED before commit)
+- **Verify Format**: `npm run format:check` (used in CI)
