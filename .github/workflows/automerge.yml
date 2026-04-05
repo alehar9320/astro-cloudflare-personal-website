@@ -1,0 +1,99 @@
+name: Auto-Merge PR
+
+# Trigger on PR review completion or check suite completion
+on:
+  pull_request_target:
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
+  check_suite:
+    types:
+      - completed
+
+# Cancel in-progress runs when a new commit is pushed (avoid duplicate merges)
+concurrency:
+  group: automerge-${{ github.event.pull_request.number }}
+  cancel-in-progress: false
+
+jobs:
+  automerge:
+    name: Auto-Merge When Ready
+    runs-on: ubuntu-latest
+    if: |
+      github.event_name == 'pull_request_target' &&
+      github.event.pull_request.draft == false &&
+      github.event.action != 'opened'
+    permissions:
+      pull-requests: write
+      contents: write
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          fetch-depth: 0
+
+      - name: Check PR Status
+        id: check-pr
+        run: |
+          # Get PR details
+          PR_NUMBER=${{ github.event.pull_request.number }}
+
+          # Check if PR has required checks passing
+          CHECKS=$(gh pr checks "$PR_NUMBER" --json statusCheckRollup -q '.[].statusCheckRollup[].state' 2>/dev/null || echo "")
+
+          # Check if all required checks are successful
+          if echo "$CHECKS" | grep -q "FAILURE\|ERROR\|PENDING\|QUEUED"; then
+            echo "checks_pass=false" >> $GITHUB_OUTPUT
+          else
+            echo "checks_pass=true" >> $GITHUB_OUTPUT
+          fi
+
+          # Check if PR is approved
+          REVIEWS=$(gh pr view "$PR_NUMBER" --json reviews -q '.reviews[] | select(.state == "APPROVED") | .state' 2>/dev/null | wc -l)
+          if [ "$REVIEWS" -gt 0 ]; then
+            echo "is_approved=true" >> $GITHUB_OUTPUT
+          else
+            echo "is_approved=false" >> $GITHUB_OUTPUT
+          fi
+
+          # Check for conflicts
+          MERGEABLE=$(gh pr view "$PR_NUMBER" --json mergeStateStatus -q '.mergeStateStatus' 2>/dev/null)
+          if [ "$MERGEABLE" = "CONFLICTING" ]; then
+            echo "has_conflicts=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_conflicts=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Auto-Merge PR
+        if: |
+          steps.check-pr.outputs.checks_pass == 'true' &&
+          steps.check-pr.outputs.is_approved == 'true' &&
+          steps.check-pr.outputs.has_conflicts == 'false'
+        run: |
+          PR_NUMBER=${{ github.event.pull_request.number }}
+          gh pr merge "$PR_NUMBER" --squash --auto
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Report Status
+        if: always()
+        run: |
+          echo "### Auto-Merge Check Results" >> $GITHUB_STEP_SUMMARY
+          echo "- Checks Pass: ${{ steps.check-pr.outputs.checks_pass }}" >> $GITHUB_STEP_SUMMARY
+          echo "- PR Approved: ${{ steps.check-pr.outputs.is_approved }}" >> $GITHUB_STEP_SUMMARY
+          echo "- Has Conflicts: ${{ steps.check-pr.outputs.has_conflicts }}" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ steps.check-pr.outputs.checks_pass }}" = "true" ] && \
+             [ "${{ steps.check-pr.outputs.is_approved }}" = "true" ] && \
+             [ "${{ steps.check-pr.outputs.has_conflicts }}" = "false" ]; then
+            echo "✅ PR will be auto-merged with squash strategy" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "⏸️  Auto-merge skipped (see conditions above)" >> $GITHUB_STEP_SUMMARY
+          fi
