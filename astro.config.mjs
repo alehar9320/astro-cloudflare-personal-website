@@ -3,6 +3,7 @@ import { defineConfig } from 'astro/config';
 
 import cloudflare from '@astrojs/cloudflare';
 import sentry from '@sentry/astro';
+import { codecovVitePlugin } from '@codecov/vite-plugin';
 
 // https://astro.build/config
 export default defineConfig({
@@ -32,4 +33,13 @@ export default defineConfig({
       },
     }),
   ],
+  vite: {
+    plugins: [
+      codecovVitePlugin({
+        enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
+        bundleName: 'molecular-mars',
+        uploadToken: process.env.CODECOV_TOKEN,
+      }),
+    ],
+  },
 });
