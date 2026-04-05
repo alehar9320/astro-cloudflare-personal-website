@@ -80,7 +80,8 @@ if (githubOutput) {
     fs.appendFileSync(githubOutput, `changelog=${encodeURIComponent(changelogEntry)}\n`);
     console.log('Outputs written to GITHUB_OUTPUT');
   } catch (e) {
-    console.warn(`Could not write to GITHUB_OUTPUT: ${e.message}`);
+    console.error(`Failed to write to GITHUB_OUTPUT: ${e.message}`);
+    process.exit(1);
   }
 }
 
