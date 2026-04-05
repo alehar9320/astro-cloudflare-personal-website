@@ -4,6 +4,7 @@ dist/
 .astro/
 # test coverage
 coverage/
+junit.xml
 
 # dependencies
 node_modules/
