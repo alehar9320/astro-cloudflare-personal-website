@@ -83,6 +83,8 @@ jobs:
 
       - name: Build Project
         run: npm run build
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
   # ─── Deploy (main only) ───────────────────────────────────────────────────────
   # Only runs after both quality and build_and_test pass, and only on pushes
@@ -139,10 +141,16 @@ jobs:
       - name: Build Project
         run: npm run build
         env:
-          PUBLIC_SENTRY_DSN: ${{ vars.SENTRY_DSN }}
-          PUBLIC_SENTRY_ENVIRONMENT: ${{ vars.SENTRY_ENVIRONMENT || 'production' }}
-          PUBLIC_SENTRY_RELEASE: ${{ env.RELEASE_VERSION }}
-          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+       - name: Build Project
+         run: npm run build
+         env:
+           PUBLIC_SENTRY_DSN: ${{ vars.SENTRY_DSN }}
+           PUBLIC_SENTRY_ENVIRONMENT: ${{ vars.SENTRY_ENVIRONMENT || 'production' }}
+           PUBLIC_SENTRY_RELEASE: ${{ env.RELEASE_VERSION }}
+           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+
 
       - name: Deploy to Cloudflare
         run: npx wrangler pages deploy ./dist
