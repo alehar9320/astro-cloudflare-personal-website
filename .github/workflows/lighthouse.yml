@@ -1,0 +1,31 @@
+name: Lighthouse Audit
+on: [pull_request]
+
+jobs:
+  lighthouse:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      # 1. Wait for Cloudflare to finish the deployment and get the URL
+      - name: Get Cloudflare Preview URL
+        uses: zentered/cloudflare-preview-url@v2.0.1
+        id: cloudflare_deployment
+        with:
+          cloudflare_project_id: ${{ secrets.CLOUDFLARE_PROJECT_ID }}
+          environment: preview
+          commit_hash: ${{ github.event.pull_request.head.sha }}
+          branch: ${{ github.event.pull_request.head.ref }}
+          wait_until_ready: true
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+
+      # 2. Run Lighthouse against that specific URL
+      - name: Run Lighthouse
+        uses: treosh/lighthouse-ci-action@v12
+        with:
+          urls: ${{ steps.cloudflare_deployment.outputs.url }}
+          configPath: './.lighthouserc.cjs'
