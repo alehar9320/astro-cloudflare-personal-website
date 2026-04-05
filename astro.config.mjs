@@ -13,5 +13,22 @@ export default defineConfig({
       entrypoint: 'astro/assets/services/cloudflare-binding',
     },
   },
-  integrations: [sentry()],
+  integrations: [
+    sentry({
+      dsn: process.env.SENTRY_DSN,
+      environment: process.env.SENTRY_ENVIRONMENT || 'production',
+      release: process.env.SENTRY_RELEASE,
+      tracesSampleRate: 1.0,
+      replaysSessionSampleRate: 0.1,
+      replaysOnErrorSampleRate: 1.0,
+      sendDefaultPii: false,
+      sourceMapsUploadOptions: {
+        authToken: process.env.SENTRY_AUTH_TOKEN,
+        org: 'personal-projects-1c',
+        project: 'astro-cloudflare-site',
+        release: process.env.SENTRY_RELEASE,
+        telemetry: false,
+      },
+    }),
+  ],
 });
