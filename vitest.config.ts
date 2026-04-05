@@ -4,6 +4,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     include: ['src/**/*.{test,spec}.{js,ts,jsx,tsx,astro}'],
+    reporters: ['default', ['junit', { outputFile: './junit.xml' }]],
     coverage: {
       provider: 'v8',
       reporter: ['text', 'lcov'],
