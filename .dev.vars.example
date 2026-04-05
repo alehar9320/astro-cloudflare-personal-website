@@ -3,15 +3,18 @@
 # .dev.vars is excluded from git and contains secrets for local development only
 
 # Sentry Error Tracking (Optional)
-# NOTE: SENTRY_DSN is stored as GitHub Repository Variable (not Secret) because:
-#       - URLs contain special characters incompatible with GitHub Secrets
-#       - DSN is technically "public" (embedded in browser JavaScript)
-#       - Only provides read-only access to error data
+# NOTE: Astro requires PUBLIC_ prefix for browser-accessible variables
+#       Variables without PUBLIC_ prefix are server-only and NOT sent to the browser
+#       SENTRY_DSN is technically "public" (embedded in browser JS) so it uses PUBLIC_
+#       SENTRY_AUTH_TOKEN is server-only (used for uploading source maps)
 # Get your DSN from: https://sentry.io/settings/projects/
 # Format: https://examplePublicKey@o0.ingest.sentry.io/0
-SENTRY_DSN=https://your-sentry-public-key@o0.ingest.sentry.io/your-project-id
-SENTRY_ENVIRONMENT=development
-SENTRY_RELEASE=local-dev
+PUBLIC_SENTRY_DSN=https://your-sentry-public-key@o0.ingest.sentry.io/your-project-id
+PUBLIC_SENTRY_ENVIRONMENT=development
+PUBLIC_SENTRY_RELEASE=local-dev
+
+# Server-side Sentry configuration (NOT exposed to browser)
+SENTRY_AUTH_TOKEN=your-sentry-auth-token-for-source-map-uploads
 
 # Cloudflare Bindings
 # These are referenced in wrangler.jsonc and accessible via Astro.locals.runtime.env
@@ -30,13 +33,14 @@ SENTRY_RELEASE=local-dev
 # Add any other environment variables your app needs here
 # Example: API_KEY=your-api-key
 
-# GitHub Variables Setup
-# For production deployment, create GitHub Repository Variables (not secrets):
-# 1. Settings → Variables and secrets → Actions → Variables → New repository variable
-# 2. SENTRY_DSN = your DSN (from Sentry dashboard)
-# 3. SENTRY_ENVIRONMENT = production (or staging)
+# GitHub Production Deployment Setup
+# For production, create GitHub Repository Variables (not secrets):
 #
-# GitHub Secrets (still needed for sensitive auth tokens):
+# VARIABLES (public - visible in browser):
+# 1. PUBLIC_SENTRY_DSN = your DSN from Sentry dashboard
+# 2. PUBLIC_SENTRY_ENVIRONMENT = production (or staging)
+#
+# SECRETS (encrypted - used by CI/CD only):
 # 1. SENTRY_AUTH_TOKEN (for automatic source map uploads)
 # 2. CLOUDFLARE_API_TOKEN (for Pages deployment)
 # 3. CLOUDFLARE_ACCOUNT_ID (for Pages deployment)

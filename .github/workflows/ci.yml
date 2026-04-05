@@ -139,9 +139,9 @@ jobs:
       - name: Build Project
         run: npm run build
         env:
-          SENTRY_DSN: ${{ vars.SENTRY_DSN }}
-          SENTRY_ENVIRONMENT: ${{ vars.SENTRY_ENVIRONMENT || 'production' }}
-          SENTRY_RELEASE: ${{ env.RELEASE_VERSION }}
+          PUBLIC_SENTRY_DSN: ${{ vars.SENTRY_DSN }}
+          PUBLIC_SENTRY_ENVIRONMENT: ${{ vars.SENTRY_ENVIRONMENT || 'production' }}
+          PUBLIC_SENTRY_RELEASE: ${{ env.RELEASE_VERSION }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
 
       - name: Deploy to Cloudflare
