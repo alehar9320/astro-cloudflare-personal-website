@@ -1,0 +1,42 @@
+# Local Development Environment Variables
+# Copy this file to .dev.vars and fill in your actual values
+# .dev.vars is excluded from git and contains secrets for local development only
+
+# Sentry Error Tracking (Optional)
+# NOTE: SENTRY_DSN is stored as GitHub Repository Variable (not Secret) because:
+#       - URLs contain special characters incompatible with GitHub Secrets
+#       - DSN is technically "public" (embedded in browser JavaScript)
+#       - Only provides read-only access to error data
+# Get your DSN from: https://sentry.io/settings/projects/
+# Format: https://examplePublicKey@o0.ingest.sentry.io/0
+SENTRY_DSN=https://your-sentry-public-key@o0.ingest.sentry.io/your-project-id
+SENTRY_ENVIRONMENT=development
+SENTRY_RELEASE=local-dev
+
+# Cloudflare Bindings
+# These are referenced in wrangler.jsonc and accessible via Astro.locals.runtime.env
+
+# Example: D1 Database (if configured in wrangler.jsonc)
+# DATABASE_URL=file:./local.db
+
+# Example: R2 Object Storage (if configured)
+# R2_BUCKET_NAME=my-local-bucket
+# R2_BUCKET_ENDPOINT=https://bucket.r2.example.com
+
+# Example: KV Namespace (if configured)
+# SESSION_KV_NAMESPACE_ID=your-kv-namespace-id
+
+# Custom Environment Variables
+# Add any other environment variables your app needs here
+# Example: API_KEY=your-api-key
+
+# GitHub Variables Setup
+# For production deployment, create GitHub Repository Variables (not secrets):
+# 1. Settings → Variables and secrets → Actions → Variables → New repository variable
+# 2. SENTRY_DSN = your DSN (from Sentry dashboard)
+# 3. SENTRY_ENVIRONMENT = production (or staging)
+#
+# GitHub Secrets (still needed for sensitive auth tokens):
+# 1. SENTRY_AUTH_TOKEN (for automatic source map uploads)
+# 2. CLOUDFLARE_API_TOKEN (for Pages deployment)
+# 3. CLOUDFLARE_ACCOUNT_ID (for Pages deployment)
