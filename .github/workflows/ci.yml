@@ -122,12 +122,6 @@ jobs:
           cat CHANGELOG.md | head -50 >> $GITHUB_ENV
           echo "EOF" >> $GITHUB_ENV
 
-      - name: Create Git Tag
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag ${{ env.RELEASE_VERSION }}
-
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
         with:
