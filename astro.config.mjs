@@ -18,6 +18,7 @@ export default defineConfig({
         org: 'alexander-m4',
         project: 'node-cloudflare-workers',
         authToken: process.env.SENTRY_AUTH_TOKEN,
+        release: process.env.SENTRY_RELEASE,
       },
     }),
   ],

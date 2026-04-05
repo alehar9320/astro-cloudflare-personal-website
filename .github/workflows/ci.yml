@@ -130,8 +130,13 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set Sentry Release
+        run: echo "SENTRY_RELEASE=$(git rev-parse HEAD)" >> $GITHUB_ENV
+
       - name: Build Project
         run: npm run build
+        env:
+          SENTRY_RELEASE: ${{ env.SENTRY_RELEASE }}
 
       - name: Deploy to Cloudflare
         run: npx wrangler pages deploy ./dist
