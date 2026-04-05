@@ -9,11 +9,14 @@ updates:
     directory: '/'
     schedule:
       interval: 'weekly'
-    # Auto-merge for minor and patch updates (low-risk dependency updates)
-    auto-merge:
-      enabled: true
-      # Only auto-merge minor and patch updates (exclude major versions)
-      ignore-open-requirements-flag: true
+    # Wait for stability (latest best practice) to avoid "day-zero" bugs
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+    # Group development dependencies to reduce PR noise
+    groups:
+      development-dependencies:
+        dependency-type: 'development'
     # Use squash merge for clean commit history
     commit-message:
       prefix: 'chore(deps):'
