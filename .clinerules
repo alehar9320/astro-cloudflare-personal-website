@@ -47,7 +47,7 @@ This project uses the modern **Cloudflare Workers + Assets binding** model (not 
 1. `npm run dev` — Local miniflare should start without errors
 2. `npm run build` — Verify build output in `./dist` includes both `./dist/client` (static) and `./dist/server` (Worker)
 3. `npx wrangler types` — Generate runtime types; run after any binding changes
-4. Check `.ast / type-safe access to `Astro.locals.runtime.env`
+4. Check `.ast` for type-safe access to `Astro.locals.runtime.env`
 
 ### Rendering Strategy
 
