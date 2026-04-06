@@ -64,7 +64,9 @@ describe('release script', () => {
 
   it('should handle missing tags gracefully', async () => {
     vi.mocked(fs.default.existsSync).mockReturnValue(true);
-    vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
+    vi.mocked(fs.default.readFileSync).mockReturnValue(
+      '# Changelog\n\nAll notable changes to this project will be documented in this file.\n\n'
+    );
     vi.mocked(child_process.execSync).mockImplementation((cmd) => {
       if (typeof cmd === 'string' && cmd.includes('describe --tags')) throw new Error('No tags');
       return Buffer.from('commit1');
@@ -144,6 +146,10 @@ describe('release script', () => {
       'mock_github_output',
       expect.stringContaining('version=2023.01.01.1200')
     );
+    expect(fs.default.appendFileSync).toHaveBeenCalledWith(
+      'mock_github_output',
+      expect.stringContaining('changelog<<EOF')
+    );
     delete process.env.GITHUB_OUTPUT;
   });
 
@@ -214,6 +220,28 @@ describe('release script', () => {
     expect(fs.default.writeFileSync).toHaveBeenCalledWith(
       'CHANGELOG.md',
       expect.stringContaining('- feat: initial commit')
+    );
+  });
+
+  it('should keep the changelog header at the top and insert entries below it', async () => {
+    vi.mocked(fs.default.existsSync).mockReturnValue(true);
+    vi.mocked(fs.default.readFileSync).mockReturnValue(
+      '# Changelog\n\nAll notable changes to this project will be documented in this file.\n\n## [2022.12.31.2359] - 2022-12-31\n\n- Previous entry\n'
+    );
+    vi.mocked(child_process.execSync).mockImplementation((cmd) => {
+      if (typeof cmd === 'string' && cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
+      if (typeof cmd === 'string' && cmd.includes('log'))
+        return Buffer.from('feat: new release metadata');
+      return Buffer.from('');
+    });
+
+    await import('../scripts/release.js?t=' + (Date.now() + 11));
+
+    expect(fs.default.writeFileSync).toHaveBeenCalledWith(
+      'CHANGELOG.md',
+      expect.stringMatching(
+        /^# Changelog\n\nAll notable changes to this project will be documented in this file\.\n\n## \[2023\.01\.01\.1200\] - 2023-01-01/
+      )
     );
   });
 });
