@@ -83,7 +83,8 @@ describe('release script', () => {
     vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
     vi.mocked(child_process.execSync).mockImplementation((cmd) => {
       if (typeof cmd === 'string' && cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
-      if (typeof cmd === 'string' && cmd.includes('log')) return Buffer.from('feat: new feature\nfix: bug fix');
+      if (typeof cmd === 'string' && cmd.includes('log'))
+        return Buffer.from('feat: new feature\nfix: bug fix');
       return Buffer.from('');
     });
 
@@ -100,7 +101,8 @@ describe('release script', () => {
     vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
     vi.mocked(child_process.execSync).mockImplementation((cmd) => {
       if (typeof cmd === 'string' && cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
-      if (typeof cmd === 'string' && cmd.includes('log')) return Buffer.from('feat: new feature\nchore: update [skip ci]');
+      if (typeof cmd === 'string' && cmd.includes('log'))
+        return Buffer.from('feat: new feature\nchore: update [skip ci]');
       return Buffer.from('');
     });
 
@@ -117,7 +119,8 @@ describe('release script', () => {
     vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
     vi.mocked(child_process.execSync).mockImplementation((cmd) => {
       if (typeof cmd === 'string' && cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
-      if (typeof cmd === 'string' && cmd.includes('log')) return Buffer.from('chore: update [skip ci]');
+      if (typeof cmd === 'string' && cmd.includes('log'))
+        return Buffer.from('chore: update [skip ci]');
       return Buffer.from('');
     });
 
@@ -199,8 +202,10 @@ describe('release script', () => {
     vi.mocked(fs.default.existsSync).mockReturnValue(true);
     vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
     vi.mocked(child_process.execSync).mockImplementation((cmd) => {
-      if (typeof cmd === 'string' && cmd.includes('describe --tags')) throw new Error('Git describe failed');
-      if (typeof cmd === 'string' && cmd.includes('log --oneline')) return Buffer.from('feat: initial commit');
+      if (typeof cmd === 'string' && cmd.includes('describe --tags'))
+        throw new Error('Git describe failed');
+      if (typeof cmd === 'string' && cmd.includes('log --oneline'))
+        return Buffer.from('feat: initial commit');
       return Buffer.from('');
     });
 
