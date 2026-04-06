@@ -5,6 +5,6 @@ export default [
   ...tseslint.configs.recommended,
   ...eslintPluginAstro.configs.recommended,
   {
-    ignores: ['dist/**/*', '.astro/**/*', 'node_modules/**/*', 'env.d.ts'],
+    ignores: ['dist/**/*', '.astro/**/*', 'coverage/**/*', 'node_modules/**/*', 'env.d.ts'],
   },
 ];

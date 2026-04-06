@@ -2,7 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
-import { Content as ChangelogContent } from '../../CHANGELOG.md';
 ---
 
 <BaseLayout title="What's New | Alexander Härenstam" description="Changelog and recent updates">
@@ -14,13 +13,98 @@ import { Content as ChangelogContent } from '../../CHANGELOG.md';
         align="start"
       />
 
-      <div class="content markdown-content">
-        <ChangelogContent />
+      <div class="content">
+        <div class="release-list" data-release-list>
+          <p class="release-status">Loading latest release history...</p>
+        </div>
+        <noscript>
+          <p class="release-status">
+            Release history is available on
+            <a href="https://github.com/alehar9320/astro-cloudflare-personal-website/releases">
+              GitHub Releases
+            </a>.
+          </p>
+        </noscript>
       </div>
     </main>
     <ContactCTA />
   </div>
 </BaseLayout>
+
+<script>
+  import {
+    RELEASES_PAGE_URL,
+    fetchGitHubReleases,
+    formatReleaseDate,
+    splitReleaseBody,
+  } from '../utils/github-releases';
+
+  const releaseList = document.querySelector('[data-release-list]');
+
+  if (releaseList instanceof HTMLDivElement) {
+    fetchGitHubReleases().then((releases) => {
+      if (releases.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'release-status';
+        empty.textContent = 'Release history is unavailable right now.';
+
+        const link = document.createElement('a');
+        link.href = RELEASES_PAGE_URL;
+        link.textContent = 'View GitHub Releases';
+
+        empty.append(' ');
+        empty.append(link);
+        empty.append('.');
+
+        releaseList.replaceChildren(empty);
+        return;
+      }
+
+      const fragment = document.createDocumentFragment();
+
+      releases.forEach((release) => {
+        const article = document.createElement('article');
+        article.className = 'release-card';
+
+        const heading = document.createElement('h2');
+        heading.textContent = release.version;
+
+        const meta = document.createElement('p');
+        meta.className = 'release-meta';
+        meta.textContent = formatReleaseDate(release.publishedAt);
+
+        const bodyItems = splitReleaseBody(release.body);
+
+        if (bodyItems.length > 0) {
+          const list = document.createElement('ul');
+
+          bodyItems.forEach((item) => {
+            const listItem = document.createElement('li');
+            listItem.textContent = item;
+            list.append(listItem);
+          });
+
+          article.append(heading, meta, list);
+        } else {
+          const fallback = document.createElement('p');
+          fallback.className = 'release-status';
+          fallback.textContent = 'No release notes were published for this version.';
+          article.append(heading, meta, fallback);
+        }
+
+        const link = document.createElement('a');
+        link.href = release.url;
+        link.className = 'release-link';
+        link.textContent = 'View on GitHub';
+        article.append(link);
+
+        fragment.append(article);
+      });
+
+      releaseList.replaceChildren(fragment);
+    });
+  }
+</script>
 
 <style>
   .content {
@@ -31,28 +115,51 @@ import { Content as ChangelogContent } from '../../CHANGELOG.md';
     box-shadow: var(--shadow-sm);
   }
 
-  :global(.markdown-content h1) {
-    font-size: var(--text-3xl);
-    margin-bottom: 2rem;
-    color: var(--gray-0);
+  .release-list {
+    display: grid;
+    gap: 1.5rem;
   }
 
-  :global(.markdown-content h2) {
+  .release-card {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--gray-800);
+  }
+
+  .release-card:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .release-card h2 {
     font-size: var(--text-xl);
-    margin-top: 2.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.35rem;
     color: var(--gray-100);
   }
 
-  :global(.markdown-content ul) {
+  .release-meta {
+    color: var(--gray-400);
+    margin-bottom: 1rem;
+  }
+
+  .release-card ul {
     margin-left: 1.5rem;
     list-style-type: disc;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     color: var(--gray-300);
   }
 
-  :global(.markdown-content li) {
+  .release-card li {
     margin-bottom: 0.5rem;
     line-height: 1.6;
+  }
+
+  .release-status {
+    color: var(--gray-300);
+    line-height: 1.6;
+  }
+
+  .release-link {
+    display: inline-block;
+    margin-top: 0.25rem;
   }
 </style>
