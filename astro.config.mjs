@@ -15,9 +15,10 @@ export default defineConfig({
   },
   integrations: [
     sentry({
-      dsn: process.env.SENTRY_DSN,
-      environment: process.env.SENTRY_ENVIRONMENT || 'production',
-      release: process.env.SENTRY_RELEASE,
+      dsn: process.env.SENTRY_DSN || process.env.PUBLIC_SENTRY_DSN,
+      environment:
+        process.env.SENTRY_ENVIRONMENT || process.env.PUBLIC_SENTRY_ENVIRONMENT || 'production',
+      release: process.env.SENTRY_RELEASE || process.env.PUBLIC_SENTRY_RELEASE,
       tracesSampleRate: 1.0,
       replaysSessionSampleRate: 0.1,
       replaysOnErrorSampleRate: 1.0,
@@ -26,7 +27,7 @@ export default defineConfig({
         authToken: process.env.SENTRY_AUTH_TOKEN,
         org: 'personal-projects-1c',
         project: 'astro-cloudflare-site',
-        release: process.env.SENTRY_RELEASE,
+        release: process.env.SENTRY_RELEASE || process.env.PUBLIC_SENTRY_RELEASE,
         telemetry: false,
       },
     }),
