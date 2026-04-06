@@ -24,7 +24,7 @@ This website serves as my digital portfolio, showcasing my professional journey,
 This project is built with a modern web stack designed for speed, SEO, and developer experience:
 
 - **[Astro](https://astro.build/)**: The web framework for building fast, content-focused websites.
-- **[Cloudflare Pages](https://pages.cloudflare.com/)**: For fast, secure, and globally distributed hosting.
+- **[Cloudflare Pages](https://pages.cloudflare.com/)**: For fast, secure, and globally distributed hosting with Git-based auto-deploys.
 - **HTML/CSS/JS**: Vanilla web technologies, prioritizing lean bundles and performance.
 
 ## 🛠 Features
@@ -87,7 +87,7 @@ Navigate to `http://localhost:4321` in your browser to view the site as you make
 
 ## 🌐 Deployment
 
-This project is structured to be deployed on **Cloudflare**. To deploy modifications, simply push changes to the main branch connected to your Cloudflare Pages instance. Cloudflare will automatically build using `npm run build` and deploy the output directory (`./dist/`).
+This project is structured to be deployed on **Cloudflare**. Push changes to the `main` branch connected to your Cloudflare Pages project and Cloudflare will automatically build using `npm run build` and deploy the output directory (`./dist/`). GitHub Actions handles quality checks plus release artifact generation (`src/data/version.json` and `CHANGELOG.md`); it does not manually deploy production in parallel.
 
 ## 📬 Contact & Connect
 

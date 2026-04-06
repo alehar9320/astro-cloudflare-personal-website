@@ -1,6 +1,14 @@
 import fs from 'fs';
 import { execSync } from 'child_process';
 
+const CHANGELOG_PATH = 'CHANGELOG.md';
+const VERSION_PATH = 'src/data/version.json';
+const CHANGELOG_HEADER = `# Changelog
+
+All notable changes to this project will be documented in this file.
+
+`;
+
 const now = new Date();
 const YYYY = now.getUTCFullYear();
 const MM = String(now.getUTCMonth() + 1).padStart(2, '0');
@@ -18,7 +26,7 @@ if (!fs.existsSync('src/data')) {
 
 // Write to src/data/version.json
 const versionData = { version };
-fs.writeFileSync('src/data/version.json', JSON.stringify(versionData, null, 2));
+fs.writeFileSync(VERSION_PATH, JSON.stringify(versionData, null, 2));
 
 // Get last tag
 let lastTag = '';
@@ -62,22 +70,31 @@ if (commits) {
 }
 
 // Prepend to CHANGELOG.md
-let existingChangelog = '';
+let existingChangelog = CHANGELOG_HEADER;
 try {
-  existingChangelog = fs.readFileSync('CHANGELOG.md', 'utf-8');
+  existingChangelog = fs.readFileSync(CHANGELOG_PATH, 'utf-8');
 } catch (e) {
   console.log('CHANGELOG.md not found. A new one will be created.');
   console.debug('File read error:', e.message);
 }
 
-fs.writeFileSync('CHANGELOG.md', changelogEntry + existingChangelog);
+let changelogBody = existingChangelog;
+if (existingChangelog.startsWith(CHANGELOG_HEADER)) {
+  changelogBody = existingChangelog.slice(CHANGELOG_HEADER.length);
+}
+
+changelogBody = changelogBody.replaceAll(CHANGELOG_HEADER, '').replace(/^\s+/, '');
+
+const nextChangelog = CHANGELOG_HEADER + changelogEntry + changelogBody;
+
+fs.writeFileSync(CHANGELOG_PATH, nextChangelog);
 
 // Write outputs to GitHub Actions for workflow consumption
 const githubOutput = process.env.GITHUB_OUTPUT;
 if (githubOutput) {
   try {
     fs.appendFileSync(githubOutput, `version=${version}\n`);
-    fs.appendFileSync(githubOutput, `changelog=${encodeURIComponent(changelogEntry)}\n`);
+    fs.appendFileSync(githubOutput, `changelog<<EOF\n${changelogEntry}EOF\n`);
     console.log('Outputs written to GITHUB_OUTPUT');
   } catch (e) {
     console.error(`Failed to write to GITHUB_OUTPUT: ${e.message}`);
