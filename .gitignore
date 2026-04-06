@@ -2,6 +2,8 @@
 dist/
 # generated types
 .astro/
+.wrangler/
+
 # test coverage
 coverage/
 junit.xml
