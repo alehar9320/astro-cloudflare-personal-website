@@ -32,10 +32,12 @@ describe('sentry.server.config', () => {
 
     await import('../sentry.server.config?t=2');
 
-    expect(Sentry.init).toHaveBeenCalledWith(expect.objectContaining({
-      dsn: 'https://example-dsn@sentry.io/123',
-      environment: 'test',
-      release: '1.0.0',
-    }));
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        dsn: 'https://example-dsn@sentry.io/123',
+        environment: 'test',
+        release: '1.0.0',
+      })
+    );
   });
 });

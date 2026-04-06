@@ -5,7 +5,7 @@ import * as Sentry from '@sentry/astro';
 vi.mock('@sentry/astro', () => {
   return {
     init: vi.fn(),
-    Replay: vi.fn().mockImplementation(function() {
+    Replay: vi.fn().mockImplementation(function () {
       return {};
     }),
   };
@@ -38,10 +38,12 @@ describe('sentry.client.config', () => {
     await import('../sentry.client.config?t=2');
 
     expect(Sentry.init).toHaveBeenCalled();
-    expect(Sentry.init).toHaveBeenCalledWith(expect.objectContaining({
-      dsn: 'https://example-dsn@sentry.io/123',
-      environment: 'test',
-      release: '1.0.0',
-    }));
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        dsn: 'https://example-dsn@sentry.io/123',
+        environment: 'test',
+        release: '1.0.0',
+      })
+    );
   });
 });
