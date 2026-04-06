@@ -249,6 +249,34 @@ const projects = (await getCollection('work'))
     color: var(--gray-300);
     background: var(--gradient-subtle);
     box-shadow: var(--shadow-sm);
+    transition:
+      transform var(--theme-transition),
+      box-shadow var(--theme-transition),
+      border-color var(--theme-transition);
+  }
+
+  .mention-card a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .mention-card:hover,
+  .mention-card:focus-within {
+    transform: translateY(-2px);
+    border-color: color-mix(in oklab, var(--accent-regular), var(--gray-800) 60%);
+    box-shadow: var(--shadow-md);
+  }
+
+  .mention-card a:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 3px;
+    border-radius: 1.25rem;
   }
 
   @media (min-width: 50em) {
