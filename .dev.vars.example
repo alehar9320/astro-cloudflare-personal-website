@@ -45,8 +45,9 @@ SENTRY_AUTH_TOKEN=your-sentry-auth-token-for-source-map-uploads
 # 2. CLOUDFLARE_API_TOKEN (for Pages deployment)
 # 3. CLOUDFLARE_ACCOUNT_ID (for Pages deployment)
 
-# Notes:
+# Notes on Environment Variable Scope:
 # - This file is never committed to git (.gitignore includes .dev.vars)
-# - Values defined here are available in Astro via Astro.locals.runtime.env
-# - During local dev (npm run dev), miniflare reads these automatically
-# - For production, use: wrangler secret:bulk < secrets.json
+# - Variables WITHOUT PUBLIC_ prefix are server-only and accessible via Astro.locals.runtime.env
+#   (miniflare reads these during npm run dev for local server code)
+# - Variables prefixed with PUBLIC_* are exposed to the browser (available as import.meta.env.PUBLIC_*)
+# - For production secrets, use: wrangler secret:bulk < secrets.json
