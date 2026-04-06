@@ -112,7 +112,10 @@ This generates `env.d.ts` with full TypeScript support for all bindings.
 
 Local development uses `.dev.vars` (DO NOT COMMIT):
 ```env
-SENTRY_DSN=https://your-key@sentry.io/project
+PUBLIC_SENTRY_DSN=https://your-sentry-public-key@o0.ingest.sentry.io/your-project-id
+PUBLIC_SENTRY_ENVIRONMENT=development
+PUBLIC_SENTRY_RELEASE=local-dev
+SENTRY_AUTH_TOKEN=your-sourcemap-upload-token
 DB_NAME=local_test_db
 ```
 
