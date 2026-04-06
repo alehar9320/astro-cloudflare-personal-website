@@ -5,12 +5,13 @@ import * as Sentry from '@sentry/astro';
 vi.mock('@sentry/astro', () => {
   return {
     init: vi.fn(),
-    replayIntegration: vi.fn(),
   };
 });
 
 describe('sentry.server.config', () => {
   const originalEnv = process.env;
+  const importServerConfig = async (suffix: string) =>
+    import(/* @vite-ignore */ `../sentry.server.config?${suffix}`);
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -20,7 +21,7 @@ describe('sentry.server.config', () => {
   it('should not initialize Sentry if SENTRY_DSN is missing', async () => {
     delete process.env.SENTRY_DSN;
 
-    await import('../sentry.server.config?t=1');
+    await importServerConfig('t=1');
 
     expect(Sentry.init).not.toHaveBeenCalled();
   });
@@ -30,13 +31,15 @@ describe('sentry.server.config', () => {
     process.env.SENTRY_ENVIRONMENT = 'test';
     process.env.SENTRY_RELEASE = '1.0.0';
 
-    await import('../sentry.server.config?t=2');
+    await importServerConfig('t=2');
 
     expect(Sentry.init).toHaveBeenCalledWith(
       expect.objectContaining({
         dsn: 'https://example-dsn@sentry.io/123',
         environment: 'test',
         release: '1.0.0',
+        sendDefaultPii: false,
+        tracesSampleRate: 1.0,
       })
     );
   });

@@ -55,9 +55,9 @@ cp .dev.vars.example .dev.vars # Configure local environment variables
 ### Release and Deployment
 
 - **Cloudflare Auto-Deploy:** Production deploys are triggered by Cloudflare's Git integration when `main` receives a new commit.
-- **Release Artifacts:** `scripts/release.js` is the source of truth for `src/data/version.json` and `CHANGELOG.md`. These files are tracked and must remain commitable.
-- **GitHub Actions Role:** CI validates changes on PRs and, on `main`, generates and commits release artifacts plus creates the GitHub release. It must not bypass Cloudflare by introducing a second manual production deploy path.
-- **Footer + What's New:** The footer version link and `/whats-new` page both depend on the tracked release artifacts being up to date.
+- **Release Source of Truth:** GitHub releases and tags are the canonical source for versioning and changelog history.
+- **GitHub Actions Role:** CI validates changes on PRs and, on `main`, creates a GitHub release from `scripts/release.js`. It must not push generated release files back to protected `main`.
+- **Footer + What's New:** The footer version link and `/whats-new` page consume GitHub release data rather than tracked repo artifacts.
 
 ## 4. AI Constraints (The "Never" List)
 
@@ -68,6 +68,7 @@ cp .dev.vars.example .dev.vars # Configure local environment variables
 - **NEVER** commit code that fails `npm run format`, `npm run lint`, or `npm run build`.
 - **NEVER** use deprecated Cloudflare Pages models; strictly follow the Workers + Assets binding pattern.
 - **NEVER** add or preserve a parallel manual production deploy step in CI when Cloudflare Git auto-deploy already owns production releases.
+- **NEVER** design automation that depends on direct writes back to protected `main` for release metadata.
 
 ## 5. AI Agent Skills
 
@@ -86,4 +87,4 @@ Refer to the individual `SKILL.md` files in each skill folder for detailed guida
 
 - **CI:** GitHub Actions (`ci.yml`) runs linting, formatting checks, tests, and builds on every PR.
 - **CD:** Cloudflare automatically deploys pushes to `main` through its Git integration.
-- **Release:** GitHub Actions runs `scripts/release.js` on `main`, commits the generated release artifacts, and creates the GitHub release for that version.
+- **Release:** GitHub Actions runs `scripts/release.js` on `main` and creates the GitHub release for that version without mutating `main`.

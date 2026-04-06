@@ -1,6 +1,5 @@
 ---
 import Icon from './Icon.astro';
-import versionData from '../data/version.json';
 
 const currentYear = new Date().getFullYear();
 ---
@@ -12,7 +11,7 @@ const currentYear = new Date().getFullYear();
       <Icon icon="rocket-launch" size="1.2em" />
     </p>
     <p>&copy; {currentYear} Alexander Härenstam</p>
-    <p><a href="/whats-new" class="version-link">v{versionData.version}</a></p>
+    <p><a href="/whats-new" class="version-link" data-latest-version>Release notes</a></p>
   </div>
   <p class="socials">
     <a href="https://www.linkedin.com/in/alehar/"> LinkedIn</a>
@@ -30,6 +29,24 @@ const currentYear = new Date().getFullYear();
     </a>
   </p>
 </footer>
+
+<script>
+  import { fetchGitHubReleases } from '../utils/github-releases';
+
+  const versionLink = document.querySelector('[data-latest-version]');
+
+  if (versionLink instanceof HTMLAnchorElement) {
+    fetchGitHubReleases().then((releases) => {
+      if (releases[0]) {
+        versionLink.textContent = `v${releases[0].version}`;
+        return;
+      }
+
+      versionLink.textContent = 'Release notes';
+    });
+  }
+</script>
+
 <style>
   footer {
     display: flex;
