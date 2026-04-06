@@ -18,7 +18,12 @@ export default defineConfig({
       reporter: ['text', 'lcov'],
       reportsDirectory: './coverage',
       all: true,
-      include: ['src/**/*', 'sentry.server.config.ts', 'sentry.client.config.ts', 'scripts/release.js'],
+      include: [
+        'src/**/*',
+        'sentry.server.config.ts',
+        'sentry.client.config.ts',
+        'scripts/release.js',
+      ],
       exclude: ['src/**/*.d.ts', 'src/content/**', 'src/data/**', 'src/styles/**'],
     },
   },
