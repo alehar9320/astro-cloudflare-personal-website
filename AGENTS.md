@@ -69,7 +69,41 @@ cp .dev.vars.example .dev.vars # Configure local environment variables
 - **NEVER** use deprecated Cloudflare Pages models; strictly follow the Workers + Assets binding pattern.
 - **NEVER** add or preserve a parallel manual production deploy step in CI when Cloudflare Git auto-deploy already owns production releases.
 
-## 5. Deployment & CI/CD
+## 5. AI Agent Skills
+
+To maintain the high standards of this project, AI agents should possess and apply the following skills:
+
+### Edge-First Engineering
+
+- **Concept:** Mastery of the Cloudflare Workers + Assets architecture.
+- **Action:** Prioritize Cloudflare-native bindings (D1, R2, KV) over external SaaS to minimize latency and egress. Ensure all server-side logic is compatible with the `workerd` runtime.
+
+### Strict Type-Safety & Schema Integrity
+
+- **Concept:** Zero-tolerance for `any` or loose typing.
+- **Action:** Enforce strict TypeScript across the entire codebase. When modifying bindings, immediately run `npx wrangler types` to update environment definitions. Ensure content collections strictly adhere to defined Zod schemas.
+
+### Astro Content Architecture
+
+- **Concept:** Expert-level knowledge of Astro's content layer and component model.
+- **Action:** Leverage content collections for all data-driven elements. Maintain clean separation between logic (Astro scripts) and presentation (HTML/CSS). Follow the `PascalCase` component naming convention.
+
+### Vanilla Performance Optimization
+
+- **Concept:** Dedication to "lean and fast" without reliance on heavy frameworks.
+- **Action:** Write high-performance vanilla CSS and minimal JavaScript. Avoid introducing utility-first CSS frameworks or large runtime libraries unless absolutely mission-critical.
+
+### Automated Quality Assurance
+
+- **Concept:** Continuous verification through the project's testing and linting suite.
+- **Action:** Proactively run Vitest suites (`npm test`) and maintain high code coverage. Enforce Prettier formatting and ESLint rules before every submission.
+
+### Persona & Context Alignment
+
+- **Concept:** Deep understanding of the author's professional profile and project goals.
+- **Action:** Regularly consult `context/` and `README.md` to ensure all content updates, bio changes, or project descriptions align with Alexander Härenstam's real-world expertise in Product Management and Developer Experience.
+
+## 6. Deployment & CI/CD
 
 - **CI:** GitHub Actions (`ci.yml`) runs linting, formatting checks, tests, and builds on every PR.
 - **CD:** Cloudflare automatically deploys pushes to `main` through its Git integration.
