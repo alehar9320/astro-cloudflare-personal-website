@@ -42,7 +42,7 @@ describe('release script', () => {
   it('should generate a version based on current date', async () => {
     vi.mocked(fs.default.existsSync).mockReturnValue(true);
     vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
-    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('tag1') as any);
+    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('tag1'));
 
     await import('../scripts/release.js?t=' + Date.now());
 
@@ -55,7 +55,7 @@ describe('release script', () => {
   it('should create src/data directory if it does not exist', async () => {
     vi.mocked(fs.default.existsSync).mockReturnValue(false);
     vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
-    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('') as any);
+    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from(''));
 
     await import('../scripts/release.js?t=' + (Date.now() + 1));
 
@@ -65,10 +65,10 @@ describe('release script', () => {
   it('should handle missing tags gracefully', async () => {
     vi.mocked(fs.default.existsSync).mockReturnValue(true);
     vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
-    vi.mocked(child_process.execSync).mockImplementation(((cmd: string) => {
-      if (cmd.includes('describe --tags')) throw new Error('No tags');
+    vi.mocked(child_process.execSync).mockImplementation((cmd) => {
+      if (typeof cmd === 'string' && cmd.includes('describe --tags')) throw new Error('No tags');
       return Buffer.from('commit1');
-    }) as any);
+    });
 
     await import('../scripts/release.js?t=' + (Date.now() + 2));
 
@@ -81,11 +81,11 @@ describe('release script', () => {
   it('should format changelog entry correctly with commits', async () => {
     vi.mocked(fs.default.existsSync).mockReturnValue(true);
     vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
-    vi.mocked(child_process.execSync).mockImplementation(((cmd: string) => {
-      if (cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
-      if (cmd.includes('log')) return Buffer.from('feat: new feature\nfix: bug fix');
+    vi.mocked(child_process.execSync).mockImplementation((cmd) => {
+      if (typeof cmd === 'string' && cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
+      if (typeof cmd === 'string' && cmd.includes('log')) return Buffer.from('feat: new feature\nfix: bug fix');
       return Buffer.from('');
-    }) as any);
+    });
 
     await import('../scripts/release.js?t=' + (Date.now() + 3));
 
@@ -98,11 +98,11 @@ describe('release script', () => {
   it('should skip [skip ci] commits', async () => {
     vi.mocked(fs.default.existsSync).mockReturnValue(true);
     vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
-    vi.mocked(child_process.execSync).mockImplementation(((cmd: string) => {
-      if (cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
-      if (cmd.includes('log')) return Buffer.from('feat: new feature\nchore: update [skip ci]');
+    vi.mocked(child_process.execSync).mockImplementation((cmd) => {
+      if (typeof cmd === 'string' && cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
+      if (typeof cmd === 'string' && cmd.includes('log')) return Buffer.from('feat: new feature\nchore: update [skip ci]');
       return Buffer.from('');
-    }) as any);
+    });
 
     await import('../scripts/release.js?t=' + (Date.now() + 4));
 
@@ -115,11 +115,11 @@ describe('release script', () => {
   it('should use internal CI updates message if all commits are skipped', async () => {
     vi.mocked(fs.default.existsSync).mockReturnValue(true);
     vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
-    vi.mocked(child_process.execSync).mockImplementation(((cmd: string) => {
-      if (cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
-      if (cmd.includes('log')) return Buffer.from('chore: update [skip ci]');
+    vi.mocked(child_process.execSync).mockImplementation((cmd) => {
+      if (typeof cmd === 'string' && cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
+      if (typeof cmd === 'string' && cmd.includes('log')) return Buffer.from('chore: update [skip ci]');
       return Buffer.from('');
-    }) as any);
+    });
 
     await import('../scripts/release.js?t=' + (Date.now() + 10));
 
@@ -133,7 +133,7 @@ describe('release script', () => {
     process.env.GITHUB_OUTPUT = 'mock_github_output';
     vi.mocked(fs.default.existsSync).mockReturnValue(true);
     vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
-    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('tag1') as any);
+    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('tag1'));
 
     await import('../scripts/release.js?t=' + (Date.now() + 5));
 
@@ -148,12 +148,12 @@ describe('release script', () => {
     process.env.GITHUB_OUTPUT = 'invalid_path';
     vi.mocked(fs.default.existsSync).mockReturnValue(true);
     vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
-    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('tag1') as any);
+    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('tag1'));
     vi.mocked(fs.default.appendFileSync).mockImplementation(() => {
       throw new Error('Write failed');
     });
 
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as any);
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
 
     await import('../scripts/release.js?t=' + (Date.now() + 6));
 
@@ -168,7 +168,7 @@ describe('release script', () => {
       if (path === 'CHANGELOG.md') throw new Error('Not found');
       return 'existing';
     });
-    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('') as any);
+    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from(''));
 
     await import('../scripts/release.js?t=' + (Date.now() + 7));
 
@@ -181,11 +181,11 @@ describe('release script', () => {
   it('should handle git log error gracefully', async () => {
     vi.mocked(fs.default.existsSync).mockReturnValue(true);
     vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
-    vi.mocked(child_process.execSync).mockImplementation(((cmd: string) => {
-      if (cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
-      if (cmd.includes('log')) throw new Error('Git log failed');
+    vi.mocked(child_process.execSync).mockImplementation((cmd) => {
+      if (typeof cmd === 'string' && cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
+      if (typeof cmd === 'string' && cmd.includes('log')) throw new Error('Git log failed');
       return Buffer.from('');
-    }) as any);
+    });
 
     await import('../scripts/release.js?t=' + (Date.now() + 8));
 
@@ -198,11 +198,11 @@ describe('release script', () => {
   it('should handle git describe error gracefully', async () => {
     vi.mocked(fs.default.existsSync).mockReturnValue(true);
     vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
-    vi.mocked(child_process.execSync).mockImplementation(((cmd: string) => {
-      if (cmd.includes('describe --tags')) throw new Error('Git describe failed');
-      if (cmd.includes('log --oneline')) return Buffer.from('feat: initial commit');
+    vi.mocked(child_process.execSync).mockImplementation((cmd) => {
+      if (typeof cmd === 'string' && cmd.includes('describe --tags')) throw new Error('Git describe failed');
+      if (typeof cmd === 'string' && cmd.includes('log --oneline')) return Buffer.from('feat: initial commit');
       return Buffer.from('');
-    }) as any);
+    });
 
     await import('../scripts/release.js?t=' + (Date.now() + 9));
 
