@@ -14,7 +14,7 @@ vi.mock('fs', () => ({
     writeFileSync: vi.fn(),
     readFileSync: vi.fn(),
     appendFileSync: vi.fn(),
-  }
+  },
 }));
 
 vi.mock('child_process', () => {
@@ -23,7 +23,7 @@ vi.mock('child_process', () => {
     execSync,
     default: {
       execSync,
-    }
+    },
   };
 });
 
@@ -153,7 +153,7 @@ describe('release script', () => {
       throw new Error('Write failed');
     });
 
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => (undefined as any));
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as any);
 
     await import('../scripts/release.js?t=' + (Date.now() + 6));
 
