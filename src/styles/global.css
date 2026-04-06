@@ -161,6 +161,33 @@ a {
   color: var(--link-color);
 }
 
+/* Consistent interactive styling for plain text links (prose links).
+   Links with explicit classes (nav, buttons, etc.) keep their own styling. */
+a:not([class]) {
+  text-decoration: 1px solid underline transparent;
+  text-underline-offset: 0.25em;
+  transition:
+    text-decoration-color var(--theme-transition),
+    color var(--theme-transition);
+}
+
+a:not([class]):hover {
+  text-decoration-color: currentColor;
+}
+
+a:not([class]):focus-visible {
+  text-decoration-color: currentColor;
+  outline: 2px solid var(--accent-regular);
+  outline-offset: 0.2em;
+  border-radius: 0.25em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  a:not([class]) {
+    transition: none;
+  }
+}
+
 h1,
 h2,
 h3,
