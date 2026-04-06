@@ -8,7 +8,10 @@ import { codecovVitePlugin } from '@codecov/vite-plugin';
 // https://astro.build/config
 export default defineConfig({
   output: 'static',
-  adapter: cloudflare(),
+  adapter: cloudflare({
+    prerenderEnvironment: 'workerd',
+  }),
+  trailingSlash: 'never',
   image: {
     service: {
       entrypoint: 'astro/assets/services/cloudflare-binding',
