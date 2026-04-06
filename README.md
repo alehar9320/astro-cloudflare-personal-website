@@ -87,7 +87,7 @@ Navigate to `http://localhost:4321` in your browser to view the site as you make
 
 ## 🌐 Deployment
 
-This project is structured to be deployed on **Cloudflare**. Push changes to the `main` branch connected to your Cloudflare Pages project and Cloudflare will automatically build using `npm run build` and deploy the output directory (`./dist/`). GitHub Actions handles quality checks plus release artifact generation (`src/data/version.json` and `CHANGELOG.md`); it does not manually deploy production in parallel.
+This project is structured to be deployed on **Cloudflare**. Push changes to the `main` branch connected to your Cloudflare Git integration (Workers + Assets) and Cloudflare will automatically build using `npm run build` and deploy the output directory (`./dist/`). GitHub Actions handles quality checks plus GitHub release creation; it does not manually deploy production in parallel or push generated release files back to protected `main`.
 
 ## 📬 Contact & Connect
 

@@ -1,14 +1,6 @@
 import fs from 'fs';
 import { execSync } from 'child_process';
 
-const CHANGELOG_PATH = 'CHANGELOG.md';
-const VERSION_PATH = 'src/data/version.json';
-const CHANGELOG_HEADER = `# Changelog
-
-All notable changes to this project will be documented in this file.
-
-`;
-
 const now = new Date();
 const YYYY = now.getUTCFullYear();
 const MM = String(now.getUTCMonth() + 1).padStart(2, '0');
@@ -19,16 +11,6 @@ const version = `${YYYY}.${MM}.${DD}.${HH}${mm}`;
 
 console.log(`Bumping version to ${version}`);
 
-// Ensure directory exists
-if (!fs.existsSync('src/data')) {
-  fs.mkdirSync('src/data', { recursive: true });
-}
-
-// Write to src/data/version.json
-const versionData = { version };
-fs.writeFileSync(VERSION_PATH, JSON.stringify(versionData, null, 2));
-
-// Get last tag
 let lastTag = '';
 try {
   lastTag = execSync('git describe --tags --abbrev=0', { stdio: 'pipe' }).toString().trim();
@@ -37,7 +19,6 @@ try {
   console.debug('Git describe error:', e.message);
 }
 
-// Get commits since last tag
 let commits = '';
 try {
   if (lastTag) {
@@ -50,51 +31,30 @@ try {
   console.debug('Git log error:', e.message);
 }
 
-// Format the changelog entry
-const dateStr = now.toISOString().split('T')[0];
-let changelogEntry = `## [${version}] - ${dateStr}\n\n`;
+let changelog = '';
 
 if (commits) {
-  const list = commits
+  const entries = commits
     .split('\n')
-    .filter((c) => !c.includes('[skip ci]'))
-    .map((c) => `- ${c}`)
-    .join('\n');
-  if (list) {
-    changelogEntry += `${list}\n\n`;
+    .map((commit) => commit.trim())
+    .filter(Boolean)
+    .filter((commit) => !commit.includes('[skip ci]'))
+    .map((commit) => `- ${commit}`);
+
+  if (entries.length > 0) {
+    changelog = `${entries.join('\n')}\n`;
   } else {
-    changelogEntry += `- Internal CI updates.\n\n`;
+    changelog = '- Internal CI updates.\n';
   }
 } else {
-  changelogEntry += `- No documented changes.\n\n`;
+  changelog = '- No documented changes.\n';
 }
 
-// Prepend to CHANGELOG.md
-let existingChangelog = CHANGELOG_HEADER;
-try {
-  existingChangelog = fs.readFileSync(CHANGELOG_PATH, 'utf-8');
-} catch (e) {
-  console.log('CHANGELOG.md not found. A new one will be created.');
-  console.debug('File read error:', e.message);
-}
-
-let changelogBody = existingChangelog;
-if (existingChangelog.startsWith(CHANGELOG_HEADER)) {
-  changelogBody = existingChangelog.slice(CHANGELOG_HEADER.length);
-}
-
-changelogBody = changelogBody.replaceAll(CHANGELOG_HEADER, '').replace(/^\s+/, '');
-
-const nextChangelog = CHANGELOG_HEADER + changelogEntry + changelogBody;
-
-fs.writeFileSync(CHANGELOG_PATH, nextChangelog);
-
-// Write outputs to GitHub Actions for workflow consumption
 const githubOutput = process.env.GITHUB_OUTPUT;
 if (githubOutput) {
   try {
     fs.appendFileSync(githubOutput, `version=${version}\n`);
-    fs.appendFileSync(githubOutput, `changelog<<EOF\n${changelogEntry}EOF\n`);
+    fs.appendFileSync(githubOutput, `changelog<<EOF\n${changelog}EOF\n`);
     console.log('Outputs written to GITHUB_OUTPUT');
   } catch (e) {
     console.error(`Failed to write to GITHUB_OUTPUT: ${e.message}`);
@@ -102,6 +62,5 @@ if (githubOutput) {
   }
 }
 
-// Output version for GitHub Release
 console.log(`\n::notice title=Release Version::${version}`);
 console.log(`Successfully prepared version ${version}`);
