@@ -17,24 +17,24 @@ describe('sentry.client.config', () => {
   });
 
   it('should not initialize Sentry if PUBLIC_SENTRY_DSN is missing', async () => {
-    // @ts-ignore
+    // @ts-expect-error Mocking global environment
     globalThis.importMetaEnv = {};
 
-    // @ts-ignore
+    // @ts-expect-error Bypassing cache for module re-execution
     await import('../sentry.client.config?t=1');
 
     expect(Sentry.init).not.toHaveBeenCalled();
   });
 
   it('should initialize Sentry if PUBLIC_SENTRY_DSN is present', async () => {
-    // @ts-ignore
+    // @ts-expect-error Mocking global environment
     globalThis.importMetaEnv = {
       PUBLIC_SENTRY_DSN: 'https://example-dsn@sentry.io/123',
       PUBLIC_SENTRY_ENVIRONMENT: 'test',
       PUBLIC_SENTRY_RELEASE: '1.0.0',
     };
 
-    // @ts-ignore
+    // @ts-expect-error Bypassing cache for module re-execution
     await import('../sentry.client.config?t=2');
 
     expect(Sentry.init).toHaveBeenCalled();
