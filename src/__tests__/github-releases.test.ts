@@ -54,6 +54,29 @@ describe('github releases utility', () => {
     await expect(fetchGitHubReleases(fetchMock as typeof fetch)).resolves.toEqual([]);
   });
 
+  it('handles non-OK responses from GitHub API', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 500,
+      statusText: 'Internal Server Error',
+      headers: new Map([
+        ['x-ratelimit-limit', '60'],
+        ['x-ratelimit-remaining', '0'],
+        ['x-ratelimit-reset', '123456789'],
+      ]),
+    });
+
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    await expect(fetchGitHubReleases(fetchMock as typeof fetch)).resolves.toEqual([]);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      'GitHub releases request failed',
+      expect.objectContaining({
+        status: 500,
+      })
+    );
+    consoleSpy.mockRestore();
+  });
+
   it('splits markdown bullet bodies into plain list items', () => {
     expect(splitReleaseBody('- feat: one\n- fix: two\n\n- docs: three')).toEqual([
       'feat: one',
