@@ -1,0 +1,3 @@
+# Vantage Journal 🔍
+
+## 2025-05-22 - Quality Hardening & Guardrails | **Learning:** Redundant Sentry configurations across root and src/ can lead to drift in environment handling and logic duplication. Mandatory content schemas are effective early-stage guardrails for ensuring accessibility standards like `img_alt` are met before build time. | **Action:** Consolidated Sentry client configuration to root with improved environment variable handling and strict privacy-focused replay settings. Enforced mandatory `img_alt` in `src/content.config.ts` to prevent accessibility regressions. Increased Vitest coverage for GitHub utility to 100%.
