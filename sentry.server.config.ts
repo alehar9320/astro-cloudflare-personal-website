@@ -8,7 +8,6 @@ if (sentryDsn) {
     environment:
       process.env.SENTRY_ENVIRONMENT || process.env.PUBLIC_SENTRY_ENVIRONMENT || 'production',
     release: process.env.SENTRY_RELEASE || process.env.PUBLIC_SENTRY_RELEASE,
-    sendDefaultPii: false,
     tracesSampleRate: 1.0,
   });
 }

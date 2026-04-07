@@ -2,25 +2,18 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as fs from 'fs';
 import * as child_process from 'child_process';
 
-const fsMock = fs as typeof fs & {
-  default: {
-    appendFileSync: ReturnType<typeof vi.fn>;
-    writeFileSync: ReturnType<typeof vi.fn>;
-  };
-};
-
 vi.mock('fs', () => ({
-  appendFileSync: vi.fn(),
   existsSync: vi.fn(),
   mkdirSync: vi.fn(),
-  readFileSync: vi.fn(),
   writeFileSync: vi.fn(),
+  readFileSync: vi.fn(),
+  appendFileSync: vi.fn(),
   default: {
-    appendFileSync: vi.fn(),
     existsSync: vi.fn(),
     mkdirSync: vi.fn(),
-    readFileSync: vi.fn(),
     writeFileSync: vi.fn(),
+    readFileSync: vi.fn(),
+    appendFileSync: vi.fn(),
   },
 }));
 
@@ -35,7 +28,7 @@ vi.mock('child_process', () => {
 });
 
 describe('release script', () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.resetModules();
     vi.useFakeTimers();
     vi.setSystemTime(new Date('2023-01-01T12:00:00Z'));
@@ -44,24 +37,52 @@ describe('release script', () => {
   afterEach(() => {
     vi.useRealTimers();
     vi.clearAllMocks();
-    delete process.env.GITHUB_OUTPUT;
   });
 
-  it('writes the version to GITHUB_OUTPUT without mutating tracked files', async () => {
-    process.env.GITHUB_OUTPUT = 'mock_github_output';
-    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('v1.0.0'));
+  it('should generate a version based on current date', async () => {
+    vi.mocked(fs.default.existsSync).mockReturnValue(true);
+    vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
+    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('tag1'));
 
     await import('../scripts/release.js?t=' + Date.now());
 
-    expect(fsMock.default.appendFileSync).toHaveBeenCalledWith(
-      'mock_github_output',
-      expect.stringContaining('version=2023.01.01.1200')
+    expect(fs.default.writeFileSync).toHaveBeenCalledWith(
+      'src/data/version.json',
+      expect.stringContaining('2023.01.01.1200')
     );
-    expect(fsMock.default.writeFileSync).not.toHaveBeenCalled();
   });
 
-  it('formats changelog output from commits since the last tag', async () => {
-    process.env.GITHUB_OUTPUT = 'mock_github_output';
+  it('should create src/data directory if it does not exist', async () => {
+    vi.mocked(fs.default.existsSync).mockReturnValue(false);
+    vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
+    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from(''));
+
+    await import('../scripts/release.js?t=' + (Date.now() + 1));
+
+    expect(fs.default.mkdirSync).toHaveBeenCalledWith('src/data', { recursive: true });
+  });
+
+  it('should handle missing tags gracefully', async () => {
+    vi.mocked(fs.default.existsSync).mockReturnValue(true);
+    vi.mocked(fs.default.readFileSync).mockReturnValue(
+      '# Changelog\n\nAll notable changes to this project will be documented in this file.\n\n'
+    );
+    vi.mocked(child_process.execSync).mockImplementation((cmd) => {
+      if (typeof cmd === 'string' && cmd.includes('describe --tags')) throw new Error('No tags');
+      return Buffer.from('commit1');
+    });
+
+    await import('../scripts/release.js?t=' + (Date.now() + 2));
+
+    expect(fs.default.writeFileSync).toHaveBeenCalledWith(
+      'CHANGELOG.md',
+      expect.stringContaining('## [2023.01.01.1200]')
+    );
+  });
+
+  it('should format changelog entry correctly with commits', async () => {
+    vi.mocked(fs.default.existsSync).mockReturnValue(true);
+    vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
     vi.mocked(child_process.execSync).mockImplementation((cmd) => {
       if (typeof cmd === 'string' && cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
       if (typeof cmd === 'string' && cmd.includes('log'))
@@ -69,74 +90,158 @@ describe('release script', () => {
       return Buffer.from('');
     });
 
-    await import('../scripts/release.js?t=' + (Date.now() + 1));
+    await import('../scripts/release.js?t=' + (Date.now() + 3));
 
-    expect(fsMock.default.appendFileSync).toHaveBeenCalledWith(
-      'mock_github_output',
+    expect(fs.default.writeFileSync).toHaveBeenCalledWith(
+      'CHANGELOG.md',
       expect.stringContaining('- feat: new feature\n- fix: bug fix')
     );
   });
 
-  it('skips [skip ci] commits and falls back to internal CI updates when needed', async () => {
-    process.env.GITHUB_OUTPUT = 'mock_github_output';
+  it('should skip [skip ci] commits', async () => {
+    vi.mocked(fs.default.existsSync).mockReturnValue(true);
+    vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
     vi.mocked(child_process.execSync).mockImplementation((cmd) => {
       if (typeof cmd === 'string' && cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
       if (typeof cmd === 'string' && cmd.includes('log'))
-        return Buffer.from('chore: refresh metadata [skip ci]');
+        return Buffer.from('feat: new feature\nchore: update [skip ci]');
       return Buffer.from('');
     });
 
-    await import('../scripts/release.js?t=' + (Date.now() + 2));
+    await import('../scripts/release.js?t=' + (Date.now() + 4));
 
-    expect(fsMock.default.appendFileSync).toHaveBeenCalledWith(
-      'mock_github_output',
+    expect(fs.default.writeFileSync).toHaveBeenCalledWith(
+      'CHANGELOG.md',
+      expect.not.stringContaining('chore: update [skip ci]')
+    );
+  });
+
+  it('should use internal CI updates message if all commits are skipped', async () => {
+    vi.mocked(fs.default.existsSync).mockReturnValue(true);
+    vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
+    vi.mocked(child_process.execSync).mockImplementation((cmd) => {
+      if (typeof cmd === 'string' && cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
+      if (typeof cmd === 'string' && cmd.includes('log'))
+        return Buffer.from('chore: update [skip ci]');
+      return Buffer.from('');
+    });
+
+    await import('../scripts/release.js?t=' + (Date.now() + 10));
+
+    expect(fs.default.writeFileSync).toHaveBeenCalledWith(
+      'CHANGELOG.md',
       expect.stringContaining('- Internal CI updates.')
     );
   });
 
-  it('handles missing tags by using the full git log', async () => {
+  it('should write to GITHUB_OUTPUT if available', async () => {
     process.env.GITHUB_OUTPUT = 'mock_github_output';
-    vi.mocked(child_process.execSync).mockImplementation((cmd) => {
-      if (typeof cmd === 'string' && cmd.includes('describe --tags')) throw new Error('No tags');
-      return Buffer.from('feat: initial release');
+    vi.mocked(fs.default.existsSync).mockReturnValue(true);
+    vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
+    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('tag1'));
+
+    await import('../scripts/release.js?t=' + (Date.now() + 5));
+
+    expect(fs.default.appendFileSync).toHaveBeenCalledWith(
+      'mock_github_output',
+      expect.stringContaining('version=2023.01.01.1200')
+    );
+    expect(fs.default.appendFileSync).toHaveBeenCalledWith(
+      'mock_github_output',
+      expect.stringContaining('changelog<<EOF')
+    );
+    delete process.env.GITHUB_OUTPUT;
+  });
+
+  it('should handle GITHUB_OUTPUT write error gracefully', async () => {
+    process.env.GITHUB_OUTPUT = 'invalid_path';
+    vi.mocked(fs.default.existsSync).mockReturnValue(true);
+    vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
+    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('tag1'));
+    vi.mocked(fs.default.appendFileSync).mockImplementation(() => {
+      throw new Error('Write failed');
     });
 
-    await import('../scripts/release.js?t=' + (Date.now() + 3));
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
 
-    expect(fsMock.default.appendFileSync).toHaveBeenCalledWith(
-      'mock_github_output',
-      expect.stringContaining('- feat: initial release')
+    await import('../scripts/release.js?t=' + (Date.now() + 6));
+
+    expect(exitSpy).toHaveBeenCalledWith(1);
+    delete process.env.GITHUB_OUTPUT;
+    exitSpy.mockRestore();
+  });
+
+  it('should handle missing CHANGELOG.md gracefully', async () => {
+    vi.mocked(fs.default.existsSync).mockReturnValue(true);
+    vi.mocked(fs.default.readFileSync).mockImplementation((path) => {
+      if (path === 'CHANGELOG.md') throw new Error('Not found');
+      return 'existing';
+    });
+    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from(''));
+
+    await import('../scripts/release.js?t=' + (Date.now() + 7));
+
+    expect(fs.default.writeFileSync).toHaveBeenCalledWith(
+      'CHANGELOG.md',
+      expect.stringContaining('## [2023.01.01.1200]')
     );
   });
 
-  it('falls back to no documented changes when git log is unavailable', async () => {
-    process.env.GITHUB_OUTPUT = 'mock_github_output';
+  it('should handle git log error gracefully', async () => {
+    vi.mocked(fs.default.existsSync).mockReturnValue(true);
+    vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
     vi.mocked(child_process.execSync).mockImplementation((cmd) => {
       if (typeof cmd === 'string' && cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
       if (typeof cmd === 'string' && cmd.includes('log')) throw new Error('Git log failed');
       return Buffer.from('');
     });
 
-    await import('../scripts/release.js?t=' + (Date.now() + 4));
+    await import('../scripts/release.js?t=' + (Date.now() + 8));
 
-    expect(fsMock.default.appendFileSync).toHaveBeenCalledWith(
-      'mock_github_output',
+    expect(fs.default.writeFileSync).toHaveBeenCalledWith(
+      'CHANGELOG.md',
       expect.stringContaining('- No documented changes.')
     );
   });
 
-  it('exits when writing GitHub output fails', async () => {
-    process.env.GITHUB_OUTPUT = 'invalid_path';
-    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('v1.0.0'));
-    fsMock.default.appendFileSync.mockImplementation(() => {
-      throw new Error('Write failed');
+  it('should handle git describe error gracefully', async () => {
+    vi.mocked(fs.default.existsSync).mockReturnValue(true);
+    vi.mocked(fs.default.readFileSync).mockReturnValue('existing changelog');
+    vi.mocked(child_process.execSync).mockImplementation((cmd) => {
+      if (typeof cmd === 'string' && cmd.includes('describe --tags'))
+        throw new Error('Git describe failed');
+      if (typeof cmd === 'string' && cmd.includes('log --oneline'))
+        return Buffer.from('feat: initial commit');
+      return Buffer.from('');
     });
 
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+    await import('../scripts/release.js?t=' + (Date.now() + 9));
 
-    await import('../scripts/release.js?t=' + (Date.now() + 5));
+    expect(fs.default.writeFileSync).toHaveBeenCalledWith(
+      'CHANGELOG.md',
+      expect.stringContaining('- feat: initial commit')
+    );
+  });
 
-    expect(exitSpy).toHaveBeenCalledWith(1);
-    exitSpy.mockRestore();
+  it('should keep the changelog header at the top and insert entries below it', async () => {
+    vi.mocked(fs.default.existsSync).mockReturnValue(true);
+    vi.mocked(fs.default.readFileSync).mockReturnValue(
+      '# Changelog\n\nAll notable changes to this project will be documented in this file.\n\n## [2022.12.31.2359] - 2022-12-31\n\n- Previous entry\n'
+    );
+    vi.mocked(child_process.execSync).mockImplementation((cmd) => {
+      if (typeof cmd === 'string' && cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
+      if (typeof cmd === 'string' && cmd.includes('log'))
+        return Buffer.from('feat: new release metadata');
+      return Buffer.from('');
+    });
+
+    await import('../scripts/release.js?t=' + (Date.now() + 11));
+
+    expect(fs.default.writeFileSync).toHaveBeenCalledWith(
+      'CHANGELOG.md',
+      expect.stringMatching(
+        /^# Changelog\n\nAll notable changes to this project will be documented in this file\.\n\n## \[2023\.01\.01\.1200\] - 2023-01-01/
+      )
+    );
   });
 });

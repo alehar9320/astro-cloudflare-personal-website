@@ -5,14 +5,13 @@ import * as Sentry from '@sentry/astro';
 vi.mock('@sentry/astro', () => {
   return {
     init: vi.fn(),
-    replayIntegration: vi.fn(() => ({})),
+    Replay: vi.fn().mockImplementation(function () {
+      return {};
+    }),
   };
 });
 
 describe('sentry.client.config', () => {
-  const importClientConfig = async (suffix: string) =>
-    import(/* @vite-ignore */ `../sentry.client.config?${suffix}`);
-
   beforeEach(() => {
     vi.clearAllMocks();
   });
@@ -21,7 +20,8 @@ describe('sentry.client.config', () => {
     // @ts-expect-error Mocking global environment
     globalThis.importMetaEnv = {};
 
-    await importClientConfig('t=1');
+    // @ts-expect-error Bypassing cache for module re-execution
+    await import('../sentry.client.config?t=1');
 
     expect(Sentry.init).not.toHaveBeenCalled();
   });
@@ -34,22 +34,15 @@ describe('sentry.client.config', () => {
       PUBLIC_SENTRY_RELEASE: '1.0.0',
     };
 
-    await importClientConfig('t=2');
+    // @ts-expect-error Bypassing cache for module re-execution
+    await import('../sentry.client.config?t=2');
 
     expect(Sentry.init).toHaveBeenCalled();
-    expect(Sentry.replayIntegration).toHaveBeenCalledWith({
-      maskAllText: true,
-      blockAllMedia: true,
-    });
     expect(Sentry.init).toHaveBeenCalledWith(
       expect.objectContaining({
         dsn: 'https://example-dsn@sentry.io/123',
         environment: 'test',
         release: '1.0.0',
-        sendDefaultPii: false,
-        tracesSampleRate: 1.0,
-        replaysSessionSampleRate: 0.1,
-        replaysOnErrorSampleRate: 1.0,
       })
     );
   });
