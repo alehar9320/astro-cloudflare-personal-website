@@ -2,12 +2,28 @@
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const personSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: 'Alexander Härenstam',
+  jobTitle: 'Strategic Product Leader',
+  worksFor: {
+    '@type': 'Organization',
+    name: 'IFS',
+  },
+  url: Astro.site ? Astro.site.toString() : 'https://alexanderharenstam.com',
+  sameAs: ['https://www.linkedin.com/in/alexanderharenstam/'],
+  description:
+    'Strategic Product Leader with a proven track record of delivering multi-million dollar business value through Industrial AI and digital transformation.',
+};
 ---
 
 <BaseLayout
   title="About | Alexander Härenstam"
   description="Learn about Alexander Härenstam's background, education, and skills as a Strategic Product Leader at IFS."
 >
+  <script type="application/ld+json" set:html={JSON.stringify(personSchema)} />
   <div class="stack gap-20">
     <main id="main-content" class="wrapper about">
       <Hero
@@ -21,6 +37,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 					alt="Alexander Härenstam at work with a colleague"
 				/>-->
       </Hero>
+
+      <section class="tldr-box">
+        <p>
+          <strong>TL;DR:</strong>
+          Strategic Product Leader driving high-impact innovation, Industrial AI, and Developer Experience
+          (DevEx) at IFS. Expert in scaling design systems and bridging the gap between complex technology
+          and market success.
+        </p>
+      </section>
 
       <section>
         <h2 class="section-title">Background</h2>
@@ -146,6 +171,23 @@ import BaseLayout from '../layouts/BaseLayout.astro';
     display: flex;
     flex-direction: column;
     gap: 3.5rem;
+  }
+
+  .tldr-box {
+    grid-column: 2 / 4;
+    padding: 1.5rem;
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 0.75rem;
+    font-size: var(--text-md);
+    line-height: 1.5;
+    color: var(--gray-200);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .tldr-box strong {
+    color: var(--accent-light);
+    margin-right: 0.5rem;
   }
 
   img {
