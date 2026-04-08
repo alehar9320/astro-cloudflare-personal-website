@@ -2,12 +2,49 @@
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': 'https://harenstam.com/#person',
+      name: 'Alexander Härenstam',
+      jobTitle: 'Strategic Product Leader',
+      description:
+        'Strategic Product Leader specializing in Developer Experience (DevEx) and Industrial AI at IFS.',
+      url: 'https://harenstam.com',
+      sameAs: ['https://www.linkedin.com/in/alehar'],
+      worksFor: {
+        '@type': 'Organization',
+        name: 'IFS',
+        url: 'https://www.ifs.com',
+      },
+      alumniOf: {
+        '@type': 'CollegeOrUniversity',
+        name: 'Chalmers University of Technology',
+        url: 'https://www.chalmers.se/en/',
+      },
+    },
+    {
+      '@type': 'WebPage',
+      '@id': 'https://harenstam.com/about/#webpage',
+      url: 'https://harenstam.com/about',
+      name: 'About | Alexander Härenstam',
+      about: { '@id': 'https://harenstam.com/#person' },
+      description:
+        "Learn about Alexander Härenstam's background, education, and skills as a Strategic Product Leader at IFS.",
+    },
+  ],
+};
 ---
 
 <BaseLayout
   title="About | Alexander Härenstam"
   description="Learn about Alexander Härenstam's background, education, and skills as a Strategic Product Leader at IFS."
 >
+  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+
   <div class="stack gap-20">
     <main id="main-content" class="wrapper about">
       <Hero
@@ -25,6 +62,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <section>
         <h2 class="section-title">Background</h2>
         <div class="content">
+          <div class="tldr-box">
+            <p>
+              <strong>TL;DR:</strong> Strategic Product Leader at <strong>IFS</strong> with an M.Sc. from
+              <strong>Chalmers</strong>. I specialize in <strong>Industrial AI</strong>, <strong
+                >Developer Experience (DevEx)</strong
+              >, and <strong>Design Systems</strong>, delivering multi-million dollar ROI through
+              technological innovation.
+            </p>
+          </div>
           <p>
             I am a strategic <a
               href="https://en.wikipedia.org/wiki/Product_management"
