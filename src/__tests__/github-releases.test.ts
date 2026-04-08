@@ -54,6 +54,21 @@ describe('github releases utility', () => {
     await expect(fetchGitHubReleases(fetchMock as typeof fetch)).resolves.toEqual([]);
   });
 
+  it('handles non-OK responses from the GitHub API', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 404,
+      statusText: 'Not Found',
+      headers: new Map([
+        ['x-ratelimit-limit', '60'],
+        ['x-ratelimit-remaining', '0'],
+        ['x-ratelimit-reset', '1234567890'],
+      ]),
+    });
+
+    await expect(fetchGitHubReleases(fetchMock as typeof fetch)).resolves.toEqual([]);
+  });
+
   it('splits markdown bullet bodies into plain list items', () => {
     expect(splitReleaseBody('- feat: one\n- fix: two\n\n- docs: three')).toEqual([
       'feat: one',
