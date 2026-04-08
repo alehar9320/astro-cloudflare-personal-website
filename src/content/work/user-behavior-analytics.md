@@ -11,6 +11,10 @@ tags:
   - Product Strategy
 ---
 
+<div class="tldr-box">
+  <p><strong>TL;DR:</strong> Spearheaded a core IFS Cloud analytics platform to ground roadmap decisions in user telemetry, optimizing R&D focus and ensuring high-value product iteration.</p>
+</div>
+
 Strategic Leadership of the User Behavior Analytics Platform: This core capability for IFS Cloud ensures that every feature is grounded in genuine customer needs. By implementing this platform, we've optimized development resources and ensured that our R&D efforts are laser-focused on high-value functionality.
 
 Understanding how users navigate complex enterprise software allowed us to make data-driven decisions that align with global business objectives. By capturing granular telemetry, we've enabled product teams to iterate with confidence, directly impacting the quality and adoption of the IFS Cloud ecosystem.

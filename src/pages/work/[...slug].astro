@@ -61,12 +61,6 @@ const schema = {
       <main class="wrapper">
         <div class="stack gap-10 content">
           {entry.data.img && <img src={entry.data.img} alt={entry.data.img_alt || ''} />}
-          <section class="tldr-box">
-            <p>
-              <strong>TL;DR:</strong>
-              {entry.data.description}
-            </p>
-          </section>
           <div class="content">
             <Content />
           </div>
@@ -104,22 +98,6 @@ const schema = {
   .description {
     font-size: var(--text-lg);
     max-width: 54ch;
-  }
-
-  .tldr-box {
-    padding: 1.5rem;
-    background: var(--gradient-subtle);
-    border: 1px solid var(--gray-800);
-    border-radius: 0.75rem;
-    font-size: var(--text-md);
-    line-height: 1.5;
-    color: var(--gray-200);
-    box-shadow: var(--shadow-sm);
-  }
-
-  .tldr-box strong {
-    color: var(--accent-light);
-    margin-right: 0.5rem;
   }
 
   .content {

@@ -11,6 +11,10 @@ tags:
   - Mobile App
 ---
 
+<div class="tldr-box">
+  <p><strong>TL;DR:</strong> Digitized onsite workflows for a masonry firm via a custom Android platform, replacing manual paperwork with high-efficiency digital job management.</p>
+</div>
+
 Developed an Android application for the company Lidköpings Stenhuggeri which is a masoning firm. The application's goal is to simplify the paper-work within the company.
 
 By digitizing their workflows into a mobile interface, the company was able to track jobs, materials, and schedules far more effectively than their previous manual processes allowed.

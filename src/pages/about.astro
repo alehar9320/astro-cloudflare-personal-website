@@ -29,7 +29,9 @@ const schema = {
     {
       '@type': 'WebPage',
       '@id': 'https://alexanderharenstam.com/about/#webpage',
-      url: Astro.site ? new URL('/about', Astro.site).toString() : 'https://alexanderharenstam.com/about',
+      url: Astro.site
+        ? new URL('/about', Astro.site).toString()
+        : 'https://alexanderharenstam.com/about',
       name: 'About | Alexander Härenstam',
       about: { '@id': 'https://alexanderharenstam.com/#person' },
       description:
@@ -58,14 +60,14 @@ const schema = {
 				/>-->
       </Hero>
 
-      <section class="tldr-box">
+      <div class="tldr-box">
         <p>
           <strong>TL;DR:</strong>
           Strategic Product Leader driving high-impact innovation, Industrial AI, and Developer Experience
           (DevEx) at IFS. Expert in scaling design systems and bridging the gap between complex technology
           and market success.
         </p>
-      </section>
+      </div>
 
       <section>
         <h2 class="section-title">Background</h2>

@@ -11,6 +11,10 @@ tags:
   - Product Management
 ---
 
+<div class="tldr-box">
+  <p><strong>TL;DR:</strong> Leading the multi-million dollar <strong>AI Coding Copilot</strong> strategy at IFS, accelerating development cycles and delivering significant efficiency gains for global engineering teams.</p>
+</div>
+
 As Product Manager for Developer Experience at IFS, I set the strategy for the tools and platforms that empower internal engineering teams, global partners, and customers. The work translates to increased efficiency and accelerated time-to-market for the company's offerings.
 
 One key pillar has been the strategic rollout of AI Coding Copilots—an initiative delivering business value in the millions. By integrating agentic AI capabilities into the developer workflow, we've significantly accelerated the development lifecycle and improved time-to-market for the entire IFS Cloud portfolio.
