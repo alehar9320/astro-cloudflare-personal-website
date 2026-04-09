@@ -4,8 +4,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout title="Not Found" description="404 Error — this page was not found">
-  <Hero
-    title="Page Not Found"
-    tagline="The page you're looking for doesn't exist or has moved. Let's get you back on track."
-  />
+  <main id="main-content" class="wrapper stack gap-8" tabindex="-1">
+    <Hero title="Page Not Found" tagline="The page you're looking for doesn't exist or has moved. Let's get you back on track."/>
+  </main>
 </BaseLayout>

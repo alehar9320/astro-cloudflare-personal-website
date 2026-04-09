@@ -142,20 +142,30 @@ const { title, description } = Astro.props;
         white-space: nowrap;
       }
 
-      .sr-only.focus-visible:focus {
+      .sr-only.focus-visible:focus-visible {
         clip: auto;
         height: auto;
         margin: auto;
         overflow: visible;
-        position: static;
+        position: fixed;
+        top: 1rem;
+        left: 1rem;
         width: auto;
         white-space: normal;
-        padding: 1rem;
-        background: var(--gray-900);
+        padding: 0.75rem 1.5rem;
+        background: hsla(var(--gray-999-basis), 0.7);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         color: var(--gray-0);
+        border: 1px solid var(--accent-regular);
+        border-radius: 999rem;
+        box-shadow: var(--shadow-lg);
         display: block;
         text-align: center;
-        z-index: 9999;
+        z-index: 10000;
+        text-decoration: none;
+        font-family: var(--font-brand);
+        font-weight: 500;
       }
     </style>
   </body>
