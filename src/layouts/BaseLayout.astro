@@ -21,7 +21,7 @@ const { title, description } = Astro.props;
   </head>
   <body>
     <!-- Skip to content link for accessibility -->
-    <a href="#main-content" class="sr-only focus-visible">Skip to content</a>
+    <a href="#main-content" class="sr-only">Skip to content</a>
 
     <div class="stack backgrounds">
       <Nav />
@@ -142,20 +142,33 @@ const { title, description } = Astro.props;
         white-space: nowrap;
       }
 
-      .sr-only.focus-visible:focus {
+      .sr-only:focus-visible {
         clip: auto;
         height: auto;
         margin: auto;
         overflow: visible;
-        position: static;
+        position: fixed;
+        top: 1.5rem;
+        left: 50%;
+        transform: translateX(-50%);
         width: auto;
-        white-space: normal;
-        padding: 1rem;
-        background: var(--gray-900);
+        white-space: nowrap;
+        padding: 0.75rem 1.5rem;
+        background: hsla(var(--gray-999-basis), 0.9);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
         color: var(--gray-0);
+        border: 1px solid var(--accent-regular);
+        border-radius: 999rem;
         display: block;
         text-align: center;
+        text-decoration: none;
+        font-weight: 600;
+        box-shadow:
+          0 0 20px hsla(210, 100%, 50%, 0.3),
+          var(--shadow-lg);
         z-index: 9999;
+        transition: transform 0.3s cubic-bezier(0.23, 1, 0.32, 1);
       }
     </style>
   </body>
