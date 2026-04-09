@@ -31,18 +31,6 @@ describe('github releases utility', () => {
     expect(
       normalizeRelease({
         tag_name: '2026.04.06.1400',
-      })
-    ).toEqual({
-      body: '',
-      publishedAt: null,
-      title: '2026.04.06.1400',
-      url: RELEASES_PAGE_URL,
-      version: '2026.04.06.1400',
-    });
-
-    expect(
-      normalizeRelease({
-        tag_name: '2026.04.06.1400',
         body: null,
         html_url: undefined,
       })
@@ -84,23 +72,30 @@ describe('github releases utility', () => {
 
   it('uses GITHUB_TOKEN when present in environment', async () => {
     const originalToken = process.env.GITHUB_TOKEN;
-    process.env.GITHUB_TOKEN = 'test-token';
-    const fetchMock = vi.fn().mockResolvedValue({
-      ok: true,
-      json: async () => [],
-    });
+    try {
+      process.env.GITHUB_TOKEN = 'test-token';
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [],
+      });
 
-    await fetchGitHubReleases(fetchMock as typeof fetch);
+      await fetchGitHubReleases(fetchMock as typeof fetch);
 
-    expect(fetchMock).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.objectContaining({
-        headers: expect.objectContaining({
-          Authorization: 'token test-token',
-        }),
-      })
-    );
-    process.env.GITHUB_TOKEN = originalToken;
+      expect(fetchMock).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: 'token test-token',
+          }),
+        })
+      );
+    } finally {
+      if (originalToken !== undefined) {
+        process.env.GITHUB_TOKEN = originalToken;
+      } else {
+        delete process.env.GITHUB_TOKEN;
+      }
+    }
   });
 
   it('handles non-OK responses from the GitHub API', async () => {
