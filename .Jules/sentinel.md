@@ -1,0 +1,1 @@
+## 2025-05-14 - Removed set:html from Hero component | **Vulnerability:** Use of `set:html` in reusable components like `Hero.astro` can lead to XSS if prop content is not strictly sanitized. | **Prevention:** Migrated rich content to named slots, allowing Astro to handle standard props with automatic escaping and providing a secure boundary for HTML injection.

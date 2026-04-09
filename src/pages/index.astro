@@ -26,11 +26,15 @@ const projects = (await getCollection('work'))
   <div class="stack gap-20 lg:gap-48">
     <div class="wrapper stack gap-8 lg:gap-20">
       <header class="hero">
-        <Hero
-          title="Elevating Developer Experience & Product Strategy"
-          tagline="I am <strong>Alexander Härenstam</strong>, a Strategic Product Leader championing enterprise-scale Industrial AI at <a href='https://www.ifs.com/' target='_blank' rel='noopener noreferrer'>IFS</a>."
-          align="start"
-        >
+        <Hero title="Elevating Developer Experience & Product Strategy" align="start">
+          <p slot="tagline" class="tagline">
+            I am <strong>Alexander Härenstam</strong>, a Strategic Product Leader championing
+            enterprise-scale Industrial AI at <a
+              href="https://www.ifs.com/"
+              target="_blank"
+              rel="noopener noreferrer">IFS</a
+            >.
+          </p>
           <div class="roles">
             <Pill><Icon icon="strategy" size="1.33em" /> Technical Product Management</Pill>
             <Pill><Icon icon="terminal-window" size="1.33em" /> Developer Experience (DevEx)</Pill>
