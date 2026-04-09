@@ -11,10 +11,6 @@ tags:
   - Mobile App
 ---
 
-<div class="tldr-box">
-  <p><strong>TL;DR:</strong> Digitalized onsite workflows for <strong>Lidköping Stenhuggeri</strong> by developing an <strong>Android-based job management platform</strong>, replacing manual processes with high-efficiency digital tracking.</p>
-</div>
-
 Developed an Android application for the company Lidköpings Stenhuggeri which is a masoning firm. The application's goal is to simplify the paper-work within the company.
 
 By digitizing their workflows into a mobile interface, the company was able to track jobs, materials, and schedules far more effectively than their previous manual processes allowed.

@@ -11,10 +11,6 @@ tags:
   - Innovation
 ---
 
-<div class="tldr-box">
-  <p><strong>TL;DR:</strong> Conducted a <strong>Master Thesis</strong> at <strong>Chalmers</strong> on <strong>Business Model Innovation</strong>, identifying how digitalization enables scalability and data-driven decision-making while uncovering organizational barriers to change.</p>
-</div>
-
 Digital developments have significantly affected the market environment over the last decade. A sense of urgency has put concepts related to business transformation in high demand. Among these concepts, a popular term has been business model innovation; the strategic and innovative re-arrangement of business activities.
 
 My thesis was conducted at [Chalmers University of Technology](https://www.chalmers.se/en/) and revolved around business model innovation, and the opportunities and barriers that digitalization creates. This was done by:

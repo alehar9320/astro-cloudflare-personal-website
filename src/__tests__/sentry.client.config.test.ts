@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import * as Sentry from '@sentry/astro';
 
 // Mock Sentry
@@ -10,11 +10,20 @@ vi.mock('@sentry/astro', () => {
 });
 
 describe('sentry.client.config', () => {
+  const originalImportMetaEnv = (
+    globalThis as typeof globalThis & { importMetaEnv?: Record<string, string | undefined> }
+  ).importMetaEnv;
   const importClientConfig = async (suffix: string) =>
     import(/* @vite-ignore */ `../sentry.client.config?${suffix}`);
 
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  afterEach(() => {
+    (
+      globalThis as typeof globalThis & { importMetaEnv?: Record<string, string | undefined> }
+    ).importMetaEnv = originalImportMetaEnv;
   });
 
   it('should not initialize Sentry if PUBLIC_SENTRY_DSN is missing', async () => {
@@ -50,6 +59,21 @@ describe('sentry.client.config', () => {
         tracesSampleRate: 1.0,
         replaysSessionSampleRate: 0.1,
         replaysOnErrorSampleRate: 1.0,
+      })
+    );
+  });
+
+  it('should fallback to "unknown" environment if PUBLIC_SENTRY_ENVIRONMENT is missing', async () => {
+    // @ts-expect-error Mocking global environment
+    globalThis.importMetaEnv = {
+      PUBLIC_SENTRY_DSN: 'https://example-dsn@sentry.io/123',
+    };
+
+    await importClientConfig('t=3');
+
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        environment: 'unknown',
       })
     );
   });

@@ -43,4 +43,18 @@ describe('sentry.server.config', () => {
       })
     );
   });
+
+  it('should fallback to "production" environment if SENTRY_ENVIRONMENT is missing', async () => {
+    process.env.SENTRY_DSN = 'https://example-dsn@sentry.io/123';
+    delete process.env.SENTRY_ENVIRONMENT;
+    delete process.env.PUBLIC_SENTRY_ENVIRONMENT;
+
+    await importServerConfig('t=3');
+
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        environment: 'production',
+      })
+    );
+  });
 });

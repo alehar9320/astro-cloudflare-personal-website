@@ -27,6 +27,22 @@ describe('github releases utility', () => {
     });
   });
 
+  it('handles missing optional fields in normalizeRelease', () => {
+    expect(
+      normalizeRelease({
+        tag_name: '2026.04.06.1400',
+        body: null,
+        html_url: undefined,
+      })
+    ).toEqual({
+      body: '',
+      publishedAt: null,
+      title: '2026.04.06.1400',
+      url: RELEASES_PAGE_URL,
+      version: '2026.04.06.1400',
+    });
+  });
+
   it('filters out invalid or draft releases', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
@@ -52,6 +68,34 @@ describe('github releases utility', () => {
     const fetchMock = vi.fn().mockRejectedValue(new Error('network error'));
 
     await expect(fetchGitHubReleases(fetchMock as typeof fetch)).resolves.toEqual([]);
+  });
+
+  it('uses GITHUB_TOKEN when present in environment', async () => {
+    const originalToken = process.env.GITHUB_TOKEN;
+    try {
+      process.env.GITHUB_TOKEN = 'test-token';
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [],
+      });
+
+      await fetchGitHubReleases(fetchMock as typeof fetch);
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        expect.any(String),
+        expect.objectContaining({
+          headers: expect.objectContaining({
+            Authorization: 'token test-token',
+          }),
+        })
+      );
+    } finally {
+      if (originalToken !== undefined) {
+        process.env.GITHUB_TOKEN = originalToken;
+      } else {
+        delete process.env.GITHUB_TOKEN;
+      }
+    }
   });
 
   it('handles non-OK responses from the GitHub API', async () => {
