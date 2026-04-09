@@ -53,4 +53,19 @@ describe('sentry.client.config', () => {
       })
     );
   });
+
+  it('should fallback to "unknown" environment if PUBLIC_SENTRY_ENVIRONMENT is missing', async () => {
+    // @ts-expect-error Mocking global environment
+    globalThis.importMetaEnv = {
+      PUBLIC_SENTRY_DSN: 'https://example-dsn@sentry.io/123',
+    };
+
+    await importClientConfig('t=3');
+
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        environment: 'unknown',
+      })
+    );
+  });
 });
