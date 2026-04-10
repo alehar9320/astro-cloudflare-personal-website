@@ -14,6 +14,7 @@ import Hero from '../components/Hero.astro';
       />
 
       <div class="content">
+        <div data-release-summary></div>
         <div class="release-list" data-release-list>
           <p class="release-status">Loading latest release history...</p>
         </div>
@@ -62,6 +63,50 @@ import Hero from '../components/Hero.astro';
 
       const fragment = document.createDocumentFragment();
 
+      // Generate summary from the first 3 most significant items across latest releases
+      const summaryItems = releases
+        .flatMap((r) => splitReleaseBody(r.body))
+        .filter((item) => {
+          const msg = item.message.toLowerCase();
+          // Prioritize features, fixes, and persona-driven updates
+          return (
+            msg.includes('feat') ||
+            msg.includes('fix') ||
+            msg.includes('scribe') ||
+            msg.includes('oracle') ||
+            msg.includes('sentinel') ||
+            msg.includes('palette') ||
+            msg.includes('vantage') ||
+            msg.includes('bolt')
+          );
+        })
+        .slice(0, 3)
+        .map((item) => item.message);
+
+      // Fallback to first 3 items if no prioritized items found
+      if (summaryItems.length === 0) {
+        summaryItems.push(
+          ...releases
+            .flatMap((r) => splitReleaseBody(r.body))
+            .slice(0, 3)
+            .map((item) => item.message)
+        );
+      }
+
+      if (summaryItems.length > 0) {
+        const summaryContainer = document.querySelector('[data-release-summary]');
+        if (summaryContainer) {
+          const tldr = document.createElement('div');
+          tldr.className = 'tldr-box';
+          const p = document.createElement('p');
+          const strong = document.createElement('strong');
+          strong.textContent = 'Recent Highlights:';
+          p.append(strong, ` ${summaryItems.join('; ')}.`);
+          tldr.append(p);
+          summaryContainer.replaceChildren(tldr);
+        }
+      }
+
       releases.forEach((release) => {
         const article = document.createElement('article');
         article.className = 'release-card';
@@ -80,7 +125,21 @@ import Hero from '../components/Hero.astro';
 
           bodyItems.forEach((item) => {
             const listItem = document.createElement('li');
-            listItem.textContent = item;
+
+            if (item.hash && item.url) {
+              const code = document.createElement('code');
+              code.className = 'commit-hash';
+              const link = document.createElement('a');
+              link.href = item.url;
+              link.target = '_blank';
+              link.rel = 'noopener noreferrer';
+              link.textContent = item.hash;
+              code.append(link);
+              listItem.append(code, ' ', item.message);
+            } else {
+              listItem.textContent = item.message;
+            }
+
             list.append(listItem);
           });
 
@@ -161,5 +220,23 @@ import Hero from '../components/Hero.astro';
   .release-link {
     display: inline-block;
     margin-top: 0.25rem;
+  }
+
+  .commit-hash {
+    background: var(--gray-800);
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.25rem;
+    font-size: 0.85em;
+    font-family: monospace;
+    margin-right: 0.25rem;
+  }
+
+  .commit-hash a {
+    text-decoration: none;
+    color: var(--accent-regular);
+  }
+
+  :root.theme-dark .commit-hash a {
+    color: var(--accent-dark);
   }
 </style>

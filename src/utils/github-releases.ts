@@ -20,6 +20,13 @@ const RELEASES_API_URL =
   'https://api.github.com/repos/alehar9320/astro-cloudflare-personal-website/releases?per_page=20';
 const RELEASES_PAGE_URL =
   'https://github.com/alehar9320/astro-cloudflare-personal-website/releases';
+const REPO_URL = 'https://github.com/alehar9320/astro-cloudflare-personal-website';
+
+export interface ReleaseItem {
+  hash?: string;
+  message: string;
+  url?: string;
+}
 
 export function normalizeRelease(release: GitHubReleaseApiItem): SiteRelease | null {
   if (!release.tag_name || release.draft) return null;
@@ -79,12 +86,31 @@ export function formatReleaseDate(dateString: string | null): string {
   return date.toISOString().split('T')[0];
 }
 
-export function splitReleaseBody(body: string): string[] {
+export function parseReleaseItem(line: string): ReleaseItem {
+  const cleaned = line.trim().replace(/^- /, '');
+  // Matches a 7-character hex hash at the beginning
+  const hashMatch = cleaned.match(/^([a-f0-9]{7})\s+(.*)/);
+
+  if (hashMatch) {
+    const hash = hashMatch[1];
+    return {
+      hash,
+      message: hashMatch[2],
+      url: `${REPO_URL}/commit/${hash}`,
+    };
+  }
+
+  return {
+    message: cleaned,
+  };
+}
+
+export function splitReleaseBody(body: string): ReleaseItem[] {
   return body
     .split('\n')
     .map((line) => line.trim())
     .filter(Boolean)
-    .map((line) => line.replace(/^- /, ''));
+    .map(parseReleaseItem);
 }
 
-export { RELEASES_PAGE_URL };
+export { RELEASES_PAGE_URL, REPO_URL };
