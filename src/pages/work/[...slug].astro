@@ -42,7 +42,7 @@ const schema = {
 ---
 
 <BaseLayout title={entry.data.title} description={entry.data.description}>
-  <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="stack gap-20">
     <div class="stack gap-15">
       <header>
