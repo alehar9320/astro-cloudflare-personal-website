@@ -69,11 +69,27 @@ describe('github releases utility', () => {
     await expect(fetchGitHubReleases(fetchMock as typeof fetch)).resolves.toEqual([]);
   });
 
-  it('splits markdown bullet bodies into plain list items', () => {
+  it('splits markdown bullet bodies into release items', () => {
     expect(splitReleaseBody('- feat: one\n- fix: two\n\n- docs: three')).toEqual([
-      'feat: one',
-      'fix: two',
-      'docs: three',
+      { message: 'feat: one' },
+      { message: 'fix: two' },
+      { message: 'docs: three' },
+    ]);
+  });
+
+  it('parses commit hashes from release items', () => {
+    const body = '- 8acc628 ✍️ Scribe: Strategic Copy Optimization\n- Plain message';
+    const items = splitReleaseBody(body);
+
+    expect(items).toEqual([
+      {
+        hash: '8acc628',
+        message: '✍️ Scribe: Strategic Copy Optimization',
+        url: 'https://github.com/alehar9320/astro-cloudflare-personal-website/commit/8acc628',
+      },
+      {
+        message: 'Plain message',
+      },
     ]);
   });
 
