@@ -87,7 +87,7 @@ export function formatReleaseDate(dateString: string | null): string {
 }
 
 export function parseReleaseItem(line: string): ReleaseItem {
-  const cleaned = line.trim().replace(/^- /, '');
+  const cleaned = line.trim();
   // Matches a 7-character hex hash at the beginning
   const hashMatch = cleaned.match(/^([a-f0-9]{7})\s+(.*)/);
 
@@ -108,8 +108,11 @@ export function parseReleaseItem(line: string): ReleaseItem {
 export function splitReleaseBody(body: string): ReleaseItem[] {
   return body
     .split('\n')
-    .map((line) => line.trim())
-    .filter(Boolean)
+    .filter((line) => {
+      const trimmed = line.trim();
+      return trimmed.length > 0 && !trimmed.startsWith('#');
+    })
+    .map((line) => line.replace(/^[-*+]\s+/, ''))
     .map(parseReleaseItem);
 }
 

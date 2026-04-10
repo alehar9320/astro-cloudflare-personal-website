@@ -69,16 +69,19 @@ describe('github releases utility', () => {
     await expect(fetchGitHubReleases(fetchMock as typeof fetch)).resolves.toEqual([]);
   });
 
-  it('splits markdown bullet bodies into release items', () => {
-    expect(splitReleaseBody('- feat: one\n- fix: two\n\n- docs: three')).toEqual([
+  it('splits markdown bullet bodies into release items and handles various markers', () => {
+    const body = '- feat: one\n* fix: two\n+ docs: three\n\n# Header to skip\nPlain line';
+    expect(splitReleaseBody(body)).toEqual([
       { message: 'feat: one' },
       { message: 'fix: two' },
       { message: 'docs: three' },
+      { message: 'Plain line' },
     ]);
   });
 
-  it('parses commit hashes from release items', () => {
-    const body = '- 8acc628 ✍️ Scribe: Strategic Copy Optimization\n- Plain message';
+  it('parses commit hashes from release items with various markers', () => {
+    const body =
+      '* 8acc628 ✍️ Scribe: Strategic Copy Optimization\n+ 1234567 fix: some issue\n- plain message';
     const items = splitReleaseBody(body);
 
     expect(items).toEqual([
@@ -88,7 +91,12 @@ describe('github releases utility', () => {
         url: 'https://github.com/alehar9320/astro-cloudflare-personal-website/commit/8acc628',
       },
       {
-        message: 'Plain message',
+        hash: '1234567',
+        message: 'fix: some issue',
+        url: 'https://github.com/alehar9320/astro-cloudflare-personal-website/commit/1234567',
+      },
+      {
+        message: 'plain message',
       },
     ]);
   });
