@@ -75,8 +75,12 @@ describe('github releases utility', () => {
       { message: 'feat: one' },
       { message: 'fix: two' },
       { message: 'docs: three' },
-      { message: 'Plain line' },
     ]);
+  });
+
+  it('ignores lines without valid list markers', () => {
+    const body = 'Just text\n- List item\nNot a list item\n### Heading';
+    expect(splitReleaseBody(body)).toEqual([{ message: 'List item' }]);
   });
 
   it('parses commit hashes from release items with various markers', () => {

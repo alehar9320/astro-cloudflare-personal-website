@@ -108,10 +108,8 @@ export function parseReleaseItem(line: string): ReleaseItem {
 export function splitReleaseBody(body: string): ReleaseItem[] {
   return body
     .split('\n')
-    .filter((line) => {
-      const trimmed = line.trim();
-      return trimmed.length > 0 && !trimmed.startsWith('#');
-    })
+    .map((line) => line.trim())
+    .filter((line) => /^[-*+]\s+/.test(line))
     .map((line) => line.replace(/^[-*+]\s+/, ''))
     .map(parseReleaseItem);
 }
