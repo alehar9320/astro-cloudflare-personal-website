@@ -9,13 +9,13 @@ import Hero from '../components/Hero.astro';
     <main class="wrapper stack gap-8">
       <Hero
         title="What's New"
-        tagline="A continuously updated release log of improvements, tweaks, and new features."
+        tagline="A real-time log of project milestones, technical refinements, and portfolio updates."
         align="start"
       />
 
       <div class="content">
         <div class="release-list" data-release-list>
-          <p class="release-status">Loading latest release history...</p>
+          <p class="release-status">Fetching latest project updates...</p>
         </div>
         <noscript>
           <p class="release-status">
@@ -46,7 +46,7 @@ import Hero from '../components/Hero.astro';
       if (releases.length === 0) {
         const empty = document.createElement('p');
         empty.className = 'release-status';
-        empty.textContent = 'Release history is unavailable right now.';
+        empty.textContent = 'Project history is currently unavailable.';
 
         const link = document.createElement('a');
         link.href = RELEASES_PAGE_URL;
