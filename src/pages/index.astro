@@ -47,7 +47,14 @@ const projects = (await getCollection('work'))
           width="480"
           height="620"
           src="/assets/portrait.png"
+          loading="eager"
+          fetchpriority="high"
         />
+        <!--
+          Optimization: Added loading="eager" and fetchpriority="high" to the portrait image.
+          Why: This is the Hero image and a prime LCP candidate. Prioritizing its loading
+          improves the Largest Contentful Paint metric and perceived performance.
+        -->
       </header>
 
       <Skills />
