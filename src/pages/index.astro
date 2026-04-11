@@ -20,9 +20,43 @@ const projects = (await getCollection('work'))
 
 // Full Astro Component Syntax:
 // https://docs.astro.build/basics/astro-components/
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': 'https://harenstam.com/#person',
+      name: 'Alexander Härenstam',
+      jobTitle: 'Strategic Product Leader',
+      description:
+        'Strategic Product Leader specializing in Developer Experience (DevEx) and Industrial AI at IFS.',
+      url: 'https://harenstam.com',
+      sameAs: ['https://www.linkedin.com/in/alehar'],
+      worksFor: {
+        '@type': 'Organization',
+        name: 'IFS',
+        url: 'https://www.ifs.com',
+      },
+    },
+    {
+      '@type': 'WebSite',
+      '@id': 'https://harenstam.com/#website',
+      url: 'https://harenstam.com',
+      name: 'Alexander Härenstam | Strategic Product Leader & Innovator in AI',
+      description:
+        'Explore the professional portfolio of Alexander Härenstam, a Strategic Product Leader specializing in Industrial AI, Developer Experience (DevEx), and Design Systems at IFS.',
+      publisher: { '@id': 'https://harenstam.com/#person' },
+    },
+  ],
+};
 ---
 
-<BaseLayout>
+<BaseLayout
+  title="Alexander Härenstam | Strategic Product Leader & Innovator in AI"
+  description="Explore the professional portfolio of Alexander Härenstam, a Strategic Product Leader specializing in Industrial AI, Developer Experience (DevEx), and Design Systems at IFS."
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="stack gap-20 lg:gap-48">
     <div class="wrapper stack gap-8 lg:gap-20">
       <header class="hero">
@@ -54,6 +88,14 @@ const projects = (await getCollection('work'))
     </div>
 
     <main id="main-content" class="wrapper stack gap-20 lg:gap-48">
+      <div class="tldr-box">
+        <p>
+          <strong>TL;DR:</strong> Strategic Product Leader at <strong>IFS</strong> specializing in
+          <strong>Industrial AI</strong> and <strong>Developer Experience</strong>. I transform
+          complex enterprise challenges into high-adoption product solutions with proven
+          multi-million dollar impact.
+        </p>
+      </div>
       <section class="section with-background with-cta">
         <header class="section-header stack gap-2 lg:gap-4">
           <h2>Strategic Impact</h2>
