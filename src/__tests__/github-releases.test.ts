@@ -27,6 +27,18 @@ describe('github releases utility', () => {
     });
   });
 
+  it('handles missing release name by falling back to tag_name', () => {
+    expect(
+      normalizeRelease({
+        tag_name: 'v1.0.0',
+        name: null,
+      })
+    ).toMatchObject({
+      title: 'v1.0.0',
+      version: 'v1.0.0',
+    });
+  });
+
   it('filters out invalid or draft releases', async () => {
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
@@ -52,6 +64,40 @@ describe('github releases utility', () => {
     const fetchMock = vi.fn().mockRejectedValue(new Error('network error'));
 
     await expect(fetchGitHubReleases(fetchMock as typeof fetch)).resolves.toEqual([]);
+  });
+
+  it('returns an empty list and logs error when fetch throws', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const fetchMock = vi.fn().mockImplementation(() => {
+      throw new Error('fetch error');
+    });
+
+    await expect(fetchGitHubReleases(fetchMock as typeof fetch)).resolves.toEqual([]);
+    expect(consoleSpy).toHaveBeenCalledWith('GitHub releases request errored', expect.any(Error));
+    consoleSpy.mockRestore();
+  });
+
+  it('works in non-Node environments where process is undefined', async () => {
+    vi.stubGlobal('process', undefined);
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [],
+    });
+
+    await fetchGitHubReleases(fetchMock as typeof fetch);
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Accept: 'application/vnd.github+json',
+        }),
+      })
+    );
+
+    const callHeaders = fetchMock.mock.calls[0][1].headers;
+    expect(callHeaders.Authorization).toBeUndefined();
+    vi.unstubAllGlobals();
   });
 
   it('handles non-OK responses from the GitHub API', async () => {
