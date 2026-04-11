@@ -280,8 +280,14 @@ const isCurrentPage = (href: string) => {
   }
 
   .social:hover,
-  .social:focus {
+  .social:focus-visible {
     color: var(--accent-text-over);
+  }
+
+  .social:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+    border-radius: 0.375rem;
   }
 
   .theme-toggle {
@@ -342,9 +348,14 @@ const isCurrentPage = (href: string) => {
     }
 
     .link:hover,
-    .link:focus {
+    .link:focus-visible {
       color: var(--gray-100);
       background-color: var(--accent-subtle-overlay);
+    }
+
+    .link:focus-visible {
+      outline: 2px solid var(--accent-regular);
+      outline-offset: 4px;
     }
 
     .link[aria-current='page'] {
