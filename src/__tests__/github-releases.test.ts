@@ -110,4 +110,48 @@ describe('github releases utility', () => {
     expect(formatReleaseDate('not-a-date')).toBe('Unknown date');
     expect(formatReleaseDate(null)).toBe('Unknown date');
   });
+
+  it('handles normalization edge cases (empty body, missing urls)', () => {
+    expect(normalizeRelease({ tag_name: 'v1' })).toEqual({
+      body: '',
+      publishedAt: null,
+      title: 'v1',
+      url: RELEASES_PAGE_URL,
+      version: 'v1',
+    });
+  });
+
+  it('uses GITHUB_TOKEN and logs rate limits on error', async () => {
+    vi.stubEnv('GITHUB_TOKEN', 'test-token');
+    vi.stubGlobal('process', { env: { GITHUB_TOKEN: 'test-token' } });
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: false,
+      headers: new Map([['x-ratelimit-limit', '60']]),
+    });
+
+    await fetchGitHubReleases(fetchMock as typeof fetch);
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: { Accept: expect.any(String), Authorization: 'token test-token' },
+      })
+    );
+    expect(consoleSpy).toHaveBeenCalledWith(
+      'GitHub releases request failed',
+      expect.objectContaining({ rateLimitLimit: '60' })
+    );
+
+    vi.unstubAllGlobals();
+    vi.unstubAllEnvs();
+  });
+
+  it('handles environment without process global', async () => {
+    vi.stubGlobal('process', undefined);
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => [] });
+    await fetchGitHubReleases(fetchMock as typeof fetch);
+    expect(fetchMock.mock.calls[0][1].headers).not.toHaveProperty('Authorization');
+    vi.unstubAllGlobals();
+  });
 });
