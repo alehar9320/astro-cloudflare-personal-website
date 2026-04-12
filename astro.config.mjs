@@ -3,9 +3,12 @@ import { defineConfig } from 'astro/config';
 import { codecovVitePlugin } from '@codecov/vite-plugin';
 
 import cloudflare from '@astrojs/cloudflare';
+import node from '@astrojs/node';
 import sentry from '@sentry/astro';
 
+const isRender = process.env.RENDER === 'true';
 const isAstroCheck = process.argv.includes('check');
+
 const codecovPlugin = /** @type {import('vite').PluginOption} */ (
   codecovVitePlugin({
     enableBundleAnalysis: process.env.CODECOV_TOKEN !== undefined,
@@ -16,12 +19,24 @@ const codecovPlugin = /** @type {import('vite').PluginOption} */ (
 
 // https://astro.build/config
 export default defineConfig({
-  output: 'static',
-  adapter: isAstroCheck ? undefined : cloudflare(),
+  output: isRender ? 'server' : 'static',
+  // Switch adapters based on the environment
+  adapter: isAstroCheck
+    ? undefined
+    : isRender
+      ? node({ mode: 'standalone' })
+      : cloudflare({
+          inspectorPort: false,
+          prerenderEnvironment: 'node',
+          remoteBindings: false,
+        }),
   image: {
-    service: {
-      entrypoint: 'astro/assets/services/cloudflare-binding',
-    },
+    // Only use Cloudflare image service when NOT on Render
+    service: isRender
+      ? undefined
+      : {
+          entrypoint: 'astro/assets/services/cloudflare-binding',
+        },
   },
   integrations: [
     sentry({
