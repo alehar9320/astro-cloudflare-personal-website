@@ -23,9 +23,11 @@ import Icon from './Icon.astro';
       box-shadow var(--theme-transition);
   }
 
-  button:hover {
+  button:hover,
+  button:focus-visible {
     background-color: var(--gray-900);
     box-shadow: inset 0 0 0 1px var(--accent-regular);
+    transform: scale(1.1);
   }
 
   button:active {
@@ -35,7 +37,7 @@ import Icon from './Icon.astro';
 
   button:focus-visible {
     outline: 2px solid var(--accent-regular);
-    outline-offset: 0.2rem;
+    outline-offset: 4px;
   }
 
   .icon {
