@@ -11,7 +11,7 @@ vi.mock('@sentry/astro', () => {
 
 describe('sentry.client.config', () => {
   const importClientConfig = async (suffix: string) =>
-    import(/* @vite-ignore */ `../sentry.client.config?${suffix}`);
+    import(/* @vite-ignore */ `../../sentry.client.config?${suffix}`);
 
   beforeEach(() => {
     vi.clearAllMocks();
