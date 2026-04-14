@@ -43,4 +43,48 @@ describe('sentry.server.config', () => {
       })
     );
   });
+
+  it('should fallback to PUBLIC_SENTRY_DSN if SENTRY_DSN is missing', async () => {
+    delete process.env.SENTRY_DSN;
+    process.env.PUBLIC_SENTRY_DSN = 'https://public-dsn@sentry.io/456';
+
+    await importServerConfig('t=3');
+
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        dsn: 'https://public-dsn@sentry.io/456',
+      })
+    );
+  });
+
+  it('should fallback to PUBLIC_ variants for environment and release', async () => {
+    process.env.SENTRY_DSN = 'https://example-dsn@sentry.io/123';
+    delete process.env.SENTRY_ENVIRONMENT;
+    delete process.env.SENTRY_RELEASE;
+    process.env.PUBLIC_SENTRY_ENVIRONMENT = 'staging';
+    process.env.PUBLIC_SENTRY_RELEASE = '2.0.0';
+
+    await importServerConfig('t=4');
+
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        environment: 'staging',
+        release: '2.0.0',
+      })
+    );
+  });
+
+  it('should use production as default environment', async () => {
+    process.env.SENTRY_DSN = 'https://example-dsn@sentry.io/123';
+    delete process.env.SENTRY_ENVIRONMENT;
+    delete process.env.PUBLIC_SENTRY_ENVIRONMENT;
+
+    await importServerConfig('t=5');
+
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        environment: 'production',
+      })
+    );
+  });
 });
