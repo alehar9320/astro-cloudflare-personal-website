@@ -51,3 +51,12 @@ SENTRY_AUTH_TOKEN=your-sentry-auth-token-for-source-map-uploads
 #   (miniflare reads these during npm run dev for local server code)
 # - Variables prefixed with PUBLIC_* are exposed to the browser (available as import.meta.env.PUBLIC_*)
 # - For production secrets, use: wrangler secret:bulk < secrets.json
+
+# Multi-Environment Deployment (Render.com vs Cloudflare)
+# Render.com automatically sets RENDER=true in its environment.
+# In astro.config.mjs, the constant 'isRender' (process.env.RENDER === 'true')
+# is used to toggle between the @astrojs/node adapter (for Render) and the
+# @astrojs/cloudflare adapter (for Cloudflare Pages).
+#
+# To test the Render/Node configuration locally:
+# RENDER=true npm run dev
