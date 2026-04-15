@@ -56,4 +56,39 @@ describe('sentry.client.config', () => {
       })
     );
   });
+
+  it('should use PUBLIC_ prefixed variables if unprefixed ones are missing', async () => {
+    // @ts-expect-error Mocking global environment
+    globalThis.importMetaEnv = {
+      PUBLIC_SENTRY_DSN: 'https://public-dsn@sentry.io/456',
+      PUBLIC_SENTRY_ENVIRONMENT: 'staging',
+      PUBLIC_SENTRY_RELEASE: '2.0.0',
+    };
+
+    await importClientConfig('t=3');
+
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        dsn: 'https://public-dsn@sentry.io/456',
+        environment: 'staging',
+        release: '2.0.0',
+      })
+    );
+  });
+
+  it('should fallback to production environment and undefined release', async () => {
+    // @ts-expect-error Mocking global environment
+    globalThis.importMetaEnv = {
+      PUBLIC_SENTRY_DSN: 'https://example-dsn@sentry.io/123',
+    };
+
+    await importClientConfig('t=4');
+
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        environment: 'production',
+        release: undefined,
+      })
+    );
+  });
 });

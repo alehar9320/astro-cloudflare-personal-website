@@ -57,7 +57,10 @@ const schema = {
     // Sentry verification: Throw an error after a short delay
     setTimeout(() => {
       // Only throw in development or if a special flag is set to avoid annoying users
-      if (window.location.hostname === 'localhost' || window.location.search.includes('sentry-test')) {
+      if (
+        window.location.hostname === 'localhost' ||
+        window.location.search.includes('sentry-test')
+      ) {
         console.log('Sentry verification: Throwing intentional error...');
         throw new Error('Sentry Test Error');
       }

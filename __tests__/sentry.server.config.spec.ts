@@ -47,4 +47,32 @@ describe('sentry.server.config', () => {
       })
     );
   });
+
+  it('should use PUBLIC_ SENTRY_DSN if SENTRY_DSN is missing', async () => {
+    delete process.env.SENTRY_DSN;
+    process.env.PUBLIC_SENTRY_DSN = 'https://public-dsn@sentry.io/456';
+
+    await importServerConfig('t=3');
+
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        dsn: 'https://public-dsn@sentry.io/456',
+      })
+    );
+  });
+
+  it('should fallback to production environment and undefined release', async () => {
+    process.env.SENTRY_DSN = 'https://example-dsn@sentry.io/123';
+    delete process.env.SENTRY_ENVIRONMENT;
+    delete process.env.SENTRY_RELEASE;
+
+    await importServerConfig('t=4');
+
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        environment: 'production',
+        release: undefined,
+      })
+    );
+  });
 });
