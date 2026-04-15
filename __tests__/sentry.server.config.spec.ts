@@ -18,12 +18,16 @@ describe('sentry.server.config', () => {
     process.env = { ...originalEnv };
   });
 
-  it('should not initialize Sentry if SENTRY_DSN is missing', async () => {
+  it('should use default DSN if SENTRY_DSN is missing', async () => {
     delete process.env.SENTRY_DSN;
 
     await importServerConfig('t=1');
 
-    expect(Sentry.init).not.toHaveBeenCalled();
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        dsn: 'https://7ecb3a9c0549d3d1818112e1bc11ad67@o4511135179669504.ingest.de.sentry.io/4511155924435024',
+      })
+    );
   });
 
   it('should initialize Sentry if SENTRY_DSN is present', async () => {
@@ -38,7 +42,7 @@ describe('sentry.server.config', () => {
         dsn: 'https://example-dsn@sentry.io/123',
         environment: 'test',
         release: '1.0.0',
-        sendDefaultPii: false,
+        sendDefaultPii: true,
         tracesSampleRate: 1.0,
       })
     );

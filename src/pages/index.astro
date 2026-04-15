@@ -53,6 +53,16 @@ const schema = {
 ---
 
 <BaseLayout>
+  <script is:inline>
+    // Sentry verification: Throw an error after a short delay
+    setTimeout(() => {
+      // Only throw in development or if a special flag is set to avoid annoying users
+      if (window.location.hostname === 'localhost' || window.location.search.includes('sentry-test')) {
+        console.log('Sentry verification: Throwing intentional error...');
+        throw new Error('Sentry Test Error');
+      }
+    }, 1000);
+  </script>
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="stack gap-20 lg:gap-48">
     <div class="wrapper stack gap-8 lg:gap-20">
