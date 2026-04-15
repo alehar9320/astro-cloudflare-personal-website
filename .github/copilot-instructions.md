@@ -70,7 +70,8 @@ Notes: npm scripts forward arguments after `--` to the underlying command.
 
 ## MCP servers
 
-- This repo contains mcp_config.json with an `astro-docs` MCP server configured. See `mcp_config.json` at project root.
+- This repo contains `mcp_config.json` with `astro-docs` and `render` MCP servers configured.
+- See `mcp_config.json` at project root and [docs/mcp.md](docs/mcp.md) for detailed setup instructions for Cursor, Antigravity, Codex, and Claude Desktop.
 
 ---
 
@@ -135,12 +136,6 @@ Before submitting code for a pull request:
 - ✅ `npm run build` succeeds without warnings
 
 **If any formatting issues remain after `npm run format`, they will block the CI quality gate.**
-
----
-
-## MCP servers
-
-- This repo contains mcp_config.json with an `astro-docs` MCP server configured. See `mcp_config.json` at project root.
 
 ---
 
