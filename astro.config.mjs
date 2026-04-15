@@ -20,6 +20,12 @@ const codecovPlugin = /** @type {import('vite').PluginOption} */ (
 // https://astro.build/config
 export default defineConfig({
   output: isRender ? 'server' : 'static',
+  server: isRender
+    ? {
+        // Render health checks require the service to listen on an external interface.
+        host: true,
+      }
+    : undefined,
   // Switch adapters based on the environment
   adapter: isAstroCheck
     ? undefined
