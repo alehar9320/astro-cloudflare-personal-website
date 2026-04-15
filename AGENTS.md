@@ -33,6 +33,7 @@
   - PascalCase for Astro components (`MyComponent.astro`).
   - kebab-case for other files (`my-script.ts`).
 - **Icons:** Phosphor Icons adapted in `src/components/IconPaths.ts`.
+- **MCP Servers:** Configured in `mcp_config.json` (root) and documented in `docs/mcp.md`. Includes `astro-docs` and `render` servers.
 
 ## 3. Development Workflow
 

@@ -9,6 +9,7 @@
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
+    "start": "node ./dist/server/entry.mjs",
     "check": "astro check",
     "preview": "astro preview",
     "astro": "astro",
@@ -22,6 +23,7 @@
   },
   "dependencies": {
     "@astrojs/cloudflare": "^13.1.7",
+    "@astrojs/node": "^10.0.4",
     "@sentry/astro": "^10.47.0",
     "@sentry/cloudflare": "^10.47.0",
     "astro": "^6.1.3",
