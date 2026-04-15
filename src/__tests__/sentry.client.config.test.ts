@@ -11,7 +11,7 @@ vi.mock('@sentry/astro', () => {
 
 describe('sentry.client.config', () => {
   const importClientConfig = async (suffix: string) =>
-    import(/* @vite-ignore */ `../sentry.client.config?${suffix}`);
+    import(/* @vite-ignore */ `../../sentry.client.config?${suffix}`);
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -48,8 +48,21 @@ describe('sentry.client.config', () => {
         release: '1.0.0',
         sendDefaultPii: false,
         tracesSampleRate: 1.0,
-        replaysSessionSampleRate: 0.1,
-        replaysOnErrorSampleRate: 1.0,
+      })
+    );
+  });
+
+  it('should fall back to production environment if PUBLIC_SENTRY_ENVIRONMENT is missing', async () => {
+    // @ts-expect-error Mocking global environment
+    globalThis.importMetaEnv = {
+      PUBLIC_SENTRY_DSN: 'https://example-dsn@sentry.io/123',
+    };
+
+    await importClientConfig('t=3');
+
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        environment: 'production',
       })
     );
   });
