@@ -24,7 +24,7 @@ This website serves as my digital portfolio, showcasing my professional journey,
 This project is built with a modern web stack designed for speed, SEO, and developer experience:
 
 - **[Astro](https://astro.build/)**: The web framework for building fast, content-focused websites.
-- **[Cloudflare Pages](https://pages.cloudflare.com/)**: For fast, secure, and globally distributed hosting with Git-based auto-deploys.
+- **[Cloudflare Workers](https://workers.cloudflare.com/)**: For fast, secure, and globally distributed hosting with Git-based auto-deploys.
 - **HTML/CSS/JS**: Vanilla web technologies, prioritizing lean bundles and performance.
 
 ## 🛠 Features
@@ -48,7 +48,7 @@ To run this project locally on your machine, follow these steps:
 
 ### Prerequisites
 
-- Node.js (v18 or higher)
+- Node.js (v22.12.0 or higher)
 - npm or another package manager (yarn, pnpm)
 
 ### Installation
@@ -87,7 +87,17 @@ Navigate to `http://localhost:4321` in your browser to view the site as you make
 
 ## 🌐 Deployment
 
-This project is structured to be deployed on **Cloudflare**. Push changes to the `main` branch connected to your Cloudflare Git integration (Workers + Assets) and Cloudflare will automatically build using `npm run build` and deploy the output directory (`./dist/`). GitHub Actions handles quality checks plus GitHub release creation; it does not manually deploy production in parallel or push generated release files back to protected `main`.
+This project is structured to be deployed primarily on **Cloudflare Workers + Assets**. Push changes to the `main` branch connected to your Cloudflare Git integration and Cloudflare will automatically build using `npm run build` and deploy the output directory (`./dist/`). GitHub Actions handles quality checks plus GitHub release creation; it does not manually deploy production in parallel or push generated release files back to protected `main`.
+
+Render is also supported as a **Node web service**. The repo includes a [render.yaml](./render.yaml) Blueprint that uses:
+
+- `npm install && npm run build`
+- `npm run start`
+- `NODE_VERSION=22.12.0`
+
+At build time, Render sets `RENDER=true`, which switches Astro to the standalone Node adapter. The Astro config also binds the server to `0.0.0.0`, which Render requires for health checks to pass.
+
+If you deploy on Render, configure any required secrets in the Render dashboard environment settings. Do not commit or mirror local `.env` values into the repository.
 
 ## 📬 Contact & Connect
 
