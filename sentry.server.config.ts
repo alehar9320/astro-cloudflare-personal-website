@@ -1,6 +1,5 @@
 import * as Sentry from '@sentry/astro';
 
-// Only initialize Sentry if DSN is configured (check both unprefixed and PUBLIC_ variants)
 const sentryDsn = process.env.SENTRY_DSN || process.env.PUBLIC_SENTRY_DSN;
 if (sentryDsn) {
   Sentry.init({
