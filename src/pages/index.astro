@@ -73,11 +73,20 @@ const schema = {
           </div>
         </Hero>
 
+        {
+          /*
+          BENCHMARK NOTE:
+          Adding loading="eager" and fetchpriority="high" to the hero image
+          to prioritize it as the LCP element and improve perceived load time.
+        */
+        }
         <img
           alt="Alexander Härenstam smiling in a red plaid shirt and tortoise shell glasses"
           width="480"
           height="620"
           src="/assets/portrait.png"
+          loading="eager"
+          fetchpriority="high"
         />
       </header>
 
