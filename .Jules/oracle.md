@@ -1,3 +1,5 @@
+## 2026-04-18 - Portfolio Index AEO/GEO Optimization | **Learning:** Providing a high-level summary (TL;DR) and explicit structured data (ItemList) on index pages helps LLMs understand the relationship between a collection and its individual entities. | **Action:** Added a `.tldr-box` summary and implemented `ItemList` JSON-LD on the Portfolio page to improve answerability and discoverability of work projects.
+
 ## 2025-05-22 - Optimizing Work Collection for AI Synthesis | **Learning:** LLMs prioritize "Direct Answer" blocks (TL;DR) for quick synthesis, and structured JSON-LD provides the explicit context needed for high-confidence citations. | **Action:** Implement TL;DR boxes across all Work projects and inject Schema.org CreativeWork metadata into the work detail pages.
 
 ## 2026-04-08 - Initial AEO Strategy Implementation | **Learning:** LLMs prioritize structured summaries and explicit JSON-LD for synthesizing professional authority. | **Action:** Implemented `.tldr-box` component and integrated `Person`/`Organization` schema on the About page.
