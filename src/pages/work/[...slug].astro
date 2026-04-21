@@ -6,6 +6,7 @@ import Hero from '../../components/Hero.astro';
 import Icon from '../../components/Icon.astro';
 import Pill from '../../components/Pill.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { safeStringify } from '../../utils/safe-json';
 
 interface Props {
   entry: CollectionEntry<'work'>;
@@ -42,7 +43,7 @@ const schema = {
 ---
 
 <BaseLayout title={entry.data.title} description={entry.data.description}>
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <script is:inline type="application/ld+json" set:html={safeStringify(schema)} />
   <div class="stack gap-20">
     <div class="stack gap-15">
       <header>
