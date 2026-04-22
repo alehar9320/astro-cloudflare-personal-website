@@ -25,7 +25,9 @@ const { title, description } = Astro.props;
 
     <div class="stack backgrounds">
       <Nav />
-      <slot />
+      <main id="main-content" tabindex="-1" class="main-content">
+        <slot />
+      </main>
       <Footer />
     </div>
 
@@ -119,6 +121,10 @@ const { title, description } = Astro.props;
           /*base*/ normal;
         /* Rotate default template's purple (-280deg) to marine blue (-210deg). Difference (-70deg) */
         filter: hue-rotate(-70deg);
+      }
+
+      .main-content:focus {
+        outline: none;
       }
       @media (forced-colors: active) {
         /* Deactivate custom backgrounds for high contrast users. */
