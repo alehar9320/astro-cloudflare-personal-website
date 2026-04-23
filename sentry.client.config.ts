@@ -1,18 +1,14 @@
 import * as Sentry from '@sentry/astro';
 
-// Client-side Sentry configuration with browser-compatible environment variables
+// Client-side Sentry configuration
 // Note: Variables must use PUBLIC_ prefix to be exposed to the browser bundle
-const env =
-  (globalThis as typeof globalThis & { importMetaEnv?: Record<string, string | undefined> })
-    .importMetaEnv || (import.meta as { env: Record<string, string | undefined> }).env;
-
-const dsn = env?.PUBLIC_SENTRY_DSN || env?.SENTRY_DSN;
+const dsn = import.meta.env.PUBLIC_SENTRY_DSN;
 
 if (dsn) {
   Sentry.init({
     dsn,
-    environment: env?.PUBLIC_SENTRY_ENVIRONMENT || env?.SENTRY_ENVIRONMENT || 'production',
-    release: env?.PUBLIC_SENTRY_RELEASE || env?.SENTRY_RELEASE,
+    environment: import.meta.env.PUBLIC_SENTRY_ENVIRONMENT || 'production',
+    release: import.meta.env.PUBLIC_SENTRY_RELEASE,
     integrations: [Sentry.replayIntegration({ maskAllText: true, blockAllMedia: true })],
     sendDefaultPii: false,
     tracesSampleRate: 1.0,
