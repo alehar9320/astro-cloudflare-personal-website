@@ -21,11 +21,13 @@ const { title, description } = Astro.props;
   </head>
   <body>
     <!-- Skip to content link for accessibility -->
-    <a href="#main-content" class="sr-only focus-visible">Skip to content</a>
+    <a href="#main-content" class="sr-only skip-to-content">Skip to content</a>
 
     <div class="stack backgrounds">
       <Nav />
-      <slot />
+      <main id="main-content" tabindex="-1" class="main-content">
+        <slot />
+      </main>
       <Footer />
     </div>
 
@@ -120,6 +122,10 @@ const { title, description } = Astro.props;
         /* Rotate default template's purple (-280deg) to marine blue (-210deg). Difference (-70deg) */
         filter: hue-rotate(-70deg);
       }
+
+      .main-content:focus {
+        outline: none;
+      }
       @media (forced-colors: active) {
         /* Deactivate custom backgrounds for high contrast users. */
         .backgrounds {
@@ -142,20 +148,29 @@ const { title, description } = Astro.props;
         white-space: nowrap;
       }
 
-      .sr-only.focus-visible:focus {
+      .sr-only.skip-to-content:focus-visible {
         clip: auto;
         height: auto;
-        margin: auto;
+        margin: 0;
         overflow: visible;
-        position: static;
+        position: absolute;
+        top: 1rem;
+        left: 1rem;
         width: auto;
         white-space: normal;
-        padding: 1rem;
-        background: var(--gray-900);
+        padding: 0.75rem 1.5rem;
+        background: hsla(var(--gray-999-basis), 0.1);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border: 1px solid hsla(var(--gray-999-basis), 0.2);
         color: var(--gray-0);
+        border-radius: 999rem;
         display: block;
         text-align: center;
-        z-index: 9999;
+        z-index: 99999;
+        text-decoration: none;
+        outline: 2px solid var(--accent-regular);
+        outline-offset: 4px;
       }
     </style>
   </body>
