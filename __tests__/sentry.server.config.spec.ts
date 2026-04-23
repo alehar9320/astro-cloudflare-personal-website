@@ -18,8 +18,9 @@ describe('sentry.server.config', () => {
     process.env = { ...originalEnv };
   });
 
-  it('should not initialize Sentry if SENTRY_DSN is missing', async () => {
+  it('should not initialize Sentry if DSN is missing', async () => {
     delete process.env.SENTRY_DSN;
+    delete process.env.PUBLIC_SENTRY_DSN;
 
     await importServerConfig('t=1');
 
@@ -40,6 +41,61 @@ describe('sentry.server.config', () => {
         release: '1.0.0',
         sendDefaultPii: false,
         tracesSampleRate: 1.0,
+      })
+    );
+  });
+
+  it('should initialize Sentry if PUBLIC_SENTRY_DSN is present and SENTRY_DSN is missing', async () => {
+    delete process.env.SENTRY_DSN;
+    process.env.PUBLIC_SENTRY_DSN = 'https://public-dsn@sentry.io/456';
+
+    await importServerConfig('t=3');
+
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        dsn: 'https://public-dsn@sentry.io/456',
+      })
+    );
+  });
+
+  it('should fallback to production environment if not provided', async () => {
+    process.env.SENTRY_DSN = 'https://example-dsn@sentry.io/123';
+    delete process.env.SENTRY_ENVIRONMENT;
+    delete process.env.PUBLIC_SENTRY_ENVIRONMENT;
+
+    await importServerConfig('t=4');
+
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        environment: 'production',
+      })
+    );
+  });
+
+  it('should use PUBLIC_SENTRY_ENVIRONMENT if SENTRY_ENVIRONMENT is missing', async () => {
+    process.env.SENTRY_DSN = 'https://example-dsn@sentry.io/123';
+    delete process.env.SENTRY_ENVIRONMENT;
+    process.env.PUBLIC_SENTRY_ENVIRONMENT = 'staging';
+
+    await importServerConfig('t=5');
+
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        environment: 'staging',
+      })
+    );
+  });
+
+  it('should use PUBLIC_SENTRY_RELEASE if SENTRY_RELEASE is missing', async () => {
+    process.env.SENTRY_DSN = 'https://example-dsn@sentry.io/123';
+    delete process.env.SENTRY_RELEASE;
+    process.env.PUBLIC_SENTRY_RELEASE = '2.0.0';
+
+    await importServerConfig('t=6');
+
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        release: '2.0.0',
       })
     );
   });
