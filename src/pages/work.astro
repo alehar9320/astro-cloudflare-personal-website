@@ -5,16 +5,34 @@ import Grid from '../components/Grid.astro';
 import Hero from '../components/Hero.astro';
 import PortfolioPreview from '../components/PortfolioPreview.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { safeStringify } from '../utils/safe-json';
 
 const projects = (await getCollection('work')).sort(
   (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
 );
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'ItemList',
+  name: "Alexander Härenstam's Strategic Portfolio",
+  description:
+    'A curated selection of initiatives transforming complex enterprise challenges into scalable product solutions.',
+  numberOfItems: projects.length,
+  itemListElement: projects.map((project, index) => ({
+    '@type': 'ListItem',
+    position: index + 1,
+    url: `https://harenstam.com/work/${project.id}`,
+    name: project.data.title,
+    description: project.data.description,
+  })),
+};
 ---
 
 <BaseLayout
   title="Portfolio & Work | Alexander Härenstam"
   description="Explore Alexander Härenstam's strategic product portfolio and recent initiatives."
 >
+  <script is:inline type="application/ld+json" set:html={safeStringify(schema)} />
   <div class="stack gap-20">
     <main id="main-content" class="wrapper stack gap-8">
       <Hero
@@ -22,6 +40,16 @@ const projects = (await getCollection('work')).sort(
         tagline="A curated selection of initiatives transforming complex enterprise challenges into scalable product solutions."
         align="start"
       />
+      <div class="tldr-box">
+        <p>
+          <strong>TL;DR:</strong> Alexander's portfolio showcases a track record of driving
+          <strong>multi-million dollar ROI</strong> through <strong>Industrial AI</strong>,
+          <strong>Developer Experience (DevEx)</strong>, and <strong>Design Systems</strong>. Key
+          achievements include scaling global platforms and leading AI-first developer tools at <strong
+            >IFS</strong
+          >.
+        </p>
+      </div>
       <Grid variant="offset">
         {
           projects.map((project) => (

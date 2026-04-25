@@ -2,6 +2,7 @@
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { safeStringify } from '../utils/safe-json';
 
 const schema = {
   '@context': 'https://schema.org',
@@ -43,7 +44,7 @@ const schema = {
   title="About | Alexander Härenstam"
   description="Learn about Alexander Härenstam's background, education, and skills as a Strategic Product Leader at IFS."
 >
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <script is:inline type="application/ld+json" set:html={safeStringify(schema)} />
 
   <div class="stack gap-20">
     <main id="main-content" class="wrapper about">
