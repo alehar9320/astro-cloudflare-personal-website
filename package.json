@@ -47,6 +47,7 @@
   },
   "overrides": {
     "brace-expansion": "^5.0.5",
+    "postcss": "^8.5.10",
     "yaml": "^2.8.3",
     "@actions/github": {
       "undici": "7.24.7"
