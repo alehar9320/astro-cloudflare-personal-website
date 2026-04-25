@@ -1,5 +1,7 @@
 # Scribe's Journal ✍️
 
+## 2026-04-25 - Strategic Impact through Microcopy & Narratives | **Learning:** Reframing standard headings (e.g., "Skills" to "Skills That Drive Impact") and project descriptions with active, outcome-oriented language strengthens the brand's position as a results-driven leader. | **Action:** Audit all static headings and legacy project descriptions for passive voice and replace with benefit-driven, strategic alternatives.
+
 ## 2026-04-18 - Outcome-Oriented Narrative | **Learning:** Shifting from passive skill categories to active, outcome-oriented headings (e.g., "Driving Growth & ROI") reinforces a results-driven Product Management narrative. Quantifying impact in case studies adds tangible credibility. | **Action:** Use active verbs for section headers and seek opportunities to quantify achievements in project descriptions to drive perceived value.
 
 ## 2026-04-10 - Refinement of Strategic Messaging | **Learning:** Balancing brand persona with UX clarity is crucial; over-engineering microcopy with jargon like "strategic overview" can increase user friction. | **Action:** Prioritize plain language in navigational elements (like 404 pages) while reserving strategic narrative for content-heavy sections. Reverted high-level title changes that significantly altered core narrative without explicit approval.

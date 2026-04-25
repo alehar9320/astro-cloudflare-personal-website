@@ -4,7 +4,7 @@ publishDate: 2017-06-01 00:00:00
 img: /assets/stock-1.jpg
 img_alt: Business structure concept
 description: |
-  Master Thesis @ Chalmers University of Technology: A strategic exploration into the keys for digital transformation success—identifying scalable growth opportunities through data-driven innovation.
+  A strategic roadmap for digital transformation—identifying how data-driven innovation unlocks scalable growth and competitive advantage.
 tags:
   - Research
   - Digitalization
@@ -15,7 +15,7 @@ tags:
   <p><strong>TL;DR:</strong> Conducted a <strong>Master Thesis</strong> at <strong>Chalmers</strong> on <strong>Business Model Innovation</strong>, identifying how digitalization enables scalability and data-driven decision-making while uncovering organizational barriers to change.</p>
 </div>
 
-Digital developments have significantly affected the market environment over the last decade. A sense of urgency has put concepts related to business transformation in high demand. Among these concepts, a popular term has been business model innovation; the strategic and innovative re-arrangement of business activities.
+Digital transformation has fundamentally reshaped the competitive landscape, making strategic business model innovation a critical requirement for sustained success. This research explores how organizations can strategically re-arrange their activities to capture new value and maintain a competitive edge in a digital-first economy.
 
 My thesis was conducted at [Chalmers University of Technology](https://www.chalmers.se/en/) and revolved around business model innovation, and the opportunities and barriers that digitalization creates. This was done by:
 
