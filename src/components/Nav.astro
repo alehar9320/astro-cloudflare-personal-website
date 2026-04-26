@@ -184,6 +184,13 @@ const isCurrentPage = (href: string) => {
     line-height: 1.1;
     color: var(--gray-0);
     text-decoration: none;
+    border-radius: 0.5rem;
+    transition: outline-offset var(--theme-transition);
+  }
+
+  .site-title:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
   }
 
   .menu-button {
@@ -198,6 +205,12 @@ const isCurrentPage = (href: string) => {
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
     box-shadow: var(--shadow-md);
+    transition: outline-offset var(--theme-transition);
+  }
+
+  .menu-button:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: -0.5rem;
   }
 
   .menu-button[aria-expanded='true'] {
@@ -281,12 +294,20 @@ const isCurrentPage = (href: string) => {
     padding: var(--icon-padding);
     text-decoration: none;
     color: var(--accent-dark);
-    transition: color var(--theme-transition);
+    transition:
+      color var(--theme-transition),
+      outline-offset var(--theme-transition);
+    border-radius: 0.5rem;
   }
 
   .social:hover,
-  .social:focus {
+  .social:focus-visible {
     color: var(--accent-text-over);
+  }
+
+  .social:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
   }
 
   .theme-toggle {
