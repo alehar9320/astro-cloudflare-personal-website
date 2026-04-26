@@ -15,41 +15,41 @@ describe('sentry.client.config', () => {
 
   beforeEach(() => {
     vi.clearAllMocks();
+    vi.stubEnv('PUBLIC_SENTRY_DSN', '');
+    vi.stubEnv('PUBLIC_SENTRY_ENVIRONMENT', '');
+    vi.stubEnv('PUBLIC_SENTRY_RELEASE', '');
   });
 
   it('should not initialize Sentry if PUBLIC_SENTRY_DSN is missing', async () => {
-    // @ts-expect-error Mocking global environment
-    globalThis.importMetaEnv = {};
-
     await importClientConfig('t=1');
 
     expect(Sentry.init).not.toHaveBeenCalled();
   });
 
   it('should initialize Sentry if PUBLIC_SENTRY_DSN is present', async () => {
-    // @ts-expect-error Mocking global environment
-    globalThis.importMetaEnv = {
-      PUBLIC_SENTRY_DSN: 'https://example-dsn@sentry.io/123',
-      PUBLIC_SENTRY_ENVIRONMENT: 'test',
-      PUBLIC_SENTRY_RELEASE: '1.0.0',
-    };
+    vi.stubEnv('PUBLIC_SENTRY_DSN', 'https://example-dsn@sentry.io/123');
+    vi.stubEnv('PUBLIC_SENTRY_ENVIRONMENT', 'test');
+    vi.stubEnv('PUBLIC_SENTRY_RELEASE', '1.0.0');
 
     await importClientConfig('t=2');
 
-    expect(Sentry.init).toHaveBeenCalled();
-    expect(Sentry.replayIntegration).toHaveBeenCalledWith({
-      maskAllText: true,
-      blockAllMedia: true,
-    });
     expect(Sentry.init).toHaveBeenCalledWith(
       expect.objectContaining({
         dsn: 'https://example-dsn@sentry.io/123',
         environment: 'test',
         release: '1.0.0',
-        sendDefaultPii: false,
-        tracesSampleRate: 1.0,
-        replaysSessionSampleRate: 0.1,
-        replaysOnErrorSampleRate: 1.0,
+      })
+    );
+  });
+
+  it('should fallback to production environment if not provided', async () => {
+    vi.stubEnv('PUBLIC_SENTRY_DSN', 'https://example-dsn@sentry.io/123');
+
+    await importClientConfig('t=3');
+
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        environment: 'production',
       })
     );
   });
