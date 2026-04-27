@@ -11,13 +11,13 @@ vi.mock('@sentry/astro', () => {
 
 describe('sentry.client.config', () => {
   const importClientConfig = async (suffix: string) =>
-    import(/* @vite-ignore */ `../sentry.client.config?${suffix}`);
+    import(/* @vite-ignore */ `../../sentry.client.config?${suffix}`);
 
   beforeEach(() => {
     vi.clearAllMocks();
   });
 
-  it('should not initialize Sentry if PUBLIC_SENTRY_DSN is missing', async () => {
+  it('should not initialize Sentry if SENTRY_DSN is missing', async () => {
     // @ts-expect-error Mocking global environment
     globalThis.importMetaEnv = {};
 
