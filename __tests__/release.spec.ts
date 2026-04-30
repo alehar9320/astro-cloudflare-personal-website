@@ -139,4 +139,13 @@ describe('release script', () => {
     expect(exitSpy).toHaveBeenCalledWith(1);
     exitSpy.mockRestore();
   });
+
+  it('skips writing to GITHUB_OUTPUT if the environment variable is not set', async () => {
+    delete process.env.GITHUB_OUTPUT;
+    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('v1.0.0'));
+
+    await import('../scripts/release.js?t=' + (Date.now() + 6));
+
+    expect(fsMock.default.appendFileSync).not.toHaveBeenCalled();
+  });
 });
