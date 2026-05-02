@@ -11,12 +11,20 @@ const sentryDsn = env?.SENTRY_DSN || env?.PUBLIC_SENTRY_DSN;
 if (sentryDsn) {
   Sentry.init({
     dsn: sentryDsn,
-    environment: env.SENTRY_ENVIRONMENT || env.PUBLIC_SENTRY_ENVIRONMENT || 'production',
-    release: env.SENTRY_RELEASE || env.PUBLIC_SENTRY_RELEASE,
-    integrations: [Sentry.replayIntegration({ maskAllText: true, blockAllMedia: true })],
+    environment:
+      import.meta.env.SENTRY_ENVIRONMENT ||
+      import.meta.env.PUBLIC_SENTRY_ENVIRONMENT ||
+      'production',
+    release: import.meta.env.SENTRY_RELEASE || import.meta.env.PUBLIC_SENTRY_RELEASE,
     sendDefaultPii: false,
     tracesSampleRate: 1.0,
     replaysSessionSampleRate: 0.1,
     replaysOnErrorSampleRate: 1.0,
+    integrations: [
+      Sentry.replayIntegration({
+        maskAllText: true,
+        blockAllMedia: true,
+      }),
+    ],
   });
 }
