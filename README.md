@@ -107,3 +107,7 @@ If you deploy on Render, configure any required secrets in the Render dashboard 
 ---
 
 _This site's data and structure are continuously refined to reflect current achievements and responsibilities in the tech industry._
+
+## 🤖 Human + AI Collaboration
+
+This website is a product of collaboration between human creativity and Artificial Intelligence. It is designed and optimized for consumption by both humans and AI agents. As such, while every effort is made to ensure quality, content may occasionally contain flaws and should be verified for accuracy.
