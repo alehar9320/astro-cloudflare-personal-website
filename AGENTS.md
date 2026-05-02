@@ -5,6 +5,7 @@
 - **Mission:** A personal portfolio website for Alexander Härenstam, showcasing professional journey, skills, projects, and publications. Built with a focus on speed, SEO, and modern web standards.
 - **Stack:**
   - **Framework:** Astro (v4+)
+- **Collaboration:** This site is co-created by humans and AI. It is intentionally optimized for consumption by both humans and AI agents (AEO/GEO).
   - **Runtime & Deployment:** Cloudflare Workers + Assets (Unified Workers-First architecture)
   - **Language:** TypeScript (Strict mode)
   - **Styling:** Vanilla CSS
