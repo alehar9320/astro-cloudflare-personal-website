@@ -1,5 +1,7 @@
 # Scribe's Journal ✍️
 
+## 2026-05-02 - Active Headings & Approachable Microcopy | **Learning:** Shifting homepage headings from passive labels (e.g., "Industry Impact") to active, outcome-oriented ones (e.g., "Amplifying Industry Impact") immediately signals leadership and agency. Additionally, replacing technical terms like "Release notes" with "Latest Updates" in the footer reduces cognitive load for non-technical visitors. | **Action:** Prioritize active verbs for all section headers and audit footer/navigation for developer-centric jargon that can be simplified for a broader audience.
+
 ## 2026-04-25 - Strategic Impact through Microcopy & Narratives | **Learning:** Reframing standard headings (e.g., "Skills" to "Skills That Drive Impact") and project descriptions with active, outcome-oriented language strengthens the brand's position as a results-driven leader. | **Action:** Audit all static headings and legacy project descriptions for passive voice and replace with benefit-driven, strategic alternatives.
 
 ## 2026-04-18 - Outcome-Oriented Narrative | **Learning:** Shifting from passive skill categories to active, outcome-oriented headings (e.g., "Driving Growth & ROI") reinforces a results-driven Product Management narrative. Quantifying impact in case studies adds tangible credibility. | **Action:** Use active verbs for section headers and seek opportunities to quantify achievements in project descriptions to drive perceived value.

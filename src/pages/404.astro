@@ -1,8 +1,28 @@
 ---
 import Hero from '../components/Hero.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import CallToAction from '../components/CallToAction.astro';
+import Icon from '../components/Icon.astro';
 ---
 
 <BaseLayout title="Not Found" description="404 Error — this page was not found">
-  <Hero title="Page Not Found" tagline="The page you're looking for could not be found." />
+  <div class="stack gap-20">
+    <main class="wrapper stack gap-8">
+      <Hero title="Page Not Found" tagline="The page you're looking for could not be found." />
+      <div class="cta-container">
+        <CallToAction href="/">
+          Back Home
+          <Icon icon="arrow-right" size="1.2em" />
+        </CallToAction>
+      </div>
+    </main>
+  </div>
 </BaseLayout>
+
+<style>
+  .cta-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+</style>
