@@ -60,7 +60,23 @@ const schema = {
       </header>
       <main class="wrapper">
         <div class="stack gap-10 content">
-          {entry.data.img && <img src={entry.data.img} alt={entry.data.img_alt || ''} />}
+          {
+            /*
+             Optimization: Removed loading="lazy" and added fetchpriority="high"
+             because this image is typically the Largest Contentful Paint (LCP)
+             element on project pages. Decoding="async" prevents main thread jank.
+          */
+          }
+          {
+            entry.data.img && (
+              <img
+                src={entry.data.img}
+                alt={entry.data.img_alt || ''}
+                fetchpriority="high"
+                decoding="async"
+              />
+            )
+          }
           <div class="content">
             <Content />
           </div>

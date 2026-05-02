@@ -73,11 +73,19 @@ const schema = {
           </div>
         </Hero>
 
+        {
+          /*
+           Optimization: fetchpriority="high" prioritizes this LCP element.
+           decoding="async" ensures image decoding doesn't block the main thread.
+        */
+        }
         <img
           alt="Alexander Härenstam smiling in a red plaid shirt and tortoise shell glasses"
           width="480"
           height="620"
           src="/assets/portrait.png"
+          fetchpriority="high"
+          decoding="async"
         />
       </header>
 
