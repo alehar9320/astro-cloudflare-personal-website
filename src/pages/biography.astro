@@ -1,0 +1,118 @@
+---
+import ContactCTA from '../components/ContactCTA.astro';
+import Hero from '../components/Hero.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': 'https://harenstam.com/#person',
+      name: 'Alexander Härenstam',
+      jobTitle: 'Strategic Product Leader',
+      description:
+        'Strategic Product Leader specializing in Developer Experience (DevEx) and Industrial AI at IFS.',
+      url: 'https://harenstam.com',
+      sameAs: ['https://www.linkedin.com/in/alehar'],
+    },
+    {
+      '@type': 'WebPage',
+      '@id': 'https://harenstam.com/biography/#webpage',
+      url: 'https://harenstam.com/biography',
+      name: 'Biography | Alexander Härenstam',
+      about: { '@id': 'https://harenstam.com/#person' },
+      description:
+        'Explore the professional journey of Alexander Härenstam, from software engineering to strategic product leadership.',
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="Biography | Alexander Härenstam"
+  description="Explore the professional journey of Alexander Härenstam, from software engineering to strategic product leadership."
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+  <div class="stack gap-20">
+    <main id="main-content" class="wrapper about">
+      <Hero title="Biography" tagline="A journey through technology, strategy, and innovation." />
+
+      <section>
+        <h2 class="section-title">The Journey</h2>
+        <div class="content">
+          <p>
+            Alexander Härenstam is a strategic Product Leader with a deep-rooted passion for
+            software engineering and innovation management. His journey began at Chalmers University
+            of Technology, where he earned a B.Sc. in Software Engineering and later an M.Sc. in
+            Management and Economics of Innovation.
+          </p>
+          <p>
+            With over eight years of experience at IFS, Alexander has played a pivotal role in
+            shaping the company's product experience. From leading the development of the IFS Design
+            System to his current focus on Developer Experience (DevEx) and Industrial AI, he has
+            consistently driven value through technological innovation.
+          </p>
+          <p>
+            Alexander thrives at the intersection of product, design, and technology. He is a firm
+            believer in the power of AI-first mindsets and data-driven decision-making to solve
+            complex industrial challenges and improve how global engineering teams work.
+          </p>
+          <p>
+            <em
+              >Full biography content is currently being expanded. Check back soon for a deeper look
+              into the projects and philosophies that drive Alexander's work.</em
+            >
+          </p>
+        </div>
+      </section>
+    </main>
+
+    <ContactCTA />
+  </div>
+</BaseLayout>
+
+<style>
+  .about {
+    display: flex;
+    flex-direction: column;
+    gap: 3.5rem;
+  }
+
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    color: var(--gray-200);
+  }
+
+  .section-title {
+    grid-column-start: 1;
+    font-size: var(--text-xl);
+    color: var(--gray-0);
+  }
+
+  .content {
+    grid-column: 2 / 4;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 50em) {
+    .about {
+      display: grid;
+      grid-template-columns: 1fr 60% 1fr;
+    }
+
+    .about > :global(:first-child) {
+      grid-column-start: 2;
+    }
+
+    section {
+      display: contents;
+      font-size: var(--text-lg);
+    }
+  }
+</style>
