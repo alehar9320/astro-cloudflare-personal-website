@@ -29,6 +29,11 @@ const currentYear = new Date().getFullYear();
         Report an issue
       </a>
     </p>
+    <p><a href="/whats-new" class="version-link" data-latest-version>Latest Updates</a></p>
+    <p class="ai-notice">
+      Human + AI Collaboration. Optimized for humans & agents. Content may have flaws; verify for
+      accuracy.
+    </p>
   </div>
   <p class="socials">
     <a href="https://www.linkedin.com/in/alehar/"> LinkedIn</a>
@@ -125,6 +130,12 @@ const currentYear = new Date().getFullYear();
     color: var(--gray-600);
   }
 
+  .ai-notice {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    line-height: 1.5;
+  }
+
   /* Source icon link styling: keep visual weight minimal */
   .source-link {
     display: inline-flex;
@@ -186,6 +197,10 @@ const currentYear = new Date().getFullYear();
       flex-direction: row;
       gap: 1rem;
       flex-wrap: wrap;
+    }
+
+    .ai-notice {
+      flex-basis: 100%;
     }
 
     .socials {
