@@ -19,7 +19,16 @@ const currentYear = new Date().getFullYear();
       <Icon icon="rocket-launch" size="1.2em" />
     </p>
     <p>&copy; {currentYear} Alexander Härenstam</p>
-    <p><a href="/whats-new" class="version-link" data-latest-version>Latest Updates</a></p>
+    <p>
+      <a href="/whats-new" class="version-link" data-latest-version>Latest Updates</a>
+      <span class="separator" aria-hidden="true">&bull;</span>
+      <a
+        href="https://github.com/alehar9320/astro-cloudflare-personal-website/issues"
+        class="version-link"
+      >
+        Report an issue
+      </a>
+    </p>
   </div>
   <p class="socials">
     <a href="https://www.linkedin.com/in/alehar/"> LinkedIn</a>
@@ -103,6 +112,17 @@ const currentYear = new Date().getFullYear();
   .version-link:hover,
   .version-link:focus {
     color: var(--gray-200);
+  }
+
+  .version-link:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+    border-radius: 0.25rem;
+  }
+
+  .separator {
+    padding: 0 0.5rem;
+    color: var(--gray-600);
   }
 
   /* Source icon link styling: keep visual weight minimal */
