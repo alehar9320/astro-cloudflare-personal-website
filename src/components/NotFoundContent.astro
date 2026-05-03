@@ -1,0 +1,25 @@
+---
+import Hero from './Hero.astro';
+import CallToAction from './CallToAction.astro';
+import Icon from './Icon.astro';
+---
+
+<div class="stack gap-20">
+  <main class="wrapper stack gap-8">
+    <Hero title="Page Not Found" tagline="The page you're looking for could not be found." />
+    <div class="cta-container">
+      <CallToAction href="/">
+        Back Home
+        <Icon icon="arrow-right" size="1.2em" />
+      </CallToAction>
+    </div>
+  </main>
+</div>
+
+<style>
+  .cta-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 2rem;
+  }
+</style>
