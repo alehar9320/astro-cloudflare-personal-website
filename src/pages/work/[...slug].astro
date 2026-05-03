@@ -23,6 +23,11 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
+
+if (!entry) {
+  return Astro.redirect('/404');
+}
+
 const { Content } = await render(entry);
 
 const schema = {
@@ -60,7 +65,16 @@ const schema = {
       </header>
       <main class="wrapper">
         <div class="stack gap-10 content">
-          {entry.data.img && <img src={entry.data.img} alt={entry.data.img_alt || ''} />}
+          {
+            entry.data.img && (
+              <img
+                src={entry.data.img}
+                alt={entry.data.img_alt || ''}
+                fetchpriority="high"
+                decoding="async"
+              />
+            )
+          }
           <div class="content">
             <Content />
           </div>
