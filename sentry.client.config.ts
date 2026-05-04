@@ -13,7 +13,13 @@ if (sentryDsn) {
     dsn: sentryDsn,
     environment: env.SENTRY_ENVIRONMENT || env.PUBLIC_SENTRY_ENVIRONMENT || 'production',
     release: env.SENTRY_RELEASE || env.PUBLIC_SENTRY_RELEASE,
-    integrations: [Sentry.replayIntegration({ maskAllText: true, blockAllMedia: true })],
+    integrations: [
+      Sentry.replayIntegration({
+        maskAllText: true,
+        blockAllMedia: true,
+        maskAllInputs: true,
+      }),
+    ],
     sendDefaultPii: false,
     tracesSampleRate: 1.0,
     replaysSessionSampleRate: 0.1,

@@ -52,7 +52,30 @@ describe('sentry.client.config', () => {
     expect(Sentry.replayIntegration).toHaveBeenCalledWith({
       maskAllText: true,
       blockAllMedia: true,
+      maskAllInputs: true,
     });
+  });
+
+  it('should prefer unprefixed SENTRY_ environment variables', async () => {
+    // @ts-expect-error Mocking global environment
+    globalThis.importMetaEnv = {
+      SENTRY_DSN: 'https://unprefixed@sentry.io/123',
+      PUBLIC_SENTRY_DSN: 'https://prefixed@sentry.io/123',
+      SENTRY_ENVIRONMENT: 'unprefixed-env',
+      PUBLIC_SENTRY_ENVIRONMENT: 'prefixed-env',
+      SENTRY_RELEASE: 'unprefixed-release',
+      PUBLIC_SENTRY_RELEASE: 'prefixed-release',
+    };
+
+    await importClientConfig('t=prefer-unprefixed');
+
+    expect(Sentry.init).toHaveBeenCalledWith(
+      expect.objectContaining({
+        dsn: 'https://unprefixed@sentry.io/123',
+        environment: 'unprefixed-env',
+        release: 'unprefixed-release',
+      })
+    );
   });
 
   it('should fallback to "production" environment if not specified', async () => {
