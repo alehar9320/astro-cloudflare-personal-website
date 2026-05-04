@@ -31,3 +31,7 @@ pnpm-debug.log*
 
 # codex plans
 conductor/
+
+#logs
+wrangler_dev.log
+dev_server.log
