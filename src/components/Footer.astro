@@ -29,7 +29,6 @@ const currentYear = new Date().getFullYear();
         Report an issue
       </a>
     </p>
-    <p><a href="/whats-new" class="version-link" data-latest-version>Latest Updates</a></p>
     <p class="ai-notice">
       Human + AI Collaboration. Optimized for humans & agents. Content may have flaws; verify for
       accuracy.
@@ -60,7 +59,7 @@ const currentYear = new Date().getFullYear();
   if (versionLink instanceof HTMLAnchorElement) {
     fetchGitHubReleases().then((releases) => {
       if (releases[0]) {
-        versionLink.textContent = `v${releases[0].version}`;
+        versionLink.textContent = `Latest Updates (v${releases[0].version})`;
         return;
       }
 
@@ -102,6 +101,7 @@ const currentYear = new Date().getFullYear();
   .socials {
     display: flex;
     justify-content: center;
+    align-items: center;
     gap: 1rem;
     flex-wrap: wrap;
   }
@@ -132,7 +132,7 @@ const currentYear = new Date().getFullYear();
 
   .ai-notice {
     font-size: 0.75rem;
-    color: var(--gray-500);
+    color: var(--gray-600);
     line-height: 1.5;
   }
 
