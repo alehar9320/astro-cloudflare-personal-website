@@ -22,20 +22,18 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^13.2.1",
+    "@astrojs/cloudflare": "^13.1.10",
     "@astrojs/node": "^10.0.5",
-    "@sentry/astro": "^10.50.0",
-    "@sentry/cloudflare": "^10.50.0",
-    "astro": "^6.1.9",
-    "posthog-js": "^1.372.6",
-    "posthog-node": "^5.33.0",
-    "wrangler": "^4.85.0"
+    "@sentry/astro": "^10.49.0",
+    "@sentry/cloudflare": "^10.49.0",
+    "astro": "^6.1.8",
+    "wrangler": "^4.83.0"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
-    "@codecov/vite-plugin": "^2.0.1",
-    "@typescript-eslint/parser": "^8.59.0",
-    "@vitest/coverage-v8": "^4.1.5",
+    "@codecov/vite-plugin": "^1.9.1",
+    "@typescript-eslint/parser": "^8.58.2",
+    "@vitest/coverage-v8": "^4.1.4",
     "@vitest/ui": "^4.1.2",
     "eslint": "^10.2.1",
     "eslint-plugin-astro": "^1.7.0",
@@ -44,7 +42,7 @@
     "lint-staged": "^16.4.0",
     "prettier": "^3.8.3",
     "prettier-plugin-astro": "^0.14.1",
-    "typescript-eslint": "^8.59.0",
+    "typescript-eslint": "^8.58.2",
     "vitest": "^4.1.2"
   },
   "overrides": {

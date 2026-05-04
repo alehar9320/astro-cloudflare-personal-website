@@ -4,12 +4,11 @@ import { type CollectionEntry, getCollection, render } from 'astro:content';
 import ContactCTA from '../../components/ContactCTA.astro';
 import Hero from '../../components/Hero.astro';
 import Icon from '../../components/Icon.astro';
-import NotFoundContent from '../../components/NotFoundContent.astro';
 import Pill from '../../components/Pill.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 interface Props {
-  entry?: CollectionEntry<'work'>;
+  entry: CollectionEntry<'work'>;
 }
 
 // This is a dynamic route that generates a page for every Markdown file in src/content/
@@ -24,78 +23,52 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
+const { Content } = await render(entry);
 
-if (!entry) {
-  Astro.response.status = 404;
-}
-
-const renderedEntry = entry ? await render(entry) : null;
-const Content = renderedEntry?.Content;
-
-const schema = entry
-  ? {
-      '@context': 'https://schema.org',
-      '@type': 'CreativeWork',
-      name: entry.data.title,
-      description: entry.data.description,
-      datePublished: entry.data.publishDate.toISOString(),
-      author: {
-        '@type': 'Person',
-        name: 'Alexander Härenstam',
-        url: 'https://harenstam.com',
-      },
-      image: entry.data.img ? `https://harenstam.com${entry.data.img}` : undefined,
-      keywords: entry.data.tags.join(', '),
-    }
-  : null;
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'CreativeWork',
+  name: entry.data.title,
+  description: entry.data.description,
+  datePublished: entry.data.publishDate.toISOString(),
+  author: {
+    '@type': 'Person',
+    name: 'Alexander Härenstam',
+    url: 'https://harenstam.com',
+  },
+  image: entry.data.img ? `https://harenstam.com${entry.data.img}` : undefined,
+  keywords: entry.data.tags.join(', '),
+};
 ---
 
-<BaseLayout
-  title={entry ? entry.data.title : 'Not Found'}
-  description={entry ? entry.data.description : '404 Error — this page was not found'}
->
-  {schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />}
-  {
-    entry ? (
-      <div class="stack gap-20">
-        <div class="stack gap-15">
-          <header>
-            <div class="wrapper stack gap-2">
-              <a class="back-link" href="/work/">
-                <Icon icon="arrow-left" /> Work
-              </a>
-              <Hero title={entry.data.title} align="start">
-                <div class="details">
-                  <div class="tags">
-                    {entry.data.tags.map((t: unknown) => (
-                      <Pill>{t}</Pill>
-                    ))}
-                  </div>
-                  <p class="description">{entry.data.description}</p>
-                </div>
-              </Hero>
+<BaseLayout title={entry.data.title} description={entry.data.description}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <div class="stack gap-20">
+    <div class="stack gap-15">
+      <header>
+        <div class="wrapper stack gap-2">
+          <a class="back-link" href="/work/"><Icon icon="arrow-left" /> Work</a>
+          <Hero title={entry.data.title} align="start">
+            <div class="details">
+              <div class="tags">
+                {entry.data.tags.map((t: unknown) => <Pill>{t}</Pill>)}
+              </div>
+              <p class="description">{entry.data.description}</p>
             </div>
-          </header>
-          <main class="wrapper">
-            <div class="stack gap-10 content">
-              {entry.data.img && (
-                <img
-                  src={entry.data.img}
-                  alt={entry.data.img_alt || ''}
-                  fetchpriority="high"
-                  decoding="async"
-                />
-              )}
-              <div class="content">{Content && <Content />}</div>
-            </div>
-          </main>
+          </Hero>
         </div>
-        <ContactCTA />
-      </div>
-    ) : (
-      <NotFoundContent />
-    )
-  }
+      </header>
+      <main class="wrapper">
+        <div class="stack gap-10 content">
+          {entry.data.img && <img src={entry.data.img} alt={entry.data.img_alt || ''} />}
+          <div class="content">
+            <Content />
+          </div>
+        </div>
+      </main>
+    </div>
+    <ContactCTA />
+  </div>
 </BaseLayout>
 
 <style>
@@ -173,12 +146,6 @@ const schema = entry
   .content :global(a:hover),
   .content :global(a:focus) {
     text-decoration-color: currentColor;
-  }
-
-  .back-link:focus-visible {
-    outline: 2px solid var(--accent-regular);
-    outline-offset: 4px;
-    border-radius: 0.25rem;
   }
 
   @media (min-width: 50em) {

@@ -1,11 +1,5 @@
 # Palette 🎨 - UX & Accessibility Journal
 
-## 2025-05-17 - Avoiding Deceptive Interactivity and Unifying Focus States
-
-**Learning:** "Deceptive interactivity" (e.g., using `cursor: pointer` or "lift" effects on non-clickable elements like badges) creates a broken promise to the user, leading to frustration when clicking doesn't trigger an action. Additionally, links with custom classes often miss the global focus indicator styles, creating an inconsistent experience for keyboard users.
-
-**Action:** Removed pointer cursors and interactive transformations from the `Pill` component to better reflect its status as a static badge. Unified focus states by explicitly adding `:focus-visible` outlines to navigational links with classes (`.back-link`, `.version-link`), ensuring a consistent 2px accent outline with 4px offset across the site.
-
 ## 2025-05-15 - Improving Keyboard Accessibility with Enhanced Focus States
 
 **Learning:** When implementing a glassmorphic design with subtle backgrounds and lift effects (like `translateY`), standard focus outlines can feel disconnected or get lost in the translucency. Using `:focus-visible` specifically allows for high-visibility outlines that only appear for keyboard users, avoiding visual noise for mouse users. Combining the focus state with the same "lift" effect used on hover provides a consistent spatial mental model for the interface.
