@@ -99,6 +99,8 @@ At build time, Render sets `RENDER=true`, which switches Astro to the standalone
 
 If you deploy on Render, configure any required secrets in the Render dashboard environment settings. Do not commit or mirror local `.env` values into the repository.
 
+A live secondary deployment is maintained at [https://astro-cloudflare-personal-website-web.onrender.com/](https://astro-cloudflare-personal-website-web.onrender.com/). This instance is compatible with `jules.google.com`, enabling autonomous AI agents to debug and verify changes against a live Node.js environment.
+
 ## 📬 Contact & Connect
 
 - **LinkedIn:** [Alexander Härenstam](https://www.linkedin.com/in/alehar/)
