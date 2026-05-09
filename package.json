@@ -22,7 +22,7 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^13.2.1",
+    "@astrojs/cloudflare": "^13.3.0",
     "@astrojs/node": "^10.0.5",
     "@sentry/astro": "^10.50.0",
     "@sentry/cloudflare": "^10.50.0",
