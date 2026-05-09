@@ -47,22 +47,22 @@ describe('sentry.server.config', () => {
 
   it('should prefer PUBLIC_SENTRY_DSN if SENTRY_DSN is missing', async () => {
     delete process.env.SENTRY_DSN;
-    process.env.PUBLIC_SENTRY_DSN = 'https://prefixed@sentry.io/123';
-    process.env.PUBLIC_SENTRY_ENVIRONMENT = 'prefixed-env';
-    process.env.PUBLIC_SENTRY_RELEASE = 'prefixed-release';
+    process.env.PUBLIC_SENTRY_DSN = 'https://public-dsn@sentry.io/456';
+    process.env.PUBLIC_SENTRY_ENVIRONMENT = 'staging';
+    process.env.PUBLIC_SENTRY_RELEASE = '2.0.0';
 
-    await importServerConfig('t=prefer-prefixed');
+    await importServerConfig('t=3');
 
     expect(Sentry.init).toHaveBeenCalledWith(
       expect.objectContaining({
-        dsn: 'https://prefixed@sentry.io/123',
-        environment: 'prefixed-env',
-        release: 'prefixed-release',
+        dsn: 'https://public-dsn@sentry.io/456',
+        environment: 'staging',
+        release: '2.0.0',
       })
     );
   });
 
-  it('should fallback to "production" environment if not specified', async () => {
+  it('should fallback to "production" environment if no environment is provided', async () => {
     process.env.SENTRY_DSN = 'https://example-dsn@sentry.io/123';
     delete process.env.SENTRY_ENVIRONMENT;
     delete process.env.PUBLIC_SENTRY_ENVIRONMENT;
