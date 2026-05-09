@@ -20,7 +20,6 @@ describe('sentry.server.config', () => {
 
   it('should not initialize Sentry if SENTRY_DSN is missing', async () => {
     delete process.env.SENTRY_DSN;
-    delete process.env.PUBLIC_SENTRY_DSN;
 
     await importServerConfig('t=1');
 
@@ -45,8 +44,7 @@ describe('sentry.server.config', () => {
     );
   });
 
-  it('should prefer PUBLIC_SENTRY_DSN if SENTRY_DSN is missing', async () => {
-    delete process.env.SENTRY_DSN;
+  it('should initialize Sentry using PUBLIC_ prefixes if standard variables are missing', async () => {
     process.env.PUBLIC_SENTRY_DSN = 'https://public-dsn@sentry.io/456';
     process.env.PUBLIC_SENTRY_ENVIRONMENT = 'staging';
     process.env.PUBLIC_SENTRY_RELEASE = '2.0.0';
@@ -67,7 +65,7 @@ describe('sentry.server.config', () => {
     delete process.env.SENTRY_ENVIRONMENT;
     delete process.env.PUBLIC_SENTRY_ENVIRONMENT;
 
-    await importServerConfig('t=env-fallback');
+    await importServerConfig('t=4');
 
     expect(Sentry.init).toHaveBeenCalledWith(
       expect.objectContaining({
