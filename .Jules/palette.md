@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-10 - Eliminating Deceptive Interactivity and Improving Text Accessibility
+
+**Learning:** "Deceptive interactivity" (e.g., using `cursor: pointer`, background-position shifts, or "lift" effects on non-clickable elements like badges) creates a broken promise to the user, leading to frustration when clicking doesn't trigger an action. Furthermore, disabling text selection on informational elements (`user-select: none`) creates an accessibility barrier for users who may need to copy information for reference or use assistive technologies.
+
+**Action:** Removed hover transformations, background-position shifts, and pointer cursors from the `Pill` component. Removed `user-select: none` to ensure text accessibility and selection are preserved. This reinforces the `Pill` as a static, informational badge rather than an interactive element.
+
 ## 2025-05-17 - Avoiding Deceptive Interactivity and Unifying Focus States
 
 **Learning:** "Deceptive interactivity" (e.g., using `cursor: pointer` or "lift" effects on non-clickable elements like badges) creates a broken promise to the user, leading to frustration when clicking doesn't trigger an action. Additionally, links with custom classes often miss the global focus indicator styles, creating an inconsistent experience for keyboard users.
