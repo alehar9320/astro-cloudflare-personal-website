@@ -11,3 +11,5 @@
 ## 2026-05-05 - Implementing Persistent AI Quality Guardrails | **Learning:** AI agents require explicit, file-based protocols to maintain repository integrity and prevent unverified code from being committed. | **Action:** Created `.aiconfig.md` containing a mandatory four-stage Quality Pipeline (Format, Lint, Check, Test) to be executed before every push.
 
 ## 2026-05-07 - Refining UX Interactivity and Strengthening Type Inference | **Learning:** Non-interactive elements must avoid deceptive hover effects to maintain user trust, and redundant type casts should be removed to leverage TypeScript's native inference from schemas. | **Action:** Removed hover animations from the `Pill` component and eliminated unnecessary `(t: unknown)` casts in `src/pages/work/[...slug].astro`.
+
+## 2026-05-16 - Resolving Astro-Node Version Mismatch Runtime Error | **Learning:** Version drift between Astro core and its adapters (e.g., @astrojs/node) can lead to runtime TypeErrors like "getAdapterLogger is not a function" due to internal API changes. | **Action:** Synchronized `astro` and its adapters to their latest compatible versions in `package.json`.
