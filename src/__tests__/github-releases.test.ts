@@ -156,4 +156,36 @@ describe('github releases utility', () => {
     expect(fetchMock.mock.calls[0][1].headers).not.toHaveProperty('Authorization');
     vi.unstubAllGlobals();
   });
+
+  it('rejects invalid GitHub API URLs', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const fetchMock = vi.fn();
+
+    const result = await fetchGitHubReleases(fetchMock as typeof fetch, 'https://malicious.com');
+
+    expect(result).toEqual([]);
+    expect(consoleSpy).toHaveBeenCalledWith('Invalid GitHub API URL');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('redacts tokens from error messages', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const fetchMock = vi.fn().mockRejectedValue(new Error('failed with token ghp_12345abcdef'));
+
+    await fetchGitHubReleases(fetchMock as typeof fetch);
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      'GitHub releases request errored:',
+      'failed with token [REDACTED]'
+    );
+  });
+
+  it('handles non-Error objects in catch block', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const fetchMock = vi.fn().mockRejectedValue('not an error object');
+
+    await fetchGitHubReleases(fetchMock as typeof fetch);
+
+    expect(consoleSpy).toHaveBeenCalledWith('GitHub releases request errored:', 'Unknown error');
+  });
 });
