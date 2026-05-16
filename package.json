@@ -27,7 +27,7 @@
     "@sentry/astro": "^10.50.0",
     "@sentry/cloudflare": "^10.50.0",
     "astro": "^6.2.1",
-    "posthog-js": "^1.372.6",
+    "posthog-js": "^1.372.10",
     "posthog-node": "^5.33.0",
     "wrangler": "^4.85.0"
   },
