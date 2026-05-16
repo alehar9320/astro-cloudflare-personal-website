@@ -121,12 +121,14 @@ describe('github releases utility', () => {
     });
   });
 
-  it('uses GITHUB_TOKEN and logs rate limits on error', async () => {
+  it('uses GITHUB_TOKEN and logs status on error', async () => {
     vi.stubEnv('GITHUB_TOKEN', 'test-token');
     vi.stubGlobal('process', { env: { GITHUB_TOKEN: 'test-token' } });
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const fetchMock = vi.fn().mockResolvedValue({
       ok: false,
+      status: 403,
+      statusText: 'Forbidden',
       headers: new Map([['x-ratelimit-limit', '60']]),
     });
 
@@ -140,7 +142,7 @@ describe('github releases utility', () => {
     );
     expect(consoleSpy).toHaveBeenCalledWith(
       'GitHub releases request failed',
-      expect.objectContaining({ rateLimitLimit: '60' })
+      expect.objectContaining({ status: 403, statusText: 'Forbidden' })
     );
 
     vi.unstubAllGlobals();
