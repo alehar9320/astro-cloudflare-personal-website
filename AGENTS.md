@@ -90,3 +90,4 @@ Refer to the individual `SKILL.md` files in each skill folder for detailed guida
 - **CI:** GitHub Actions (`ci.yml`) runs linting, formatting checks, tests, and builds on every PR.
 - **CD:** Cloudflare automatically deploys pushes to `main` through its Git integration.
 - **Release:** GitHub Actions runs `scripts/release.js` on `main` and creates the GitHub release for that version without mutating `main`.
+- **Secondary Debugging Instance (Render):** A live Node.js deployment is available at `https://astro-cloudflare-personal-website-web.onrender.com/`. This instance is compatible with `jules.google.com` and allows autonomous AI agents to perform live debugging and verification of the application in a production-like environment.
