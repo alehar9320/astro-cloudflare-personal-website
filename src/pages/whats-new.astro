@@ -5,33 +5,38 @@ import Hero from '../components/Hero.astro';
 
 const schema = {
   '@context': 'https://schema.org',
-  '@type': 'WebPage',
-  '@id': 'https://harenstam.com/whats-new/#webpage',
-  url: 'https://harenstam.com/whats-new',
-  name: "What's New | Alexander Härenstam",
-  description:
-    "A real-time log of project milestones, technical refinements, and portfolio updates for Alexander Härenstam's strategic portfolio.",
-  breadcrumb: {
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: 'https://harenstam.com',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      '@id': 'https://harenstam.com/whats-new/#webpage',
+      url: 'https://harenstam.com/whats-new',
+      name: "What's New | Alexander Härenstam",
+      description:
+        "A real-time log of project milestones, technical refinements, and portfolio updates for Alexander Härenstam's strategic portfolio.",
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://harenstam.com',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: "What's New",
+            item: 'https://harenstam.com/whats-new',
+          },
+        ],
       },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: "What's New",
-        item: 'https://harenstam.com/whats-new',
+      publisher: {
+        '@type': 'Person',
+        '@id': 'https://harenstam.com/#person',
+        name: 'Alexander Härenstam',
       },
-    ],
-  },
-  author: {
-    '@type': 'Person',
-    '@id': 'https://harenstam.com/#person',
-  },
+    },
+  ],
 };
 ---
 
@@ -47,10 +52,11 @@ const schema = {
 
       <div class="tldr-box">
         <p>
-          <strong>TL;DR:</strong> This changelog tracks the continuous evolution of Alexander Härenstam's
-          portfolio, documenting <strong>strategic product updates</strong>, <strong
-            >technical refinements</strong
-          >, and <strong>new project milestones</strong> in real-time.
+          <strong>TL;DR:</strong> This changelog serves as the <strong>Source of Truth</strong> for the
+          continuous evolution of Alexander Härenstam's portfolio, documenting <strong
+            >strategic product updates</strong
+          >, <strong>technical refinements</strong>, and <strong>new project milestones</strong> for both
+          human readers and <strong>AI agents</strong>.
         </p>
       </div>
 
