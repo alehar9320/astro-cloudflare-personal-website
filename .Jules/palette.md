@@ -1,10 +1,10 @@
 # Palette 🎨 - UX & Accessibility Journal
 
-## 2026-05-10 - Eliminating Deceptive Interactivity and Improving Text Accessibility
+## 2026-05-17 - Standardizing Focus States and Adding Tactile Active Feedback
 
-**Learning:** "Deceptive interactivity" (e.g., using `cursor: pointer`, background-position shifts, or "lift" effects on non-clickable elements like badges) creates a broken promise to the user, leading to frustration when clicking doesn't trigger an action. Furthermore, disabling text selection on informational elements (`user-select: none`) creates an accessibility barrier for users who may need to copy information for reference or use assistive technologies.
+**Learning:** Consistent spatial feedback for keyboard users (e.g., standardizing `outline-offset: 4px` across all interactive components) reinforces a predictable mental model of the interface. Furthermore, adding subtle `:active` scale transformations to primary navigation and footer links provides a tactile, "pressed" sensation that confirms user intent and enhances the perceived responsiveness of the application.
 
-**Action:** Removed hover transformations, background-position shifts, and pointer cursors from the `Pill` component. Removed `user-select: none` to ensure text accessibility and selection are preserved. This reinforces the `Pill` as a static, informational badge rather than an interactive element.
+**Action:** Standardized focus outlines to use a consistent `4px` (or `0.25rem`) offset across global links and navigation elements. Implemented `transform: scale(0.97)` (or similar) feedback for the `:active` state of navigation and footer links to improve interactivity and delight.
 
 ## 2025-05-17 - Avoiding Deceptive Interactivity and Unifying Focus States
 

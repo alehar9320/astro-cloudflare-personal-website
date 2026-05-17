@@ -178,7 +178,7 @@ a:not([class]):hover {
 a:not([class]):focus-visible {
   text-decoration-color: currentColor;
   outline: 2px solid var(--accent-regular);
-  outline-offset: 0.2em;
+  outline-offset: 0.25rem;
   border-radius: 0.25em;
 }
 

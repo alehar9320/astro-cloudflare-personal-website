@@ -15,7 +15,7 @@ const currentYear = new Date().getFullYear();
         href="https://www.google.com/maps/place/Sweden/"
         target="_blank"
         rel="noopener noreferrer">Sweden</a
-      > 🇸🇪 with <a href="https://astro.build/">Astro</a>
+      > 🇸🇪 with <a href="https://astro.build/" target="_blank" rel="noopener noreferrer">Astro</a>
       <Icon icon="rocket-launch" size="1.2em" />
     </p>
     <p>&copy; {currentYear} Alexander Härenstam</p>
@@ -81,15 +81,22 @@ const currentYear = new Date().getFullYear();
   }
 
   footer a {
+    display: inline-block;
     color: var(--gray-400);
     text-decoration: 1px solid underline transparent;
     text-underline-offset: 0.25em;
-    transition: text-decoration-color var(--theme-transition);
+    transition:
+      text-decoration-color var(--theme-transition),
+      transform var(--theme-transition);
   }
 
   footer a:hover,
   footer a:focus {
     text-decoration-color: currentColor;
+  }
+
+  footer a:active {
+    transform: scale(0.98);
   }
 
   .group {
