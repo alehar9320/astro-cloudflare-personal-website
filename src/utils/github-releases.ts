@@ -40,11 +40,20 @@ export function normalizeRelease(release: GitHubReleaseApiItem): SiteRelease | n
   };
 }
 
-export async function fetchGitHubReleases(fetchImpl: typeof fetch = fetch): Promise<SiteRelease[]> {
+export async function fetchGitHubReleases(
+  fetchImpl: typeof fetch = fetch,
+  url: string = RELEASES_API_URL
+): Promise<SiteRelease[]> {
   const githubToken = typeof process !== 'undefined' ? process.env.GITHUB_TOKEN : undefined;
 
+  // Defensive check to ensure we only fetch from the trusted GitHub API domain
+  if (!url.startsWith('https://api.github.com/')) {
+    console.error('Invalid GitHub API URL');
+    return [];
+  }
+
   try {
-    const response = await fetchImpl(RELEASES_API_URL, {
+    const response = await fetchImpl(url, {
       headers: {
         Accept: 'application/vnd.github+json',
         ...(githubToken ? { Authorization: `token ${githubToken}` } : {}),
@@ -52,10 +61,8 @@ export async function fetchGitHubReleases(fetchImpl: typeof fetch = fetch): Prom
     });
 
     if (!response.ok) {
+      // Intentionally avoiding logging headers that might contain sensitive information
       console.error('GitHub releases request failed', {
-        rateLimitLimit: response.headers.get('x-ratelimit-limit'),
-        rateLimitRemaining: response.headers.get('x-ratelimit-remaining'),
-        rateLimitReset: response.headers.get('x-ratelimit-reset'),
         status: response.status,
         statusText: response.statusText,
       });
@@ -69,7 +76,12 @@ export async function fetchGitHubReleases(fetchImpl: typeof fetch = fetch): Prom
       .map(normalizeRelease)
       .filter((release): release is SiteRelease => release !== null);
   } catch (error) {
-    console.error('GitHub releases request errored', error);
+    // Redact potential token if error message contains it (defense in depth)
+    const safeErrorMessage =
+      error instanceof Error
+        ? error.message.replace(/token\s+[a-zA-Z0-9_-]+/g, 'token [REDACTED]')
+        : 'Unknown error';
+    console.error('GitHub releases request errored:', safeErrorMessage);
     return [];
   }
 }
