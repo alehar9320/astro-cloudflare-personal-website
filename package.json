@@ -22,11 +22,11 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^13.2.1",
-    "@astrojs/node": "^10.0.6",
+    "@astrojs/cloudflare": "^13.5.1",
+    "@astrojs/node": "^10.1.1",
     "@sentry/astro": "^10.50.0",
     "@sentry/cloudflare": "^10.50.0",
-    "astro": "^6.3.1",
+    "astro": "^6.3.3",
     "posthog-js": "^1.372.6",
     "posthog-node": "^5.33.0",
     "wrangler": "^4.85.0"
