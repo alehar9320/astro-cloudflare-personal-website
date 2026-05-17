@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-17 - Enhancing Content Selection and Standardizing Focus Spatiality
+
+**Learning:** Using `user-select: none` on informational badges (like `Pill`) creates unnecessary friction for users trying to copy text for reference. Additionally, consistent `outline-offset: 4px` across all interactive elements (including theme toggles and cards) reinforces a predictable spatial model for keyboard users. Adding `target="_blank"` with `rel="noopener noreferrer"` to external informational links (like the Astro framework link in the footer) ensures a non-disruptive navigation experience that preserves the user's session.
+
+**Action:** Standardized `outline-offset: 4px` for `ThemeToggle` and `.mention-card` focus states. Removed `user-select: none` and hover transitions from the `Pill` component to improve content accessibility and prevent deceptive interactivity. Enhanced the Astro framework link in the footer with secure, external-opening attributes.
+
 ## 2025-05-17 - Avoiding Deceptive Interactivity and Unifying Focus States
 
 **Learning:** "Deceptive interactivity" (e.g., using `cursor: pointer` or "lift" effects on non-clickable elements like badges) creates a broken promise to the user, leading to frustration when clicking doesn't trigger an action. Additionally, links with custom classes often miss the global focus indicator styles, creating an inconsistent experience for keyboard users.
