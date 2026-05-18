@@ -75,16 +75,22 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
 
+      - name: Upload Test Results to Codecov
+        if: ${{ !cancelled() }}
+        uses: codecov/test-results-action@v1
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+
       - name: Build Project
         run: npm run build
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-  # ─── Deploy (main only) ───────────────────────────────────────────────────────
-  # Only runs after both quality and build_and_test pass, and only on pushes
-  # to main (i.e. after a PR is merged). PRs get a Cloudflare preview deploy
-  # automatically via the Cloudflare Pages GitHub integration; this job handles
-  # the production promotion.
-  deploy:
-    name: Deploy to Production
+  # ─── Release Metadata (main only) ────────────────────────────────────────────
+  # Protected main forbids direct write-backs, so release metadata is published
+  # as a GitHub release instead of a follow-up commit to the repository.
+  release:
+    name: Release Metadata
     needs: [quality, build_and_test]
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main' && github.event_name == 'push'
@@ -113,12 +119,14 @@ jobs:
 
       - name: Increment Version & Generate Changelog
         run: node scripts/release.js
+        id: release
 
-      - name: Build Project
-        run: npm run build
-
-      - name: Deploy to Cloudflare
-        run: npx wrangler pages deploy ./dist
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ steps.release.outputs.version }}
+          tag_name: ${{ steps.release.outputs.version }}
+          target_commitish: main
+          body: ${{ steps.release.outputs.changelog }}
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

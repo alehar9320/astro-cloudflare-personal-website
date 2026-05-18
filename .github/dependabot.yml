@@ -5,7 +5,19 @@
 
 version: 2
 updates:
-  - package-ecosystem: 'npm' # See documentation for possible values
-    directory: '/' # Location of package manifests
+  - package-ecosystem: 'npm'
+    directory: '/'
     schedule:
       interval: 'weekly'
+    # Wait for stability (latest best practice) to avoid "day-zero" bugs
+    cooldown:
+      default-days: 7
+      semver-major-days: 14
+    # Group development dependencies to reduce PR noise
+    groups:
+      development-dependencies:
+        dependency-type: 'development'
+    # Use squash merge for clean commit history
+    commit-message:
+      prefix: 'chore(deps):'
+      include: 'scope'

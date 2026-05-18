@@ -1,0 +1,62 @@
+# Local Development Environment Variables
+# Copy this file to .dev.vars and fill in your actual values
+# .dev.vars is excluded from git and contains secrets for local development only
+
+# Sentry Error Tracking (Optional)
+# NOTE: Astro requires PUBLIC_ prefix for browser-accessible variables
+#       Variables without PUBLIC_ prefix are server-only and NOT sent to the browser
+#       SENTRY_DSN is technically "public" (embedded in browser JS) so it uses PUBLIC_
+#       SENTRY_AUTH_TOKEN is server-only (used for uploading source maps)
+# Get your DSN from: https://sentry.io/settings/projects/
+# Format: https://examplePublicKey@o0.ingest.sentry.io/0
+PUBLIC_SENTRY_DSN=https://your-sentry-public-key@o0.ingest.sentry.io/your-project-id
+PUBLIC_SENTRY_ENVIRONMENT=development
+PUBLIC_SENTRY_RELEASE=local-dev
+
+# Server-side Sentry configuration (NOT exposed to browser)
+SENTRY_AUTH_TOKEN=your-sentry-auth-token-for-source-map-uploads
+
+# Cloudflare Bindings
+# These are referenced in wrangler.jsonc and accessible via Astro.locals.runtime.env
+
+# Example: D1 Database (if configured in wrangler.jsonc)
+# DATABASE_URL=file:./local.db
+
+# Example: R2 Object Storage (if configured)
+# R2_BUCKET_NAME=my-local-bucket
+# R2_BUCKET_ENDPOINT=https://bucket.r2.example.com
+
+# Example: KV Namespace (if configured)
+# SESSION_KV_NAMESPACE_ID=your-kv-namespace-id
+
+# Custom Environment Variables
+# Add any other environment variables your app needs here
+# Example: API_KEY=your-api-key
+
+# GitHub Production Deployment Setup
+# For production, create GitHub Repository Variables (not secrets):
+#
+# VARIABLES (public - visible in browser):
+# 1. PUBLIC_SENTRY_DSN = your DSN from Sentry dashboard
+# 2. PUBLIC_SENTRY_ENVIRONMENT = production (or staging)
+#
+# SECRETS (encrypted - used by CI/CD only):
+# 1. SENTRY_AUTH_TOKEN (for automatic source map uploads)
+# 2. CLOUDFLARE_API_TOKEN (for Pages deployment)
+# 3. CLOUDFLARE_ACCOUNT_ID (for Pages deployment)
+
+# Notes on Environment Variable Scope:
+# - This file is never committed to git (.gitignore includes .dev.vars)
+# - Variables WITHOUT PUBLIC_ prefix are server-only and accessible via Astro.locals.runtime.env
+#   (miniflare reads these during npm run dev for local server code)
+# - Variables prefixed with PUBLIC_* are exposed to the browser (available as import.meta.env.PUBLIC_*)
+# - For production secrets, use: wrangler secret:bulk < secrets.json
+
+# Multi-Environment Deployment (Render.com vs Cloudflare)
+# Render.com automatically sets RENDER=true in its environment.
+# In astro.config.mjs, the constant 'isRender' (process.env.RENDER === 'true')
+# is used to toggle between the @astrojs/node adapter (for Render) and the
+# @astrojs/cloudflare adapter (for Cloudflare Pages).
+#
+# To test the Render/Node configuration locally:
+# RENDER=true npm run dev

@@ -11,16 +11,6 @@ const version = `${YYYY}.${MM}.${DD}.${HH}${mm}`;
 
 console.log(`Bumping version to ${version}`);
 
-// Ensure directory exists
-if (!fs.existsSync('src/data')) {
-  fs.mkdirSync('src/data', { recursive: true });
-}
-
-// Write to src/data/version.json
-const versionData = { version };
-fs.writeFileSync('src/data/version.json', JSON.stringify(versionData, null, 2));
-
-// Get last tag
 let lastTag = '';
 try {
   lastTag = execSync('git describe --tags --abbrev=0', { stdio: 'pipe' }).toString().trim();
@@ -29,7 +19,6 @@ try {
   console.debug('Git describe error:', e.message);
 }
 
-// Get commits since last tag
 let commits = '';
 try {
   if (lastTag) {
@@ -42,61 +31,36 @@ try {
   console.debug('Git log error:', e.message);
 }
 
-// Format the changelog entry
-const dateStr = now.toISOString().split('T')[0];
-let changelogEntry = `## [${version}] - ${dateStr}\n\n`;
+let changelog = '';
 
 if (commits) {
-  const list = commits
+  const entries = commits
     .split('\n')
-    .filter((c) => !c.includes('[skip ci]'))
-    .map((c) => `- ${c}`)
-    .join('\n');
-  if (list) {
-    changelogEntry += `${list}\n\n`;
+    .map((commit) => commit.trim())
+    .filter(Boolean)
+    .filter((commit) => !commit.includes('[skip ci]'))
+    .map((commit) => `- ${commit}`);
+
+  if (entries.length > 0) {
+    changelog = `${entries.join('\n')}\n`;
   } else {
-    changelogEntry += `- Internal CI updates.\n\n`;
+    changelog = '- Internal CI updates.\n';
   }
 } else {
-  changelogEntry += `- No documented changes.\n\n`;
+  changelog = '- No documented changes.\n';
 }
 
-// Prepend to CHANGELOG.md
-let existingChangelog = '';
-try {
-  existingChangelog = fs.readFileSync('CHANGELOG.md', 'utf-8');
-} catch (e) {
-  console.log('CHANGELOG.md not found. A new one will be created.');
-  console.debug('File read error:', e.message);
-}
-
-fs.writeFileSync('CHANGELOG.md', changelogEntry + existingChangelog);
-
-// Git operations
-try {
-  execSync('git config user.name "github-actions[bot]"');
-  execSync('git config user.email "github-actions[bot]@users.noreply.github.com"');
-
-  execSync('git add CHANGELOG.md src/data/version.json');
-
-  // Only commit if there are changes
-  const status = execSync('git status --porcelain').toString().trim();
-  if (status) {
-    execSync(`git commit -m "chore: release ${version} [skip ci]"`);
-    execSync(`git tag ${version}`);
-
-    // Only push if in a CI environment to prevent accidental local pushes
-    if (process.env.GITHUB_ACTIONS) {
-      execSync('git push origin main');
-      execSync('git push origin --tags');
-      console.log(`Successfully released version ${version}`);
-    } else {
-      console.log(`Local run complete. Version ${version} prepared but not pushed.`);
-    }
-  } else {
-    console.log('No files to commit.');
+const githubOutput = process.env.GITHUB_OUTPUT;
+if (githubOutput) {
+  try {
+    fs.appendFileSync(githubOutput, `version=${version}\n`);
+    fs.appendFileSync(githubOutput, `changelog<<EOF\n${changelog}EOF\n`);
+    console.log('Outputs written to GITHUB_OUTPUT');
+  } catch (e) {
+    console.error(`Failed to write to GITHUB_OUTPUT: ${e.message}`);
+    process.exit(1);
   }
-} catch (error) {
-  console.error('Error during git operations:', error.stdout ? error.stdout.toString() : error);
-  process.exit(1);
 }
+
+console.log(`\n::notice title=Release Version::${version}`);
+console.log(`Successfully prepared version ${version}`);

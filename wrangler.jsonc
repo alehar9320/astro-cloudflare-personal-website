@@ -5,9 +5,21 @@
   "main": "@astrojs/cloudflare/entrypoints/server",
   "assets": {
     "directory": "./dist",
-    "binding": "ASSETS",
+    "binding": "ASSETS"
   },
   "observability": {
-    "enabled": true,
+    "enabled": true
   },
+  "ai": {
+    "binding": "AI"
+  },
+  "kv_namespaces": [
+    {
+      "binding": "CHAT_STORE",
+      "id": "dd674149727647a9ae66dbb0fd8c98a9"
+    }
+  ],
+  "vars": {
+    "PUBLIC_POSTHOG_HOST": "https://eu.i.posthog.com"
+  }
 }

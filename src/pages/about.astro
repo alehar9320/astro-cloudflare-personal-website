@@ -2,17 +2,54 @@
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': 'https://harenstam.com/#person',
+      name: 'Alexander Härenstam',
+      jobTitle: 'Strategic Product Leader',
+      description:
+        'Strategic Product Leader specializing in Developer Experience (DevEx) and Industrial AI at IFS.',
+      url: 'https://harenstam.com',
+      sameAs: ['https://www.linkedin.com/in/alehar'],
+      worksFor: {
+        '@type': 'Organization',
+        name: 'IFS',
+        url: 'https://www.ifs.com',
+      },
+      alumniOf: {
+        '@type': 'CollegeOrUniversity',
+        name: 'Chalmers University of Technology',
+        url: 'https://www.chalmers.se/en/',
+      },
+    },
+    {
+      '@type': 'WebPage',
+      '@id': 'https://harenstam.com/about/#webpage',
+      url: 'https://harenstam.com/about',
+      name: 'About | Alexander Härenstam',
+      about: { '@id': 'https://harenstam.com/#person' },
+      description:
+        "Learn about Alexander Härenstam's background, education, and skills as a Strategic Product Leader at IFS.",
+    },
+  ],
+};
 ---
 
 <BaseLayout
   title="About | Alexander Härenstam"
   description="Learn about Alexander Härenstam's background, education, and skills as a Strategic Product Leader at IFS."
 >
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+
   <div class="stack gap-20">
     <main id="main-content" class="wrapper about">
       <Hero
         title="About"
-        tagline="Thanks for stopping by. Read below to learn more about myself and my background."
+        tagline="Aligning technical excellence with strategic innovation to deliver measurable market impact."
       >
         <!--<img
 					width="1553"
@@ -25,9 +62,21 @@ import BaseLayout from '../layouts/BaseLayout.astro';
       <section>
         <h2 class="section-title">Background</h2>
         <div class="content">
+          <div class="tldr-box">
+            <p>
+              <strong>TL;DR:</strong> Strategic Product Leader at <strong>IFS</strong> with an M.Sc. from
+              <strong>Chalmers</strong>. I specialize in <strong>Industrial AI</strong>, <strong
+                >Developer Experience (DevEx)</strong
+              >, and <strong>Design Systems</strong>, delivering multi-million dollar ROI through
+              technological innovation.
+            </p>
+          </div>
           <p>
-            I am a strategic Product Leader with a proven track record of delivering multi-million
-            dollar business value through <a
+            I am a strategic <a
+              href="https://en.wikipedia.org/wiki/Product_management"
+              target="_blank"
+              rel="noopener noreferrer">Product Leader</a
+            > with a proven track record of delivering multi-million dollar business value through <a
               href="https://en.wikipedia.org/wiki/Artificial_intelligence_in_industry"
               target="_blank"
               rel="noopener noreferrer">Industrial AI</a
@@ -35,9 +84,15 @@ import BaseLayout from '../layouts/BaseLayout.astro';
               href="https://en.wikipedia.org/wiki/Digital_transformation"
               target="_blank"
               rel="noopener noreferrer">digital transformation</a
-            >. With a unique blend of technical expertise in software engineering and strategic
-            insight in innovation management, I bridge the gap between complex technology and
-            scalable market success.
+            >. With a unique blend of technical expertise in <a
+              href="https://en.wikipedia.org/wiki/Software_engineering"
+              target="_blank"
+              rel="noopener noreferrer">software engineering</a
+            > and strategic insight in <a
+              href="https://en.wikipedia.org/wiki/Innovation_management"
+              target="_blank"
+              rel="noopener noreferrer">innovation management</a
+            >, I bridge the gap between complex technology and scalable market success.
           </p>
           <p>
             In my current role at <a
@@ -84,16 +139,45 @@ import BaseLayout from '../layouts/BaseLayout.astro';
                 target="_blank"
                 rel="noopener noreferrer">Software Engineering</a
               ></b
-            >, Chalmers University of Technology (2012 - 2015)
+            >, <a href="https://www.chalmers.se/en/" target="_blank" rel="noopener noreferrer"
+              >Chalmers University of Technology</a
+            > (2012 - 2015)
           </p>
         </div>
       </section>
       <section>
-        <h2 class="section-title">Skills</h2>
+        <h2 class="section-title">Skills That Drive Impact</h2>
         <div class="content">
           <p>
-            Product Management, Software Development, Design Thinking, Strategic Thinking,
-            Technological Innovation, Developer Experience, Business Analysis
+            <a
+              href="https://en.wikipedia.org/wiki/Product_management"
+              target="_blank"
+              rel="noopener noreferrer">Product Management</a
+            >, <a
+              href="https://en.wikipedia.org/wiki/Software_development"
+              target="_blank"
+              rel="noopener noreferrer">Software Development</a
+            >, <a
+              href="https://en.wikipedia.org/wiki/Design_thinking"
+              target="_blank"
+              rel="noopener noreferrer">Design Thinking</a
+            >, <a
+              href="https://en.wikipedia.org/wiki/Strategic_thinking"
+              target="_blank"
+              rel="noopener noreferrer">Strategic Thinking</a
+            >, <a
+              href="https://en.wikipedia.org/wiki/Innovation_management"
+              target="_blank"
+              rel="noopener noreferrer">Technological Innovation</a
+            >, <a
+              href="https://en.wikipedia.org/wiki/Developer_experience"
+              target="_blank"
+              rel="noopener noreferrer">Developer Experience</a
+            >, <a
+              href="https://en.wikipedia.org/wiki/Business_analysis"
+              target="_blank"
+              rel="noopener noreferrer">Business Analysis</a
+            >
           </p>
         </div>
       </section>

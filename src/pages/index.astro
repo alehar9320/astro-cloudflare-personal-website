@@ -18,19 +18,67 @@ const projects = (await getCollection('work'))
   .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
   .slice(0, 4);
 
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': 'https://harenstam.com/#person',
+      name: 'Alexander Härenstam',
+      jobTitle: 'Strategic Product Leader',
+      description:
+        'Strategic Product Leader specializing in Developer Experience (DevEx) and Industrial AI at IFS.',
+      url: 'https://harenstam.com',
+      sameAs: ['https://www.linkedin.com/in/alehar', 'https://github.com/alehar9320'],
+      worksFor: {
+        '@type': 'Organization',
+        name: 'IFS',
+        url: 'https://www.ifs.com',
+      },
+      knowsAbout: [
+        'Strategic Product Management',
+        'Developer Experience (DevEx)',
+        'Industrial AI',
+        'Design Systems',
+        'Digital Transformation',
+      ],
+      alumniOf: {
+        '@type': 'CollegeOrUniversity',
+        name: 'Chalmers University of Technology',
+        url: 'https://www.chalmers.se/en/',
+      },
+      award: 'Zeroheight Design System Awards - Runner-up',
+    },
+    {
+      '@type': 'WebSite',
+      '@id': 'https://harenstam.com/#website',
+      url: 'https://harenstam.com',
+      name: 'Alexander Härenstam | Strategic Product Leader',
+      publisher: { '@id': 'https://harenstam.com/#person' },
+      description:
+        'Alexander Härenstam is a Strategic Product Leader driving high-impact innovation, Industrial AI, and Developer Experience (DevEx) at IFS.',
+    },
+  ],
+};
+
 // Full Astro Component Syntax:
 // https://docs.astro.build/basics/astro-components/
 ---
 
 <BaseLayout>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="stack gap-20 lg:gap-48">
     <div class="wrapper stack gap-8 lg:gap-20">
       <header class="hero">
-        <Hero
-          title="Hello, I am Alexander Härenstam"
-          tagline="Strategic Product Leader championing Developer Experience and enterprise-scale Industrial AI at <a href='https://www.ifs.com/' target='_blank' rel='noopener noreferrer'>IFS</a>."
-          align="start"
-        >
+        <Hero title="Elevating Developer Experience & Product Strategy" align="start">
+          <p slot="tagline" class="tagline">
+            I am <strong>Alexander Härenstam</strong>, a Strategic Product Leader championing
+            enterprise-scale Industrial AI at <a
+              href="https://www.ifs.com/"
+              target="_blank"
+              rel="noopener noreferrer">IFS</a
+            >.
+          </p>
           <div class="roles">
             <Pill><Icon icon="strategy" size="1.33em" /> Technical Product Management</Pill>
             <Pill><Icon icon="terminal-window" size="1.33em" /> Developer Experience (DevEx)</Pill>
@@ -43,8 +91,20 @@ const projects = (await getCollection('work'))
           width="480"
           height="620"
           src="/assets/portrait.png"
+          fetchpriority="high"
+          decoding="async"
         />
       </header>
+
+      <div class="tldr-box">
+        <p>
+          <strong>TL;DR:</strong> Strategic Product Leader at <strong>IFS</strong> specializing in <strong
+            >Industrial AI</strong
+          >, <strong>Developer Experience (DevEx)</strong>, and <strong>Design Systems</strong>. I
+          drive multi-million dollar ROI by aligning technical excellence with high-impact product
+          innovation.
+        </p>
+      </div>
 
       <Skills />
     </div>
@@ -52,7 +112,7 @@ const projects = (await getCollection('work'))
     <main id="main-content" class="wrapper stack gap-20 lg:gap-48">
       <section class="section with-background with-cta">
         <header class="section-header stack gap-2 lg:gap-4">
-          <h2>Selected Work</h2>
+          <h2>Strategic Impact</h2>
           <p>
             A curated look at my track record of transforming complex enterprise challenges into
             scalable, high-adoption product solutions.
@@ -73,7 +133,7 @@ const projects = (await getCollection('work'))
 
         <div class="cta">
           <CallToAction href="/work">
-            View All
+            View Strategic Portfolio
             <Icon icon="arrow-right" size="1.2em" />
           </CallToAction>
         </div>
@@ -81,8 +141,11 @@ const projects = (await getCollection('work'))
 
       <section class="section with-background bg-variant">
         <header class="section-header stack gap-2 lg:gap-4">
-          <h2>Mentions</h2>
-          <p>Featured publications, industry recognition, and my broader professional footprint.</p>
+          <h2>Amplifying Industry Impact</h2>
+          <p>
+            Driving the conversation through strategic leadership, academic collaboration, and
+            award-winning platform innovation.
+          </p>
         </header>
 
         <div class="gallery">
@@ -91,19 +154,19 @@ const projects = (await getCollection('work'))
               <a
                 href="https://blog.ifs.com/author/alexander-harenstam/"
                 target="_blank"
-                rel="noopener noreferrer">IFS Blog Author</a
+                rel="noopener noreferrer">Strategic Insights on IFS Blog</a
               >
             </li>
             <li class="mention-card">
-              <a href="https://www.chalmers.se/" target="_blank" rel="noopener noreferrer"
-                >Chalmers University</a
+              <a href="https://www.chalmers.se/en/" target="_blank" rel="noopener noreferrer"
+                >Alumnus of Chalmers University</a
               >
             </li>
             <li class="mention-card">
               <a
                 href="https://zeroheight.com/events/design-system-awards/"
                 target="_blank"
-                rel="noopener noreferrer">Zeroheight Design System Awards</a
+                rel="noopener noreferrer">Zeroheight Design Awards</a
               >
             </li>
           </Grid>
@@ -249,6 +312,34 @@ const projects = (await getCollection('work'))
     color: var(--gray-300);
     background: var(--gradient-subtle);
     box-shadow: var(--shadow-sm);
+    transition:
+      transform var(--theme-transition),
+      box-shadow var(--theme-transition),
+      border-color var(--theme-transition);
+  }
+
+  .mention-card a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    padding: 1rem;
+    color: inherit;
+    text-decoration: none;
+  }
+
+  .mention-card:hover,
+  .mention-card:focus-within {
+    transform: translateY(-2px);
+    border-color: color-mix(in oklab, var(--accent-regular), var(--gray-800) 60%);
+    box-shadow: var(--shadow-md);
+  }
+
+  .mention-card a:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 3px;
+    border-radius: 1.25rem;
   }
 
   @media (min-width: 50em) {

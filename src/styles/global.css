@@ -161,6 +161,33 @@ a {
   color: var(--link-color);
 }
 
+/* Consistent interactive styling for plain text links (prose links).
+   Links with explicit classes (nav, buttons, etc.) keep their own styling. */
+a:not([class]) {
+  text-decoration: 1px solid underline transparent;
+  text-underline-offset: 0.25em;
+  transition:
+    text-decoration-color var(--theme-transition),
+    color var(--theme-transition);
+}
+
+a:not([class]):hover {
+  text-decoration-color: currentColor;
+}
+
+a:not([class]):focus-visible {
+  text-decoration-color: currentColor;
+  outline: 2px solid var(--accent-regular);
+  outline-offset: 0.2em;
+  border-radius: 0.25em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  a:not([class]) {
+    transition: none;
+  }
+}
+
 h1,
 h2,
 h3,
@@ -268,4 +295,31 @@ h5 {
   .lg\:gap-48 {
     gap: 12rem;
   }
+}
+
+/* TL;DR Box for GEO/AEO optimization */
+.tldr-box {
+  padding: 1.5rem;
+  background: var(--gradient-subtle);
+  border: 1px solid var(--gray-800);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 2.5rem;
+  backdrop-filter: blur(8px);
+}
+
+.tldr-box p {
+  margin: 0;
+  font-size: var(--text-md);
+  line-height: 1.6;
+  color: var(--gray-200);
+}
+
+.tldr-box strong {
+  color: var(--accent-regular);
+  font-weight: 700;
+}
+
+:root.theme-dark .tldr-box strong {
+  color: var(--accent-dark);
 }

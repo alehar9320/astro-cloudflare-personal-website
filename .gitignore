@@ -2,8 +2,11 @@
 dist/
 # generated types
 .astro/
+.wrangler/
+
 # test coverage
 coverage/
+junit.xml
 
 # dependencies
 node_modules/
@@ -13,6 +16,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 pnpm-debug.log*
+*.log
 
 
 # environment variables
@@ -24,3 +28,10 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# codex plans
+conductor/
+
+#logs
+wrangler_dev.log
+dev_server.log

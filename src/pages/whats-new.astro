@@ -2,7 +2,6 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
-import { Content as ChangelogContent } from '../../CHANGELOG.md';
 ---
 
 <BaseLayout title="What's New | Alexander Härenstam" description="Changelog and recent updates">
@@ -10,17 +9,161 @@ import { Content as ChangelogContent } from '../../CHANGELOG.md';
     <main class="wrapper stack gap-8">
       <Hero
         title="What's New"
-        tagline="A continuously updated release log of improvements, tweaks, and new features."
+        tagline="A real-time log of project milestones, technical refinements, and portfolio updates."
         align="start"
       />
 
-      <div class="content markdown-content">
-        <ChangelogContent />
+      <div class="content">
+        <div data-release-summary></div>
+        <div class="release-list" data-release-list>
+          <p class="release-status">Fetching latest project updates...</p>
+        </div>
+        <noscript>
+          <p class="release-status">
+            Release history is available on
+            <a href="https://github.com/alehar9320/astro-cloudflare-personal-website/releases">
+              GitHub Releases
+            </a>.
+          </p>
+        </noscript>
       </div>
     </main>
     <ContactCTA />
   </div>
 </BaseLayout>
+
+<script>
+  import {
+    RELEASES_PAGE_URL,
+    fetchGitHubReleases,
+    formatReleaseDate,
+    splitReleaseBody,
+  } from '../utils/github-releases';
+
+  const releaseList = document.querySelector('[data-release-list]');
+
+  if (releaseList instanceof HTMLDivElement) {
+    fetchGitHubReleases().then((releases) => {
+      if (releases.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'release-status';
+        empty.textContent = 'Project history is currently unavailable.';
+
+        const link = document.createElement('a');
+        link.href = RELEASES_PAGE_URL;
+        link.textContent = 'View GitHub Releases';
+
+        empty.append(' ');
+        empty.append(link);
+        empty.append('.');
+
+        releaseList.replaceChildren(empty);
+        return;
+      }
+
+      const fragment = document.createDocumentFragment();
+
+      // Generate summary from the first 3 most significant items across latest releases
+      const summaryItems = releases
+        .flatMap((r) => splitReleaseBody(r.body))
+        .filter((item) => {
+          const msg = item.message.toLowerCase();
+          // Prioritize features, fixes, and persona-driven updates
+          return (
+            msg.includes('feat') ||
+            msg.includes('fix') ||
+            msg.includes('scribe') ||
+            msg.includes('oracle') ||
+            msg.includes('sentinel') ||
+            msg.includes('palette') ||
+            msg.includes('vantage') ||
+            msg.includes('bolt')
+          );
+        })
+        .slice(0, 3)
+        .map((item) => item.message);
+
+      // Fallback to first 3 items if no prioritized items found
+      if (summaryItems.length === 0) {
+        summaryItems.push(
+          ...releases
+            .flatMap((r) => splitReleaseBody(r.body))
+            .slice(0, 3)
+            .map((item) => item.message)
+        );
+      }
+
+      if (summaryItems.length > 0) {
+        const summaryContainer = document.querySelector('[data-release-summary]');
+        if (summaryContainer) {
+          const tldr = document.createElement('div');
+          tldr.className = 'tldr-box';
+          const p = document.createElement('p');
+          const strong = document.createElement('strong');
+          strong.textContent = 'Recent Highlights:';
+          p.append(strong, ` ${summaryItems.join('; ')}.`);
+          tldr.append(p);
+          summaryContainer.replaceChildren(tldr);
+        }
+      }
+
+      releases.forEach((release) => {
+        const article = document.createElement('article');
+        article.className = 'release-card';
+
+        const heading = document.createElement('h2');
+        heading.textContent = release.version;
+
+        const meta = document.createElement('p');
+        meta.className = 'release-meta';
+        meta.textContent = formatReleaseDate(release.publishedAt);
+
+        const bodyItems = splitReleaseBody(release.body);
+
+        if (bodyItems.length > 0) {
+          const list = document.createElement('ul');
+
+          bodyItems.forEach((item) => {
+            const listItem = document.createElement('li');
+
+            if (item.hash && item.url) {
+              const code = document.createElement('code');
+              code.className = 'commit-hash';
+              const link = document.createElement('a');
+              link.href = item.url;
+              link.target = '_blank';
+              link.rel = 'noopener noreferrer';
+              link.textContent = item.hash;
+              code.append(link);
+              listItem.append(code, ' ', item.message);
+            } else {
+              listItem.textContent = item.message;
+            }
+
+            list.append(listItem);
+          });
+
+          article.append(heading, meta, list);
+        } else {
+          const fallback = document.createElement('p');
+          fallback.className = 'release-status';
+          fallback.textContent = 'No release notes were published for this version.';
+          article.append(heading, meta, fallback);
+        }
+
+        const link = document.createElement('a');
+        link.href = release.url;
+        link.className = 'release-link';
+        link.textContent = 'View on GitHub';
+        article.append(link);
+
+        fragment.append(article);
+      });
+
+      releaseList.replaceChildren(fragment);
+    });
+  }
+</script>
 
 <style>
   .content {
@@ -31,28 +174,69 @@ import { Content as ChangelogContent } from '../../CHANGELOG.md';
     box-shadow: var(--shadow-sm);
   }
 
-  :global(.markdown-content h1) {
-    font-size: var(--text-3xl);
-    margin-bottom: 2rem;
-    color: var(--gray-0);
+  .release-list {
+    display: grid;
+    gap: 1.5rem;
   }
 
-  :global(.markdown-content h2) {
+  .release-card {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--gray-800);
+  }
+
+  .release-card:last-child {
+    border-bottom: 0;
+    padding-bottom: 0;
+  }
+
+  .release-card h2 {
     font-size: var(--text-xl);
-    margin-top: 2.5rem;
-    margin-bottom: 1rem;
+    margin-bottom: 0.35rem;
     color: var(--gray-100);
   }
 
-  :global(.markdown-content ul) {
+  .release-meta {
+    color: var(--gray-400);
+    margin-bottom: 1rem;
+  }
+
+  .release-card ul {
     margin-left: 1.5rem;
     list-style-type: disc;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
     color: var(--gray-300);
   }
 
-  :global(.markdown-content li) {
+  .release-card li {
     margin-bottom: 0.5rem;
     line-height: 1.6;
+  }
+
+  .release-status {
+    color: var(--gray-300);
+    line-height: 1.6;
+  }
+
+  .release-link {
+    display: inline-block;
+    margin-top: 0.25rem;
+  }
+
+  .commit-hash {
+    background: var(--gray-800);
+    padding: 0.1rem 0.3rem;
+    border-radius: 0.25rem;
+    font-size: 0.85em;
+    font-family: monospace;
+    margin-right: 0.25rem;
+  }
+
+  .commit-hash a {
+    text-decoration: none;
+    color: var(--accent-regular);
+  }
+
+  :root.theme-dark .commit-hash a {
+    color: var(--accent-dark);
   }
 </style>
