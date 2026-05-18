@@ -1,20 +1,26 @@
-export interface GitHubReleaseApiItem {
-  body?: string | null;
-  draft?: boolean;
-  html_url?: string;
-  name?: string | null;
-  prerelease?: boolean;
-  published_at?: string | null;
-  tag_name?: string;
-}
+import { z } from 'zod';
 
-export interface SiteRelease {
-  body: string;
-  publishedAt: string | null;
-  title: string;
-  url: string;
-  version: string;
-}
+export const GitHubReleaseApiItemSchema = z.object({
+  body: z.string().nullable().optional(),
+  draft: z.boolean().optional(),
+  html_url: z.string().optional(),
+  name: z.string().nullable().optional(),
+  prerelease: z.boolean().optional(),
+  published_at: z.string().nullable().optional(),
+  tag_name: z.string().optional(),
+});
+
+export type GitHubReleaseApiItem = z.infer<typeof GitHubReleaseApiItemSchema>;
+
+export const SiteReleaseSchema = z.object({
+  body: z.string(),
+  publishedAt: z.string().nullable(),
+  title: z.string(),
+  url: z.string(),
+  version: z.string(),
+});
+
+export type SiteRelease = z.infer<typeof SiteReleaseSchema>;
 
 const RELEASES_API_URL =
   'https://api.github.com/repos/alehar9320/astro-cloudflare-personal-website/releases?per_page=20';
@@ -69,7 +75,15 @@ export async function fetchGitHubReleases(
       return [];
     }
 
-    const releases = (await response.json()) as GitHubReleaseApiItem[];
+    const json = await response.json();
+    const result = z.array(GitHubReleaseApiItemSchema).safeParse(json);
+
+    if (!result.success) {
+      console.error('GitHub releases API validation failed:', result.error.format());
+      return [];
+    }
+
+    const releases = result.data;
 
     return releases
       .filter((release) => !release.prerelease)

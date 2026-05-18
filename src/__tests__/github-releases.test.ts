@@ -48,6 +48,22 @@ describe('github releases utility', () => {
     ]);
   });
 
+  it('handles API validation failure', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [{ tag_name: 123 }], // invalid tag_name (number instead of string)
+    });
+
+    const result = await fetchGitHubReleases(fetchMock as typeof fetch);
+
+    expect(result).toEqual([]);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      'GitHub releases API validation failed:',
+      expect.any(Object)
+    );
+  });
+
   it('returns an empty list when the GitHub API fails', async () => {
     const fetchMock = vi.fn().mockRejectedValue(new Error('network error'));
 
