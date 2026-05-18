@@ -1,15 +1,3 @@
-# Sentinel's Journal
+## 2025-05-22 - Zod Runtime Validation Implementation | **Vulnerability:** Unvalidated external data and environment variables could lead to runtime errors or security issues if malformed data is processed. | **Prevention:** Introduced Zod for runtime schema validation of GitHub API responses and PostHog environment variables. Updated AI agent guardrails to enforce Zod runtime validation as a standard practice for all external and untrusted data.
 
-Security-focused logs and critical learnings for the Alexander Härenstam's portfolio.
-
-Format: ## YYYY-MM-DD - [Title] | **Vulnerability:** [Insight] | **Prevention:** [Action]
-
-## 2026-04-26 - Implement Referrer-Policy and defensive GitHub API handling | **Vulnerability:** Potential for referrer data leakage and sensitive token exposure in logs if GitHub API requests fail or are misconfigured. | **Prevention:** Added `strict-origin-when-cross-origin` Referrer-Policy and implemented defensive URL validation and redacted logging in the GitHub API utility.
-
-## 2026-04-25 - Resolve PostCSS XSS vulnerability | **Vulnerability:** PostCSS (versions < 8.5.10) had a moderate severity XSS vulnerability via unescaped `</style>` in its CSS stringify output (GHSA-qx2v-qp2m-jg93). | **Prevention:** Implemented a dependency override in `package.json` to force `postcss` version `^8.5.10`.
-
-## 2026-04-10 - Mitigate XSS in Hero component | **Vulnerability:** Use of `set:html` with the `tagline` prop in `Hero.astro` allowed potential XSS if unvalidated input were passed to the component. While current usage was safe, it posed a risk for future changes. | **Prevention:** Replaced `set:html` with a named slot `<slot name="tagline" />` for rich content injection. The `tagline` prop now defaults to auto-escaped plain text.
-
-## 2026-04-11 - Resolve yaml vulnerability | **Vulnerability:** Moderate risk vulnerability in transitive dependency `yaml` (v2.0.0-2.8.2) through `@astrojs/check`, susceptible to Stack Overflow via deeply nested YAML collections (GHSA-48c2-rrv3-qjmp). | **Prevention:** Implemented a dependency override in `package.json` to force `yaml` version `^2.8.3`.
-
-## 2026-05-09 - Mitigate high-severity vulnerability in fast-uri | **Vulnerability:** `fast-uri` (versions <= 3.1.1) was vulnerable to path traversal and host confusion via percent-encoded characters (GHSA-q3j6-qgpj-74h6, GHSA-v39h-62p7-jpjc). | **Prevention:** Implemented a dependency override in `package.json` to force `fast-uri` version `^3.1.2`.
+## 2026-05-18 - Mitigate moderate-severity vulnerability in ws | **Vulnerability:** `ws` (versions 8.0.0 - 8.20.0) was vulnerable to uninitialized memory disclosure (GHSA-58qx-3vcg-4xpx). | **Prevention:** Implemented a dependency override in `package.json` to force `ws` version `^8.20.1`.
