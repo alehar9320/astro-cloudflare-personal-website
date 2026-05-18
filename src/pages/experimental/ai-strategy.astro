@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Icon from '../../components/Icon.astro';
+import { iconPaths } from '../../components/IconPaths';
+import { z } from 'zod';
+
+const Checklist = z.array(z.object({ task: z.string(), icon: z.string() })).parse([
+  { task: 'Audit Technical Debt for AI readiness', icon: 'code' },
+  { task: 'Scale Agentic DevEx Workflows', icon: 'terminal-window' },
+  { task: 'Measure ROI on Industrial AI', icon: 'strategy' },
+]);
+---
+
+<BaseLayout
+  title="AI Strategy MVP | Alexander Härenstam"
+  description="Experimental AI Strategy Framework"
+>
+  <main class="wrapper stack gap-10" id="main-content">
+    <Hero
+      title="AI Strategy"
+      tagline="A barebone framework for strategic AI evolution."
+      align="start"
+    />
+    <div class="stack gap-4">
+      {
+        Checklist.map(({ task, icon }: { task: string; icon: string }) => (
+          <div
+            class="tldr-box"
+            style="margin-bottom: 0; display: flex; align-items: center; gap: 1.5rem;"
+          >
+            <Icon icon={icon as keyof typeof iconPaths} size="2.5rem" gradient />
+            <p>
+              <strong>{task}</strong>
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </main>
+</BaseLayout>
