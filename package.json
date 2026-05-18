@@ -29,7 +29,8 @@
     "astro": "^6.3.3",
     "posthog-js": "^1.372.6",
     "posthog-node": "^5.33.0",
-    "wrangler": "^4.85.0"
+    "wrangler": "^4.85.0",
+    "zod": "^4.4.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
