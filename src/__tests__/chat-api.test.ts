@@ -191,6 +191,30 @@ describe('chat API', () => {
     expect(ai.run).toHaveBeenCalledOnce();
   });
 
+  it('starts the rate limit counter at one when no count exists', async () => {
+    const ai = createAi();
+    const get = vi.fn().mockResolvedValue(null);
+    const put = vi.fn().mockResolvedValue(undefined);
+    const store = { get, put } as unknown as KVNamespace;
+    mockEnv.AI = ai;
+    mockEnv.CHAT_STORE = store;
+
+    const response = await POST(
+      createContext(
+        createRequest(
+          { messages: [{ role: 'user', content: 'Hello' }] },
+          { 'cf-connecting-ip': '203.0.113.3' }
+        )
+      )
+    );
+
+    expect(response.status).toBe(200);
+    expect(put).toHaveBeenCalledWith('chat-limit:203.0.113.3', '1', {
+      expirationTtl: 3600,
+    });
+    expect(ai.run).toHaveBeenCalledOnce();
+  });
+
   it('returns a 500 error when AI execution fails', async () => {
     const ai = {
       run: vi.fn<Env['AI']['run']>().mockRejectedValue(new Error('AI unavailable')),
@@ -200,5 +224,16 @@ describe('chat API', () => {
 
     expect(response.status).toBe(500);
     await expect(readJson(response)).resolves.toEqual({ error: 'AI unavailable' });
+  });
+
+  it('returns an unknown 500 error when AI execution rejects with a non-Error value', async () => {
+    const ai = {
+      run: vi.fn<Env['AI']['run']>().mockRejectedValue('AI unavailable'),
+    };
+
+    const response = await postChat({ messages: [{ role: 'user', content: 'Hello' }] }, ai);
+
+    expect(response.status).toBe(500);
+    await expect(readJson(response)).resolves.toEqual({ error: 'Unknown error' });
   });
 });
