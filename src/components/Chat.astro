@@ -157,6 +157,12 @@
     color: var(--gray-100);
   }
 
+  .assistant-message {
+    align-self: flex-start;
+    background-color: var(--gray-800);
+    color: var(--gray-100);
+  }
+
   .typing-indicator {
     padding: 0.5rem 1rem;
     font-size: 0.75rem;
@@ -234,7 +240,10 @@
   }
 
   // Load history
-  messages.forEach((msg: Message) => appendMessage(msg.role, msg.content));
+  messages.forEach((msg: Message) => {
+    const displayRole = msg.role === 'ai' ? 'assistant' : msg.role;
+    appendMessage(displayRole, msg.content);
+  });
 
   chatToggle?.addEventListener('click', () => {
     chatWindow?.classList.toggle('hidden');
@@ -266,7 +275,7 @@
       if (!response.ok) throw new Error('Failed to fetch');
 
       typingIndicator?.classList.add('hidden');
-      const aiMessageDiv = appendMessage('ai', '');
+      const aiMessageDiv = appendMessage('assistant', '');
       let aiContent = '';
 
       const reader = response.body?.getReader();
@@ -283,12 +292,12 @@
         }
       }
 
-      messages.push({ role: 'ai', content: aiContent });
+      messages.push({ role: 'assistant', content: aiContent });
       saveMessages();
     } catch (error) {
       console.error('Chat error:', error);
       typingIndicator?.classList.add('hidden');
-      appendMessage('ai', 'Sorry, something went wrong. Please try again.');
+      appendMessage('assistant', 'Sorry, something went wrong. Please try again.');
     }
   });
 </script>
