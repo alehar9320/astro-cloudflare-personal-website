@@ -3,12 +3,13 @@ interface Props {
   title: string;
   tagline?: string;
   align?: 'start' | 'center';
+  variant?: 'primary' | 'secondary';
 }
 
-const { align = 'center', tagline, title } = Astro.props;
+const { align = 'center', tagline, title, variant = 'secondary' } = Astro.props;
 ---
 
-<div class:list={['hero stack gap-4', align]}>
+<div class:list={['hero stack gap-4', align, variant]}>
   <div class="stack gap-2">
     <h1 class="title">{title}</h1>
     <slot name="tagline">{tagline && <p class="tagline">{tagline}</p>}</slot>
@@ -31,6 +32,34 @@ const { align = 'center', tagline, title } = Astro.props;
   .title {
     font-size: var(--text-3xl);
     color: var(--gray-0);
+  }
+
+  /* Primary title styling for a modern, AI-inspired look with high contrast */
+  .primary .title {
+    background: linear-gradient(
+      135deg,
+      var(--accent-regular) 0%,
+      var(--accent-dark) 50%,
+      var(--accent-regular) 100%
+    );
+    background-size: 200% auto;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    display: inline-block;
+    animation: shine 12s linear infinite;
+  }
+
+  @keyframes shine {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
   }
 
   @media (min-width: 50em) {
