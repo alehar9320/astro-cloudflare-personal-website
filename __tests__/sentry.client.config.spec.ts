@@ -52,6 +52,7 @@ describe('sentry.client.config', () => {
     expect(Sentry.replayIntegration).toHaveBeenCalledWith({
       maskAllText: true,
       blockAllMedia: true,
+      maskAllInputs: true,
     });
   });
 
