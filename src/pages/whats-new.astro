@@ -101,9 +101,9 @@ const schema = {
         link.href = RELEASES_PAGE_URL;
         link.textContent = 'View GitHub Releases';
 
-        empty.append(' ');
-        empty.append(link);
-        empty.append('.');
+        empty.appendChild(document.createTextNode(' '));
+        empty.appendChild(link);
+        empty.appendChild(document.createTextNode('.'));
 
         releaseList.replaceChildren(empty);
         return;
@@ -149,8 +149,9 @@ const schema = {
           const p = document.createElement('p');
           const strong = document.createElement('strong');
           strong.textContent = 'Recent Highlights:';
-          p.append(strong, ` ${summaryItems.join('; ')}.`);
-          tldr.append(p);
+          p.appendChild(strong);
+          p.appendChild(document.createTextNode(` ${summaryItems.join('; ')}.`));
+          tldr.appendChild(p);
           summaryContainer.replaceChildren(tldr);
         }
       }
@@ -182,30 +183,35 @@ const schema = {
               link.target = '_blank';
               link.rel = 'noopener noreferrer';
               link.textContent = item.hash;
-              code.append(link);
-              listItem.append(code, ' ', item.message);
+              code.appendChild(link);
+              listItem.appendChild(code);
+              listItem.appendChild(document.createTextNode(` ${item.message}`));
             } else {
               listItem.textContent = item.message;
             }
 
-            list.append(listItem);
+            list.appendChild(listItem);
           });
 
-          article.append(heading, meta, list);
+          article.appendChild(heading);
+          article.appendChild(meta);
+          article.appendChild(list);
         } else {
           const fallback = document.createElement('p');
           fallback.className = 'release-status';
           fallback.textContent = 'No release notes were published for this version.';
-          article.append(heading, meta, fallback);
+          article.appendChild(heading);
+          article.appendChild(meta);
+          article.appendChild(fallback);
         }
 
         const link = document.createElement('a');
         link.href = release.url;
         link.className = 'release-link';
         link.textContent = 'View on GitHub';
-        article.append(link);
+        article.appendChild(link);
 
-        fragment.append(article);
+        fragment.appendChild(article);
       });
 
       releaseList.replaceChildren(fragment);
