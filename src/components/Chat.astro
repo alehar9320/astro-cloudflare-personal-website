@@ -34,7 +34,17 @@
         >
       </button>
     </div>
-    <div id="chat-messages" class="chat-messages"></div>
+    <div id="chat-messages" class="chat-messages" aria-live="polite">
+      <section class="message assistant-message welcome-message" aria-label="About this chat">
+        <h2>Meet Alexander's digital twin</h2>
+        <p>
+          Ask about Alexander's work, product thinking, Developer Experience, Industrial AI, or
+          background just as you would ask Alexander directly. I've been given context about him,
+          but I'm still an AI: responses can vary and may contain mistakes. Treat answers as a
+          helpful starting point, not a verified source of truth.
+        </p>
+      </section>
+    </div>
     <div id="typing-indicator" class="typing-indicator hidden">Alexander is typing...</div>
     <form id="chat-form" class="chat-form">
       <input
@@ -161,6 +171,23 @@
     align-self: flex-start;
     background-color: var(--gray-800);
     color: var(--gray-100);
+  }
+
+  .welcome-message {
+    max-width: 90%;
+  }
+
+  .welcome-message h2 {
+    margin: 0 0 0.35rem;
+    color: var(--gray-0);
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .welcome-message p {
+    margin: 0;
+    color: var(--gray-200);
   }
 
   .typing-indicator {
