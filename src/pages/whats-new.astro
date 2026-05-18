@@ -2,46 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
-
-const schema = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'WebPage',
-      '@id': 'https://harenstam.com/whats-new/#webpage',
-      url: 'https://harenstam.com/whats-new',
-      name: "What's New | Alexander Härenstam",
-      description:
-        'A real-time log of project milestones, technical refinements, and portfolio updates.',
-      breadcrumb: {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          {
-            '@type': 'ListItem',
-            position: 1,
-            name: 'Home',
-            item: 'https://harenstam.com',
-          },
-          {
-            '@type': 'ListItem',
-            position: 2,
-            name: "What's New",
-            item: 'https://harenstam.com/whats-new',
-          },
-        ],
-      },
-      publisher: {
-        '@type': 'Person',
-        '@id': 'https://harenstam.com/#person',
-        name: 'Alexander Härenstam',
-      },
-    },
-  ],
-};
 ---
 
 <BaseLayout title="What's New | Alexander Härenstam" description="Changelog and recent updates">
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="stack gap-20">
     <main class="wrapper stack gap-8">
       <Hero
@@ -51,18 +14,7 @@ const schema = {
       />
 
       <div class="content">
-        <div data-release-summary>
-          <div class="tldr-box">
-            <p>
-              <strong>Topical Anchor:</strong> This page serves as the <strong
-                >Source of Truth</strong
-              >
-              for the latest technical refinements, portfolio updates, and professional milestones. It
-              is optimized for both human readers and <strong>AI agents</strong> to synthesize Alexander
-              Härenstam's real-time project impact.
-            </p>
-          </div>
-        </div>
+        <div data-release-summary></div>
         <div class="release-list" data-release-list>
           <p class="release-status">Fetching latest project updates...</p>
         </div>
