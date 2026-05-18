@@ -1,14 +1,105 @@
 import type { APIRoute } from 'astro';
+import { env } from 'cloudflare:workers';
 
-export const POST: APIRoute = async ({ request, locals }) => {
-  const ai = locals.runtime?.env?.AI;
-  const store = locals.runtime?.env?.CHAT_STORE;
+const MAX_MESSAGES = 10;
+const MAX_MESSAGE_CONTENT_LENGTH = 500;
+const MAX_TOTAL_CONTENT_LENGTH = 3000;
+const jsonHeaders = { 'content-type': 'application/json' };
+
+export const prerender = false;
+
+type ChatRole = 'user' | 'assistant';
+
+interface ChatMessage {
+  role: ChatRole;
+  content: string;
+}
+
+interface ChatEnv {
+  AI?: {
+    run: (model: string, input: unknown) => Promise<ReadableStream>;
+  };
+  CHAT_STORE?: KVNamespace;
+}
+
+function jsonError(error: string, status: number) {
+  return new Response(JSON.stringify({ error }), {
+    status,
+    headers: jsonHeaders,
+  });
+}
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null;
+}
+
+function validateMessages(messages: unknown): ChatMessage[] | Response {
+  if (!Array.isArray(messages)) {
+    return jsonError('Expected messages to be an array', 400);
+  }
+
+  if (messages.length === 0) {
+    return jsonError('Expected at least one message', 400);
+  }
+
+  if (messages.length > MAX_MESSAGES) {
+    return jsonError(`Message history cannot exceed ${MAX_MESSAGES} messages`, 400);
+  }
+
+  let totalContentLength = 0;
+
+  const validatedMessages: ChatMessage[] = [];
+
+  for (const [index, message] of messages.entries()) {
+    if (!isRecord(message)) {
+      return jsonError(`Message at index ${index} must be an object`, 400);
+    }
+
+    const { role, content } = message;
+
+    if (role !== 'user' && role !== 'assistant') {
+      return jsonError(`Message at index ${index} has an unsupported role`, 400);
+    }
+
+    if (typeof content !== 'string') {
+      return jsonError(`Message at index ${index} content must be a string`, 400);
+    }
+
+    const trimmedContent = content.trim();
+
+    if (trimmedContent.length === 0) {
+      return jsonError(`Message at index ${index} content cannot be empty`, 400);
+    }
+
+    if (trimmedContent.length > MAX_MESSAGE_CONTENT_LENGTH) {
+      return jsonError(
+        `Message at index ${index} cannot exceed ${MAX_MESSAGE_CONTENT_LENGTH} characters`,
+        400
+      );
+    }
+
+    totalContentLength += trimmedContent.length;
+
+    if (totalContentLength > MAX_TOTAL_CONTENT_LENGTH) {
+      return jsonError(
+        `Message history cannot exceed ${MAX_TOTAL_CONTENT_LENGTH} total characters`,
+        400
+      );
+    }
+
+    validatedMessages.push({ role, content: trimmedContent });
+  }
+
+  return validatedMessages;
+}
+
+export const POST: APIRoute = async ({ request }) => {
+  const bindings = env as unknown as ChatEnv;
+  const ai = bindings.AI;
+  const store = bindings.CHAT_STORE;
 
   if (!ai) {
-    return new Response(JSON.stringify({ error: 'AI binding not found' }), {
-      status: 500,
-      headers: { 'content-type': 'application/json' },
-    });
+    return jsonError('AI binding not found', 500);
   }
 
   // Basic Security: Client IP-based rate limiting
@@ -19,32 +110,29 @@ export const POST: APIRoute = async ({ request, locals }) => {
     const currentCount = parseInt((await store.get(rateLimitKey)) || '0');
     if (currentCount >= 20) {
       // 20 requests per hour limit
-      return new Response(JSON.stringify({ error: 'Rate limit exceeded. Try again in an hour.' }), {
-        status: 429,
-        headers: { 'content-type': 'application/json' },
-      });
+      return jsonError('Rate limit exceeded. Try again in an hour.', 429);
     }
     // Increment counter with 1 hour expiration
     await store.put(rateLimitKey, (currentCount + 1).toString(), { expirationTtl: 3600 });
   }
 
-  const body = await request.json();
-  const { messages } = body;
+  let body: unknown;
 
-  // Validation: Check message size and count
-  if (!Array.isArray(messages) || messages.length > 10) {
-    return new Response(JSON.stringify({ error: 'Invalid message history' }), {
-      status: 400,
-      headers: { 'content-type': 'application/json' },
-    });
+  try {
+    body = await request.json();
+  } catch {
+    return jsonError('Invalid JSON payload', 400);
   }
 
-  const lastMessage = messages[messages.length - 1]?.content;
-  if (typeof lastMessage !== 'string' || lastMessage.length > 500) {
-    return new Response(JSON.stringify({ error: 'Message too long' }), {
-      status: 400,
-      headers: { 'content-type': 'application/json' },
-    });
+  if (!isRecord(body)) {
+    return jsonError('Expected request body to be an object', 400);
+  }
+
+  const { messages } = body;
+  const validatedMessages = validateMessages(messages);
+
+  if (validatedMessages instanceof Response) {
+    return validatedMessages;
   }
 
   const systemPrompt = `You are Alexander Härenstam, a strategic Product Leader at IFS.
@@ -55,7 +143,7 @@ Keep your responses brief, typically 2-3 sentences.`;
 
   try {
     const stream = await ai.run('@cf/meta/llama-3.1-8b-instruct', {
-      messages: [{ role: 'system', content: systemPrompt }, ...messages],
+      messages: [{ role: 'system', content: systemPrompt }, ...validatedMessages],
       stream: true,
     });
 
@@ -66,9 +154,6 @@ Keep your responses brief, typically 2-3 sentences.`;
     });
   } catch (e: unknown) {
     const errorMessage = e instanceof Error ? e.message : 'Unknown error';
-    return new Response(JSON.stringify({ error: errorMessage }), {
-      status: 500,
-      headers: { 'content-type': 'application/json' },
-    });
+    return jsonError(errorMessage, 500);
   }
 };
