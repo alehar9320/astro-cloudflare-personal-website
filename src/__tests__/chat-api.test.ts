@@ -3,7 +3,7 @@ import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { POST } from '../pages/api/chat';
 
 const endpoint = 'https://example.com/api/chat';
-let mockEnv: Partial<Env> = {};
+const mockEnv: Partial<Env> = {};
 
 type ChatPostContext = Parameters<typeof POST>[0];
 
@@ -238,5 +238,23 @@ describe('chat API', () => {
 
     expect(response.status).toBe(500);
     await expect(readJson(response)).resolves.toEqual({ error: 'Unknown error' });
+  });
+
+  it('falls back to process.env when locals.runtime is missing', async () => {
+    const ai = createAi();
+    vi.stubGlobal('process', {
+      ...process,
+      env: { AI: ai },
+    });
+
+    const response = await POST({
+      request: createRequest({ messages: [{ role: 'user', content: 'Hello' }] }),
+      locals: {},
+    } as unknown as ChatPostContext);
+
+    expect(response.status).toBe(200);
+    expect(ai.run).toHaveBeenCalledOnce();
+
+    vi.unstubAllGlobals();
   });
 });
