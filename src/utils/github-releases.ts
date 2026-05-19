@@ -28,7 +28,7 @@ const RELEASES_PAGE_URL =
   'https://github.com/alehar9320/astro-cloudflare-personal-website/releases';
 const REPO_URL = 'https://github.com/alehar9320/astro-cloudflare-personal-website';
 
-export interface ReleaseItem {
+interface ReleaseItem {
   hash?: string;
   message: string;
   url?: string;
@@ -140,4 +140,4 @@ export function splitReleaseBody(body: string): ReleaseItem[] {
     .map(parseReleaseItem);
 }
 
-export { RELEASES_PAGE_URL, REPO_URL };
+export { RELEASES_PAGE_URL };
