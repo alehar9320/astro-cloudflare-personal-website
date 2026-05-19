@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { POST } from '../pages/api/chat';
 
@@ -68,10 +68,22 @@ describe('chat API', () => {
     );
   });
 
-  it('returns 500 when the AI binding is missing', async () => {
+  it('returns 500 when the AI binding is missing (empty env)', async () => {
     const response = await POST(
       createContext(createRequest({ messages: [{ role: 'user', content: 'Hello' }] }), {})
     );
+
+    expect(response.status).toBe(500);
+    await expect(readJson(response)).resolves.toEqual({ error: 'AI binding not found' });
+  });
+
+  it('returns 500 when the runtime is completely missing from locals', async () => {
+    const context = {
+      request: createRequest({ messages: [{ role: 'user', content: 'Hello' }] }),
+      locals: {},
+    } as unknown as ChatPostContext;
+
+    const response = await POST(context);
 
     expect(response.status).toBe(500);
     await expect(readJson(response)).resolves.toEqual({ error: 'AI binding not found' });
