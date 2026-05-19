@@ -34,7 +34,17 @@
         >
       </button>
     </div>
-    <div id="chat-messages" class="chat-messages"></div>
+    <div id="chat-messages" class="chat-messages" aria-live="polite">
+      <section class="message assistant-message welcome-message" aria-label="About this chat">
+        <h2>Meet Alexander's digital twin</h2>
+        <p>
+          Ask about Alexander's work, product thinking, Developer Experience, Industrial AI, or
+          background just as you would ask Alexander directly. I've been given context about him,
+          but I'm still an AI: responses can vary and may contain mistakes. Treat answers as a
+          helpful starting point, not a verified source of truth.
+        </p>
+      </section>
+    </div>
     <div id="typing-indicator" class="typing-indicator hidden">Alexander is typing...</div>
     <form id="chat-form" class="chat-form">
       <input
@@ -163,6 +173,23 @@
     color: var(--gray-100);
   }
 
+  .welcome-message {
+    max-width: 90%;
+  }
+
+  .welcome-message h2 {
+    margin: 0 0 0.35rem;
+    color: var(--gray-0);
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .welcome-message p {
+    margin: 0;
+    color: var(--gray-200);
+  }
+
   .typing-indicator {
     padding: 0.5rem 1rem;
     font-size: 0.75rem;
@@ -211,6 +238,8 @@
 </style>
 
 <script>
+  import { createChatStreamParser, extractAssistantTextFromSse } from '../utils/chat-stream';
+
   const chatToggle = document.getElementById('chat-toggle');
   const chatWindow = document.getElementById('chat-window');
   const chatClose = document.getElementById('chat-close');
@@ -230,6 +259,23 @@
     content: string;
   }
 
+  function normalizeMessage(message: Message): Message {
+    if (message.role !== 'assistant') {
+      return message;
+    }
+
+    const normalizedContent = extractAssistantTextFromSse(message.content);
+
+    if (normalizedContent.length === 0) {
+      return message;
+    }
+
+    return {
+      ...message,
+      content: normalizedContent,
+    };
+  }
+
   function appendMessage(role: string, content: string) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${role}-message`;
@@ -240,7 +286,7 @@
   }
 
   // Load history
-  messages.forEach((msg: Message) => {
+  messages.map(normalizeMessage).forEach((msg: Message) => {
     const displayRole = msg.role === 'ai' ? 'assistant' : msg.role;
     appendMessage(displayRole, msg.content);
   });
@@ -277,6 +323,7 @@
       typingIndicator?.classList.add('hidden');
       const aiMessageDiv = appendMessage('assistant', '');
       let aiContent = '';
+      const streamParser = createChatStreamParser();
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
@@ -285,11 +332,20 @@
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-          const chunk = decoder.decode(value);
-          aiContent += chunk;
-          aiMessageDiv.textContent = aiContent;
+          const chunk = decoder.decode(value, { stream: true });
+          const parsedChunk = streamParser.push(chunk);
+          if (parsedChunk) {
+            aiContent += parsedChunk;
+            aiMessageDiv.textContent = aiContent;
+          }
           chatMessages?.scrollTo(0, chatMessages.scrollHeight);
         }
+      }
+
+      const remainingContent = streamParser.flush();
+      if (remainingContent) {
+        aiContent += remainingContent;
+        aiMessageDiv.textContent = aiContent;
       }
 
       messages.push({ role: 'assistant', content: aiContent });
