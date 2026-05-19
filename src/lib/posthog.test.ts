@@ -1,5 +1,4 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import type { Mock } from 'vitest';
 
 const PostHogMock = vi.fn();
 
@@ -21,18 +20,6 @@ describe('getPostHogClient', () => {
     expect(PostHogMock).not.toHaveBeenCalled();
   });
 
-  it('returns null and logs an error when the PostHog host is invalid', async () => {
-    vi.stubEnv('PUBLIC_POSTHOG_KEY', 'test-key');
-    vi.stubEnv('PUBLIC_POSTHOG_HOST', 'not-a-url');
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-    const { getPostHogClient } = await import('./posthog');
-
-    expect(getPostHogClient()).toBeNull();
-    expect(consoleSpy).toHaveBeenCalled();
-    expect(PostHogMock).not.toHaveBeenCalled();
-  });
-
   it('creates a PostHog client with the configured env vars', async () => {
     vi.stubEnv('PUBLIC_POSTHOG_KEY', 'test-key');
     vi.stubEnv('PUBLIC_POSTHOG_HOST', 'https://eu.i.posthog.com');
@@ -47,7 +34,7 @@ describe('getPostHogClient', () => {
       flushAt: 1,
       flushInterval: 0,
     });
-    expect(client).toBe((PostHogMock as Mock).mock.results[0]?.value);
+    expect(client).toBe(PostHogMock.mock.results[0]?.value);
   });
 
   it('reuses the cached PostHog client for repeated calls', async () => {

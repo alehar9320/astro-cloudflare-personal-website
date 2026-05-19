@@ -1,26 +1,20 @@
-import { z } from 'zod';
+export interface GitHubReleaseApiItem {
+  body?: string | null;
+  draft?: boolean;
+  html_url?: string;
+  name?: string | null;
+  prerelease?: boolean;
+  published_at?: string | null;
+  tag_name?: string;
+}
 
-export const GitHubReleaseApiItemSchema = z.object({
-  body: z.string().nullable().optional(),
-  draft: z.boolean().optional(),
-  html_url: z.string().optional(),
-  name: z.string().nullable().optional(),
-  prerelease: z.boolean().optional(),
-  published_at: z.string().nullable().optional(),
-  tag_name: z.string().optional(),
-});
-
-export type GitHubReleaseApiItem = z.infer<typeof GitHubReleaseApiItemSchema>;
-
-export const SiteReleaseSchema = z.object({
-  body: z.string(),
-  publishedAt: z.string().nullable(),
-  title: z.string(),
-  url: z.string(),
-  version: z.string(),
-});
-
-export type SiteRelease = z.infer<typeof SiteReleaseSchema>;
+export interface SiteRelease {
+  body: string;
+  publishedAt: string | null;
+  title: string;
+  url: string;
+  version: string;
+}
 
 const RELEASES_API_URL =
   'https://api.github.com/repos/alehar9320/astro-cloudflare-personal-website/releases?per_page=20';
@@ -46,20 +40,11 @@ export function normalizeRelease(release: GitHubReleaseApiItem): SiteRelease | n
   };
 }
 
-export async function fetchGitHubReleases(
-  fetchImpl: typeof fetch = fetch,
-  url: string = RELEASES_API_URL
-): Promise<SiteRelease[]> {
+export async function fetchGitHubReleases(fetchImpl: typeof fetch = fetch): Promise<SiteRelease[]> {
   const githubToken = typeof process !== 'undefined' ? process.env.GITHUB_TOKEN : undefined;
 
-  // Defensive check to ensure we only fetch from the trusted GitHub API domain
-  if (!url.startsWith('https://api.github.com/')) {
-    console.error('Invalid GitHub API URL');
-    return [];
-  }
-
   try {
-    const response = await fetchImpl(url, {
+    const response = await fetchImpl(RELEASES_API_URL, {
       headers: {
         Accept: 'application/vnd.github+json',
         ...(githubToken ? { Authorization: `token ${githubToken}` } : {}),
@@ -67,35 +52,24 @@ export async function fetchGitHubReleases(
     });
 
     if (!response.ok) {
-      // Intentionally avoiding logging headers that might contain sensitive information
       console.error('GitHub releases request failed', {
+        rateLimitLimit: response.headers.get('x-ratelimit-limit'),
+        rateLimitRemaining: response.headers.get('x-ratelimit-remaining'),
+        rateLimitReset: response.headers.get('x-ratelimit-reset'),
         status: response.status,
         statusText: response.statusText,
       });
       return [];
     }
 
-    const json = await response.json();
-    const result = z.array(GitHubReleaseApiItemSchema).safeParse(json);
-
-    if (!result.success) {
-      console.error('GitHub releases API validation failed:', result.error.format());
-      return [];
-    }
-
-    const releases = result.data;
+    const releases = (await response.json()) as GitHubReleaseApiItem[];
 
     return releases
       .filter((release) => !release.prerelease)
       .map(normalizeRelease)
       .filter((release): release is SiteRelease => release !== null);
   } catch (error) {
-    // Redact potential token if error message contains it (defense in depth)
-    const safeErrorMessage =
-      error instanceof Error
-        ? error.message.replace(/token\s+[a-zA-Z0-9_-]+/g, 'token [REDACTED]')
-        : 'Unknown error';
-    console.error('GitHub releases request errored:', safeErrorMessage);
+    console.error('GitHub releases request errored', error);
     return [];
   }
 }
