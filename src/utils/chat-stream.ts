@@ -4,14 +4,18 @@ const DONE_MARKER = '[DONE]';
 interface SseParserState {
   currentEventLines: string[];
   partialLine: string;
+  sawSseEvents: boolean;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null;
 }
 
+const SSE_DATA_REGEX = /(^|\n)\s*data:\s*/;
+const SSE_EVENT_REGEX = /(^|\n)\s*event:\s*[\w-]+/;
+
 function looksLikeSsePayload(raw: string): boolean {
-  return raw.includes(DATA_PREFIX) || raw.includes(DONE_MARKER) || raw.includes('event:');
+  return SSE_DATA_REGEX.test(raw) || SSE_EVENT_REGEX.test(raw) || raw.includes(DONE_MARKER);
 }
 
 function extractResponseFromPayload(payload: string): string {
@@ -36,6 +40,9 @@ function consumeLine(state: SseParserState, line: string): string {
   if (line === '') {
     const payload = state.currentEventLines.join('\n').trim();
     state.currentEventLines = [];
+    if (payload) {
+      state.sawSseEvents = true;
+    }
     return extractResponseFromPayload(payload);
   }
 
@@ -58,9 +65,21 @@ function processBufferedText(state: SseParserState, input: string, isFinalChunk:
 
   state.partialLine = isFinalChunk ? '' : lines[lines.length - 1];
 
-  if (isFinalChunk && state.currentEventLines.length > 0) {
-    parsedText += extractResponseFromPayload(state.currentEventLines.join('\n').trim());
-    state.currentEventLines = [];
+  if (isFinalChunk) {
+    if (state.currentEventLines.length > 0) {
+      const payload = state.currentEventLines.join('\n').trim();
+      const extracted = extractResponseFromPayload(payload);
+      if (extracted) {
+        state.sawSseEvents = true;
+        parsedText += extracted;
+      }
+      state.currentEventLines = [];
+    }
+
+    // Support plain text fallback: if we never saw any SSE events, return the raw input
+    if (!state.sawSseEvents && parsedText === '') {
+      return normalizedInput;
+    }
   }
 
   return parsedText;
@@ -70,10 +89,14 @@ export function createChatStreamParser() {
   const state: SseParserState = {
     currentEventLines: [],
     partialLine: '',
+    sawSseEvents: false,
   };
 
   return {
     push(chunk: string) {
+      if (!state.sawSseEvents && !looksLikeSsePayload(chunk)) {
+        return chunk;
+      }
       return processBufferedText(state, chunk, false);
     },
     flush() {

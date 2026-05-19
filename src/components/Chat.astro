@@ -267,7 +267,10 @@
     const normalizedContent = extractAssistantTextFromSse(message.content);
 
     if (normalizedContent.length === 0) {
-      return message;
+      return {
+        ...message,
+        content: '',
+      };
     }
 
     return {

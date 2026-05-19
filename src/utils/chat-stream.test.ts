@@ -48,4 +48,24 @@ describe('chat stream parser', () => {
   it('falls back to plain text when the input is not SSE', () => {
     expect(extractAssistantTextFromSse('Hello world')).toBe('Hello world');
   });
+
+  it('supports plain text streams with multiple chunks', () => {
+    const parser = createChatStreamParser();
+
+    expect(parser.push('Hello ')).toBe('Hello ');
+    expect(parser.push('world')).toBe('world');
+    expect(parser.flush()).toBe('');
+  });
+
+  it('ignores "event:" when it is not at the start of a line', () => {
+    const text = 'Next event: tomorrow';
+    expect(extractAssistantTextFromSse(text)).toBe(text);
+  });
+
+  it('falls back to raw text if SSE starts but is invalid', () => {
+    const parser = createChatStreamParser();
+
+    expect(parser.push('data: {"response": "hi"')).toBe('');
+    expect(parser.flush()).toBe('data: {"response": "hi"');
+  });
 });
