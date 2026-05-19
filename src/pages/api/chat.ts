@@ -150,6 +150,8 @@ Keep your responses brief, typically 2-3 sentences.`;
     return new Response(stream, {
       headers: {
         'content-type': 'text/event-stream',
+        'cache-control': 'no-store',
+        'x-content-type-options': 'nosniff',
       },
     });
   } catch (e: unknown) {
