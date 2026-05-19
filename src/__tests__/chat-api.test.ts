@@ -243,9 +243,9 @@ describe('chat API', () => {
   it('falls back to process.env when locals.runtime.env is missing', async () => {
     const ai = createAi();
     // Simulate process.env having AI binding
-    // We cast to any to stub process.env for this test
+    // We use a type assertion to allow stubbing process.env for this test
     const originalEnv = process.env;
-    process.env = { ...originalEnv, AI: ai as any };
+    process.env = { ...originalEnv, AI: ai as unknown as (typeof process.env)['AI'] };
 
     const request = createRequest({ messages: [{ role: 'user', content: 'Hello' }] });
     // Context without locals.runtime.env
