@@ -1,14 +1,22 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { z } from 'zod';
+import flags from '../content/flags.json';
 
 interface Props {
   project: CollectionEntry<'work'>;
 }
 
 const { data, id } = Astro.props.project;
+
+const flagSchema = z.object({
+  portfolio_tactile_v1: z.boolean().default(false),
+});
+
+const { portfolio_tactile_v1 } = flagSchema.parse(flags);
 ---
 
-<a class="card" href={`/work/${id}`}>
+<a class:list={['card', { 'tactile-enabled': portfolio_tactile_v1 }]} href={`/work/${id}`}>
   <span class="title">{data.title}</span>
   <img src={data.img} alt={data.img_alt || ''} loading="lazy" decoding="async" />
 </a>
@@ -32,7 +40,8 @@ const { data, id } = Astro.props.project;
     transition:
       transform 0.4s cubic-bezier(0.22, 1, 0.36, 1),
       box-shadow 0.4s ease,
-      border-color 0.4s ease;
+      border-color 0.4s ease,
+      transform 0.2s ease;
   }
 
   .card:hover,
@@ -47,6 +56,11 @@ const { data, id } = Astro.props.project;
   .card:focus-visible {
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
+  }
+
+  .card.tactile-enabled:active {
+    transform: translateY(2px) scale(0.98);
+    box-shadow: var(--shadow-sm);
   }
 
   .title {
