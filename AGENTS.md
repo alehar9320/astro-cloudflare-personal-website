@@ -34,7 +34,7 @@
   - PascalCase for Astro components (`MyComponent.astro`).
   - kebab-case for other files (`my-script.ts`).
 - **Icons:** Phosphor Icons adapted in `src/components/IconPaths.ts`.
-- **MCP Servers:** Configured in `mcp_config.json` (root) and documented in `docs/mcp.md`. Includes `astro-docs` and `render` servers.
+- **MCP Servers:** Configured in `mcp_config.json` (root) and documented in `docs/mcp.md`. Includes `astro-docs`, `render`, and `context7` servers.
 
 ## 3. Development Workflow
 
@@ -82,6 +82,7 @@ Project-specific AI agent skills are defined in the `.agents/skills/` directory.
 - Vanilla Performance Optimization
 - Automated Quality Assurance
 - Persona & Context Alignment
+- Context7 Documentation Retrieval
 
 Refer to the individual `SKILL.md` files in each skill folder for detailed guidance.
 
