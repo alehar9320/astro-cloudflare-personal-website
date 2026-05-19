@@ -99,7 +99,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const store = bindings.CHAT_STORE;
 
   if (!ai) {
-    return jsonError('AI binding not found', 500);
+    return jsonError('AI binding not found. Chat is only available on Cloudflare Workers.', 503);
   }
 
   // Basic Security: Client IP-based rate limiting
@@ -150,6 +150,8 @@ Keep your responses brief, typically 2-3 sentences.`;
     return new Response(stream, {
       headers: {
         'content-type': 'text/event-stream',
+        'Cache-Control': 'no-store',
+        'X-Content-Type-Options': 'nosniff',
       },
     });
   } catch (e: unknown) {
