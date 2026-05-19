@@ -9,8 +9,6 @@ export default defineConfig({
     ],
     alias: {
       'astro:content': new URL('./src/__tests__/mocks/astro-content.ts', import.meta.url).pathname,
-      'cloudflare:workers': new URL('./src/__tests__/mocks/cloudflare-workers.ts', import.meta.url)
-        .pathname,
       'astro/loaders': new URL('./src/__tests__/mocks/astro-loaders.ts', import.meta.url).pathname,
       'astro/zod': new URL('./src/__tests__/mocks/astro-zod.ts', import.meta.url).pathname,
     },
