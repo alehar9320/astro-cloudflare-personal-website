@@ -1,5 +1,4 @@
 import type { APIRoute } from 'astro';
-import { env } from 'cloudflare:workers';
 
 const MAX_MESSAGES = 10;
 const MAX_MESSAGE_CONTENT_LENGTH = 500;
@@ -93,8 +92,8 @@ function validateMessages(messages: unknown): ChatMessage[] | Response {
   return validatedMessages;
 }
 
-export const POST: APIRoute = async ({ request }) => {
-  const bindings = env as unknown as ChatEnv;
+export const POST: APIRoute = async ({ request, locals }) => {
+  const bindings = (locals.runtime?.env || {}) as unknown as ChatEnv;
   const ai = bindings.AI;
   const store = bindings.CHAT_STORE;
 
@@ -150,6 +149,8 @@ Keep your responses brief, typically 2-3 sentences.`;
     return new Response(stream, {
       headers: {
         'content-type': 'text/event-stream',
+        'cache-control': 'no-store',
+        'x-content-type-options': 'nosniff',
       },
     });
   } catch (e: unknown) {

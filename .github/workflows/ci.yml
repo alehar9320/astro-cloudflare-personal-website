@@ -46,6 +46,9 @@ jobs:
       - name: Run Linter
         run: npm run lint
 
+      - name: Security Audit
+        run: npm audit
+
   # ─── Build & Test ─────────────────────────────────────────────────────────────
   # Runs in parallel with quality to keep total wall-clock time low.
   build_and_test:
