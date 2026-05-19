@@ -4,4 +4,4 @@
 - Insight 2: `PortfolioPreview.astro` currently lacks the `:active` state present in other interactive components like `CallToAction.astro`.
 - Abort trigger: Abort if `astro check` fails due to flag integration.
 
-[CYCLE COMPLETE] Enhancement successfully deployed behind `portfolio_tactile_v1` flag. Tactile feedback implemented using `transform: translateY(-2px) scale(0.98)` on `:active`.
+[CYCLE COMPLETE] Enhancement successfully deployed behind `portfolio_tactile_v1` flag. Tactile feedback implemented using `transform: translateY(2px) scale(0.98)` on `:active`. Also resolved Render deployment failure by removing direct `cloudflare:workers` dependency in `chat.ts`.
