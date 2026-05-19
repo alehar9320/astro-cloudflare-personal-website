@@ -1,9 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { POST } from '../pages/api/chat';
+import { POST, type ChatEnv } from '../pages/api/chat';
 
 const endpoint = 'https://example.com/api/chat';
-const mockEnv: any = {};
+const mockEnv = {} as ChatEnv;
 
 type ChatPostContext = Parameters<typeof POST>[0];
 
@@ -238,5 +238,25 @@ describe('chat API', () => {
 
     expect(response.status).toBe(500);
     await expect(readJson(response)).resolves.toEqual({ error: 'Unknown error' });
+  });
+
+  it('falls back to process.env when locals.runtime.env is missing', async () => {
+    const ai = createAi();
+    // Simulate process.env having AI binding
+    // We cast to any to stub process.env for this test
+    const originalEnv = process.env;
+    process.env = { ...originalEnv, AI: ai as any };
+
+    const request = createRequest({ messages: [{ role: 'user', content: 'Hello' }] });
+    // Context without locals.runtime.env
+    const context = { request, locals: {} } as unknown as ChatPostContext;
+
+    const response = await POST(context);
+
+    expect(response.status).toBe(200);
+    expect(ai.run).toHaveBeenCalled();
+
+    // Restore process.env
+    process.env = originalEnv;
   });
 });
