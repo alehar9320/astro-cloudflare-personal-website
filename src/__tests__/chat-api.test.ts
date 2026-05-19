@@ -73,13 +73,20 @@ describe('chat API', () => {
     );
   });
 
-  it('returns 500 when the AI binding is missing', async () => {
+  it('returns a mock response when the AI binding is missing in development', async () => {
     const response = await POST(
       createContext(createRequest({ messages: [{ role: 'user', content: 'Hello' }] }))
     );
 
-    expect(response.status).toBe(500);
-    await expect(readJson(response)).resolves.toEqual({ error: 'AI binding not found' });
+    // In DEV mode (Vitest), it should return a 200 mock response instead of 500
+    expect(response.status).toBe(200);
+    expect(response.headers.get('content-type')).toBe('text/event-stream');
+
+    const reader = response.body?.getReader();
+    const decoder = new TextDecoder();
+    const { value } = (await reader?.read()) || {};
+    const text = decoder.decode(value);
+    expect(text).toContain('mock AI');
   });
 
   it('returns 400 for invalid JSON', async () => {

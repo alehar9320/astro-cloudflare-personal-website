@@ -94,9 +94,32 @@ function validateMessages(messages: unknown): ChatMessage[] | Response {
 }
 
 export const POST: APIRoute = async ({ request }) => {
-  const bindings = env as unknown as ChatEnv;
-  const ai = bindings.AI;
-  const store = bindings.CHAT_STORE;
+  // In Astro v6, use the official cloudflare:workers import for bindings
+  const envBindings = env as unknown as ChatEnv;
+
+  let ai = envBindings.AI;
+  const store = envBindings.CHAT_STORE;
+
+  // Mock AI for local development if the binding is missing
+  if (!ai && import.meta.env.DEV) {
+    ai = {
+      run: async () => {
+        const text =
+          "I'm currently running in local development mode with a mock AI. " +
+          "To test with the real Cloudflare AI, run 'npm run dev:remote'.";
+
+        return new ReadableStream({
+          start(controller) {
+            const encoder = new TextEncoder();
+            // Simulate SSE format that the parser expects
+            const payload = JSON.stringify({ response: text });
+            controller.enqueue(encoder.encode(`data: ${payload}\n\n`));
+            controller.close();
+          },
+        }) as unknown as ReadableStream;
+      },
+    };
+  }
 
   if (!ai) {
     return jsonError('AI binding not found', 500);

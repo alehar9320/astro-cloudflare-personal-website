@@ -33,8 +33,8 @@ export default defineConfig({
       ? node({ mode: 'standalone' })
       : cloudflare({
           inspectorPort: false,
-          prerenderEnvironment: 'node',
-          remoteBindings: false,
+          prerenderEnvironment: 'workerd',
+          remoteBindings: process.env.REMOTE_BINDINGS === 'true',
         }),
   image: {
     // Only use Cloudflare image service when NOT on Render
@@ -50,6 +50,9 @@ export default defineConfig({
       org: 'personal-projects-1c',
       project: 'astro-cloudflare-site',
       telemetry: false,
+      enabled:
+        !process.env.SKIP_SENTRY &&
+        (process.env.NODE_ENV === 'production' || !!process.env.SENTRY_DSN),
     }),
   ],
   vite: {
