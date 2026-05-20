@@ -14,7 +14,7 @@ interface ChatMessage {
   content: string;
 }
 
-interface ChatEnv {
+export interface ChatEnv {
   AI?: {
     run: (model: string, input: unknown) => Promise<ReadableStream>;
   };
@@ -93,7 +93,7 @@ function validateMessages(messages: unknown): ChatMessage[] | Response {
 }
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  const bindings = (locals.runtime?.env || {}) as unknown as ChatEnv;
+  const bindings = (locals.runtime?.env || process.env) as unknown as ChatEnv;
   const ai = bindings.AI;
   const store = bindings.CHAT_STORE;
 

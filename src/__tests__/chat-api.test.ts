@@ -78,6 +78,10 @@ describe('chat API', () => {
   });
 
   it('returns 500 when the runtime is completely missing from locals', async () => {
+    // Clear process.env AI to ensure fallback fails
+    const originalAi = process.env.AI;
+    delete process.env.AI;
+
     const context = {
       request: createRequest({ messages: [{ role: 'user', content: 'Hello' }] }),
       locals: {},
@@ -87,6 +91,8 @@ describe('chat API', () => {
 
     expect(response.status).toBe(500);
     await expect(readJson(response)).resolves.toEqual({ error: 'AI binding not found' });
+
+    process.env.AI = originalAi;
   });
 
   it('returns 400 for invalid JSON', async () => {
@@ -239,5 +245,21 @@ describe('chat API', () => {
 
     expect(response.status).toBe(500);
     await expect(readJson(response)).resolves.toEqual({ error: 'Unknown error' });
+  });
+
+  it('falls back to process.env when locals.runtime.env is missing', async () => {
+    const ai = createAi();
+    const originalEnv = process.env;
+    process.env = { ...originalEnv, AI: ai as unknown as (typeof process.env)['AI'] };
+
+    const request = createRequest({ messages: [{ role: 'user', content: 'Hello' }] });
+    const context = { request, locals: {} } as unknown as ChatPostContext;
+
+    const response = await POST(context);
+
+    expect(response.status).toBe(200);
+    expect(ai.run).toHaveBeenCalled();
+
+    process.env = originalEnv;
   });
 });
