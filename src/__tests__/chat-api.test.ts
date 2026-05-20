@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { POST, type ChatEnv } from '../pages/api/chat';
 
@@ -15,7 +15,7 @@ function createRequest(body: unknown, headers?: HeadersInit) {
   });
 }
 
-function createContext(request: Request) {
+function createContext(request: Request, env: Partial<Env> = {}) {
   return {
     request,
     locals: {
@@ -27,9 +27,7 @@ function createContext(request: Request) {
 }
 
 async function postChat(body: unknown, ai = createAi()) {
-  mockEnv.AI = ai;
-  mockEnv.CHAT_STORE = undefined;
-  return POST(createContext(createRequest(body)));
+  return POST(createContext(createRequest(body), { AI: ai }));
 }
 
 async function readJson(response: Response) {
@@ -43,11 +41,6 @@ function createAi(stream = new ReadableStream()) {
 }
 
 describe('chat API', () => {
-  beforeEach(() => {
-    mockEnv.AI = undefined;
-    mockEnv.CHAT_STORE = undefined;
-  });
-
   it('sanitizes valid messages and forwards them with the local system prompt', async () => {
     const ai = createAi();
 
@@ -78,7 +71,7 @@ describe('chat API', () => {
 
   it('returns 500 when the AI binding is missing', async () => {
     const response = await POST(
-      createContext(createRequest({ messages: [{ role: 'user', content: 'Hello' }] }))
+      createContext(createRequest({ messages: [{ role: 'user', content: 'Hello' }] }), {})
     );
 
     expect(response.status).toBe(500);
@@ -86,9 +79,9 @@ describe('chat API', () => {
   });
 
   it('returns 400 for invalid JSON', async () => {
-    mockEnv.AI = createAi();
-
-    const response = await POST(createContext(createRequest('{invalid json')));
+    const response = await POST(
+      createContext(createRequest('{invalid json'), { AI: createAi() })
+    );
 
     expect(response.status).toBe(400);
     await expect(readJson(response)).resolves.toEqual({ error: 'Invalid JSON payload' });
@@ -149,15 +142,14 @@ describe('chat API', () => {
     const get = vi.fn().mockResolvedValue('20');
     const put = vi.fn();
     const store = { get, put } as unknown as KVNamespace;
-    mockEnv.AI = ai;
-    mockEnv.CHAT_STORE = store;
 
     const response = await POST(
       createContext(
         createRequest(
           { messages: [{ role: 'user', content: 'Hello' }] },
           { 'cf-connecting-ip': '203.0.113.1' }
-        )
+        ),
+        { AI: ai, CHAT_STORE: store }
       )
     );
 
@@ -175,15 +167,14 @@ describe('chat API', () => {
     const get = vi.fn().mockResolvedValue('2');
     const put = vi.fn().mockResolvedValue(undefined);
     const store = { get, put } as unknown as KVNamespace;
-    mockEnv.AI = ai;
-    mockEnv.CHAT_STORE = store;
 
     const response = await POST(
       createContext(
         createRequest(
           { messages: [{ role: 'user', content: 'Hello' }] },
           { 'cf-connecting-ip': '203.0.113.2' }
-        )
+        ),
+        { AI: ai, CHAT_STORE: store }
       )
     );
 
@@ -199,15 +190,14 @@ describe('chat API', () => {
     const get = vi.fn().mockResolvedValue(null);
     const put = vi.fn().mockResolvedValue(undefined);
     const store = { get, put } as unknown as KVNamespace;
-    mockEnv.AI = ai;
-    mockEnv.CHAT_STORE = store;
 
     const response = await POST(
       createContext(
         createRequest(
           { messages: [{ role: 'user', content: 'Hello' }] },
           { 'cf-connecting-ip': '203.0.113.3' }
-        )
+        ),
+        { AI: ai, CHAT_STORE: store }
       )
     );
 
