@@ -94,7 +94,6 @@ function validateMessages(messages: unknown): ChatMessage[] | Response {
 
 export const POST: APIRoute = async ({ request, locals }) => {
   // Access bindings through locals.runtime.env or process.env (fallback for non-Cloudflare)
-  // We use type assertion to bypass Astro's base Locals type which doesn't include runtime.
   const bindings = ((locals as unknown as { runtime?: { env: ChatEnv } }).runtime?.env ||
     process.env) as unknown as ChatEnv;
 
