@@ -204,4 +204,23 @@ describe('github releases utility', () => {
 
     expect(consoleSpy).toHaveBeenCalledWith('GitHub releases request errored:', 'Unknown error');
   });
+
+  it('handles normalizeRelease edge cases: undefined tag_name', () => {
+    // @ts-expect-error Testing invalid input
+    expect(normalizeRelease({ tag_name: undefined })).toBeNull();
+  });
+
+  it('handles normalizeRelease edge cases: whitespace name', () => {
+    const release = normalizeRelease({ tag_name: 'v1.0.0', name: '   ' });
+    expect(release?.title).toBe('v1.0.0');
+  });
+
+  it('handles normalizeRelease edge cases: missing html_url', () => {
+    const release = normalizeRelease({ tag_name: 'v1.0.0' });
+    expect(release?.url).toBe(RELEASES_PAGE_URL);
+  });
+
+  it('handles splitReleaseBody with empty body', () => {
+    expect(splitReleaseBody('')).toEqual([]);
+  });
 });

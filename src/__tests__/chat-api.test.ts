@@ -16,17 +16,21 @@ function createRequest(body: unknown, headers?: HeadersInit) {
   });
 }
 
-function createContext(request: Request) {
+function createContext(request: Request, env: Partial<Env> = mockEnv) {
   return {
     request,
-    locals: {},
+    locals: {
+      runtime: {
+        env,
+      },
+    },
   } as unknown as ChatPostContext;
 }
 
 async function postChat(body: unknown, ai = createAi()) {
   mockEnv.AI = ai;
   mockEnv.CHAT_STORE = undefined;
-  return POST(createContext(createRequest(body)));
+  return POST(createContext(createRequest(body), mockEnv));
 }
 
 async function readJson(response: Response) {
@@ -75,7 +79,7 @@ describe('chat API', () => {
 
   it('returns 500 when the AI binding is missing', async () => {
     const response = await POST(
-      createContext(createRequest({ messages: [{ role: 'user', content: 'Hello' }] }))
+      createContext(createRequest({ messages: [{ role: 'user', content: 'Hello' }] }), {})
     );
 
     expect(response.status).toBe(500);
@@ -85,7 +89,7 @@ describe('chat API', () => {
   it('returns 400 for invalid JSON', async () => {
     mockEnv.AI = createAi();
 
-    const response = await POST(createContext(createRequest('{invalid json')));
+    const response = await POST(createContext(createRequest('{invalid json'), mockEnv));
 
     expect(response.status).toBe(400);
     await expect(readJson(response)).resolves.toEqual({ error: 'Invalid JSON payload' });
@@ -154,7 +158,8 @@ describe('chat API', () => {
         createRequest(
           { messages: [{ role: 'user', content: 'Hello' }] },
           { 'cf-connecting-ip': '203.0.113.1' }
-        )
+        ),
+        mockEnv
       )
     );
 
@@ -180,7 +185,8 @@ describe('chat API', () => {
         createRequest(
           { messages: [{ role: 'user', content: 'Hello' }] },
           { 'cf-connecting-ip': '203.0.113.2' }
-        )
+        ),
+        mockEnv
       )
     );
 
@@ -204,7 +210,8 @@ describe('chat API', () => {
         createRequest(
           { messages: [{ role: 'user', content: 'Hello' }] },
           { 'cf-connecting-ip': '203.0.113.3' }
-        )
+        ),
+        mockEnv
       )
     );
 
@@ -235,5 +242,23 @@ describe('chat API', () => {
 
     expect(response.status).toBe(500);
     await expect(readJson(response)).resolves.toEqual({ error: 'Unknown error' });
+  });
+
+  it('falls back to anonymous for rate limiting when IP header is missing', async () => {
+    const ai = createAi();
+    const get = vi.fn().mockResolvedValue('0');
+    const put = vi.fn().mockResolvedValue(undefined);
+    const store = { get, put } as unknown as KVNamespace;
+    mockEnv.AI = ai;
+    mockEnv.CHAT_STORE = store;
+
+    const request = new Request(endpoint, {
+      method: 'POST',
+      body: JSON.stringify({ messages: [{ role: 'user', content: 'Hi' }] }),
+    });
+
+    const response = await POST(createContext(request, mockEnv));
+    expect(response.status).toBe(200);
+    expect(get).toHaveBeenCalledWith('chat-limit:anonymous');
   });
 });

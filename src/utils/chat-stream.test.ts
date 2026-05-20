@@ -48,4 +48,10 @@ describe('chat stream parser', () => {
   it('falls back to plain text when the input is not SSE', () => {
     expect(extractAssistantTextFromSse('Hello world')).toBe('Hello world');
   });
+
+  it('handles chat-stream parser with \r\n line endings', () => {
+    const parser = createChatStreamParser();
+    const chunk = 'data: {"response":"Hello"}\r\n\r\ndata: {"response":" World"}\r\n\r\n';
+    expect(parser.push(chunk)).toBe('Hello World');
+  });
 });
