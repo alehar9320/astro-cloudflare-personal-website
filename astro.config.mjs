@@ -53,6 +53,14 @@ export default defineConfig({
     }),
   ],
   vite: {
+    resolve: {
+      alias: isRender
+        ? {
+            'cloudflare:workers': new URL('./src/__tests__/mocks/cloudflare-workers.ts', import.meta.url)
+              .pathname,
+          }
+        : undefined,
+    },
     // @ts-expect-error Codecov's Vite plugin is typed against a different Vite instance than Astro's bundled one.
     plugins: [codecovPlugin],
   },
