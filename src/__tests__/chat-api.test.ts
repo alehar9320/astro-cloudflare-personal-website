@@ -1,9 +1,8 @@
 import { describe, expect, it, vi } from 'vitest';
 
-import { POST, type ChatEnv } from '../pages/api/chat';
+import { POST } from '../pages/api/chat';
 
 const endpoint = 'https://example.com/api/chat';
-const mockEnv = {} as ChatEnv;
 
 type ChatPostContext = Parameters<typeof POST>[0];
 
@@ -238,13 +237,10 @@ describe('chat API', () => {
 
   it('falls back to process.env when locals.runtime.env is missing', async () => {
     const ai = createAi();
-    // Simulate process.env having AI binding
-    // We use a type assertion to allow stubbing process.env for this test
     const originalEnv = process.env;
     process.env = { ...originalEnv, AI: ai as unknown as (typeof process.env)['AI'] };
 
     const request = createRequest({ messages: [{ role: 'user', content: 'Hello' }] });
-    // Context without locals.runtime.env
     const context = { request, locals: {} } as unknown as ChatPostContext;
 
     const response = await POST(context);
@@ -252,7 +248,6 @@ describe('chat API', () => {
     expect(response.status).toBe(200);
     expect(ai.run).toHaveBeenCalled();
 
-    // Restore process.env
     process.env = originalEnv;
   });
 });
