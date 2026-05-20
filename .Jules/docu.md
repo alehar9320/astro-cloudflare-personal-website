@@ -1,2 +1,3 @@
 ## 2025-05-14 - src/utils/chat-stream.ts | **Drift Identified:** Undocumented utility functions `createChatStreamParser` and `extractAssistantTextFromSse`. | **Action:** Adding JSDoc headers to improve code clarity and maintain synchronization with TypeScript types.
+
 ## 2025-05-14 - src/pages/api/chat.ts | **Drift Identified:** Deployment failure on non-Cloudflare platforms (Render) due to direct `cloudflare:workers` import. | **Action:** Refactored to use the portability pattern via `locals.runtime.env` to ensure multi-adapter compatibility.
