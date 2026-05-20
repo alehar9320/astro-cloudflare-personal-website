@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { POST } from '../pages/api/chat';
 
@@ -226,6 +226,22 @@ describe('chat API', () => {
       expirationTtl: 3600,
     });
     expect(ai.run).toHaveBeenCalledOnce();
+  });
+
+  it('falls back to process.env when locals.runtime is missing', async () => {
+    const ai = createAi();
+    const originalProcess = globalThis.process;
+    // @ts-ignore - Mocking process for test
+    globalThis.process = { ...originalProcess, env: { AI: ai } };
+
+    const response = await POST(
+      createContext(createRequest({ messages: [{ role: 'user', content: 'Hello' }] }))
+    );
+
+    expect(response.status).toBe(200);
+    expect(ai.run).toHaveBeenCalled();
+
+    globalThis.process = originalProcess;
   });
 
   it('returns a 500 error when AI execution fails', async () => {
