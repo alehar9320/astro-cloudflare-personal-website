@@ -56,8 +56,10 @@ export default defineConfig({
     resolve: {
       alias: isRender
         ? {
-            'cloudflare:workers': new URL('./src/__tests__/mocks/cloudflare-workers.ts', import.meta.url)
-              .pathname,
+            'cloudflare:workers': new URL(
+              './src/__tests__/mocks/cloudflare-workers.ts',
+              import.meta.url
+            ).pathname,
           }
         : undefined,
     },
