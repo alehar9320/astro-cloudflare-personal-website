@@ -1,15 +1,34 @@
-(node:59202) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
-(Use `node --trace-deprecation ...` to show where the warning was created)
-15:16:52 [@astrojs/cloudflare] Enabling image processing with Cloudflare Images for production with the "IMAGES" Images binding.
-15:16:52 [@astrojs/cloudflare] Enabling sessions with Cloudflare KV with the "SESSION" KV binding.
-Failed to start the remote proxy session, see the error details below:
 
-You must be logged in to use wrangler dev in remote mode. Try logging in, or run wrangler dev --local.
-  Location:
-    /app/node_modules/wrangler/wrangler-dist/cli.js:307484:11
-  Stack trace:
-    at /app/node_modules/wrangler/wrangler-dist/cli.js:307484:11
-    at async startRemoteProxySession (/app/node_modules/wrangler/wrangler-dist/cli.js:307460:18)
-    at async file:///app/node_modules/@cloudflare/vite-plugin/dist/index.mjs:29760:80
-    at async getDevMiniflareOptions (file:///app/node_modules/@cloudflare/vite-plugin/dist/index.mjs:29757:70)
-    at async _createServer (file:///app/node_modules/vite/dist/node/chunks/config.js:25603:86)
+> molecular-mars@0.0.1 dev
+> astro dev
+
+(node:42574) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+03:08:34 [@astrojs/cloudflare] Enabling image processing with Cloudflare Images for production with the "IMAGES" Images binding.
+03:08:34 [@astrojs/cloudflare] Enabling sessions with Cloudflare KV with the "SESSION" KV binding.
+[vite] connected.
+[33m▲ [43;33m[[43;30mWARNING[43;33m][0m [1mAI bindings always access remote resources, and so may incur usage charges even in local dev. To suppress this warning, set `remote: true` for the binding definition in your configuration file.[0m
+
+
+03:08:36 [vite] Re-optimizing dependencies because vite config has changed
+03:08:41 [types] Generated 1ms
+[vite] connected.
+03:08:42 [content] Syncing content
+03:08:42 [content] Synced content
+03:08:42 [vite] Re-optimizing dependencies because vite config has changed
+03:08:42 [vite] Re-optimizing dependencies because vite config has changed
+ astro  v6.3.3 ready in 12224 ms
+┃ Local    http://localhost:4321/
+┃ Network  use --host to expose
+03:08:43 watching for file changes...
+03:09:00 [200] /work 159ms
+03:09:01 [vite] ✨ new dependencies optimized: posthog-js, @sentry/astro, zod
+03:09:01 [vite] ✨ optimized dependencies changed. reloading
+03:09:02 [WARN] [vite] The file does not exist at "/app/node_modules/.vite/deps/astro-IQQQXCO3.js?v=b0323183" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+03:09:02 [WARN] [vite] The file does not exist at "/app/node_modules/.vite/deps/audit-UWCKQAAX.js?v=b0323183" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+03:09:02 [WARN] [vite] The file does not exist at "/app/node_modules/.vite/deps/xray-XH6VIXDC.js?v=b0323183" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+03:09:02 [WARN] [vite] The file does not exist at "/app/node_modules/.vite/deps/settings-K4OHAGC2.js?v=b0323183" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+03:09:02 [WARN] [vite] The file does not exist at "/app/node_modules/.vite/deps/toolbar-2H5PSQQU.js?v=b0323183" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+03:09:02 [WARN] [vite] The file does not exist at "/app/node_modules/.vite/deps/ui-library-EVFCBMCE.js?v=b0323183" which is in the optimize deps directory. The dependency might be incompatible with the dep optimizer. Try adding it to `optimizeDeps.exclude`.
+03:11:08 [watch] /src/components/PortfolioPreview.astro?astro&type=style&index=0&lang.css
+03:11:20 [watch] /src/components/PortfolioPreview.astro?astro&type=style&index=0&lang.css
