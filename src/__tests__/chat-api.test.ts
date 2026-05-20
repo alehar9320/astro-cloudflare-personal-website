@@ -1,10 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { env as workersEnv } from 'cloudflare:workers';
-import { POST } from '../pages/api/chat';
+import { POST, type ChatEnv } from '../pages/api/chat';
 
 const endpoint = 'https://example.com/api/chat';
-const mockEnv = workersEnv as Partial<Env>;
+const mockEnv = {} as ChatEnv;
 
 type ChatPostContext = Parameters<typeof POST>[0];
 
@@ -19,7 +18,11 @@ function createRequest(body: unknown, headers?: HeadersInit) {
 function createContext(request: Request) {
   return {
     request,
-    locals: {},
+    locals: {
+      runtime: {
+        env: mockEnv,
+      },
+    },
   } as unknown as ChatPostContext;
 }
 
@@ -235,5 +238,25 @@ describe('chat API', () => {
 
     expect(response.status).toBe(500);
     await expect(readJson(response)).resolves.toEqual({ error: 'Unknown error' });
+  });
+
+  it('falls back to process.env when locals.runtime.env is missing', async () => {
+    const ai = createAi();
+    // Simulate process.env having AI binding
+    // We use a type assertion to allow stubbing process.env for this test
+    const originalEnv = process.env;
+    process.env = { ...originalEnv, AI: ai as unknown as (typeof process.env)['AI'] };
+
+    const request = createRequest({ messages: [{ role: 'user', content: 'Hello' }] });
+    // Context without locals.runtime.env
+    const context = { request, locals: {} } as unknown as ChatPostContext;
+
+    const response = await POST(context);
+
+    expect(response.status).toBe(200);
+    expect(ai.run).toHaveBeenCalled();
+
+    // Restore process.env
+    process.env = originalEnv;
   });
 });

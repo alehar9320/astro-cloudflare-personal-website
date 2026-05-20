@@ -1,5 +1,4 @@
 import type { APIRoute } from 'astro';
-import { env } from 'cloudflare:workers';
 
 const MAX_MESSAGES = 10;
 const MAX_MESSAGE_CONTENT_LENGTH = 500;
@@ -15,7 +14,7 @@ interface ChatMessage {
   content: string;
 }
 
-interface ChatEnv {
+export interface ChatEnv {
   AI?: {
     run: (model: string, input: unknown) => Promise<ReadableStream>;
   };
@@ -93,8 +92,9 @@ function validateMessages(messages: unknown): ChatMessage[] | Response {
   return validatedMessages;
 }
 
-export const POST: APIRoute = async ({ request }) => {
-  const bindings = env as unknown as ChatEnv;
+export const POST: APIRoute = async ({ request, locals }) => {
+  const bindings = ((locals as { runtime?: { env: ChatEnv } }).runtime?.env ||
+    process.env) as unknown as ChatEnv;
   const ai = bindings.AI;
   const store = bindings.CHAT_STORE;
 
