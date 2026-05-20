@@ -1,14 +1,17 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { z } from 'zod';
+import flags from '../content/flags.json';
 
 interface Props {
   project: CollectionEntry<'work'>;
 }
 
 const { data, id } = Astro.props.project;
+const isTactileEnabled = z.boolean().default(false).parse(flags.portfolio_tactile_v1);
 ---
 
-<a class="card" href={`/work/${id}`}>
+<a class={`card ${isTactileEnabled ? 'tactile' : ''}`} href={`/work/${id}`}>
   <span class="title">{data.title}</span>
   <img src={data.img} alt={data.img_alt || ''} loading="lazy" decoding="async" />
 </a>
@@ -42,6 +45,11 @@ const { data, id } = Astro.props.project;
       0 15px 35px -5px hsla(210, 100%, 45%, 0.4),
       var(--shadow-lg);
     border-color: hsla(var(--gray-999-basis), 0.5);
+  }
+
+  .card.tactile:active {
+    transform: translateY(2px) scale(0.98);
+    transition: transform 0.2s ease;
   }
 
   .card:focus-visible {
