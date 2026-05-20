@@ -231,7 +231,7 @@ describe('chat API', () => {
   it('falls back to process.env when locals.runtime is missing', async () => {
     const ai = createAi();
     const originalProcess = globalThis.process;
-    // @ts-ignore - Mocking process for test
+    // @ts-expect-error - Mocking process for test
     globalThis.process = { ...originalProcess, env: { AI: ai } };
 
     const response = await POST(
