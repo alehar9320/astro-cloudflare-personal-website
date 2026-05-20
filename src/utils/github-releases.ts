@@ -54,7 +54,7 @@ export async function fetchGitHubReleases(
 
   // Defensive check to ensure we only fetch from the trusted GitHub API domain
   if (!url.startsWith('https://api.github.com/')) {
-    console.error('Invalid GitHub API URL');
+    console.error({ event: 'github_releases_invalid_url' });
     return [];
   }
 
@@ -68,7 +68,8 @@ export async function fetchGitHubReleases(
 
     if (!response.ok) {
       // Intentionally avoiding logging headers that might contain sensitive information
-      console.error('GitHub releases request failed', {
+      console.error({
+        event: 'github_releases_request_failed',
         status: response.status,
         statusText: response.statusText,
       });
@@ -79,7 +80,10 @@ export async function fetchGitHubReleases(
     const result = z.array(GitHubReleaseApiItemSchema).safeParse(json);
 
     if (!result.success) {
-      console.error('GitHub releases API validation failed:', result.error.format());
+      console.error({
+        event: 'github_releases_validation_failed',
+        errors: result.error.format(),
+      });
       return [];
     }
 
@@ -95,7 +99,7 @@ export async function fetchGitHubReleases(
       error instanceof Error
         ? error.message.replace(/token\s+[a-zA-Z0-9_-]+/g, 'token [REDACTED]')
         : 'Unknown error';
-    console.error('GitHub releases request errored:', safeErrorMessage);
+    console.error({ event: 'github_releases_request_error', error: safeErrorMessage });
     return [];
   }
 }

@@ -29,7 +29,10 @@ describe('getPostHogClient', () => {
     const { getPostHogClient } = await import('./posthog');
 
     expect(getPostHogClient()).toBeNull();
-    expect(consoleSpy).toHaveBeenCalled();
+    expect(consoleSpy).toHaveBeenCalledWith({
+      event: 'posthog_config_invalid',
+      errors: expect.any(Object),
+    });
     expect(PostHogMock).not.toHaveBeenCalled();
   });
 

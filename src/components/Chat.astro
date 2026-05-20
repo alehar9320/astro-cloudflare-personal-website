@@ -351,7 +351,10 @@
       messages.push({ role: 'assistant', content: aiContent });
       saveMessages();
     } catch (error) {
-      console.error('Chat error:', error);
+      console.error({
+        event: 'chat_client_error',
+        error: error instanceof Error ? error.message : 'Unknown error',
+      });
       typingIndicator?.classList.add('hidden');
       appendMessage('assistant', 'Sorry, something went wrong. Please try again.');
     }

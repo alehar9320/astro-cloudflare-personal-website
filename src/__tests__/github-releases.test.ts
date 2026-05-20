@@ -58,10 +58,10 @@ describe('github releases utility', () => {
     const result = await fetchGitHubReleases(fetchMock as typeof fetch);
 
     expect(result).toEqual([]);
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'GitHub releases API validation failed:',
-      expect.any(Object)
-    );
+    expect(consoleSpy).toHaveBeenCalledWith({
+      event: 'github_releases_validation_failed',
+      errors: expect.any(Object),
+    });
   });
 
   it('returns an empty list when the GitHub API fails', async () => {
@@ -156,10 +156,11 @@ describe('github releases utility', () => {
         headers: { Accept: expect.any(String), Authorization: 'token test-token' },
       })
     );
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'GitHub releases request failed',
-      expect.objectContaining({ status: 403, statusText: 'Forbidden' })
-    );
+    expect(consoleSpy).toHaveBeenCalledWith({
+      event: 'github_releases_request_failed',
+      status: 403,
+      statusText: 'Forbidden',
+    });
 
     vi.unstubAllGlobals();
     vi.unstubAllEnvs();
@@ -180,7 +181,7 @@ describe('github releases utility', () => {
     const result = await fetchGitHubReleases(fetchMock as typeof fetch, 'https://malicious.com');
 
     expect(result).toEqual([]);
-    expect(consoleSpy).toHaveBeenCalledWith('Invalid GitHub API URL');
+    expect(consoleSpy).toHaveBeenCalledWith({ event: 'github_releases_invalid_url' });
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -190,10 +191,10 @@ describe('github releases utility', () => {
 
     await fetchGitHubReleases(fetchMock as typeof fetch);
 
-    expect(consoleSpy).toHaveBeenCalledWith(
-      'GitHub releases request errored:',
-      'failed with token [REDACTED]'
-    );
+    expect(consoleSpy).toHaveBeenCalledWith({
+      event: 'github_releases_request_error',
+      error: 'failed with token [REDACTED]',
+    });
   });
 
   it('handles non-Error objects in catch block', async () => {
@@ -202,6 +203,9 @@ describe('github releases utility', () => {
 
     await fetchGitHubReleases(fetchMock as typeof fetch);
 
-    expect(consoleSpy).toHaveBeenCalledWith('GitHub releases request errored:', 'Unknown error');
+    expect(consoleSpy).toHaveBeenCalledWith({
+      event: 'github_releases_request_error',
+      error: 'Unknown error',
+    });
   });
 });
