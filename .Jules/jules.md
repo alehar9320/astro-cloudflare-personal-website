@@ -1,7 +1,4 @@
-## 2026-05-19 - Portfolio Tactile Feedback | Signal: Technical | Lean Implementation: Isolated via feature flag in `src/content/flags.json` and scoped CSS class.
-
-- Insight 1: Standardizing tactile feedback across all clickable elements improves UX consistency.
-- Insight 2: `PortfolioPreview.astro` currently lacks the `:active` state present in other interactive components like `CallToAction.astro`.
-- Abort trigger: Abort if `astro check` fails due to flag integration.
-
-[CYCLE COMPLETE] Enhancement successfully deployed behind `portfolio_tactile_v1` flag. Tactile feedback implemented using `transform: translateY(2px) scale(0.98)` on `:active`. Also resolved Render deployment failure by removing direct `cloudflare:workers` dependency in `chat.ts`.
+## 2026-05-19 - Tactile & Portability | Signal: Technical | Lean Implementation: Flagged CSS + Locals Fallback
+- [Insight 1: Deployment failures on Render caused by cloudflare:workers virtual module imports in shared code paths.]
+- [Insight 2: Portfolio cards lack active tactile feedback, which can lead to perceived input lag on mobile.]
+- [Lean Implementation: Used CSS transform :active for tactile feedback and Astro.locals for platform-agnostic env access.]

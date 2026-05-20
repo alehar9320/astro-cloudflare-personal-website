@@ -8,15 +8,10 @@ interface Props {
 }
 
 const { data, id } = Astro.props.project;
-
-const flagSchema = z.object({
-  portfolio_tactile_v1: z.boolean().default(false),
-});
-
-const { portfolio_tactile_v1 } = flagSchema.parse(flags);
+const isTactileEnabled = z.boolean().default(false).parse(flags.portfolio_tactile_v1);
 ---
 
-<a class:list={['card', { 'tactile-enabled': portfolio_tactile_v1 }]} href={`/work/${id}`}>
+<a class={`card ${isTactileEnabled ? 'tactile' : ''}`} href={`/work/${id}`}>
   <span class="title">{data.title}</span>
   <img src={data.img} alt={data.img_alt || ''} loading="lazy" decoding="async" />
 </a>
@@ -52,15 +47,14 @@ const { portfolio_tactile_v1 } = flagSchema.parse(flags);
     border-color: hsla(var(--gray-999-basis), 0.5);
   }
 
+  .card.tactile:active {
+    transform: translateY(2px) scale(0.98);
+    transition: transform 0.2s ease;
+  }
+
   .card:focus-visible {
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
-  }
-
-  .card.tactile-enabled:active {
-    transform: translateY(2px) scale(0.98);
-    box-shadow: var(--shadow-sm);
-    transition: transform 0.2s ease;
   }
 
   .title {
