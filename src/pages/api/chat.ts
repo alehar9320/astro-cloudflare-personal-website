@@ -1,5 +1,4 @@
 import type { APIRoute } from 'astro';
-import { env } from 'cloudflare:workers';
 
 const MAX_MESSAGES = 10;
 const MAX_MESSAGE_CONTENT_LENGTH = 500;
@@ -93,8 +92,9 @@ function validateMessages(messages: unknown): ChatMessage[] | Response {
   return validatedMessages;
 }
 
-export const POST: APIRoute = async ({ request }) => {
-  const bindings = env as unknown as ChatEnv;
+export const POST: APIRoute = async ({ request, locals }) => {
+  const bindings = ((locals as { runtime?: { env: unknown } }).runtime?.env ||
+    process.env) as unknown as ChatEnv;
   const ai = bindings.AI;
   const store = bindings.CHAT_STORE;
 
@@ -110,6 +110,7 @@ export const POST: APIRoute = async ({ request }) => {
     const currentCount = parseInt((await store.get(rateLimitKey)) || '0');
     if (currentCount >= 20) {
       // 20 requests per hour limit
+      console.warn({ event: 'chat_rate_limit_exceeded' });
       return jsonError('Rate limit exceeded. Try again in an hour.', 429);
     }
     // Increment counter with 1 hour expiration
@@ -121,6 +122,7 @@ export const POST: APIRoute = async ({ request }) => {
   try {
     body = await request.json();
   } catch {
+    console.error({ event: 'chat_invalid_json_payload' });
     return jsonError('Invalid JSON payload', 400);
   }
 
@@ -154,6 +156,7 @@ Keep your responses brief, typically 2-3 sentences.`;
     });
   } catch (e: unknown) {
     const errorMessage = e instanceof Error ? e.message : 'Unknown error';
+    console.error({ event: 'chat_ai_execution_failed', error: errorMessage });
     return jsonError(errorMessage, 500);
   }
 };

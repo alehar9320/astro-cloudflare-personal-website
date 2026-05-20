@@ -19,7 +19,7 @@ export function getPostHogClient(): PostHog | null {
   if (!result.success) {
     // Only log if the key is present but invalid (e.g. empty string)
     if (env.key) {
-      console.error('Invalid PostHog configuration:', result.error.format());
+      console.error({ event: 'posthog_config_invalid', errors: result.error.format() });
     }
     return null;
   }
