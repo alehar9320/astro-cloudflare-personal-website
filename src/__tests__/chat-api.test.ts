@@ -1,10 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { env as workersEnv } from 'cloudflare:workers';
 import { POST } from '../pages/api/chat';
 
 const endpoint = 'https://example.com/api/chat';
-const mockEnv = workersEnv as Partial<Env>;
+let mockEnv: Record<string, unknown> = {};
 
 type ChatPostContext = Parameters<typeof POST>[0];
 
@@ -19,7 +18,11 @@ function createRequest(body: unknown, headers?: HeadersInit) {
 function createContext(request: Request) {
   return {
     request,
-    locals: {},
+    locals: {
+      runtime: {
+        env: mockEnv,
+      },
+    },
   } as unknown as ChatPostContext;
 }
 
