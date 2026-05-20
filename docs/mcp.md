@@ -99,3 +99,51 @@ This repo also references the Astro Docs MCP server in `mcp_config.json`:
 ```
 
 You can add this to your preferred editor's MCP configuration to give the AI access to the latest Astro documentation.
+
+## Context7 MCP Server
+
+Context7 provides up-to-date, version-specific documentation and code examples straight from the source.
+
+### 1. Cursor Setup
+
+Add the following to your Cursor MCP settings:
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "<YOUR_API_KEY>"
+      }
+    }
+  }
+}
+```
+
+### 2. Claude Desktop Setup
+
+Add the following to your Claude Desktop configuration:
+
+```json
+{
+  "mcpServers": {
+    "context7": {
+      "url": "https://mcp.context7.com/mcp",
+      "headers": {
+        "CONTEXT7_API_KEY": "<YOUR_API_KEY>"
+      }
+    }
+  }
+}
+```
+
+### 3. Automated Setup
+
+You can also set up Context7 for your coding agents using the CLI:
+
+```bash
+npx ctx7 setup
+```
+
+Follow the prompts to authenticate and configure your preferred agent (Cursor, Claude Code, etc.).
