@@ -2,7 +2,6 @@
 // Learn about using Astro layouts:
 // https://docs.astro.build/en/basics/layouts/
 
-import Chat from '../components/Chat.astro';
 import Footer from '../components/Footer.astro';
 // Component Imports
 import MainHead from '../components/MainHead.astro';
@@ -29,8 +28,6 @@ const { title, description } = Astro.props;
       <slot />
       <Footer />
     </div>
-
-    <Chat />
 
     <script>
       // Add “loaded” class once the document has completely loaded.

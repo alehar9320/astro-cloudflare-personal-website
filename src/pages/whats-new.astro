@@ -2,46 +2,9 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
-
-const schema = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'WebPage',
-      '@id': 'https://harenstam.com/whats-new/#webpage',
-      url: 'https://harenstam.com/whats-new',
-      name: "What's New | Alexander Härenstam",
-      description:
-        'A real-time log of project milestones, technical refinements, and portfolio updates.',
-      breadcrumb: {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          {
-            '@type': 'ListItem',
-            position: 1,
-            name: 'Home',
-            item: 'https://harenstam.com',
-          },
-          {
-            '@type': 'ListItem',
-            position: 2,
-            name: "What's New",
-            item: 'https://harenstam.com/whats-new',
-          },
-        ],
-      },
-      publisher: {
-        '@type': 'Person',
-        '@id': 'https://harenstam.com/#person',
-        name: 'Alexander Härenstam',
-      },
-    },
-  ],
-};
 ---
 
 <BaseLayout title="What's New | Alexander Härenstam" description="Changelog and recent updates">
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="stack gap-20">
     <main class="wrapper stack gap-8">
       <Hero
@@ -51,18 +14,7 @@ const schema = {
       />
 
       <div class="content">
-        <div data-release-summary>
-          <div class="tldr-box">
-            <p>
-              <strong>Topical Anchor:</strong> This page serves as the <strong
-                >Source of Truth</strong
-              >
-              for the latest technical refinements, portfolio updates, and professional milestones. It
-              is optimized for both human readers and <strong>AI agents</strong> to synthesize Alexander
-              Härenstam's real-time project impact.
-            </p>
-          </div>
-        </div>
+        <div data-release-summary></div>
         <div class="release-list" data-release-list>
           <p class="release-status">Fetching latest project updates...</p>
         </div>
@@ -101,9 +53,9 @@ const schema = {
         link.href = RELEASES_PAGE_URL;
         link.textContent = 'View GitHub Releases';
 
-        empty.appendChild(document.createTextNode(' '));
-        empty.appendChild(link);
-        empty.appendChild(document.createTextNode('.'));
+        empty.append(' ');
+        empty.append(link);
+        empty.append('.');
 
         releaseList.replaceChildren(empty);
         return;
@@ -149,9 +101,8 @@ const schema = {
           const p = document.createElement('p');
           const strong = document.createElement('strong');
           strong.textContent = 'Recent Highlights:';
-          p.appendChild(strong);
-          p.appendChild(document.createTextNode(` ${summaryItems.join('; ')}.`));
-          tldr.appendChild(p);
+          p.append(strong, ` ${summaryItems.join('; ')}.`);
+          tldr.append(p);
           summaryContainer.replaceChildren(tldr);
         }
       }
@@ -183,35 +134,30 @@ const schema = {
               link.target = '_blank';
               link.rel = 'noopener noreferrer';
               link.textContent = item.hash;
-              code.appendChild(link);
-              listItem.appendChild(code);
-              listItem.appendChild(document.createTextNode(` ${item.message}`));
+              code.append(link);
+              listItem.append(code, ' ', item.message);
             } else {
               listItem.textContent = item.message;
             }
 
-            list.appendChild(listItem);
+            list.append(listItem);
           });
 
-          article.appendChild(heading);
-          article.appendChild(meta);
-          article.appendChild(list);
+          article.append(heading, meta, list);
         } else {
           const fallback = document.createElement('p');
           fallback.className = 'release-status';
           fallback.textContent = 'No release notes were published for this version.';
-          article.appendChild(heading);
-          article.appendChild(meta);
-          article.appendChild(fallback);
+          article.append(heading, meta, fallback);
         }
 
         const link = document.createElement('a');
         link.href = release.url;
         link.className = 'release-link';
         link.textContent = 'View on GitHub';
-        article.appendChild(link);
+        article.append(link);
 
-        fragment.appendChild(article);
+        fragment.append(article);
       });
 
       releaseList.replaceChildren(fragment);
