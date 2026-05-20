@@ -261,4 +261,25 @@ describe('chat API', () => {
     expect(response.status).toBe(200);
     expect(get).toHaveBeenCalledWith('chat-limit:anonymous');
   });
+
+  it('falls back to process.env when locals.runtime.env is missing', async () => {
+    const ai = createAi();
+    vi.stubGlobal('process', { env: { AI: ai } });
+
+    const request = new Request(endpoint, {
+      method: 'POST',
+      body: JSON.stringify({ messages: [{ role: 'user', content: 'Hi' }] }),
+    });
+
+    // Passing locals without runtime property to trigger fallback
+    const response = await POST({
+      request,
+      locals: {},
+    } as unknown as Parameters<typeof POST>[0]);
+
+    expect(response.status).toBe(200);
+    expect(ai.run).toHaveBeenCalledOnce();
+
+    vi.unstubAllGlobals();
+  });
 });
