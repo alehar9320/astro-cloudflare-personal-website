@@ -1,10 +1,9 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { env as workersEnv } from 'cloudflare:workers';
 import { POST } from '../pages/api/chat';
 
 const endpoint = 'https://example.com/api/chat';
-const mockEnv = workersEnv as Partial<Env>;
+const mockEnv: Record<string, unknown> = {};
 
 type ChatPostContext = Parameters<typeof POST>[0];
 
@@ -19,7 +18,11 @@ function createRequest(body: unknown, headers?: HeadersInit) {
 function createContext(request: Request) {
   return {
     request,
-    locals: {},
+    locals: {
+      runtime: {
+        env: mockEnv,
+      },
+    },
   } as unknown as ChatPostContext;
 }
 
@@ -235,5 +238,24 @@ describe('chat API', () => {
 
     expect(response.status).toBe(500);
     await expect(readJson(response)).resolves.toEqual({ error: 'Unknown error' });
+  });
+
+  it('falls back to process.env when locals.runtime.env is missing', async () => {
+    const ai = createAi();
+    const originalEnv = process.env;
+    // @ts-expect-error Mocking process.env
+    process.env = { ...originalEnv, AI: ai };
+
+    const contextWithoutRuntime = {
+      request: createRequest({ messages: [{ role: 'user', content: 'Hello' }] }),
+      locals: {},
+    } as unknown as ChatPostContext;
+
+    const response = await POST(contextWithoutRuntime);
+
+    expect(response.status).toBe(200);
+    expect(ai.run).toHaveBeenCalledOnce();
+
+    process.env = originalEnv;
   });
 });

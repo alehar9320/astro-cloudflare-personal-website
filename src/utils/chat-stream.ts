@@ -66,6 +66,11 @@ function processBufferedText(state: SseParserState, input: string, isFinalChunk:
   return parsedText;
 }
 
+/**
+ * Creates a stateful parser for handling Server-Sent Events (SSE) chat streams.
+ * Maintains state across multiple chunks and handles partial lines.
+ * @returns {Object} An object with `push` and `flush` methods for stream processing.
+ */
 export function createChatStreamParser() {
   const state: SseParserState = {
     currentEventLines: [],
@@ -82,6 +87,12 @@ export function createChatStreamParser() {
   };
 }
 
+/**
+ * Extracts and concatenates assistant text from a raw SSE payload.
+ * Useful for processing full responses or fallback scenarios.
+ * @param {string} raw - The raw SSE payload string.
+ * @returns {string} The extracted assistant text or the original string if no SSE pattern is found.
+ */
 export function extractAssistantTextFromSse(raw: string) {
   const parser = createChatStreamParser();
   const text = parser.push(raw) + parser.flush();
