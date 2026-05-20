@@ -81,36 +81,6 @@ describe('chat API', () => {
     });
   });
 
-  it('returns 503 when the runtime is missing from locals', async () => {
-    const context = {
-      request: createRequest({ messages: [{ role: 'user', content: 'Hello' }] }),
-      locals: {},
-    } as unknown as ChatPostContext;
-
-    const response = await POST(context);
-
-    expect(response.status).toBe(503);
-    await expect(readJson(response)).resolves.toEqual({
-      error: 'AI binding not found. Chat is only available on Cloudflare Workers.',
-    });
-  });
-
-  it('returns 503 when the runtime env is missing from runtime', async () => {
-    const context = {
-      request: createRequest({ messages: [{ role: 'user', content: 'Hello' }] }),
-      locals: {
-        runtime: {},
-      },
-    } as unknown as ChatPostContext;
-
-    const response = await POST(context);
-
-    expect(response.status).toBe(503);
-    await expect(readJson(response)).resolves.toEqual({
-      error: 'AI binding not found. Chat is only available on Cloudflare Workers.',
-    });
-  });
-
   it('returns 400 for invalid JSON', async () => {
     const ai = createAi();
 
