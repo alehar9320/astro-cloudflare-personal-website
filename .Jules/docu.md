@@ -1,0 +1,1 @@
+## 2025-05-14 - src/utils/chat-stream.ts | **Drift Identified:** Undocumented utility functions `createChatStreamParser` and `extractAssistantTextFromSse`. | **Action:** Adding JSDoc headers to improve code clarity and maintain synchronization with TypeScript types.
