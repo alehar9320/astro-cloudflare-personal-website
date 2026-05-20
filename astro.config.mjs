@@ -1,4 +1,5 @@
 // @ts-check
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
 import { codecovVitePlugin } from '@codecov/vite-plugin';
 
@@ -56,10 +57,9 @@ export default defineConfig({
     resolve: {
       alias: isRender
         ? {
-            'cloudflare:workers': new URL(
-              './src/__tests__/mocks/cloudflare-workers.ts',
-              import.meta.url
-            ).pathname,
+            'cloudflare:workers': fileURLToPath(
+              new URL('./src/__tests__/mocks/cloudflare-workers.ts', import.meta.url)
+            ),
           }
         : undefined,
     },

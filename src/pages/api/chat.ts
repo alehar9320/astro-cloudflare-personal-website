@@ -15,7 +15,7 @@ interface ChatMessage {
   content: string;
 }
 
-export interface ChatEnv {
+interface ChatEnv {
   AI?: {
     run: (model: string, input: unknown) => Promise<ReadableStream>;
   };
