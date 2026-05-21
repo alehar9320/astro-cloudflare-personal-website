@@ -1,5 +1,4 @@
 import type { APIRoute } from 'astro';
-import { env } from 'cloudflare:workers';
 
 const MAX_MESSAGES = 10;
 const MAX_MESSAGE_CONTENT_LENGTH = 500;
@@ -15,7 +14,7 @@ interface ChatMessage {
   content: string;
 }
 
-interface ChatEnv {
+export interface ChatEnv {
   AI?: {
     run: (model: string, input: unknown) => Promise<ReadableStream>;
   };
@@ -93,13 +92,16 @@ function validateMessages(messages: unknown): ChatMessage[] | Response {
   return validatedMessages;
 }
 
-export const POST: APIRoute = async ({ request }) => {
-  const bindings = env as unknown as ChatEnv;
+export const POST: APIRoute = async ({ request, locals }) => {
+  // Access bindings through locals.runtime.env or process.env (fallback for non-Cloudflare)
+  const bindings = ((locals as unknown as { runtime?: { env: ChatEnv } }).runtime?.env ||
+    process.env) as unknown as ChatEnv;
+
   const ai = bindings.AI;
   const store = bindings.CHAT_STORE;
 
   if (!ai) {
-    return jsonError('AI binding not found', 500);
+    return jsonError('AI binding not found. Chat is only available on Cloudflare Workers.', 503);
   }
 
   // Basic Security: Client IP-based rate limiting
@@ -150,6 +152,8 @@ Keep your responses brief, typically 2-3 sentences.`;
     return new Response(stream, {
       headers: {
         'content-type': 'text/event-stream',
+        'Cache-Control': 'no-store',
+        'X-Content-Type-Options': 'nosniff',
       },
     });
   } catch (e: unknown) {
