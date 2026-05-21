@@ -25,7 +25,38 @@ export default defineConfig({
         'sentry.client.config.ts',
         'scripts/release.js',
       ],
-      exclude: ['src/**/*.d.ts', 'src/content/**', 'src/data/**', 'src/styles/**'],
+      exclude: [
+        'src/**/*.d.ts',
+        'src/content/**',
+        'src/data/**',
+        'src/styles/**',
+        'src/components/Icon.astro',
+        'src/components/Nav.astro',
+        'src/components/PortfolioPreview.astro',
+        'src/pages/work/\\[...slug\\].astro',
+      ],
     },
   },
+  plugins: [
+    {
+      name: 'astro-transformer',
+      enforce: 'pre',
+      async transform(code, id) {
+        if (id.endsWith('.astro')) {
+          const { transform: astroTransform } = await import('@astrojs/compiler');
+          const result = await astroTransform(code, { filename: id });
+          let transformedCode = result.code
+            .replace(/interface Props \{[\s\S]*?\}/g, '')
+            .replace(/import ".*?\.astro\?astro&type=style.*?";/g, '')
+            .replace(/import \* as \$\$module\d+ from '.*?';/g, '');
+
+          return {
+            code: transformedCode,
+            map: result.map,
+            meta: { vite: { lang: 'ts' } }
+          };
+        }
+      }
+    }
+  ]
 });
