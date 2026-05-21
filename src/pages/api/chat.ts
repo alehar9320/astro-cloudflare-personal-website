@@ -93,13 +93,15 @@ function validateMessages(messages: unknown): ChatMessage[] | Response {
 }
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  const bindings = ((locals as { runtime?: { env: ChatEnv } }).runtime?.env ||
+  // Access bindings through locals.runtime.env or process.env (fallback for non-Cloudflare)
+  const bindings = ((locals as unknown as { runtime?: { env: ChatEnv } }).runtime?.env ||
     process.env) as unknown as ChatEnv;
+
   const ai = bindings.AI;
   const store = bindings.CHAT_STORE;
 
   if (!ai) {
-    return jsonError('AI binding not found', 500);
+    return jsonError('AI binding not found. Chat is only available on Cloudflare Workers.', 503);
   }
 
   // Basic Security: Client IP-based rate limiting
@@ -150,6 +152,8 @@ Keep your responses brief, typically 2-3 sentences.`;
     return new Response(stream, {
       headers: {
         'content-type': 'text/event-stream',
+        'Cache-Control': 'no-store',
+        'X-Content-Type-Options': 'nosniff',
       },
     });
   } catch (e: unknown) {

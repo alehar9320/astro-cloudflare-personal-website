@@ -1,9 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
-import { POST, type ChatEnv } from '../pages/api/chat';
+import { POST } from '../pages/api/chat';
 
 const endpoint = 'https://example.com/api/chat';
-const mockEnv = {} as ChatEnv;
 
 type ChatPostContext = Parameters<typeof POST>[0];
 
@@ -15,21 +14,20 @@ function createRequest(body: unknown, headers?: HeadersInit) {
   });
 }
 
-function createContext(request: Request) {
+function createContext(request: Request, runtimeEnv: unknown = {}) {
   return {
     request,
     locals: {
       runtime: {
-        env: mockEnv,
+        env: runtimeEnv,
       },
     },
   } as unknown as ChatPostContext;
 }
 
 async function postChat(body: unknown, ai = createAi()) {
-  mockEnv.AI = ai;
-  mockEnv.CHAT_STORE = undefined;
-  return POST(createContext(createRequest(body)));
+  const env = { AI: ai, CHAT_STORE: undefined };
+  return POST(createContext(createRequest(body), env));
 }
 
 async function readJson(response: Response) {
@@ -38,16 +36,11 @@ async function readJson(response: Response) {
 
 function createAi(stream = new ReadableStream()) {
   return {
-    run: vi.fn<Env['AI']['run']>().mockResolvedValue(stream),
+    run: vi.fn<() => Promise<ReadableStream>>().mockResolvedValue(stream),
   };
 }
 
 describe('chat API', () => {
-  beforeEach(() => {
-    mockEnv.AI = undefined;
-    mockEnv.CHAT_STORE = undefined;
-  });
-
   it('sanitizes valid messages and forwards them with the local system prompt', async () => {
     const ai = createAi();
 
@@ -76,19 +69,21 @@ describe('chat API', () => {
     );
   });
 
-  it('returns 500 when the AI binding is missing', async () => {
+  it('returns 503 when the AI binding is missing', async () => {
     const response = await POST(
-      createContext(createRequest({ messages: [{ role: 'user', content: 'Hello' }] }))
+      createContext(createRequest({ messages: [{ role: 'user', content: 'Hello' }] }), {})
     );
 
-    expect(response.status).toBe(500);
-    await expect(readJson(response)).resolves.toEqual({ error: 'AI binding not found' });
+    expect(response.status).toBe(503);
+    await expect(readJson(response)).resolves.toEqual({
+      error: 'AI binding not found. Chat is only available on Cloudflare Workers.',
+    });
   });
 
   it('returns 400 for invalid JSON', async () => {
-    mockEnv.AI = createAi();
+    const ai = createAi();
 
-    const response = await POST(createContext(createRequest('{invalid json')));
+    const response = await POST(createContext(createRequest('{invalid json'), { AI: ai }));
 
     expect(response.status).toBe(400);
     await expect(readJson(response)).resolves.toEqual({ error: 'Invalid JSON payload' });
@@ -149,15 +144,15 @@ describe('chat API', () => {
     const get = vi.fn().mockResolvedValue('20');
     const put = vi.fn();
     const store = { get, put } as unknown as KVNamespace;
-    mockEnv.AI = ai;
-    mockEnv.CHAT_STORE = store;
+    const env = { AI: ai, CHAT_STORE: store };
 
     const response = await POST(
       createContext(
         createRequest(
           { messages: [{ role: 'user', content: 'Hello' }] },
           { 'cf-connecting-ip': '203.0.113.1' }
-        )
+        ),
+        env
       )
     );
 
@@ -173,17 +168,17 @@ describe('chat API', () => {
   it('increments the rate limit counter before running AI', async () => {
     const ai = createAi();
     const get = vi.fn().mockResolvedValue('2');
-    const put = vi.fn().mockResolvedValue(undefined);
+    const put = vi.fn();
     const store = { get, put } as unknown as KVNamespace;
-    mockEnv.AI = ai;
-    mockEnv.CHAT_STORE = store;
+    const env = { AI: ai, CHAT_STORE: store };
 
     const response = await POST(
       createContext(
         createRequest(
           { messages: [{ role: 'user', content: 'Hello' }] },
           { 'cf-connecting-ip': '203.0.113.2' }
-        )
+        ),
+        env
       )
     );
 
@@ -197,17 +192,17 @@ describe('chat API', () => {
   it('starts the rate limit counter at one when no count exists', async () => {
     const ai = createAi();
     const get = vi.fn().mockResolvedValue(null);
-    const put = vi.fn().mockResolvedValue(undefined);
+    const put = vi.fn();
     const store = { get, put } as unknown as KVNamespace;
-    mockEnv.AI = ai;
-    mockEnv.CHAT_STORE = store;
+    const env = { AI: ai, CHAT_STORE: store };
 
     const response = await POST(
       createContext(
         createRequest(
           { messages: [{ role: 'user', content: 'Hello' }] },
           { 'cf-connecting-ip': '203.0.113.3' }
-        )
+        ),
+        env
       )
     );
 
@@ -220,7 +215,7 @@ describe('chat API', () => {
 
   it('returns a 500 error when AI execution fails', async () => {
     const ai = {
-      run: vi.fn<Env['AI']['run']>().mockRejectedValue(new Error('AI unavailable')),
+      run: vi.fn<() => Promise<ReadableStream>>().mockRejectedValue(new Error('AI unavailable')),
     };
 
     const response = await postChat({ messages: [{ role: 'user', content: 'Hello' }] }, ai);
@@ -231,7 +226,7 @@ describe('chat API', () => {
 
   it('returns an unknown 500 error when AI execution rejects with a non-Error value', async () => {
     const ai = {
-      run: vi.fn<Env['AI']['run']>().mockRejectedValue('AI unavailable'),
+      run: vi.fn<() => Promise<ReadableStream>>().mockRejectedValue('AI unavailable'),
     };
 
     const response = await postChat({ messages: [{ role: 'user', content: 'Hello' }] }, ai);
@@ -242,13 +237,10 @@ describe('chat API', () => {
 
   it('falls back to process.env when locals.runtime.env is missing', async () => {
     const ai = createAi();
-    // Simulate process.env having AI binding
-    // We use a type assertion to allow stubbing process.env for this test
     const originalEnv = process.env;
     process.env = { ...originalEnv, AI: ai as unknown as (typeof process.env)['AI'] };
 
     const request = createRequest({ messages: [{ role: 'user', content: 'Hello' }] });
-    // Context without locals.runtime.env
     const context = { request, locals: {} } as unknown as ChatPostContext;
 
     const response = await POST(context);
@@ -256,7 +248,6 @@ describe('chat API', () => {
     expect(response.status).toBe(200);
     expect(ai.run).toHaveBeenCalled();
 
-    // Restore process.env
     process.env = originalEnv;
   });
 });
