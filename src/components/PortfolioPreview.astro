@@ -1,17 +1,23 @@
 ---
 import type { CollectionEntry } from 'astro:content';
+import { z } from 'zod';
+import flags from '../content/flags.json';
+import dRaw from '../content/delights.json';
+import { DelightSchema } from '../content/schemas/delights';
 
 interface Props {
   project: CollectionEntry<'work'>;
 }
 
-import flagsRaw from '../content/delights.json';
-import { DelightSchema } from '../content/schemas/delights';
-const flags = DelightSchema.parse(flagsRaw);
 const { data, id } = Astro.props.project;
+const isTactileEnabled = z.boolean().default(false).parse(flags.portfolio_tactile_v1);
+const d = DelightSchema.parse(dRaw);
 ---
 
-<a class={`card ${flags.shimmer ? 'shimmer' : ''}`} href={`/work/${id}`}>
+<a
+  class={`card ${isTactileEnabled ? 'tactile' : ''} ${d.shimmer ? 'shimmer' : ''}`}
+  href={`/work/${id}`}
+>
   <span class="title">{data.title}</span>
   <img src={data.img} alt={data.img_alt || ''} loading="lazy" decoding="async" />
 </a>
@@ -46,6 +52,11 @@ const { data, id } = Astro.props.project;
       0 15px 35px -5px hsla(210, 100%, 45%, 0.4),
       var(--shadow-lg);
     border-color: hsla(var(--gray-999-basis), 0.5);
+  }
+
+  .card.tactile:active {
+    transform: translateY(2px) scale(0.98);
+    transition: transform 0.2s ease;
   }
 
   .card:focus-visible {
@@ -89,6 +100,7 @@ const { data, id } = Astro.props.project;
     inset: 0;
     background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
     animation: s 1.2s infinite;
+    pointer-events: none;
   }
   @keyframes s {
     0% {
