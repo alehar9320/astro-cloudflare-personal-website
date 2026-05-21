@@ -29,12 +29,12 @@
 
 - **Workers-First Model:** Uses the modern Cloudflare Workers + Assets binding (`wrangler.jsonc`).
 - **Rendering:** Defaults to static pre-rendering (`output: "static"` in `astro.config.mjs`).
-- **Type Safety:** Strict TypeScript is mandatory. Run `npx wrangler types` after binding changes.
+- **Type Safety:** Strict TypeScript is mandatory. Use Zod for both compile-time and runtime validation. Run `npx wrangler types` after binding changes.
 - **Naming Conventions:**
   - PascalCase for Astro components (`MyComponent.astro`).
   - kebab-case for other files (`my-script.ts`).
 - **Icons:** Phosphor Icons adapted in `src/components/IconPaths.ts`.
-- **MCP Servers:** Configured in `mcp_config.json` (root) and documented in `docs/mcp.md`. Includes `astro-docs` and `render` servers.
+- **MCP Servers:** Configured in `mcp_config.json` (root) and documented in `docs/mcp.md`. Includes `astro-docs`, `render`, and `context7` servers.
 
 ## 3. Development Workflow
 
@@ -63,7 +63,7 @@ cp .dev.vars.example .dev.vars # Configure local environment variables
 
 ## 4. AI Constraints (The "Never" List)
 
-- **NEVER** add new top-level dependencies without explicit permission.
+- **NEVER** add new top-level dependencies without explicit permission. (Zod is an exception as it's now a core dependency for validation).
 - **NEVER** introduce Tailwind CSS or other CSS frameworks unless requested.
 - **NEVER** commit secrets or modify `.dev.vars` in the repository.
 - **NEVER** modify `wrangler.jsonc` without understanding the Workers-First model.
@@ -77,11 +77,12 @@ cp .dev.vars.example .dev.vars # Configure local environment variables
 Project-specific AI agent skills are defined in the `.agents/skills/` directory. These skills provide focused instructions for:
 
 - Edge-First Engineering (Cloudflare Workers + Assets)
-- Strict Type-Safety & Schema Integrity
+- Strict Type-Safety & Schema Integrity (Powered by Zod)
 - Astro Content Architecture
 - Vanilla Performance Optimization
 - Automated Quality Assurance
 - Persona & Context Alignment
+- Context7 Documentation Retrieval
 
 Refer to the individual `SKILL.md` files in each skill folder for detailed guidance.
 

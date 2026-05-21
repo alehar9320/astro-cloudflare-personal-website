@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-17 - Enhancing Content Selection and Standardizing Focus Spatiality
+
+**Learning:** Using `user-select: none` on informational badges (like `Pill`) creates unnecessary friction for users trying to copy text for reference. Additionally, consistent `outline-offset: 4px` across all interactive elements (including theme toggles and cards) reinforces a predictable spatial model for keyboard users. Adding `target="_blank"` with `rel="noopener noreferrer"` to external informational links (like the Astro framework link in the footer) ensures a non-disruptive navigation experience that preserves the user's session.
+
+**Action:** Standardized `outline-offset: 4px` for `ThemeToggle` and `.mention-card` focus states. Removed `user-select: none` and hover transitions from the `Pill` component to improve content accessibility and prevent deceptive interactivity. Enhanced the Astro framework link in the footer with secure, external-opening attributes.
+
 ## 2025-05-17 - Avoiding Deceptive Interactivity and Unifying Focus States
 
 **Learning:** "Deceptive interactivity" (e.g., using `cursor: pointer` or "lift" effects on non-clickable elements like badges) creates a broken promise to the user, leading to frustration when clicking doesn't trigger an action. Additionally, links with custom classes often miss the global focus indicator styles, creating an inconsistent experience for keyboard users.
@@ -17,3 +23,9 @@
 **Learning:** Accessibility elements like "Skip to Content" links should share the design language of the site. A glassmorphic focus state (translucent background, backdrop-filter, and border) ensures these elements feel like a core part of the UI rather than an afterthought. For rounded interactive elements in tight layouts (like mobile menu buttons), an inset focus ring (`outline-offset: -0.5rem`) prevents the outline from being clipped or clashing with nearby elements while remaining highly visible.
 
 **Action:** Implement glassmorphism for critical accessibility overlays and use negative `outline-offset` for pill-shaped buttons in header/footer contexts to maintain a clean, professional aesthetic without sacrificing keyboard discoverability.
+
+## 2024-05-20 - Elevating Hero Title with AI-Inspired Gradient
+
+**Learning:** A "modern AI look" often involves dynamic gradients and subtle animations that catch the eye without sacrificing legibility. By using a `variant` prop in the `Hero` component, we can isolate this high-impact styling to primary landing pages while maintaining the minimalist Northern Lights aesthetic for informational pages. Using theme variables (`--accent-regular`, `--accent-dark`, `--accent-light`) ensures the gradient scales across light and dark modes with optimal contrast.
+
+**Action:** Introduced a `variant` prop to `Hero.astro` and implemented a dynamic `primary` title style featuring a shimmer-animated gradient (`135deg`, `var(--accent-regular)` to `var(--accent-dark)`). Updated `src/pages/index.astro` to use the `primary` variant for the main landing title.
