@@ -1,3 +1,4 @@
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
@@ -8,11 +9,16 @@ export default defineConfig({
       '__tests__/**/*.{test,spec}.{js,ts,jsx,tsx}',
     ],
     alias: {
-      'astro:content': new URL('./src/__tests__/mocks/astro-content.ts', import.meta.url).pathname,
-      'cloudflare:workers': new URL('./src/__tests__/mocks/cloudflare-workers.ts', import.meta.url)
-        .pathname,
-      'astro/loaders': new URL('./src/__tests__/mocks/astro-loaders.ts', import.meta.url).pathname,
-      'astro/zod': new URL('./src/__tests__/mocks/astro-zod.ts', import.meta.url).pathname,
+      'astro:content': fileURLToPath(
+        new URL('./src/__tests__/mocks/astro-content.ts', import.meta.url)
+      ),
+      'cloudflare:workers': fileURLToPath(
+        new URL('./src/__tests__/mocks/cloudflare-workers.ts', import.meta.url)
+      ),
+      'astro/loaders': fileURLToPath(
+        new URL('./src/__tests__/mocks/astro-loaders.ts', import.meta.url)
+      ),
+      'astro/zod': fileURLToPath(new URL('./src/__tests__/mocks/astro-zod.ts', import.meta.url)),
     },
     reporters: ['default', ['junit', { outputFile: './junit.xml' }]],
     coverage: {
