@@ -1,3 +1,3 @@
-2026-05-03 - LCP Optimization for Hero Images
-Learning: Above-the-fold images, such as the portrait hero on the home page and the main project image on work detail pages, are critical for Largest Contentful Paint (LCP). Explicitly setting fetchpriority="high" and decoding="async" ensures the browser prioritizes these assets, improving perceived and actual load performance.
-Action: Added fetchpriority="high" and decoding="async" to the hero images in src/pages/index.astro and src/pages/work/[...slug].astro.
+2026-05-09 - Pruning unused icon paths
+Learning: Icon collections in `IconPaths.ts` can grow over time with unused assets, increasing the bundle size of components that import the entire collection.
+Action: Periodically audit icon usage and prune unused SVG paths. Today's audit reduced `IconPaths.ts` by ~38% (9.1KB to 5.6KB) by removing 11 unused icons.
