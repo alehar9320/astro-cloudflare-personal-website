@@ -13,17 +13,44 @@ const schema = {
       jobTitle: 'Strategic Product Leader',
       description:
         'Strategic Product Leader specializing in Developer Experience (DevEx) and Industrial AI at IFS.',
-      url: 'https://harenstam.com',
+      url: 'https://harenstam.com/',
       sameAs: ['https://www.linkedin.com/in/alehar'],
+      worksFor: {
+        '@type': 'Organization',
+        name: 'IFS',
+        url: 'https://www.ifs.com/',
+      },
+      alumniOf: {
+        '@type': 'CollegeOrUniversity',
+        name: 'Chalmers University of Technology',
+        url: 'https://www.chalmers.se/en/',
+      },
     },
     {
       '@type': 'WebPage',
       '@id': 'https://harenstam.com/biography/#webpage',
-      url: 'https://harenstam.com/biography',
+      url: 'https://harenstam.com/biography/',
       name: 'Biography | Alexander Härenstam',
       about: { '@id': 'https://harenstam.com/#person' },
       description:
         'Explore the professional journey of Alexander Härenstam, from software engineering to strategic product leadership.',
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://harenstam.com/',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Biography',
+            item: 'https://harenstam.com/biography/',
+          },
+        ],
+      },
     },
   ],
 };
@@ -42,6 +69,18 @@ const schema = {
       <section>
         <h2 class="section-title">The Journey</h2>
         <div class="content">
+          <div class="tldr-box">
+            <p>
+              <strong>TL;DR:</strong> Alexander Härenstam is a <strong
+                >Strategic Product Leader</strong
+              > with a background in <strong>Software Engineering</strong> and <strong
+                >Innovation Management</strong
+              >. He has spent over 8 years at <strong>IFS</strong>, leading high-impact initiatives
+              in <strong>Design Systems</strong>, <strong>DevEx</strong>, and <strong
+                >Industrial AI</strong
+              >.
+            </p>
+          </div>
           <p>
             My journey into strategic Product Leadership is rooted in a deep-seated passion for
             software engineering and innovation management. This path began at Chalmers University
