@@ -13,12 +13,12 @@ const schema = {
       jobTitle: 'Strategic Product Leader',
       description:
         'Strategic Product Leader specializing in Developer Experience (DevEx) and Industrial AI at IFS.',
-      url: 'https://harenstam.com',
+      url: 'https://harenstam.com/',
       sameAs: ['https://www.linkedin.com/in/alehar'],
       worksFor: {
         '@type': 'Organization',
         name: 'IFS',
-        url: 'https://www.ifs.com',
+        url: 'https://www.ifs.com/',
       },
       alumniOf: {
         '@type': 'CollegeOrUniversity',
@@ -29,11 +29,28 @@ const schema = {
     {
       '@type': 'WebPage',
       '@id': 'https://harenstam.com/about/#webpage',
-      url: 'https://harenstam.com/about',
+      url: 'https://harenstam.com/about/',
       name: 'About | Alexander Härenstam',
       about: { '@id': 'https://harenstam.com/#person' },
       description:
         "Learn about Alexander Härenstam's background, education, and skills as a Strategic Product Leader at IFS.",
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://harenstam.com/',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'About',
+            item: 'https://harenstam.com/about/',
+          },
+        ],
+      },
     },
   ],
 };
