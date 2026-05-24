@@ -29,3 +29,9 @@
 **Learning:** A "modern AI look" often involves dynamic gradients and subtle animations that catch the eye without sacrificing legibility. By using a `variant` prop in the `Hero` component, we can isolate this high-impact styling to primary landing pages while maintaining the minimalist Northern Lights aesthetic for informational pages. Using theme variables (`--accent-regular`, `--accent-dark`, `--accent-light`) ensures the gradient scales across light and dark modes with optimal contrast.
 
 **Action:** Introduced a `variant` prop to `Hero.astro` and implemented a dynamic `primary` title style featuring a shimmer-animated gradient (`135deg`, `var(--accent-regular)` to `var(--accent-dark)`). Updated `src/pages/index.astro` to use the `primary` variant for the main landing title.
+
+## 2024-05-24 - Accessible Chat Overlay & Glassmorphic Polish
+
+**Learning:** Interactive overlays (like chat windows) require robust focus management and state signaling via ARIA. Using `aria-expanded` and `aria-controls` explicitly links the trigger to the content for screen readers. Implementing a global `Escape` key listener and returning focus to the trigger element upon closing are critical patterns for maintaining navigational context in complex interfaces.
+
+**Action:** Refactored `Chat.astro` to include semantic ARIA attributes and assigned `id="chat-window"` for accessibility compliance. Implemented a `setChatExpanded` helper to synchronize DOM state, manage focus transitions, and handle the `Escape` key shortcut. Enhanced the visual aesthetic with refined glassmorphism (increased blur/saturation) and a high-visibility `:focus-visible` state with a 4px offset.

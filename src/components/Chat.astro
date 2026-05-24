@@ -3,7 +3,13 @@
 ---
 
 <div id="chat-container" class="chat-container">
-  <button id="chat-toggle" class="chat-toggle" aria-label="Open chat">
+  <button
+    id="chat-toggle"
+    class="chat-toggle"
+    aria-label="Open chat"
+    aria-expanded="false"
+    aria-controls="chat-window"
+  >
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -96,8 +102,11 @@
     transition: transform 0.2s ease;
   }
 
-  .chat-toggle:hover {
+  .chat-toggle:hover,
+  .chat-toggle:focus-visible {
     transform: scale(1.1);
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
   }
 
   .chat-window {
@@ -106,14 +115,14 @@
     right: 0;
     width: 20rem;
     height: 30rem;
-    background-color: var(--gray-999);
+    background-color: hsla(var(--gray-999-basis), 0.7);
     border: 1px solid var(--gray-800);
     border-radius: 1rem;
     box-shadow: var(--shadow-lg);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(16px) saturate(180%);
   }
 
   .chat-window.hidden {
@@ -291,12 +300,27 @@
     appendMessage(displayRole, msg.content);
   });
 
+  const setChatExpanded = (expand: boolean) => {
+    chatToggle?.setAttribute('aria-expanded', String(expand));
+    chatWindow?.classList.toggle('hidden', !expand);
+    if (expand) chatInput?.focus();
+  };
+
   chatToggle?.addEventListener('click', () => {
-    chatWindow?.classList.toggle('hidden');
+    const isExpanded = chatToggle.getAttribute('aria-expanded') === 'true';
+    setChatExpanded(!isExpanded);
   });
 
   chatClose?.addEventListener('click', () => {
-    chatWindow?.classList.add('hidden');
+    setChatExpanded(false);
+    (chatToggle as HTMLElement)?.focus();
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && chatWindow && !chatWindow.classList.contains('hidden')) {
+      setChatExpanded(false);
+      (chatToggle as HTMLElement)?.focus();
+    }
   });
 
   chatForm?.addEventListener('submit', async (e) => {
