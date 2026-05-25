@@ -78,6 +78,13 @@
   --font-body: 'Public Sans', var(--font-system);
   --font-brand: Rubik, var(--font-system);
 
+  /* Status colors */
+  --status-idle: #22c55e;
+  --status-loading: #eab308;
+  --status-error: #ef4444;
+  --status-tooltip-bg: #141925;
+  --status-tooltip-text: #e3e6ee;
+
   /* Transitions */
   --theme-transition: 0.2s ease-in-out;
 }
