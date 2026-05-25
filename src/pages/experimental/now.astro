@@ -1,0 +1,42 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Pill from '../../components/Pill.astro';
+import Icon from '../../components/Icon.astro';
+import type { iconPaths } from '../../components/IconPaths';
+import flagsData from '../../content/flags.json';
+import { z } from 'zod';
+
+if (
+  !z.object({ enable_strategic_pulse: z.boolean().default(false) }).parse(flagsData)
+    .enable_strategic_pulse
+)
+  return Astro.redirect('/404/');
+const focus: { l: string; i: keyof typeof iconPaths }[] = [
+  { l: 'Industrial AI', i: 'rocket-launch' },
+  { l: 'DevEx', i: 'terminal-window' },
+  { l: 'Strategic Planning', i: 'strategy' },
+];
+---
+
+<BaseLayout title="Strategic Pulse" description="Current focus areas.">
+  <main class="wrapper stack gap-20">
+    <Hero title="Strategic Pulse" tagline="Current high-impact focus areas." align="start" />
+    <div
+      style="border: 1px solid var(--gray-800); border-radius: 1.5rem; padding: 2rem; background: var(--gradient-subtle); display: flex; flex-direction: column; gap: 1rem;"
+    >
+      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+        {
+          focus.map((f) => (
+            <Pill>
+              <Icon icon={f.i} size="1.33em" /> {f.l}
+            </Pill>
+          ))
+        }
+      </div>
+      <p style="color: var(--gray-300);">
+        <strong>Status:</strong> Driving enterprise AI and DevEx at IFS.
+      </p>
+    </div>
+  </main>
+</BaseLayout>
