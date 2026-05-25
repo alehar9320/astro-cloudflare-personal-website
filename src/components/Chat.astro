@@ -9,6 +9,7 @@
     aria-label="Open chat"
     aria-expanded="false"
     aria-controls="chat-window"
+    aria-describedby="status-tooltip"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -21,11 +22,16 @@
       stroke-linecap="round"
       stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"></path></svg
     >
+    <span class="status-dot" aria-hidden="true"></span>
+    <span role="tooltip" id="status-tooltip" class="status-tooltip">Available</span>
   </button>
 
   <div id="chat-window" class="chat-window hidden">
     <div class="chat-header">
-      <span>Chat with Alexander's AI</span>
+      <span class="chat-header-title">
+        <span class="status-dot" aria-hidden="true"></span>
+        Chat with Alexander's AI
+      </span>
       <button id="chat-close" class="chat-close" aria-label="Close chat">
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -40,6 +46,7 @@
         >
       </button>
     </div>
+    <div id="status-announcer" class="sr-only" aria-live="polite" role="status"></div>
     <div id="chat-messages" class="chat-messages" aria-live="polite">
       <section class="message assistant-message welcome-message" aria-label="About this chat">
         <h2>Meet Alexander's digital twin</h2>
@@ -107,6 +114,88 @@
     transform: scale(1.1);
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
+  }
+
+  /* Status dot shared styles */
+  .status-dot {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background-color: var(--status-idle);
+    box-shadow: 0 0 6px var(--status-idle);
+    transition:
+      background-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .status-dot.loading {
+    background-color: var(--status-loading);
+    box-shadow: 0 0 6px var(--status-loading);
+    animation: status-pulse 1.2s ease-in-out infinite;
+  }
+
+  .status-dot.error {
+    background-color: var(--status-error);
+    box-shadow: 0 0 6px var(--status-error);
+  }
+
+  @keyframes status-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .status-dot.loading {
+      animation: none;
+    }
+  }
+
+  /* FAB dot positioning */
+  .chat-toggle .status-dot {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 14px;
+    height: 14px;
+    border: 2.5px solid var(--accent-regular);
+  }
+
+  /* Tooltip */
+  .status-tooltip {
+    position: absolute;
+    bottom: calc(100% + 8px);
+    left: 50%;
+    transform: translateX(-50%);
+    white-space: nowrap;
+    font-size: 0.7rem;
+    line-height: 1.4;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: var(--status-tooltip-bg);
+    color: var(--status-tooltip-text);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.15s ease;
+  }
+
+  .chat-toggle:hover .status-tooltip,
+  .chat-toggle:focus-visible .status-tooltip {
+    opacity: 1;
+  }
+
+  /* Header layout */
+  .chat-header-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
   }
 
   .chat-window {
@@ -257,6 +346,23 @@
   const chatMessages = document.getElementById('chat-messages');
   const typingIndicator = document.getElementById('typing-indicator');
 
+  const statusDots = document.querySelectorAll('.status-dot');
+  const statusTooltip = document.getElementById('status-tooltip');
+  const statusAnnouncer = document.getElementById('status-announcer');
+
+  const statusLabels = { idle: 'Available', loading: 'Thinking...', error: 'Connection issue' };
+
+  function setStatus(state: 'idle' | 'loading' | 'error') {
+    statusDots.forEach((el) => {
+      el.classList.remove('idle', 'loading', 'error');
+      el.classList.add(state);
+    });
+    if (statusTooltip) statusTooltip.textContent = statusLabels[state];
+    if (statusAnnouncer) statusAnnouncer.textContent = statusLabels[state];
+  }
+
+  setStatus('idle');
+
   const messages = JSON.parse(sessionStorage.getItem('chat-history') || '[]');
 
   function saveMessages() {
@@ -303,7 +409,10 @@
   const setChatExpanded = (expand: boolean) => {
     chatToggle?.setAttribute('aria-expanded', String(expand));
     chatWindow?.classList.toggle('hidden', !expand);
-    if (expand) chatInput?.focus();
+    if (expand) {
+      chatInput?.focus();
+      setStatus('idle');
+    }
   };
 
   chatToggle?.addEventListener('click', () => {
@@ -334,6 +443,8 @@
     saveMessages();
 
     typingIndicator?.classList.remove('hidden');
+
+    setStatus('loading');
 
     try {
       const response = await fetch('/api/chat', {
@@ -374,10 +485,12 @@
 
       messages.push({ role: 'assistant', content: aiContent });
       saveMessages();
+      setStatus('idle');
     } catch (error) {
       console.error('Chat error:', error);
       typingIndicator?.classList.add('hidden');
       appendMessage('assistant', 'Sorry, something went wrong. Please try again.');
+      setStatus('error');
     }
   });
 </script>
