@@ -15,6 +15,7 @@
     "astro": "astro",
     "generate-types": "wrangler types",
     "lint": "eslint .",
+    "auto-fix-lint-errors": "eslint --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "prepare": "husky",

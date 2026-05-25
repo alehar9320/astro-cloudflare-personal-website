@@ -33,6 +33,13 @@ SENTRY_AUTH_TOKEN=your-sentry-auth-token-for-source-map-uploads
 # Add any other environment variables your app needs here
 # Example: API_KEY=your-api-key
 
+# PostHog Telemetry
+# PUBLIC_POSTHOG_KEY is the client-side key for posthog-js (already configured in PostHog.astro)
+# POSTHOG_PERSONAL_API_KEY is a server-side Personal API Key for querying PostHog data
+# Create one at: PostHog → Settings → User → Personal API Keys
+POSTHOG_PERSONAL_API_KEY=your-posthog-personal-api-key
+PUBLIC_POSTHOG_PROJECT_ID=your-posthog-project-id
+
 # GitHub Production Deployment Setup
 # For production, create GitHub Repository Variables (not secrets):
 #

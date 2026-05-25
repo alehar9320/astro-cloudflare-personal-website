@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Skill(context7)",
+      "Skill(astro-architecture)",
+      "WebFetch(posthog.com)",
+      "Bash(npm run *)"
+    ]
+  },
+  "$version": 4
+}
