@@ -17,7 +17,7 @@ export const GET: APIRoute = async ({ locals }) => {
   const fetchImpl = env?.fetch || fetch;
 
   try {
-    const mau = await fetchMAU(fetchImpl);
+    const mau = await fetchMAU(fetchImpl, env);
     const timestamp = new Date().toISOString();
 
     // Validate the response structure before returning

@@ -4,7 +4,15 @@
       "Skill(context7)",
       "Skill(astro-architecture)",
       "WebFetch(posthog.com)",
-      "Bash(npm run *)"
+      "Bash(npm run build)",
+      "Bash(npm run check)",
+      "Bash(npm run dev)",
+      "Bash(npm run format)",
+      "Bash(npm run format:check)",
+      "Bash(npm run generate-types)",
+      "Bash(npm run lint)",
+      "Bash(npm run test)",
+      "Bash(npm run test:coverage)"
     ]
   },
   "$version": 4

@@ -71,24 +71,7 @@ const currentYear = new Date().getFullYear();
   // Fetch and display Monthly Active Users
   const mauElement = document.getElementById('mau-count');
   if (mauElement) {
-    fetch('/api/mau')
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-        return response.json() as Promise<{ mau?: number }>;
-      })
-      .then((data) => {
-        if (typeof data.mau === 'number') {
-          mauElement.textContent = `${new Intl.NumberFormat('en-US').format(data.mau)} MAU this month`;
-          mauElement.style.display = 'block';
-        } else {
-          mauElement.style.display = 'none';
-        }
-      })
-      .catch(() => {
-        mauElement.style.display = 'none';
-      });
+    import('../utils/display-mau').then(({ displayMauCount }) => displayMauCount(mauElement));
   }
 </script>
 

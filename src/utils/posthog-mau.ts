@@ -22,6 +22,12 @@ export const MAUApiResponseSchema = z.object({
 
 export type MAUApiResponse = z.infer<typeof MAUApiResponseSchema>;
 
+export interface PostHogEnv {
+  POSTHOG_PERSONAL_API_KEY?: string;
+  PUBLIC_POSTHOG_PROJECT_ID?: string;
+  PUBLIC_POSTHOG_HOST?: string;
+}
+
 const DEFAULT_MAU = 0;
 
 /**
@@ -29,10 +35,10 @@ const DEFAULT_MAU = 0;
  * Uses the PostHog Query API with a HogQL query.
  * Returns 0 on any error (fail-open — the footer must never break).
  */
-export async function fetchMAU(fetchImpl: typeof fetch = fetch): Promise<number> {
-  const apiKey = process.env.POSTHOG_PERSONAL_API_KEY;
-  const projectId = process.env.PUBLIC_POSTHOG_PROJECT_ID;
-  const posthogHost = process.env.PUBLIC_POSTHOG_HOST ?? 'https://eu.i.posthog.com';
+export async function fetchMAU(fetchImpl: typeof fetch = fetch, env?: PostHogEnv): Promise<number> {
+  const apiKey = env?.POSTHOG_PERSONAL_API_KEY;
+  const projectId = env?.PUBLIC_POSTHOG_PROJECT_ID;
+  const posthogHost = env?.PUBLIC_POSTHOG_HOST ?? 'https://eu.i.posthog.com';
 
   if (!apiKey || !projectId) {
     console.warn('PostHog MAU: missing API key or project ID');
@@ -49,6 +55,10 @@ export async function fetchMAU(fetchImpl: typeof fetch = fetch): Promise<number>
   ];
   try {
     const hostUrl = new URL(posthogHost);
+    if (hostUrl.protocol !== 'https:') {
+      console.error('PostHog MAU: non-HTTPS protocol', hostUrl.protocol);
+      return DEFAULT_MAU;
+    }
     if (!allowedHosts.includes(hostUrl.hostname)) {
       console.error('PostHog MAU: untrusted host', hostUrl.hostname);
       return DEFAULT_MAU;
@@ -115,9 +125,7 @@ export async function fetchMAU(fetchImpl: typeof fetch = fetch): Promise<number>
     ) {
       const mauValue = data.results.results[0][0];
       const parsed = Number(mauValue);
-      if (Number.isFinite(parsed) && parsed >= 0) {
-        return Math.floor(parsed);
-      }
+      if (Number.isFinite(parsed) && parsed >= 0) return Math.floor(parsed);
     }
 
     // Fallback: if results is a plain array (some API versions return differently)
@@ -126,9 +134,7 @@ export async function fetchMAU(fetchImpl: typeof fetch = fetch): Promise<number>
       if (Array.isArray(firstRow) && firstRow.length > 0) {
         const mauValue = firstRow[0];
         const parsed = Number(mauValue);
-        if (Number.isFinite(parsed) && parsed >= 0) {
-          return Math.floor(parsed);
-        }
+        if (Number.isFinite(parsed) && parsed >= 0) return Math.floor(parsed);
       }
     }
 
