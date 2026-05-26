@@ -210,4 +210,92 @@ describe('github releases utility', () => {
 
     expect(consoleSpy).toHaveBeenCalledWith('GitHub releases request errored:', 'Unknown error');
   });
+
+  describe('caching', () => {
+    const mockReleases = [
+      {
+        body: '- feat: ship',
+        publishedAt: null,
+        title: 'v1',
+        url: RELEASES_PAGE_URL,
+        version: 'v1',
+      },
+    ];
+
+    it('returns cached data if available and not expired', async () => {
+      vi.stubGlobal('window', {});
+      const getItem = vi.fn().mockReturnValue(
+        JSON.stringify({
+          data: mockReleases,
+          timestamp: Date.now() - 1000,
+        })
+      );
+      vi.stubGlobal('sessionStorage', { getItem });
+
+      const fetchMock = vi.fn();
+      const result = await fetchGitHubReleases(fetchMock as typeof fetch);
+
+      expect(result).toEqual(mockReleases);
+      expect(getItem).toHaveBeenCalledWith('github-releases-cache');
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('fetches and saves to cache if cache is expired', async () => {
+      vi.stubGlobal('window', {});
+      const getItem = vi.fn().mockReturnValue(
+        JSON.stringify({
+          data: [],
+          timestamp: Date.now() - 3600 * 1000 - 1,
+        })
+      );
+      const setItem = vi.fn();
+      vi.stubGlobal('sessionStorage', { getItem, setItem });
+
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [{ body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: 'v1' }],
+      });
+
+      const result = await fetchGitHubReleases(fetchMock as typeof fetch);
+
+      expect(result).toEqual(mockReleases);
+      expect(setItem).toHaveBeenCalledWith('github-releases-cache', expect.any(String));
+    });
+
+    it('handles cache read errors gracefully', async () => {
+      vi.stubGlobal('window', {});
+      const getItem = vi.fn().mockImplementation(() => {
+        throw new Error('access denied');
+      });
+      vi.stubGlobal('sessionStorage', { getItem });
+
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [{ body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: 'v1' }],
+      });
+
+      const result = await fetchGitHubReleases(fetchMock as typeof fetch);
+
+      expect(result).toEqual(mockReleases);
+      expect(fetchMock).toHaveBeenCalledOnce();
+    });
+
+    it('handles cache write errors gracefully', async () => {
+      vi.stubGlobal('window', {});
+      const setItem = vi.fn().mockImplementation(() => {
+        throw new Error('storage full');
+      });
+      vi.stubGlobal('sessionStorage', { getItem: vi.fn().mockReturnValue(null), setItem });
+
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [{ body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: 'v1' }],
+      });
+
+      const result = await fetchGitHubReleases(fetchMock as typeof fetch);
+
+      expect(result).toEqual(mockReleases);
+      expect(fetchMock).toHaveBeenCalledOnce();
+    });
+  });
 });
