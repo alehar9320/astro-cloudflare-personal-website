@@ -23,4 +23,4 @@ My thesis was conducted at [Chalmers University of Technology](https://www.chalm
 2. Studying a specific business case where digitalization was part of changing the business model.
 3. Identifying the gap between what theory stipulates and the business case at hand.
 
-The objective of the thesis captured key drivers of business model innovation in the context of digitalization, noting that opportunities are primarily identified through an increased reach, scalability, and decision-support based on data collection. Barriers are often related to the organizational inability to implement digital changes on a business level.
+The thesis captured key drivers of business model innovation in the context of digitalization, noting that opportunities are primarily identified through an increased reach, scalability, and decision-support based on data collection. Barriers are often related to the organizational inability to implement digital changes on a business level.

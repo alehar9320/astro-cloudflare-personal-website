@@ -1065,7 +1065,7 @@ interface FileOptions {
  */
 declare abstract class CacheStorage {
   /**
-   * The **`open()`** method of the the Cache object matching the `cacheName`.
+   * The **`open()`** method of the Cache object matching the `cacheName`.
    *
    * [MDN Reference](https://developer.mozilla.org/docs/Web/API/CacheStorage/open)
    */
@@ -1714,7 +1714,7 @@ interface DocumentEnd {
  */
 declare abstract class FetchEvent extends ExtendableEvent {
   /**
-   * The **`request`** read-only property of the the event handler.
+   * The **`request`** read-only property of the event handler.
    *
    * [MDN Reference](https://developer.mozilla.org/docs/Web/API/FetchEvent/request)
    */
@@ -2741,7 +2741,7 @@ declare class WritableStream<W = any> {
 declare class WritableStreamDefaultWriter<W = any> {
   constructor(stream: WritableStream);
   /**
-   * The **`closed`** read-only property of the the stream errors or the writer's lock is released.
+   * The **`closed`** read-only property of the stream errors or the writer's lock is released.
    *
    * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WritableStreamDefaultWriter/closed)
    */
@@ -2759,7 +2759,7 @@ declare class WritableStreamDefaultWriter<W = any> {
    */
   get desiredSize(): number | null;
   /**
-   * The **`abort()`** method of the the producer can no longer successfully write to the stream and it is to be immediately moved to an error state, with any queued writes discarded.
+   * The **`abort()`** method of the producer can no longer successfully write to the stream and it is to be immediately moved to an error state, with any queued writes discarded.
    *
    * [MDN Reference](https://developer.mozilla.org/docs/Web/API/WritableStreamDefaultWriter/abort)
    */
@@ -3512,7 +3512,7 @@ declare class EventSource extends EventTarget {
    */
   get url(): string;
   /**
-   * The **`withCredentials`** read-only property of the the `EventSource` object was instantiated with CORS credentials set.
+   * The **`withCredentials`** read-only property of the `EventSource` object was instantiated with CORS credentials set.
    *
    * [MDN Reference](https://developer.mozilla.org/docs/Web/API/EventSource/withCredentials)
    */
@@ -3596,13 +3596,13 @@ declare abstract class MessagePort extends EventTarget {
 declare class MessageChannel {
   constructor();
   /**
-   * The **`port1`** read-only property of the the port attached to the context that originated the channel.
+   * The **`port1`** read-only property of the port attached to the context that originated the channel.
    *
    * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessageChannel/port1)
    */
   readonly port1: MessagePort;
   /**
-   * The **`port2`** read-only property of the the port attached to the context at the other end of the channel, which the message is initially sent to.
+   * The **`port2`** read-only property of the port attached to the context at the other end of the channel, which the message is initially sent to.
    *
    * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessageChannel/port2)
    */
@@ -4862,7 +4862,7 @@ interface Ai_Cf_Openai_Whisper_Large_V3_Turbo_Input {
    */
   initial_prompt?: string;
   /**
-   * The prefix it appended the the beginning of the output of the transcription and can guide the transcription result.
+   * The prefix it appended the beginning of the output of the transcription and can guide the transcription result.
    */
   prefix?: string;
 }
@@ -10940,7 +10940,7 @@ interface Hyperdrive {
    */
   readonly host: string;
   /*
-   * The port that must be paired the the host field when connecting.
+   * The port that must be paired the host field when connecting.
    */
   readonly port: number;
   /*
