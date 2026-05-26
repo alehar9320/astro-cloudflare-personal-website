@@ -56,6 +56,10 @@ describe('chat API', () => {
 
     expect(response.status).toBe(200);
     expect(response.headers.get('content-type')).toBe('text/event-stream');
+    expect(response.headers.get('X-Frame-Options')).toBe('DENY');
+    expect(response.headers.get('Strict-Transport-Security')).toBe(
+      'max-age=31536000; includeSubDomains'
+    );
     expect(ai.run).toHaveBeenCalledWith(
       '@cf/meta/llama-3.1-8b-instruct',
       expect.objectContaining({
@@ -75,6 +79,10 @@ describe('chat API', () => {
     );
 
     expect(response.status).toBe(503);
+    expect(response.headers.get('X-Frame-Options')).toBe('DENY');
+    expect(response.headers.get('Strict-Transport-Security')).toBe(
+      'max-age=31536000; includeSubDomains'
+    );
     await expect(readJson(response)).resolves.toEqual({
       error: 'AI binding not found. Chat is only available on Cloudflare Workers.',
     });

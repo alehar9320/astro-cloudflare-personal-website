@@ -1,4 +1,4 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   RELEASES_PAGE_URL,
@@ -9,6 +9,11 @@ import {
 } from '../utils/github-releases';
 
 describe('github releases utility', () => {
+  beforeEach(() => {
+    vi.stubGlobal('window', undefined);
+    vi.stubGlobal('sessionStorage', undefined);
+  });
+
   it('normalizes published releases', () => {
     expect(
       normalizeRelease({
@@ -140,6 +145,7 @@ describe('github releases utility', () => {
   it('uses GITHUB_TOKEN and logs status on error', async () => {
     vi.stubEnv('GITHUB_TOKEN', 'test-token');
     vi.stubGlobal('process', { env: { GITHUB_TOKEN: 'test-token' } });
+    vi.stubGlobal('window', undefined);
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const fetchMock = vi.fn().mockResolvedValue({
       ok: false,
