@@ -30,12 +30,23 @@ const REPO_URL = 'https://github.com/alehar9320/astro-cloudflare-personal-websit
 const CACHE_KEY = 'github-releases-cache';
 const CACHE_TTL = 3600 * 1000; // 1 hour
 
+/**
+ * Represents a single item within a release's changelog.
+ */
 interface ReleaseItem {
+  /** The 7-character git commit hash, if available. */
   hash?: string;
+  /** The descriptive message of the change. */
   message: string;
+  /** The absolute URL to the GitHub commit page. */
   url?: string;
 }
 
+/**
+ * Normalizes a GitHub API release item into a structured SiteRelease object.
+ * @param {GitHubReleaseApiItem} release - The raw release data from the GitHub API.
+ * @returns {SiteRelease | null} A formatted site release, or null if the release is a draft or missing a tag.
+ */
 export function normalizeRelease(release: GitHubReleaseApiItem): SiteRelease | null {
   if (!release.tag_name || release.draft) return null;
 
@@ -48,6 +59,12 @@ export function normalizeRelease(release: GitHubReleaseApiItem): SiteRelease | n
   };
 }
 
+/**
+ * Fetches and validates a list of non-prerelease items from the GitHub Releases API.
+ * @param {typeof fetch} [fetchImpl=fetch] - The fetch implementation to use (useful for testing).
+ * @param {string} [url=RELEASES_API_URL] - The GitHub API endpoint to fetch from.
+ * @returns {Promise<SiteRelease[]>} A promise resolving to an array of normalized site releases.
+ */
 export async function fetchGitHubReleases(
   fetchImpl: typeof fetch = fetch,
   url: string = RELEASES_API_URL
@@ -127,6 +144,11 @@ export async function fetchGitHubReleases(
   }
 }
 
+/**
+ * Formats an ISO date string into a YYYY-MM-DD format.
+ * @param {string | null} dateString - The raw date string from the API.
+ * @returns {string} The formatted date, or 'Unknown date' if invalid.
+ */
 export function formatReleaseDate(dateString: string | null): string {
   if (!dateString) return 'Unknown date';
 
@@ -139,6 +161,11 @@ export function formatReleaseDate(dateString: string | null): string {
   return date.toISOString().split('T')[0];
 }
 
+/**
+ * Parses a single changelog line into a ReleaseItem, extracting hashes and messages.
+ * @param {string} line - A single line from the release body.
+ * @returns {ReleaseItem} An object containing the message and optional commit metadata.
+ */
 export function parseReleaseItem(line: string): ReleaseItem {
   const cleaned = line.trim();
   // Matches a 7-character hex hash at the beginning
@@ -158,6 +185,12 @@ export function parseReleaseItem(line: string): ReleaseItem {
   };
 }
 
+/**
+ * Splits a release body into individual, formatted ReleaseItem objects.
+ * Filters for lines starting with list markers (-, *, +).
+ * @param {string} body - The full Markdown body of a GitHub release.
+ * @returns {ReleaseItem[]} An array of parsed release items.
+ */
 export function splitReleaseBody(body: string): ReleaseItem[] {
   return body
     .split('\n')
