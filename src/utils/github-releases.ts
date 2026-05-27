@@ -27,6 +27,8 @@ const RELEASES_API_URL =
 const RELEASES_PAGE_URL =
   'https://github.com/alehar9320/astro-cloudflare-personal-website/releases';
 const REPO_URL = 'https://github.com/alehar9320/astro-cloudflare-personal-website';
+const CACHE_KEY = 'github-releases-cache';
+const CACHE_TTL = 3600 * 1000; // 1 hour
 
 interface ReleaseItem {
   hash?: string;
@@ -50,6 +52,20 @@ export async function fetchGitHubReleases(
   fetchImpl: typeof fetch = fetch,
   url: string = RELEASES_API_URL
 ): Promise<SiteRelease[]> {
+  if (typeof window !== 'undefined' && url === RELEASES_API_URL) {
+    try {
+      const cached = sessionStorage.getItem(CACHE_KEY);
+      if (cached) {
+        const { data, timestamp } = JSON.parse(cached);
+        if (Date.now() - timestamp < CACHE_TTL) {
+          return data;
+        }
+      }
+    } catch {
+      /* ignore cache errors */
+    }
+  }
+
   const githubToken = typeof process !== 'undefined' ? process.env.GITHUB_TOKEN : undefined;
 
   // Defensive check to ensure we only fetch from the trusted GitHub API domain
@@ -83,12 +99,23 @@ export async function fetchGitHubReleases(
       return [];
     }
 
-    const releases = result.data;
-
-    return releases
+    const releases = result.data
       .filter((release) => !release.prerelease)
       .map(normalizeRelease)
       .filter((release): release is SiteRelease => release !== null);
+
+    if (typeof window !== 'undefined' && url === RELEASES_API_URL && releases.length > 0) {
+      try {
+        sessionStorage.setItem(
+          CACHE_KEY,
+          JSON.stringify({ data: releases, timestamp: Date.now() })
+        );
+      } catch {
+        /* ignore cache errors */
+      }
+    }
+
+    return releases;
   } catch (error) {
     // Redact potential token if error message contains it (defense in depth)
     const safeErrorMessage =

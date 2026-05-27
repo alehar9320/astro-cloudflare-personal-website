@@ -3,7 +3,11 @@ import type { APIRoute } from 'astro';
 const MAX_MESSAGES = 10;
 const MAX_MESSAGE_CONTENT_LENGTH = 500;
 const MAX_TOTAL_CONTENT_LENGTH = 3000;
-const jsonHeaders = { 'content-type': 'application/json' };
+const jsonHeaders = {
+  'content-type': 'application/json',
+  'X-Frame-Options': 'DENY',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+};
 
 export const prerender = false;
 
@@ -154,6 +158,8 @@ Keep your responses brief, typically 2-3 sentences.`;
         'content-type': 'text/event-stream',
         'Cache-Control': 'no-store',
         'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY',
+        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
       },
     });
   } catch (e: unknown) {
