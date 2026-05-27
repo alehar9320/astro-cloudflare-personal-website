@@ -1,4 +1,4 @@
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 
 import { createChatStreamParser, extractAssistantTextFromSse } from './chat-stream';
 
@@ -29,16 +29,44 @@ describe('chat stream parser', () => {
   });
 
   it('ignores invalid and metadata-only SSE payloads', () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const raw =
       'data: {"response":null,"usage":{"prompt_tokens":1}}\n\n' +
       'data: {"response":"Hello"}\n\n' +
       'data: not-json\n\n';
 
     expect(extractAssistantTextFromSse(raw)).toBe('Hello');
+    expect(consoleSpy).toHaveBeenCalled();
   });
 
   it('returns an empty string for SSE-shaped payloads without assistant text', () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     expect(extractAssistantTextFromSse('data: not-json\n\n')).toBe('');
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'chat_stream_parse_error' })
+    );
+  });
+
+  it('handles non-Error objects in stream parse catch block', () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    // Mock JSON.parse to throw a non-Error
+    const originalParse = JSON.parse;
+    JSON.parse = vi.fn().mockImplementation((input) => {
+      if (input === '{"trigger_error":true}') {
+        throw 'parse error';
+      }
+      return originalParse(input);
+    });
+
+    expect(extractAssistantTextFromSse('data: {"trigger_error":true}\n\n')).toBe('');
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'chat_stream_parse_error',
+        error: 'parse error',
+      })
+    );
+
+    JSON.parse = originalParse;
   });
 
   it('treats event-only payloads as SSE and ignores them when they have no response text', () => {
