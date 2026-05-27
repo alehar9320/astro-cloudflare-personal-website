@@ -25,7 +25,9 @@ function extractResponseFromPayload(payload: string): string {
     if (isRecord(parsed) && typeof parsed.response === 'string') {
       return parsed.response;
     }
-  } catch {
+  } catch (e: unknown) {
+    const error = e instanceof Error ? e.message : String(e);
+    console.error({ event: 'chat_stream_parse_error', error });
     return '';
   }
 
