@@ -79,7 +79,7 @@ export async function fetchGitHubReleases(
     const result = z.array(GitHubReleaseApiItemSchema).safeParse(json);
 
     if (!result.success) {
-      console.error('GitHub releases API validation failed:', result.error.format());
+      console.error('GitHub releases API validation failed:', result.error.issues);
       return [];
     }
 

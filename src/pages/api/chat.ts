@@ -3,7 +3,16 @@ import type { APIRoute } from 'astro';
 const MAX_MESSAGES = 10;
 const MAX_MESSAGE_CONTENT_LENGTH = 500;
 const MAX_TOTAL_CONTENT_LENGTH = 3000;
+const RATE_LIMIT_THRESHOLD = 20;
+const RATE_LIMIT_TTL = 3600;
+const DEFAULT_MODEL = '@cf/meta/llama-3.1-8b-instruct';
 const jsonHeaders = { 'content-type': 'application/json' };
+
+const SYSTEM_PROMPT = `You are Alexander Härenstam, a strategic Product Leader at IFS.
+You are based in Nacka/Stockholm.
+Your tone is professional, insightful, and empathetic.
+You have a background in Software Engineering and Innovation Management.
+Keep your responses brief, typically 2-3 sentences.`;
 
 export const prerender = false;
 
@@ -110,12 +119,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   if (store) {
     const currentCount = parseInt((await store.get(rateLimitKey)) || '0');
-    if (currentCount >= 20) {
-      // 20 requests per hour limit
+    if (currentCount >= RATE_LIMIT_THRESHOLD) {
       return jsonError('Rate limit exceeded. Try again in an hour.', 429);
     }
-    // Increment counter with 1 hour expiration
-    await store.put(rateLimitKey, (currentCount + 1).toString(), { expirationTtl: 3600 });
+    await store.put(rateLimitKey, (currentCount + 1).toString(), { expirationTtl: RATE_LIMIT_TTL });
   }
 
   let body: unknown;
@@ -137,15 +144,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return validatedMessages;
   }
 
-  const systemPrompt = `You are Alexander Härenstam, a strategic Product Leader at IFS.
-You are based in Nacka/Stockholm.
-Your tone is professional, insightful, and empathetic.
-You have a background in Software Engineering and Innovation Management.
-Keep your responses brief, typically 2-3 sentences.`;
-
   try {
-    const stream = await ai.run('@cf/meta/llama-3.1-8b-instruct', {
-      messages: [{ role: 'system', content: systemPrompt }, ...validatedMessages],
+    const stream = await ai.run(DEFAULT_MODEL, {
+      messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...validatedMessages],
       stream: true,
     });
 
