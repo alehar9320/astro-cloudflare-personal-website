@@ -59,8 +59,10 @@ describe('github releases utility', () => {
 
     expect(result).toEqual([]);
     expect(consoleSpy).toHaveBeenCalledWith(
-      'GitHub releases API validation failed:',
-      expect.any(Object)
+      expect.objectContaining({
+        event: 'github_releases_validation_failed',
+        issues: expect.any(Array),
+      })
     );
   });
 
@@ -157,8 +159,11 @@ describe('github releases utility', () => {
       })
     );
     expect(consoleSpy).toHaveBeenCalledWith(
-      'GitHub releases request failed',
-      expect.objectContaining({ status: 403, statusText: 'Forbidden' })
+      expect.objectContaining({
+        event: 'github_releases_request_failed',
+        status: 403,
+        statusText: 'Forbidden',
+      })
     );
 
     vi.unstubAllGlobals();
@@ -180,7 +185,9 @@ describe('github releases utility', () => {
     const result = await fetchGitHubReleases(fetchMock as typeof fetch, 'https://malicious.com');
 
     expect(result).toEqual([]);
-    expect(consoleSpy).toHaveBeenCalledWith('Invalid GitHub API URL');
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'github_releases_invalid_url', url: 'https://malicious.com' })
+    );
     expect(fetchMock).not.toHaveBeenCalled();
   });
 
@@ -191,8 +198,10 @@ describe('github releases utility', () => {
     await fetchGitHubReleases(fetchMock as typeof fetch);
 
     expect(consoleSpy).toHaveBeenCalledWith(
-      'GitHub releases request errored:',
-      'failed with token [REDACTED]'
+      expect.objectContaining({
+        event: 'github_releases_request_error',
+        error: 'failed with token [REDACTED]',
+      })
     );
   });
 
@@ -202,6 +211,8 @@ describe('github releases utility', () => {
 
     await fetchGitHubReleases(fetchMock as typeof fetch);
 
-    expect(consoleSpy).toHaveBeenCalledWith('GitHub releases request errored:', 'Unknown error');
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'github_releases_request_error', error: 'Unknown error' })
+    );
   });
 });
