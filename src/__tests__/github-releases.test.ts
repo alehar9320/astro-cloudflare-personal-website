@@ -186,7 +186,10 @@ describe('github releases utility', () => {
 
     expect(result).toEqual([]);
     expect(consoleSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ event: 'github_releases_invalid_url', url: 'https://malicious.com' })
+      expect.objectContaining({
+        event: 'github_releases_invalid_url',
+        url: 'https://malicious.com',
+      })
     );
     expect(fetchMock).not.toHaveBeenCalled();
   });

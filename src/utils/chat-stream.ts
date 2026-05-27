@@ -26,7 +26,7 @@ function extractResponseFromPayload(payload: string): string {
       return parsed.response;
     }
   } catch (e: unknown) {
-    const error = e instanceof Error ? e.message : 'Unknown error';
+    const error = e instanceof Error ? e.message : String(e);
     console.error({ event: 'chat_stream_parse_error', error });
     return '';
   }

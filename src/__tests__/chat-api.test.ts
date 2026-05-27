@@ -82,11 +82,32 @@ describe('chat API', () => {
 
   it('returns 400 for invalid JSON', async () => {
     const ai = createAi();
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     const response = await POST(createContext(createRequest('{invalid json'), { AI: ai }));
 
     expect(response.status).toBe(400);
     await expect(readJson(response)).resolves.toEqual({ error: 'Invalid JSON payload' });
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'chat_api_json_parse_error', error: expect.any(String) })
+    );
+  });
+
+  it('returns 400 and logs unknown error when JSON parsing fails with a non-Error value', async () => {
+    const ai = createAi();
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const request = createRequest('{}');
+    // Mocking request.json to reject with a string
+    vi.spyOn(request, 'json').mockRejectedValue('malformed');
+
+    const response = await POST(createContext(request, { AI: ai }));
+
+    expect(response.status).toBe(400);
+    await expect(readJson(response)).resolves.toEqual({ error: 'Invalid JSON payload' });
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'chat_api_json_parse_error', error: 'malformed' })
+    );
   });
 
   it.each([
@@ -217,22 +238,30 @@ describe('chat API', () => {
     const ai = {
       run: vi.fn<() => Promise<ReadableStream>>().mockRejectedValue(new Error('AI unavailable')),
     };
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     const response = await postChat({ messages: [{ role: 'user', content: 'Hello' }] }, ai);
 
     expect(response.status).toBe(500);
     await expect(readJson(response)).resolves.toEqual({ error: 'AI unavailable' });
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'chat_api_run_error', error: 'AI unavailable' })
+    );
   });
 
   it('returns an unknown 500 error when AI execution rejects with a non-Error value', async () => {
     const ai = {
       run: vi.fn<() => Promise<ReadableStream>>().mockRejectedValue('AI unavailable'),
     };
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     const response = await postChat({ messages: [{ role: 'user', content: 'Hello' }] }, ai);
 
     expect(response.status).toBe(500);
-    await expect(readJson(response)).resolves.toEqual({ error: 'Unknown error' });
+    await expect(readJson(response)).resolves.toEqual({ error: 'AI unavailable' });
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'chat_api_run_error', error: 'AI unavailable' })
+    );
   });
 
   it('falls back to process.env when locals.runtime.env is missing', async () => {
