@@ -487,7 +487,8 @@
       saveMessages();
       setStatus('idle');
     } catch (error) {
-      console.error('Chat error:', error);
+      const message = error instanceof Error ? error.message : String(error);
+      console.error({ event: 'chat_client_error', error: message });
       typingIndicator?.classList.add('hidden');
       appendMessage('assistant', 'Sorry, something went wrong. Please try again.');
       setStatus('error');

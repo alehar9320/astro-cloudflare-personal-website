@@ -6,7 +6,11 @@ const MAX_TOTAL_CONTENT_LENGTH = 3000;
 const RATE_LIMIT_THRESHOLD = 20;
 const RATE_LIMIT_TTL = 3600;
 const DEFAULT_MODEL = '@cf/meta/llama-3.1-8b-instruct';
-const jsonHeaders = { 'content-type': 'application/json' };
+const jsonHeaders = {
+  'content-type': 'application/json',
+  'X-Frame-Options': 'DENY',
+  'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+};
 
 const SYSTEM_PROMPT = `You are Alexander Härenstam, a strategic Product Leader at IFS.
 You are based in Nacka/Stockholm.
@@ -129,7 +133,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   try {
     body = await request.json();
-  } catch {
+  } catch (e: unknown) {
+    const error = e instanceof Error ? e.message : String(e);
+    console.error({ event: 'chat_api_json_parse_error', error });
     return jsonError('Invalid JSON payload', 400);
   }
 
@@ -155,10 +161,13 @@ export const POST: APIRoute = async ({ request, locals }) => {
         'content-type': 'text/event-stream',
         'Cache-Control': 'no-store',
         'X-Content-Type-Options': 'nosniff',
+        'X-Frame-Options': 'DENY',
+        'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
       },
     });
   } catch (e: unknown) {
-    const errorMessage = e instanceof Error ? e.message : 'Unknown error';
+    const errorMessage = e instanceof Error ? e.message : String(e);
+    console.error({ event: 'chat_api_run_error', error: errorMessage });
     return jsonError(errorMessage, 500);
   }
 };
