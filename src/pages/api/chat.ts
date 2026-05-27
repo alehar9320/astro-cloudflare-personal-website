@@ -126,7 +126,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   try {
     body = await request.json();
-  } catch {
+  } catch (e: unknown) {
+    const error = e instanceof Error ? e.message : 'Invalid JSON';
+    console.error({ event: 'chat_api_json_parse_error', error });
     return jsonError('Invalid JSON payload', 400);
   }
 
@@ -164,6 +166,7 @@ Keep your responses brief, typically 2-3 sentences.`;
     });
   } catch (e: unknown) {
     const errorMessage = e instanceof Error ? e.message : 'Unknown error';
+    console.error({ event: 'chat_api_run_error', error: errorMessage });
     return jsonError(errorMessage, 500);
   }
 };
