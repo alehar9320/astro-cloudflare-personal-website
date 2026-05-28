@@ -139,10 +139,7 @@ export async function fetchGitHubReleases(
     return releases;
   } catch (error) {
     // Redact potential token if error message contains it (defense in depth)
-    const safeErrorMessage =
-      error instanceof Error
-        ? error.message.replace(/token\s+[a-zA-Z0-9_-]+/g, 'token [REDACTED]')
-        : 'Unknown error';
+    const safeErrorMessage = String(error).replace(/token\s+[a-zA-Z0-9_-]+/g, 'token [REDACTED]');
     console.error({ event: 'github_releases_request_error', error: safeErrorMessage });
     return [];
   }
