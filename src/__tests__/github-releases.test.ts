@@ -19,16 +19,16 @@ describe('github releases utility', () => {
       normalizeRelease({
         body: '- feat: add release feed',
         html_url: 'https://github.com/example/release',
-        name: '2026.04.06.1400',
+        name: '2026.05.28.0401',
         published_at: '2026-04-06T14:00:00Z',
-        tag_name: '2026.04.06.1400',
+        tag_name: '2026.05.28.0401',
       })
     ).toEqual({
       body: '- feat: add release feed',
       publishedAt: '2026-04-06T14:00:00Z',
-      title: '2026.04.06.1400',
+      title: '2026.05.28.0401',
       url: 'https://github.com/example/release',
-      version: '2026.04.06.1400',
+      version: '2026.05.28.0401',
     });
   });
 
@@ -38,7 +38,7 @@ describe('github releases utility', () => {
       json: async () => [
         { draft: true, tag_name: 'draft-release' },
         { prerelease: true, tag_name: 'beta-release' },
-        { body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: '2026.04.06.1400' },
+        { body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: '2026.05.28.0401' },
       ],
     });
 
@@ -46,9 +46,9 @@ describe('github releases utility', () => {
       {
         body: '- feat: ship',
         publishedAt: null,
-        title: '2026.04.06.1400',
+        title: '2026.05.28.0401',
         url: RELEASES_PAGE_URL,
-        version: '2026.04.06.1400',
+        version: '2026.05.28.0401',
       },
     ]);
   });
