@@ -209,7 +209,7 @@ describe('github releases utility', () => {
     expect(consoleSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         event: 'github_releases_request_error',
-        error: 'failed with token [REDACTED]',
+        error: 'Error: failed with token [REDACTED]',
       })
     );
   });
@@ -221,7 +221,10 @@ describe('github releases utility', () => {
     await fetchGitHubReleases(fetchMock as typeof fetch);
 
     expect(consoleSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ event: 'github_releases_request_error', error: 'Unknown error' })
+      expect.objectContaining({
+        event: 'github_releases_request_error',
+        error: 'not an error object',
+      })
     );
   });
 
