@@ -36,3 +36,7 @@ conductor/
 #logs
 wrangler_dev.log
 dev_server.log
+
+
+.nx/cache
+.nx/workspace-data

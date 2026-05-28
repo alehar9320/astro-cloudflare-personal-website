@@ -12,6 +12,8 @@ export default [
       '**/node_modules/',
       'env.d.ts',
       'worker-configuration.d.ts',
+      '.nx/cache',
+      '.nx/workspace-data',
     ],
   },
 ];
