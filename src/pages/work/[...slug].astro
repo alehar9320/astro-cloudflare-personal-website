@@ -35,17 +35,49 @@ const Content = renderedEntry?.Content;
 const schema = entry
   ? {
       '@context': 'https://schema.org',
-      '@type': 'CreativeWork',
-      name: entry.data.title,
-      description: entry.data.description,
-      datePublished: entry.data.publishDate.toISOString(),
-      author: {
-        '@type': 'Person',
-        name: 'Alexander Härenstam',
-        url: 'https://harenstam.com',
-      },
-      image: entry.data.img ? `https://harenstam.com${entry.data.img}` : undefined,
-      keywords: entry.data.tags.join(', '),
+      '@graph': [
+        {
+          '@type': 'WebPage',
+          '@id': `https://harenstam.com/work/${entry.id}/#webpage`,
+          url: `https://harenstam.com/work/${entry.id}/`,
+          name: `${entry.data.title} | Alexander Härenstam`,
+          description: entry.data.description,
+          breadcrumb: {
+            '@type': 'BreadcrumbList',
+            itemListElement: [
+              {
+                '@type': 'ListItem',
+                position: 1,
+                name: 'Home',
+                item: 'https://harenstam.com/',
+              },
+              {
+                '@type': 'ListItem',
+                position: 2,
+                name: 'Work',
+                item: 'https://harenstam.com/work/',
+              },
+              {
+                '@type': 'ListItem',
+                position: 3,
+                name: entry.data.title,
+                item: `https://harenstam.com/work/${entry.id}/`,
+              },
+            ],
+          },
+        },
+        {
+          '@type': 'CreativeWork',
+          name: entry.data.title,
+          description: entry.data.description,
+          datePublished: entry.data.publishDate.toISOString(),
+          author: {
+            '@id': 'https://harenstam.com/#person',
+          },
+          image: entry.data.img ? `https://harenstam.com${entry.data.img}` : undefined,
+          keywords: entry.data.tags.join(', '),
+        },
+      ],
     }
   : null;
 ---
