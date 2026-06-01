@@ -88,8 +88,14 @@ const currentYear = new Date().getFullYear();
   }
 
   footer a:hover,
-  footer a:focus {
+  footer a:focus-visible {
     text-decoration-color: currentColor;
+  }
+
+  footer a:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+    border-radius: 0.25rem;
   }
 
   .group {

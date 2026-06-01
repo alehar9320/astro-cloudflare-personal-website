@@ -12,7 +12,7 @@ tags:
 ---
 
 <div class="tldr-box">
-  <p><strong>TL;DR:</strong> Digitalized onsite workflows for <strong>Lidköping Stenhuggeri</strong> by developing an <strong>Android-based job management platform</strong>, replacing manual processes with high-efficiency digital tracking.</p>
+  <p><strong>TL;DR:</strong> Modernized onsite operations for <strong>Lidköping Stenhuggeri</strong> by delivering an <strong>Android-based management platform</strong>, replacing manual workflows with high-efficiency digital tracking.</p>
 </div>
 
 Developed a high-efficiency Android application for Lidköpings Stenhuggeri, a masonry firm. The platform eliminated manual paperwork, streamlining onsite data entry and enabling real-time operational tracking.

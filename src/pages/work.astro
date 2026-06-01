@@ -12,18 +12,52 @@ const projects = (await getCollection('work')).sort(
 
 const schema = {
   '@context': 'https://schema.org',
-  '@type': 'ItemList',
-  name: 'Strategic Portfolio | Alexander Härenstam',
-  description:
-    "Explore Alexander Härenstam's strategic portfolio of high-impact initiatives, featuring Industrial AI, Developer Experience, and Digital Transformation.",
-  numberOfItems: projects.length,
-  itemListElement: projects.map((project, index) => ({
-    '@type': 'ListItem',
-    position: index + 1,
-    name: project.data.title,
-    url: `https://harenstam.com/work/${project.id}`,
-    description: project.data.description,
-  })),
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      '@id': 'https://harenstam.com/work/#webpage',
+      url: 'https://harenstam.com/work/',
+      name: 'Strategic Portfolio | Alexander Härenstam',
+      description:
+        "Explore Alexander Härenstam's strategic portfolio of high-impact initiatives, featuring Industrial AI, Developer Experience, and Digital Transformation.",
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://harenstam.com/',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Strategic Portfolio',
+            item: 'https://harenstam.com/work/',
+          },
+        ],
+      },
+      publisher: {
+        '@type': 'Person',
+        '@id': 'https://harenstam.com/#person',
+        name: 'Alexander Härenstam',
+      },
+    },
+    {
+      '@type': 'ItemList',
+      name: 'Strategic Portfolio | Alexander Härenstam',
+      description:
+        "Explore Alexander Härenstam's strategic portfolio of high-impact initiatives, featuring Industrial AI, Developer Experience, and Digital Transformation.",
+      numberOfItems: projects.length,
+      itemListElement: projects.map((project, index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        name: project.data.title,
+        url: `https://harenstam.com/work/${project.id}/`,
+        description: project.data.description,
+      })),
+    },
+  ],
 };
 ---
 

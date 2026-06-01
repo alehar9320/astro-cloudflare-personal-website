@@ -307,6 +307,11 @@ const isCurrentPage = (href: string) => {
     display: inline-block;
     color: var(--gray-300);
     text-decoration: none;
+    transition: transform var(--theme-transition);
+  }
+
+  .link:active {
+    transform: scale(0.97);
   }
 
   .link[aria-current] {
@@ -347,8 +352,13 @@ const isCurrentPage = (href: string) => {
     color: var(--accent-dark);
     transition:
       color var(--theme-transition),
+      transform var(--theme-transition),
       outline-offset var(--theme-transition);
     border-radius: 0.5rem;
+  }
+
+  .social:active {
+    transform: scale(0.97);
   }
 
   .social:hover,

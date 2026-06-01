@@ -1,22 +1,42 @@
 import type { APIRoute } from 'astro';
+import { z } from 'zod';
 
 const MAX_MESSAGES = 10;
 const MAX_MESSAGE_CONTENT_LENGTH = 500;
 const MAX_TOTAL_CONTENT_LENGTH = 3000;
+
 const jsonHeaders = {
   'content-type': 'application/json',
   'X-Frame-Options': 'DENY',
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
-};
+} as const;
 
 export const prerender = false;
 
-type ChatRole = 'user' | 'assistant';
+const ChatRoleSchema = z.enum(['user', 'assistant']);
 
-interface ChatMessage {
-  role: ChatRole;
-  content: string;
-}
+const ChatMessageSchema = z.object({
+  role: ChatRoleSchema,
+  content: z
+    .string()
+    .trim()
+    .min(1, 'Message content cannot be empty')
+    .max(
+      MAX_MESSAGE_CONTENT_LENGTH,
+      `Message cannot exceed ${MAX_MESSAGE_CONTENT_LENGTH} characters`
+    ),
+});
+
+const ChatRequestSchema = z.object({
+  messages: z
+    .array(ChatMessageSchema)
+    .min(1, 'Expected at least one message')
+    .max(MAX_MESSAGES, `Message history cannot exceed ${MAX_MESSAGES} messages`)
+    .refine(
+      (msgs) => msgs.reduce((acc, msg) => acc + msg.content.length, 0) <= MAX_TOTAL_CONTENT_LENGTH,
+      `Message history cannot exceed ${MAX_TOTAL_CONTENT_LENGTH} total characters`
+    ),
+});
 
 export interface ChatEnv {
   AI?: {
@@ -30,70 +50,6 @@ function jsonError(error: string, status: number) {
     status,
     headers: jsonHeaders,
   });
-}
-
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null;
-}
-
-function validateMessages(messages: unknown): ChatMessage[] | Response {
-  if (!Array.isArray(messages)) {
-    return jsonError('Expected messages to be an array', 400);
-  }
-
-  if (messages.length === 0) {
-    return jsonError('Expected at least one message', 400);
-  }
-
-  if (messages.length > MAX_MESSAGES) {
-    return jsonError(`Message history cannot exceed ${MAX_MESSAGES} messages`, 400);
-  }
-
-  let totalContentLength = 0;
-
-  const validatedMessages: ChatMessage[] = [];
-
-  for (const [index, message] of messages.entries()) {
-    if (!isRecord(message)) {
-      return jsonError(`Message at index ${index} must be an object`, 400);
-    }
-
-    const { role, content } = message;
-
-    if (role !== 'user' && role !== 'assistant') {
-      return jsonError(`Message at index ${index} has an unsupported role`, 400);
-    }
-
-    if (typeof content !== 'string') {
-      return jsonError(`Message at index ${index} content must be a string`, 400);
-    }
-
-    const trimmedContent = content.trim();
-
-    if (trimmedContent.length === 0) {
-      return jsonError(`Message at index ${index} content cannot be empty`, 400);
-    }
-
-    if (trimmedContent.length > MAX_MESSAGE_CONTENT_LENGTH) {
-      return jsonError(
-        `Message at index ${index} cannot exceed ${MAX_MESSAGE_CONTENT_LENGTH} characters`,
-        400
-      );
-    }
-
-    totalContentLength += trimmedContent.length;
-
-    if (totalContentLength > MAX_TOTAL_CONTENT_LENGTH) {
-      return jsonError(
-        `Message history cannot exceed ${MAX_TOTAL_CONTENT_LENGTH} total characters`,
-        400
-      );
-    }
-
-    validatedMessages.push({ role, content: trimmedContent });
-  }
-
-  return validatedMessages;
 }
 
 export const POST: APIRoute = async ({ request, locals }) => {
@@ -123,7 +79,6 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 
   let body: unknown;
-
   try {
     body = await request.json();
   } catch (e: unknown) {
@@ -132,16 +87,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return jsonError('Invalid JSON payload', 400);
   }
 
-  if (!isRecord(body)) {
-    return jsonError('Expected request body to be an object', 400);
+  const result = ChatRequestSchema.safeParse(body);
+
+  if (!result.success) {
+    // Return the first validation error message for simplicity and security (don't leak schema details)
+    return jsonError(result.error.issues[0].message, 400);
   }
 
-  const { messages } = body;
-  const validatedMessages = validateMessages(messages);
-
-  if (validatedMessages instanceof Response) {
-    return validatedMessages;
-  }
+  const { messages } = result.data;
 
   const systemPrompt = `You are Alexander Härenstam, a strategic Product Leader at IFS.
 You are based in Nacka/Stockholm.
@@ -151,7 +104,7 @@ Keep your responses brief, typically 2-3 sentences.`;
 
   try {
     const stream = await ai.run('@cf/meta/llama-3.1-8b-instruct', {
-      messages: [{ role: 'system', content: systemPrompt }, ...validatedMessages],
+      messages: [{ role: 'system', content: systemPrompt }, ...messages],
       stream: true,
     });
 
@@ -167,6 +120,7 @@ Keep your responses brief, typically 2-3 sentences.`;
   } catch (e: unknown) {
     const errorMessage = e instanceof Error ? e.message : String(e);
     console.error({ event: 'chat_api_run_error', error: errorMessage });
-    return jsonError(errorMessage, 500);
+    // Defense in Depth: Never expose raw error messages to the UI for server-side failures
+    return jsonError('An internal error occurred. Please try again later.', 500);
   }
 };
