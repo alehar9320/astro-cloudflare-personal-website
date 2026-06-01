@@ -35,3 +35,9 @@
 **Learning:** Interactive overlays (like chat windows) require robust focus management and state signaling via ARIA. Using `aria-expanded` and `aria-controls` explicitly links the trigger to the content for screen readers. Implementing a global `Escape` key listener and returning focus to the trigger element upon closing are critical patterns for maintaining navigational context in complex interfaces.
 
 **Action:** Refactored `Chat.astro` to include semantic ARIA attributes and assigned `id="chat-window"` for accessibility compliance. Implemented a `setChatExpanded` helper to synchronize DOM state, manage focus transitions, and handle the `Escape` key shortcut. Enhanced the visual aesthetic with refined glassmorphism (increased blur/saturation) and a high-visibility `:focus-visible` state with a 4px offset.
+
+## 2026-05-18 - Standardizing Focus Spatiality & Tactile Navigation
+
+**Learning:** Standardizing interactive affordances across disparate components (Nav, Footer, Cards) creates a cohesive professional feel. A consistent `outline-offset: 4px` for focus states provides clear spatial feedback for keyboard users, while tactile `:active` transforms (`scale(0.97)`) offer physical responsiveness for touch and mouse users. Accessibility must be inclusive: `scroll-behavior: smooth` should always be gated by `prefers-reduced-motion` to prevent discomfort, and "Skip to Content" infrastructure requires site-wide `id="main-content"` consistency.
+
+**Action:** Standardized `outline-offset: 4px` and tactile scaling across `Nav.astro`, `Footer.astro`, and global link styles. Refined `global.css` to gate smooth scrolling behind `prefers-reduced-motion: no-preference`. Ensured site-wide "Skip to Content" functionality by adding `id="main-content"` to all primary page layouts and components.
