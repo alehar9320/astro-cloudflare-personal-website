@@ -19,16 +19,16 @@ describe('github releases utility', () => {
       normalizeRelease({
         body: '- feat: add release feed',
         html_url: 'https://github.com/example/release',
-        name: '2026.05.28.0401',
+        name: '2026.04.06.1400',
         published_at: '2026-04-06T14:00:00Z',
-        tag_name: '2026.05.28.0401',
+        tag_name: '2026.04.06.1400',
       })
     ).toEqual({
       body: '- feat: add release feed',
       publishedAt: '2026-04-06T14:00:00Z',
-      title: '2026.05.28.0401',
+      title: '2026.04.06.1400',
       url: 'https://github.com/example/release',
-      version: '2026.05.28.0401',
+      version: '2026.04.06.1400',
     });
   });
 
@@ -38,7 +38,7 @@ describe('github releases utility', () => {
       json: async () => [
         { draft: true, tag_name: 'draft-release' },
         { prerelease: true, tag_name: 'beta-release' },
-        { body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: '2026.05.28.0401' },
+        { body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: '2026.04.06.1400' },
       ],
     });
 
@@ -46,9 +46,9 @@ describe('github releases utility', () => {
       {
         body: '- feat: ship',
         publishedAt: null,
-        title: '2026.05.28.0401',
+        title: '2026.04.06.1400',
         url: RELEASES_PAGE_URL,
-        version: '2026.05.28.0401',
+        version: '2026.04.06.1400',
       },
     ]);
   });
@@ -209,7 +209,7 @@ describe('github releases utility', () => {
     expect(consoleSpy).toHaveBeenCalledWith(
       expect.objectContaining({
         event: 'github_releases_request_error',
-        error: 'Error: failed with token [REDACTED]',
+        error: 'failed with token [REDACTED]',
       })
     );
   });
@@ -221,10 +221,7 @@ describe('github releases utility', () => {
     await fetchGitHubReleases(fetchMock as typeof fetch);
 
     expect(consoleSpy).toHaveBeenCalledWith(
-      expect.objectContaining({
-        event: 'github_releases_request_error',
-        error: 'not an error object',
-      })
+      expect.objectContaining({ event: 'github_releases_request_error', error: 'Unknown error' })
     );
   });
 

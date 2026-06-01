@@ -15,10 +15,4 @@ export const collections = {
       img_alt: z.string().min(1),
     }),
   }),
-  flags: defineCollection({
-    loader: glob({ base: './src/content/flags', pattern: '**/*.json' }),
-    schema: z.object({
-      enable_product_manifesto: z.boolean().default(false),
-    }),
-  }),
 };
