@@ -4,7 +4,7 @@ import { iconPaths } from '../IconPaths';
 describe('iconPaths', () => {
   it('should contain expected icon names', () => {
     expect(iconPaths).toHaveProperty('terminal-window');
-    expect(iconPaths).toHaveProperty('trophy');
+    expect(iconPaths).toHaveProperty('list');
     expect(iconPaths).toHaveProperty('strategy');
     expect(iconPaths).toHaveProperty('rocket-launch');
   });
