@@ -246,6 +246,30 @@ describe('chat API', () => {
     expect(ai.run).toHaveBeenCalledOnce();
   });
 
+  it('resets the rate limit counter if the stored value is invalid (NaN)', async () => {
+    const ai = createAi();
+    const get = vi.fn().mockResolvedValue('not-a-number');
+    const put = vi.fn();
+    const store = { get, put } as unknown as KVNamespace;
+    const env = { AI: ai, CHAT_STORE: store };
+
+    const response = await POST(
+      createContext(
+        createRequest(
+          { messages: [{ role: 'user', content: 'Hello' }] },
+          { 'cf-connecting-ip': '203.0.113.4' }
+        ),
+        env
+      )
+    );
+
+    expect(response.status).toBe(200);
+    expect(put).toHaveBeenCalledWith('chat-limit:203.0.113.4', '1', {
+      expirationTtl: 3600,
+    });
+    expect(ai.run).toHaveBeenCalledOnce();
+  });
+
   it('returns a generic 500 error when AI execution fails', async () => {
     const ai = {
       run: vi.fn<() => Promise<ReadableStream>>().mockRejectedValue(new Error('AI unavailable')),
