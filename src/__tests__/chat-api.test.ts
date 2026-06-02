@@ -60,6 +60,7 @@ describe('chat API', () => {
     expect(response.headers.get('Strict-Transport-Security')).toBe(
       'max-age=31536000; includeSubDomains'
     );
+    expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff');
     expect(ai.run).toHaveBeenCalledWith(
       '@cf/meta/llama-3.1-8b-instruct',
       expect.objectContaining({
@@ -83,6 +84,7 @@ describe('chat API', () => {
     expect(response.headers.get('Strict-Transport-Security')).toBe(
       'max-age=31536000; includeSubDomains'
     );
+    expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff');
     await expect(readJson(response)).resolves.toEqual({
       error: 'AI binding not found. Chat is only available on Cloudflare Workers.',
     });
@@ -95,6 +97,7 @@ describe('chat API', () => {
     const response = await POST(createContext(createRequest('{invalid json'), { AI: ai }));
 
     expect(response.status).toBe(400);
+    expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff');
     await expect(readJson(response)).resolves.toEqual({ error: 'Invalid JSON payload' });
     expect(consoleSpy).toHaveBeenCalledWith(
       expect.objectContaining({ event: 'chat_api_json_parse_error', error: expect.any(String) })

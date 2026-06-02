@@ -1,49 +1,14 @@
 import type { APIRoute } from 'astro';
-import { z } from 'zod';
-
-const MAX_MESSAGES = 10;
-const MAX_MESSAGE_CONTENT_LENGTH = 500;
-const MAX_TOTAL_CONTENT_LENGTH = 3000;
+import { ChatRequestSchema, type ChatEnv } from '../../utils/chat-logic';
 
 const jsonHeaders = {
   'content-type': 'application/json',
   'X-Frame-Options': 'DENY',
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+  'X-Content-Type-Options': 'nosniff',
 } as const;
 
 export const prerender = false;
-
-const ChatRoleSchema = z.enum(['user', 'assistant']);
-
-const ChatMessageSchema = z.object({
-  role: ChatRoleSchema,
-  content: z
-    .string()
-    .trim()
-    .min(1, 'Message content cannot be empty')
-    .max(
-      MAX_MESSAGE_CONTENT_LENGTH,
-      `Message cannot exceed ${MAX_MESSAGE_CONTENT_LENGTH} characters`
-    ),
-});
-
-const ChatRequestSchema = z.object({
-  messages: z
-    .array(ChatMessageSchema)
-    .min(1, 'Expected at least one message')
-    .max(MAX_MESSAGES, `Message history cannot exceed ${MAX_MESSAGES} messages`)
-    .refine(
-      (msgs) => msgs.reduce((acc, msg) => acc + msg.content.length, 0) <= MAX_TOTAL_CONTENT_LENGTH,
-      `Message history cannot exceed ${MAX_TOTAL_CONTENT_LENGTH} total characters`
-    ),
-});
-
-export interface ChatEnv {
-  AI?: {
-    run: (model: string, input: unknown) => Promise<ReadableStream>;
-  };
-  CHAT_STORE?: KVNamespace;
-}
 
 function jsonError(error: string, status: number) {
   return new Response(JSON.stringify({ error }), {
@@ -69,13 +34,17 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const rateLimitKey = `chat-limit:${ip}`;
 
   if (store) {
-    const currentCount = parseInt((await store.get(rateLimitKey)) || '0');
-    if (currentCount >= 20) {
+    const rawCount = await store.get(rateLimitKey);
+    const currentCount = rawCount ? parseInt(rawCount, 10) : 0;
+
+    if (!isNaN(currentCount) && currentCount >= 20) {
       // 20 requests per hour limit
       return jsonError('Rate limit exceeded. Try again in an hour.', 429);
     }
     // Increment counter with 1 hour expiration
-    await store.put(rateLimitKey, (currentCount + 1).toString(), { expirationTtl: 3600 });
+    await store.put(rateLimitKey, (isNaN(currentCount) ? 1 : currentCount + 1).toString(), {
+      expirationTtl: 3600,
+    });
   }
 
   let body: unknown;
