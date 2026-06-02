@@ -7,8 +7,10 @@ const MAX_TOTAL_CONTENT_LENGTH = 3000;
 
 const jsonHeaders = {
   'content-type': 'application/json',
+  'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'DENY',
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+  'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none';",
 } as const;
 
 export const prerender = false;
@@ -115,6 +117,7 @@ Keep your responses brief, typically 2-3 sentences.`;
         'X-Content-Type-Options': 'nosniff',
         'X-Frame-Options': 'DENY',
         'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+        'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none';",
       },
     });
   } catch (e: unknown) {
