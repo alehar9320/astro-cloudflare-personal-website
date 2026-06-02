@@ -9,3 +9,9 @@
 - [Insight 1: Shimmer micro-interactions provide high-quality visual feedback without increasing JS bundle size.]
 - [Insight 2: Using `translateX` for the shimmer sweep is more performant than animating `background-position` as it avoids layout repaints.]
 - [Delta: 18 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-02 - Interactive Pills | Signal: Competitive/UX | Lean Implementation: Flagged CSS Gradient & Transform Transition
+
+- [Insight 1: Interactive elements should provide visual feedback on hover to improve affordance and perceived quality.]
+- [Insight 2: Leveraging existing background-image gradients with background-position transitions is a low-cost way to add depth.]
+- [Lean Implementation: Added `pill_hover_v1` flag, implemented background-position and transform transitions in Pill component.]

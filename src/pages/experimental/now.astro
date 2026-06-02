@@ -22,10 +22,8 @@ const focus: { l: string; i: keyof typeof iconPaths }[] = [
 <BaseLayout title="Strategic Pulse" description="Current focus areas.">
   <main id="main-content" class="wrapper stack gap-20">
     <Hero title="Strategic Pulse" tagline="Current high-impact focus areas." align="start" />
-    <div
-      style="border: 1px solid var(--gray-800); border-radius: 1.5rem; padding: 2rem; background: var(--gradient-subtle); display: flex; flex-direction: column; gap: 1rem;"
-    >
-      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+    <div class="pulse-container">
+      <div class="pill-group">
         {
           focus.map((f) => (
             <Pill>
@@ -34,9 +32,31 @@ const focus: { l: string; i: keyof typeof iconPaths }[] = [
           ))
         }
       </div>
-      <p style="color: var(--gray-300);">
+      <p class="status">
         <strong>Status:</strong> Driving enterprise AI and DevEx at IFS.
       </p>
     </div>
   </main>
 </BaseLayout>
+
+<style>
+  .pulse-container {
+    border: 1px solid var(--gray-800);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    background: var(--gradient-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .status {
+    color: var(--gray-300);
+  }
+</style>
