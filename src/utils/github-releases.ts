@@ -12,7 +12,7 @@ export const GitHubReleaseApiItemSchema = z.object({
 
 export type GitHubReleaseApiItem = z.infer<typeof GitHubReleaseApiItemSchema>;
 
-export const SiteReleaseSchema = z.object({
+const SiteReleaseSchema = z.object({
   body: z.string(),
   publishedAt: z.string().nullable(),
   title: z.string(),
