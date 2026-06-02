@@ -1,6 +1,7 @@
 # Kinetic Journal ⚡
 
 ## 2025-05-15 - Interactive Glassmorphism for Skills Section
+
 - **Signal:** Standardized skills box lacked interactive affordance and depth.
 - **Action:**
   - Upgraded `.box` in `src/components/Skills.astro` with `backdrop-filter: blur(16px)` for enhanced glassmorphism.
