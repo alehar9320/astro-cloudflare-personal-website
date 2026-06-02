@@ -12,15 +12,13 @@ export const GitHubReleaseApiItemSchema = z.object({
 
 export type GitHubReleaseApiItem = z.infer<typeof GitHubReleaseApiItemSchema>;
 
-const SiteReleaseSchema = z.object({
-  body: z.string(),
-  publishedAt: z.string().nullable(),
-  title: z.string(),
-  url: z.string(),
-  version: z.string(),
-});
-
-export type SiteRelease = z.infer<typeof SiteReleaseSchema>;
+export type SiteRelease = {
+  body: string;
+  publishedAt: string | null;
+  title: string;
+  url: string;
+  version: string;
+};
 
 const RELEASES_API_URL =
   'https://api.github.com/repos/alehar9320/astro-cloudflare-personal-website/releases?per_page=20';
