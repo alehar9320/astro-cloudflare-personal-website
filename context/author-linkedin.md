@@ -249,7 +249,7 @@ My thesis revolved around business model innovation, and the opportunities and b
 
 1. Academically mapping out what it means to transform a business with the help of digitalization.
 2. Studying a specific business case where digitalization was part of changing the business model.
-3. Identifying the gap between what theory stipulates and the business case at hand.Invativa is a specialist consulting company helping others create and improve their digital business. This is done by identifying how digital technology can be applied to improve the business model; digitalization. My thesis revolved around business model innovation, and the opportunities and barriers that digitalization creates. This was done by: 1) Academically mapping out what it means to transform a business with the help of digitalization. 2) Studying a specific business case where digitalization was part of changing the business model. 3) Identifying the gap between what theory stipulates and the business case at hand.…see more
+3. Identifying the gap between what theory stipulates and the business case at hand.
    Ericsson logo
    Ericsson
    1 yr 3 mos
