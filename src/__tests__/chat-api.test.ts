@@ -294,12 +294,7 @@ describe('chat API', () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     await expect(
-      POST(
-        createContext(
-          createRequest({ messages: [{ role: 'user', content: 'Hello' }] }),
-          env
-        )
-      )
+      POST(createContext(createRequest({ messages: [{ role: 'user', content: 'Hello' }] }), env))
     ).rejects.toBe('KV literal failure');
 
     expect(consoleSpy).toHaveBeenCalledWith(
