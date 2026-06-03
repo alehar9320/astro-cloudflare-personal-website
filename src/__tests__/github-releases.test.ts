@@ -108,7 +108,7 @@ describe('github releases utility', () => {
 
   it('parses commit hashes from release items with various markers', () => {
     const body =
-      '* 8acc628 ✍️ Scribe: Strategic Copy Optimization\n+ 1234567 fix: some issue\n- plain message';
+      '* 8acc628 ✍️ Scribe: Strategic Copy Optimization\n+ 1234567 fix: some issue\n- plain message\n* zzzzzzz non-hex hash';
     const items = splitReleaseBody(body);
 
     expect(items).toEqual([
@@ -125,12 +125,16 @@ describe('github releases utility', () => {
       {
         message: 'plain message',
       },
+      {
+        message: 'zzzzzzz non-hex hash',
+      },
     ]);
   });
 
   it('formats ISO dates for display and guards invalid inputs', () => {
     expect(formatReleaseDate('2026-04-06T14:00:00Z')).toBe('2026-04-06');
     expect(formatReleaseDate('not-a-date')).toBe('Unknown date');
+    expect(formatReleaseDate('')).toBe('Unknown date');
     expect(formatReleaseDate(null)).toBe('Unknown date');
   });
 
@@ -142,6 +146,10 @@ describe('github releases utility', () => {
       url: RELEASES_PAGE_URL,
       version: 'v1',
     });
+  });
+
+  it('returns null when tag_name is missing during normalization', () => {
+    expect(normalizeRelease({ body: 'no tag' })).toBeNull();
   });
 
   it('uses GITHUB_TOKEN and logs status on error', async () => {

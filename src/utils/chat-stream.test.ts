@@ -76,4 +76,15 @@ describe('chat stream parser', () => {
   it('falls back to plain text when the input is not SSE', () => {
     expect(extractAssistantTextFromSse('Hello world')).toBe('Hello world');
   });
+
+  it('handles primitive JSON payloads by returning an empty string', () => {
+    const parser = createChatStreamParser();
+    expect(parser.push('data: 42\n\n')).toBe('');
+    expect(parser.push('data: true\n\n')).toBe('');
+  });
+
+  it('normalizes mixed carriage returns and newlines', () => {
+    const parser = createChatStreamParser();
+    expect(parser.push('data: {"response":"a"}\r\n\r\ndata: {"response":"b"}\n\n')).toBe('ab');
+  });
 });

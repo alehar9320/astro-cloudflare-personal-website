@@ -219,6 +219,31 @@ describe('chat API', () => {
     expect(ai.run).toHaveBeenCalledOnce();
   });
 
+  it('handles malformed rate limit count gracefully', async () => {
+    const ai = createAi();
+    const get = vi.fn().mockResolvedValue('invalid-number');
+    const put = vi.fn();
+    const store = { get, put } as unknown as KVNamespace;
+    const env = { AI: ai, CHAT_STORE: store };
+
+    const response = await POST(
+      createContext(
+        createRequest(
+          { messages: [{ role: 'user', content: 'Hello' }] },
+          { 'cf-connecting-ip': '203.0.113.4' }
+        ),
+        env
+      )
+    );
+
+    expect(response.status).toBe(200);
+    // parseInt('invalid-number') is NaN, NaN + 1 is NaN, NaN.toString() is 'NaN'
+    expect(put).toHaveBeenCalledWith('chat-limit:203.0.113.4', 'NaN', {
+      expirationTtl: 3600,
+    });
+    expect(ai.run).toHaveBeenCalledOnce();
+  });
+
   it('starts the rate limit counter at one when no count exists', async () => {
     const ai = createAi();
     const get = vi.fn().mockResolvedValue(null);
@@ -291,5 +316,25 @@ describe('chat API', () => {
     expect(ai.run).toHaveBeenCalled();
 
     process.env = originalEnv;
+  });
+
+  it('prepends the system prompt to the message history', async () => {
+    const ai = createAi();
+    const messages = [{ role: 'user' as const, content: 'Hello' }];
+
+    await postChat({ messages }, ai);
+
+    expect(ai.run).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        messages: [
+          expect.objectContaining({
+            role: 'system',
+            content: expect.stringContaining('Alexander Härenstam'),
+          }),
+          ...messages,
+        ],
+      })
+    );
   });
 });
