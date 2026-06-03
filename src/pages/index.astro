@@ -2,6 +2,12 @@
 import { getCollection } from 'astro:content';
 // Component Imports
 import CallToAction from '../components/CallToAction.astro';
+import AuroraCanvas from '../components/AuroraCanvas.astro';
+import flagsData from '../content/flags.json';
+import { z } from 'zod';
+
+const isAuroraEnabled = z.boolean().default(false).parse(flagsData.enable_aurora_hero);
+
 // Page section components
 import ContactCTA from '../components/ContactCTA.astro';
 import Grid from '../components/Grid.astro';
@@ -70,6 +76,7 @@ const schema = {
   <div class="stack gap-20 lg:gap-48">
     <div class="wrapper stack gap-8 lg:gap-20">
       <header class="hero">
+        {isAuroraEnabled && <AuroraCanvas />}
         <Hero
           title="Elevating Developer Experience & Product Strategy"
           align="start"
@@ -187,6 +194,8 @@ const schema = {
     flex-direction: column;
     align-items: center;
     gap: 2rem;
+    position: relative;
+    overflow: hidden;
   }
 
   .roles {

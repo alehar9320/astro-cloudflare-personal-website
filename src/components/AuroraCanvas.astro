@@ -1,0 +1,75 @@
+---
+/**
+ * AuroraCanvas.astro
+ * Self-contained component for the interactive Aurora background effect.
+ * Adheres to the "Northern Lights" and Glassmorphic aesthetics.
+ */
+---
+
+<div class="aurora-container" aria-hidden="true">
+  <canvas id="aurora-canvas"></canvas>
+</div>
+
+<script>
+  import { AuroraEffect } from '../utils/aurora-logic';
+
+  const initAurora = () => {
+    const canvas = document.getElementById('aurora-canvas') as HTMLCanvasElement | null;
+    if (!canvas) return;
+
+    // Accessibility: Respect user preference for reduced motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Northern Lights colors: Cyan and Marine Blue
+    const effect = new AuroraEffect({
+      canvas,
+      colors: ['#00d2ff', '#0066cc'],
+    });
+
+    if (prefersReducedMotion) {
+      effect.setPaused(true);
+    }
+
+    effect.start();
+
+    const handleResize = () => effect.resize();
+    window.addEventListener('resize', handleResize);
+
+    // Clean up when navigating away (Astro page transitions)
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        effect.stop();
+        window.removeEventListener('resize', handleResize);
+      },
+      { once: true }
+    );
+  };
+
+  // Run on initial load and after Astro page transitions
+  initAurora();
+  document.addEventListener('astro:after-swap', initAurora);
+</script>
+
+<style>
+  .aurora-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+    pointer-events: none;
+    opacity: 0.6;
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    filter: blur(40px);
+  }
+</style>
