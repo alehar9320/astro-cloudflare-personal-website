@@ -1,0 +1,47 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import AuroraCanvas from '../../components/AuroraCanvas.astro';
+---
+
+<BaseLayout title="Lab: Aurora Visualizer" description="Experimental Aurora background effect.">
+  <main id="main-content">
+    <div class="lab-hero">
+      <AuroraCanvas />
+      <div class="wrapper">
+        <Hero
+          title="Laboratory: Aurora Visualizer"
+          tagline="Testing math-driven fluid motion for the Northern Lights aesthetic."
+          align="center"
+        />
+        <div class="controls-overlay">
+          <p>This is a hardware-accelerated HTML5 Canvas simulation.</p>
+          <p>Optimized for 60fps with automatic resize handling.</p>
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .lab-hero {
+    position: relative;
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--gray-999);
+    overflow: hidden;
+  }
+
+  .controls-overlay {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    background: hsla(var(--gray-999-basis), 0.5);
+    backdrop-filter: blur(12px);
+    border: 1px solid hsla(var(--gray-999-basis), 0.1);
+    border-radius: 1rem;
+    text-align: center;
+    color: var(--gray-300);
+  }
+</style>
