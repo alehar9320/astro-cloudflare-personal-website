@@ -219,7 +219,7 @@ describe('chat API', () => {
     expect(ai.run).toHaveBeenCalledOnce();
   });
 
-  it('handles malformed rate limit count gracefully', async () => {
+  it('handles malformed rate limit count gracefully by coercing to zero', async () => {
     const ai = createAi();
     const get = vi.fn().mockResolvedValue('invalid-number');
     const put = vi.fn();
@@ -237,8 +237,8 @@ describe('chat API', () => {
     );
 
     expect(response.status).toBe(200);
-    // parseInt('invalid-number') is NaN, NaN + 1 is NaN, NaN.toString() is 'NaN'
-    expect(put).toHaveBeenCalledWith('chat-limit:203.0.113.4', 'NaN', {
+    // 'invalid-number' is coerced to 0, then incremented to 1
+    expect(put).toHaveBeenCalledWith('chat-limit:203.0.113.4', '1', {
       expirationTtl: 3600,
     });
     expect(ai.run).toHaveBeenCalledOnce();
