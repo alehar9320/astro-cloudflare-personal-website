@@ -7,7 +7,6 @@
 | 2025-03-24 | context/author-linkedin.md        | Normalized Swedish terms (Produktchef, Produktledning) and removed duplicate text blocks | Validated   |
 | 2025-03-24 | src/content/work/master-thesis.md | Improved grammatical phrasing in the concluding paragraph                                | Validated   |
 | 2025-03-24 | worker-configuration.d.ts         | Removed redundant "the" and fixed "can be a accessed" typos                              | Validated   |
-| 2025-03-24 | context/author-linkedin.md        | Removed duplicate text block and fixed spacing                                           | Validated   |
 
 ## Spelling Exceptions
 
