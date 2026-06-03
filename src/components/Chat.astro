@@ -337,7 +337,7 @@
 
 <script>
   import { createChatStreamParser, extractAssistantTextFromSse } from '../utils/chat-stream';
-  import { normalizeMessage, pruneMessages } from '../utils/chat-logic';
+  import { normalizeMessage, pruneMessages, type ChatMessage } from '../utils/chat-logic';
 
   const chatToggle = document.getElementById('chat-toggle');
   const chatWindow = document.getElementById('chat-window');
@@ -364,7 +364,7 @@
 
   setStatus('idle');
 
-  let messages: any[] = [];
+  let messages: ChatMessage[] = [];
   try {
     const history = JSON.parse(sessionStorage.getItem('chat-history') || '[]');
     if (Array.isArray(history)) {
