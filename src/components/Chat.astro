@@ -364,16 +364,22 @@
 
   setStatus('idle');
 
-  let messages = JSON.parse(sessionStorage.getItem('chat-history') || '[]').map(
-    (msg: { role: string; content: string }) => {
-      // Extract content from SSE if it's a raw assistant message
-      if (msg.role === 'assistant') {
-        const extracted = extractAssistantTextFromSse(msg.content);
-        if (extracted) msg.content = extracted;
-      }
-      return normalizeMessage(msg);
+  let messages: any[] = [];
+  try {
+    const history = JSON.parse(sessionStorage.getItem('chat-history') || '[]');
+    if (Array.isArray(history)) {
+      messages = history.map((msg: { role: string; content: string }) => {
+        // Extract content from SSE if it's a raw assistant message
+        if (msg && typeof msg === 'object' && msg.role === 'assistant') {
+          const extracted = extractAssistantTextFromSse(msg.content);
+          if (extracted) msg.content = extracted;
+        }
+        return normalizeMessage(msg);
+      });
     }
-  );
+  } catch (error) {
+    console.warn({ event: 'chat_history_parse_error', error });
+  }
 
   // Initial prune of history
   messages = pruneMessages(messages);
