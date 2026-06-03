@@ -99,12 +99,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
   if (!result.success) {
     console.error({
       event: 'chat_api_validation_failed',
-      // Redact potentially sensitive input data from issues
-      issues: result.error.issues.map((issue) => ({
-        ...issue,
-        ...('received' in issue ? { received: '[REDACTED]' } : {}),
-        ...('value' in issue ? { value: '[REDACTED]' } : {}),
-      })),
+      // Redact potentially sensitive input data from issues by removing 'received' and 'value' fields
+      issues: result.error.issues.map((issue) => {
+        const { received: _r, value: _v, ...safeIssue } = issue as any;
+        return safeIssue;
+      }),
     });
     // Return the first validation error message for simplicity and security (don't leak schema details)
     return jsonError(result.error.issues[0].message, 400);

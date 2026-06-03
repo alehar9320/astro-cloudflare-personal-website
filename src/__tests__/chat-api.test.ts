@@ -185,15 +185,11 @@ describe('chat API', () => {
       expect.objectContaining({ event: 'chat_api_validation_failed', issues: expect.any(Array) })
     );
 
-    // Verify redaction of 'received' or 'value' field if present
+    // Verify redaction of 'received' or 'value' field by ensuring they are absent
     const call = consoleSpy.mock.calls.find((c) => c[0].event === 'chat_api_validation_failed');
     const issue = call[0].issues[0];
-    if ('received' in issue) {
-      expect(issue.received).toBe('[REDACTED]');
-    }
-    if ('value' in issue) {
-      expect(issue.value).toBe('[REDACTED]');
-    }
+    expect(issue.received).toBeUndefined();
+    expect(issue.value).toBeUndefined();
   });
 
   it('returns 429 and skips AI when the rate limit is exceeded', async () => {
