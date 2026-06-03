@@ -88,6 +88,18 @@ describe('chat API', () => {
     });
   });
 
+  it('logs error and returns 503 when the AI binding is missing', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const response = await POST(
+      createContext(createRequest({ messages: [{ role: 'user', content: 'Hello' }] }), {})
+    );
+
+    expect(response.status).toBe(503);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'chat_api_missing_ai_binding' })
+    );
+  });
+
   it('returns 400 for invalid JSON', async () => {
     const ai = createAi();
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
@@ -161,12 +173,17 @@ describe('chat API', () => {
     ],
   ])('returns 400 for %s', async (_name, body, error) => {
     const ai = createAi();
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
     const response = await postChat(body, ai);
 
     expect(response.status).toBe(400);
     const json = await readJson(response);
     expect(json.error?.toLowerCase()).toContain(error.toLowerCase());
     expect(ai.run).not.toHaveBeenCalled();
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'chat_api_validation_failed', issues: expect.any(Array) })
+    );
   });
 
   it('returns 429 and skips AI when the rate limit is exceeded', async () => {
@@ -241,6 +258,27 @@ describe('chat API', () => {
       expirationTtl: 3600,
     });
     expect(ai.run).toHaveBeenCalledOnce();
+  });
+
+  it('logs error and rethrows when KV storage interaction fails', async () => {
+    const ai = createAi();
+    const get = vi.fn().mockRejectedValue(new Error('KV failure'));
+    const store = { get } as unknown as KVNamespace;
+    const env = { AI: ai, CHAT_STORE: store };
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    await expect(
+      POST(
+        createContext(
+          createRequest({ messages: [{ role: 'user', content: 'Hello' }] }),
+          env
+        )
+      )
+    ).rejects.toThrow('KV failure');
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'chat_api_storage_error', error: 'KV failure' })
+    );
   });
 
   it('returns a generic 500 error when AI execution fails', async () => {

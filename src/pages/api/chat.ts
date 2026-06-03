@@ -61,6 +61,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const store = bindings.CHAT_STORE;
 
   if (!ai) {
+    console.error({ event: 'chat_api_missing_ai_binding' });
     return jsonError('AI binding not found. Chat is only available on Cloudflare Workers.', 503);
   }
 
@@ -69,13 +70,19 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const rateLimitKey = `chat-limit:${ip}`;
 
   if (store) {
-    const currentCount = parseInt((await store.get(rateLimitKey)) || '0');
-    if (currentCount >= 20) {
-      // 20 requests per hour limit
-      return jsonError('Rate limit exceeded. Try again in an hour.', 429);
+    try {
+      const currentCount = parseInt((await store.get(rateLimitKey)) || '0');
+      if (currentCount >= 20) {
+        // 20 requests per hour limit
+        return jsonError('Rate limit exceeded. Try again in an hour.', 429);
+      }
+      // Increment counter with 1 hour expiration
+      await store.put(rateLimitKey, (currentCount + 1).toString(), { expirationTtl: 3600 });
+    } catch (e: unknown) {
+      const error = e instanceof Error ? e.message : String(e);
+      console.error({ event: 'chat_api_storage_error', error });
+      throw e;
     }
-    // Increment counter with 1 hour expiration
-    await store.put(rateLimitKey, (currentCount + 1).toString(), { expirationTtl: 3600 });
   }
 
   let body: unknown;
@@ -90,6 +97,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const result = ChatRequestSchema.safeParse(body);
 
   if (!result.success) {
+    console.error({
+      event: 'chat_api_validation_failed',
+      // Redact potentially sensitive input data from issues
+      issues: result.error.issues.map((issue) => ({
+        ...issue,
+        ...( 'received' in issue ? { received: '[REDACTED]' } : {} ),
+        ...( 'value' in issue ? { value: '[REDACTED]' } : {} ),
+      })),
+    });
     // Return the first validation error message for simplicity and security (don't leak schema details)
     return jsonError(result.error.issues[0].message, 400);
   }
