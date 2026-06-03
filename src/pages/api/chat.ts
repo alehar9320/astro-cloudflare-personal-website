@@ -102,8 +102,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
       // Redact potentially sensitive input data from issues
       issues: result.error.issues.map((issue) => ({
         ...issue,
-        ...( 'received' in issue ? { received: '[REDACTED]' } : {} ),
-        ...( 'value' in issue ? { value: '[REDACTED]' } : {} ),
+        ...('received' in issue ? { received: '[REDACTED]' } : {}),
+        ...('value' in issue ? { value: '[REDACTED]' } : {}),
       })),
     });
     // Return the first validation error message for simplicity and security (don't leak schema details)

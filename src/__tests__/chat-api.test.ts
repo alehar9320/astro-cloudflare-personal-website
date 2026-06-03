@@ -184,6 +184,16 @@ describe('chat API', () => {
     expect(consoleSpy).toHaveBeenCalledWith(
       expect.objectContaining({ event: 'chat_api_validation_failed', issues: expect.any(Array) })
     );
+
+    // Verify redaction of 'received' or 'value' field if present
+    const call = consoleSpy.mock.calls.find((c) => c[0].event === 'chat_api_validation_failed');
+    const issue = call[0].issues[0];
+    if ('received' in issue) {
+      expect(issue.received).toBe('[REDACTED]');
+    }
+    if ('value' in issue) {
+      expect(issue.value).toBe('[REDACTED]');
+    }
   });
 
   it('returns 429 and skips AI when the rate limit is exceeded', async () => {
@@ -268,16 +278,32 @@ describe('chat API', () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     await expect(
+      POST(createContext(createRequest({ messages: [{ role: 'user', content: 'Hello' }] }), env))
+    ).rejects.toThrow('KV failure');
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'chat_api_storage_error', error: 'KV failure' })
+    );
+  });
+
+  it('logs error and rethrows when KV storage interaction fails with a non-Error value', async () => {
+    const ai = createAi();
+    const get = vi.fn().mockRejectedValue('KV literal failure');
+    const store = { get } as unknown as KVNamespace;
+    const env = { AI: ai, CHAT_STORE: store };
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    await expect(
       POST(
         createContext(
           createRequest({ messages: [{ role: 'user', content: 'Hello' }] }),
           env
         )
       )
-    ).rejects.toThrow('KV failure');
+    ).rejects.toBe('KV literal failure');
 
     expect(consoleSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ event: 'chat_api_storage_error', error: 'KV failure' })
+      expect.objectContaining({ event: 'chat_api_storage_error', error: 'KV literal failure' })
     );
   });
 
