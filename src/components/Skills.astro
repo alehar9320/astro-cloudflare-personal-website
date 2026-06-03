@@ -1,10 +1,9 @@
 ---
 import Icon from './Icon.astro';
 import flags from '../content/flags.json';
-const isPulse = flags.enable_skills_pulse_v1 === true;
 ---
 
-<section class={`box skills ${isPulse ? 'pulse-enabled' : ''}`}>
+<section class={`box skills ${flags.enable_skills_pulse_v1 ? 'pulse-enabled' : ''}`}>
   <div class="stack gap-2 lg:gap-4">
     <Icon icon="rocket-launch" color="var(--accent-regular)" size="2.5rem" gradient />
     <h2>Driving Growth & ROI</h2>
@@ -85,7 +84,6 @@ const isPulse = flags.enable_skills_pulse_v1 === true;
   .skills p {
     color: var(--gray-400);
   }
-
   @media (prefers-reduced-motion: no-preference) {
     .pulse-enabled .stack:hover :global(svg) { animation: pulse 0.6s ease-in-out; }
   }
