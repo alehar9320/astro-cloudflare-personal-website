@@ -38,13 +38,20 @@ describe('AuroraEffect', () => {
     // Mock requestAnimationFrame and cancelAnimationFrame on window
     vi.stubGlobal(
       'requestAnimationFrame',
-      vi.fn(() => 123)
+      vi.fn((cb) => {
+        if (typeof cb === 'function') {
+          // Immediately call the loop callback to test its internal logic
+          // but wrap it to avoid infinite recursion in tests
+          return 123;
+        }
+        return 123;
+      })
     );
     vi.stubGlobal('cancelAnimationFrame', vi.fn());
   });
 
   it('should initialize correctly', () => {
-    const effect = new AuroraEffect({
+    new AuroraEffect({
       canvas: mockCanvas,
       colors: ['#00d2ff', '#0066cc'],
     });
@@ -52,6 +59,16 @@ describe('AuroraEffect', () => {
     expect(mockCanvas.getContext).toHaveBeenCalledWith('2d', { alpha: true });
     expect(mockCanvas.width).toBe(800);
     expect(mockCanvas.height).toBe(600);
+  });
+
+  it('should throw if context is missing', () => {
+    vi.mocked(mockCanvas.getContext).mockReturnValue(null);
+    expect(() => {
+      new AuroraEffect({
+        canvas: mockCanvas,
+        colors: ['#00d2ff', '#0066cc'],
+      });
+    }).toThrow('Could not get canvas context');
   });
 
   it('should start and stop the animation loop', () => {
@@ -63,8 +80,16 @@ describe('AuroraEffect', () => {
     effect.start();
     expect(window.requestAnimationFrame).toHaveBeenCalled();
 
+    // Test guard: start again should return early
+    effect.start();
+    expect(window.requestAnimationFrame).toHaveBeenCalledTimes(1);
+
     effect.stop();
     expect(window.cancelAnimationFrame).toHaveBeenCalledWith(123);
+
+    // Test guard: stop when already stopped
+    effect.stop();
+    expect(window.cancelAnimationFrame).toHaveBeenCalledTimes(1);
   });
 
   it('should update and draw when running', () => {
@@ -73,24 +98,49 @@ describe('AuroraEffect', () => {
       colors: ['#00d2ff', '#0066cc'],
     });
 
-    (effect as any).update();
-    (effect as any).draw();
+    // @ts-expect-error - testing private methods
+    effect.update();
+    // @ts-expect-error - testing private methods
+    effect.draw();
 
     expect(mockContext.clearRect).toHaveBeenCalled();
     expect(mockContext.stroke).toHaveBeenCalled();
   });
 
-  it('should respect pause state', () => {
+  it('should respect pause state in the loop', () => {
     const effect = new AuroraEffect({
       canvas: mockCanvas,
       colors: ['#00d2ff', '#0066cc'],
     });
 
     effect.setPaused(true);
-    (effect as any).update = vi.fn();
-    (effect as any).draw = vi.fn();
 
-    (effect as any).start();
+    // We need to manually execute the loop to test the branch
+    let loopFn: Function | undefined;
+    vi.mocked(window.requestAnimationFrame).mockImplementation((cb) => {
+      loopFn = cb;
+      return 123;
+    });
+
+    effect.start();
+    expect(loopFn).toBeDefined();
+
+    // Mock update and draw to see if they are called
+    // @ts-expect-error - testing private methods
+    const updateSpy = vi.spyOn(effect, 'update');
+    // @ts-expect-error - testing private methods
+    const drawSpy = vi.spyOn(effect, 'draw');
+
+    if (loopFn) loopFn();
+
+    expect(updateSpy).not.toHaveBeenCalled();
+    expect(drawSpy).not.toHaveBeenCalled();
+
+    effect.setPaused(false);
+    if (loopFn) loopFn();
+
+    expect(updateSpy).toHaveBeenCalled();
+    expect(drawSpy).toHaveBeenCalled();
   });
 
   it('should handle resize', () => {
@@ -99,8 +149,25 @@ describe('AuroraEffect', () => {
       colors: ['#00d2ff', '#0066cc'],
     });
 
-    (mockCanvas.parentElement as any).clientWidth = 1024;
+    // @ts-expect-error - mocking parentElement
+    mockCanvas.parentElement.clientWidth = 1024;
     effect.resize();
     expect(mockCanvas.width).toBe(1024);
+  });
+
+  it('should not draw AuroraWave if points are insufficient', () => {
+    const effect = new AuroraEffect({
+      canvas: mockCanvas,
+      colors: ['#00d2ff', '#0066cc'],
+    });
+
+    // @ts-expect-error - accessing private waves
+    const wave = effect.waves[0];
+    // @ts-expect-error - clearing points
+    wave.points = [];
+
+    // @ts-expect-error - calling private draw
+    effect.draw();
+    expect(mockContext.beginPath).not.toHaveBeenCalled();
   });
 });
