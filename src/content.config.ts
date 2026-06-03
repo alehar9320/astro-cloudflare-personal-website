@@ -19,7 +19,6 @@ export const collections = {
     loader: glob({ base: './src/content/flags', pattern: '**/*.json' }),
     schema: z.object({
       enable_product_manifesto: z.boolean().default(false),
-      enable_skills_pulse_v1: z.boolean().default(false),
     }),
   }),
 };

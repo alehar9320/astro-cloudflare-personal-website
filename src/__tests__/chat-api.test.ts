@@ -60,6 +60,7 @@ describe('chat API', () => {
     expect(response.headers.get('Strict-Transport-Security')).toBe(
       'max-age=31536000; includeSubDomains'
     );
+    expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff');
     expect(ai.run).toHaveBeenCalledWith(
       '@cf/meta/llama-3.1-8b-instruct',
       expect.objectContaining({
@@ -83,6 +84,7 @@ describe('chat API', () => {
     expect(response.headers.get('Strict-Transport-Security')).toBe(
       'max-age=31536000; includeSubDomains'
     );
+    expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff');
     await expect(readJson(response)).resolves.toEqual({
       error: 'AI binding not found. Chat is only available on Cloudflare Workers.',
     });
@@ -95,6 +97,7 @@ describe('chat API', () => {
     const response = await POST(createContext(createRequest('{invalid json'), { AI: ai }));
 
     expect(response.status).toBe(400);
+    expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff');
     await expect(readJson(response)).resolves.toEqual({ error: 'Invalid JSON payload' });
     expect(consoleSpy).toHaveBeenCalledWith(
       expect.objectContaining({ event: 'chat_api_json_parse_error', error: expect.any(String) })
@@ -238,6 +241,30 @@ describe('chat API', () => {
 
     expect(response.status).toBe(200);
     expect(put).toHaveBeenCalledWith('chat-limit:203.0.113.3', '1', {
+      expirationTtl: 3600,
+    });
+    expect(ai.run).toHaveBeenCalledOnce();
+  });
+
+  it('resets the rate limit counter if the stored value is invalid (NaN)', async () => {
+    const ai = createAi();
+    const get = vi.fn().mockResolvedValue('not-a-number');
+    const put = vi.fn();
+    const store = { get, put } as unknown as KVNamespace;
+    const env = { AI: ai, CHAT_STORE: store };
+
+    const response = await POST(
+      createContext(
+        createRequest(
+          { messages: [{ role: 'user', content: 'Hello' }] },
+          { 'cf-connecting-ip': '203.0.113.4' }
+        ),
+        env
+      )
+    );
+
+    expect(response.status).toBe(200);
+    expect(put).toHaveBeenCalledWith('chat-limit:203.0.113.4', '1', {
       expirationTtl: 3600,
     });
     expect(ai.run).toHaveBeenCalledOnce();
