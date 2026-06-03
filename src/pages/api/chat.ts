@@ -101,7 +101,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
       event: 'chat_api_validation_failed',
       // Redact potentially sensitive input data from issues by removing 'received' and 'value' fields
       issues: result.error.issues.map((issue) => {
-        const { received: _r, value: _v, ...safeIssue } = issue as any;
+        const safeIssue = { ...issue } as Record<string, unknown>;
+        delete safeIssue.received;
+        delete safeIssue.value;
         return safeIssue;
       }),
     });
