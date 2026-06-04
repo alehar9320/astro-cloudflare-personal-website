@@ -53,10 +53,9 @@ export function pruneMessages(messages: ChatMessage[]): ChatMessage[] {
   // 4. Limit the total content length to MAX_TOTAL_CONTENT_LENGTH (keep most recent)
   let totalLength = pruned.reduce((acc, msg) => acc + msg.content.length, 0);
   while (totalLength > MAX_TOTAL_CONTENT_LENGTH && pruned.length > 1) {
-    const removed = pruned.shift();
-    if (removed) {
-      totalLength -= removed.content.length;
-    }
+    // biome-ignore lint/style/noNonNullAssertion: safe due to pruned.length > 1
+    const removed = pruned.shift()!;
+    totalLength -= removed.content.length;
   }
 
   return pruned;
