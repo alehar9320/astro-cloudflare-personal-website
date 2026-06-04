@@ -337,6 +337,7 @@
 
 <script>
   import { createChatStreamParser, extractAssistantTextFromSse } from '../utils/chat-stream';
+  import { pruneMessages } from '../utils/chat-logic';
 
   const chatToggle = document.getElementById('chat-toggle');
   const chatWindow = document.getElementById('chat-window');
@@ -440,6 +441,9 @@
     chatInput.value = '';
     appendMessage('user', content);
     messages.push({ role: 'user', content });
+
+    const pruned = pruneMessages(messages);
+
     saveMessages();
 
     typingIndicator?.classList.remove('hidden');
@@ -450,7 +454,7 @@
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ messages }),
+        body: JSON.stringify({ messages: pruned }),
       });
 
       if (!response.ok) throw new Error('Failed to fetch');
