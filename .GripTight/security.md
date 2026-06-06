@@ -15,6 +15,14 @@
 | :------------------ | :---------------------------------------------------- | :----------------- |
 | `.dev.vars.example` | `PUBLIC_POSTHOG_KEY`, `GITHUB_TOKEN`, `CODECOV_TOKEN` | Verified (Generic) |
 
+## 2026-10-24 - Environment Template Alignment (GripTight)
+
+| Verified Template   | Corrected Keys        | Validation State   |
+| :------------------ | :-------------------- | :----------------- |
+| `.dev.vars.example` | `PUBLIC_POSTHOG_HOST` | Verified (Generic) |
+| `wrangler.jsonc`    | None                  | Verified           |
+| `render.yaml`       | None                  | Verified           |
+
 **Notes:**
 
 - Initialized GripTight hygiene checks.

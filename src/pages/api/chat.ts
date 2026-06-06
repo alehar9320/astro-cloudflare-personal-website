@@ -7,8 +7,10 @@ const MAX_TOTAL_CONTENT_LENGTH = 3000;
 
 const jsonHeaders = {
   'content-type': 'application/json',
+  'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'DENY',
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+  'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none';",
 } as const;
 
 export const prerender = false;
@@ -100,6 +102,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const result = ChatRequestSchema.safeParse(body);
 
   if (!result.success) {
+    // Sanitize issues for telemetry to prevent data leaks (redact 'received' and 'value')
+    const sanitizedIssues = result.error.issues.map((issue) => {
+      const safeIssue = { ...issue } as Record<string, unknown>;
+      delete safeIssue.received;
+      delete safeIssue.value;
+      return safeIssue;
+    });
+    console.warn({ event: 'chat_api_validation_failed', issues: sanitizedIssues });
+
     // Return the first validation error message for simplicity and security (don't leak schema details)
     return jsonError(result.error.issues[0].message, 400);
   }
@@ -125,6 +136,7 @@ Keep your responses brief, typically 2-3 sentences.`;
         'X-Content-Type-Options': 'nosniff',
         'X-Frame-Options': 'DENY',
         'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+        'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none';",
       },
     });
   } catch (e: unknown) {

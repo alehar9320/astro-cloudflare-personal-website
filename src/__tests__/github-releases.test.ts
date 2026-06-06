@@ -69,6 +69,12 @@ describe('github releases utility', () => {
         issues: expect.any(Array),
       })
     );
+
+    // Ensure sensitive keys 'received' and 'value' are NOT in the logged issues
+    const loggedCall = consoleSpy.mock.calls[0][0];
+    const firstIssue = loggedCall.issues[0];
+    expect(firstIssue).not.toHaveProperty('received');
+    expect(firstIssue).not.toHaveProperty('value');
   });
 
   it('returns an empty list when the GitHub API fails', async () => {

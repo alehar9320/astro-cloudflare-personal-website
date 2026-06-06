@@ -60,6 +60,10 @@ describe('chat API', () => {
     expect(response.headers.get('Strict-Transport-Security')).toBe(
       'max-age=31536000; includeSubDomains'
     );
+    expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff');
+    expect(response.headers.get('Content-Security-Policy')).toBe(
+      "default-src 'none'; frame-ancestors 'none';"
+    );
     expect(ai.run).toHaveBeenCalledWith(
       '@cf/meta/llama-3.1-8b-instruct',
       expect.objectContaining({
@@ -82,6 +86,10 @@ describe('chat API', () => {
     expect(response.headers.get('X-Frame-Options')).toBe('DENY');
     expect(response.headers.get('Strict-Transport-Security')).toBe(
       'max-age=31536000; includeSubDomains'
+    );
+    expect(response.headers.get('X-Content-Type-Options')).toBe('nosniff');
+    expect(response.headers.get('Content-Security-Policy')).toBe(
+      "default-src 'none'; frame-ancestors 'none';"
     );
     await expect(readJson(response)).resolves.toEqual({
       error: 'Chat is currently unavailable. Please try again later.',
@@ -270,6 +278,37 @@ describe('chat API', () => {
       expirationTtl: 3600,
     });
     expect(ai.run).toHaveBeenCalledOnce();
+  });
+
+  it('sanitizes and logs validation failures to telemetry', async () => {
+    const ai = createAi();
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    // Body that will trigger a Zod error (e.g., content too long)
+    const body = {
+      messages: [{ role: 'user', content: 'a'.repeat(501) }],
+    };
+
+    const response = await postChat(body, ai);
+
+    expect(response.status).toBe(400);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'chat_api_validation_failed',
+        issues: expect.arrayContaining([
+          expect.objectContaining({
+            code: 'too_big',
+            path: ['messages', 0, 'content'],
+          }),
+        ]),
+      })
+    );
+
+    // Ensure sensitive keys 'received' and 'value' are NOT in the logged issues
+    const loggedCall = consoleSpy.mock.calls[0][0];
+    const firstIssue = loggedCall.issues[0];
+    expect(firstIssue).not.toHaveProperty('received');
+    expect(firstIssue).not.toHaveProperty('value');
   });
 
   it('returns a generic 500 error when AI execution fails', async () => {
