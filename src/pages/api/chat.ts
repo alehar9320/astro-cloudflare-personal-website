@@ -63,7 +63,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const store = bindings.CHAT_STORE;
 
   if (!ai) {
-    return jsonError('AI binding not found. Chat is only available on Cloudflare Workers.', 503);
+    return jsonError('Chat is currently unavailable. Please try again later.', 503);
   }
 
   // Basic Security: Client IP-based rate limiting
@@ -86,7 +86,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
   } catch (e: unknown) {
     const error = e instanceof Error ? e.message : String(e);
     console.error({ event: 'chat_api_json_parse_error', error });
-    return jsonError('Invalid JSON payload', 400);
+    return jsonError(
+      'We couldn’t process your request. Please check your message and try again.',
+      400
+    );
   }
 
   const result = ChatRequestSchema.safeParse(body);
