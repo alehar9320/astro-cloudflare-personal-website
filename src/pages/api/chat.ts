@@ -71,7 +71,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const rateLimitKey = `chat-limit:${ip}`;
 
   if (store) {
-    const currentCount = parseInt((await store.get(rateLimitKey)) || '0');
+    let currentCount = parseInt((await store.get(rateLimitKey)) || '0');
+    if (Number.isNaN(currentCount)) {
+      currentCount = 0;
+    }
+
     if (currentCount >= 20) {
       // 20 requests per hour limit
       return jsonError('Rate limit exceeded. Try again in an hour.', 429);
@@ -95,6 +99,15 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const result = ChatRequestSchema.safeParse(body);
 
   if (!result.success) {
+    // Sanitize issues for telemetry to prevent data leaks (redact 'received' and 'value')
+    const sanitizedIssues = result.error.issues.map((issue) => {
+      const safeIssue = { ...issue } as Record<string, unknown>;
+      delete safeIssue.received;
+      delete safeIssue.value;
+      return safeIssue;
+    });
+    console.warn({ event: 'chat_api_validation_failed', issues: sanitizedIssues });
+
     // Return the first validation error message for simplicity and security (don't leak schema details)
     return jsonError(result.error.issues[0].message, 400);
   }
