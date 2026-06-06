@@ -101,8 +101,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
   if (!result.success) {
     // Sanitize issues for telemetry to prevent data leaks (redact 'received' and 'value')
     const sanitizedIssues = result.error.issues.map((issue) => {
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-      const { received: _, value: __, ...safeIssue } = issue as unknown as Record<string, unknown>;
+      const safeIssue = { ...issue } as Record<string, unknown>;
+      delete safeIssue.received;
+      delete safeIssue.value;
       return safeIssue;
     });
     console.warn({ event: 'chat_api_validation_failed', issues: sanitizedIssues });
