@@ -4,14 +4,10 @@ import Hero from '../../components/Hero.astro';
 import Pill from '../../components/Pill.astro';
 import Icon from '../../components/Icon.astro';
 import type { iconPaths } from '../../components/IconPaths';
-import flagsData from '../../content/flags.json';
-import { z } from 'zod';
+import { getEntry } from 'astro:content';
 
-if (
-  !z.object({ enable_strategic_pulse: z.boolean().default(false) }).parse(flagsData)
-    .enable_strategic_pulse
-)
-  return Astro.redirect('/404/');
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_strategic_pulse) return Astro.redirect('/404/');
 const focus: { l: string; i: keyof typeof iconPaths }[] = [
   { l: 'Industrial AI', i: 'rocket-launch' },
   { l: 'DevEx', i: 'terminal-window' },
