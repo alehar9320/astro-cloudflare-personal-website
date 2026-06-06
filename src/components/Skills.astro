@@ -1,10 +1,8 @@
 ---
 import Icon from './Icon.astro';
-import { getEntry } from 'astro:content';
-const flagsEntry = await getEntry('flags', 'config');
 ---
 
-<section class={`box skills ${flagsEntry?.data.enable_skills_pulse_v1 ? 'pulse-enabled' : ''}`}>
+<section class="box skills">
   <div class="stack gap-2 lg:gap-4">
     <Icon icon="rocket-launch" color="var(--accent-regular)" size="2.5rem" gradient />
     <h2>Driving Growth & ROI</h2>
@@ -47,29 +45,6 @@ const flagsEntry = await getEntry('flags', 'config');
     padding: 1.5rem;
     background-color: var(--gray-999_40);
     box-shadow: var(--shadow-sm);
-    backdrop-filter: blur(16px);
-    -webkit-backdrop-filter: blur(16px);
-    transition:
-      transform var(--theme-transition),
-      box-shadow var(--theme-transition),
-      border-color var(--theme-transition);
-  }
-
-  .box:hover {
-    transform: translateY(-4px);
-    border-color: var(--accent-regular);
-    box-shadow:
-      0 12px 30px -5px hsla(210, 100%, 45%, 0.3),
-      var(--shadow-md);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .box {
-      transition: none;
-    }
-    .box:hover {
-      transform: none;
-    }
   }
 
   .skills {
@@ -84,20 +59,6 @@ const flagsEntry = await getEntry('flags', 'config');
 
   .skills p {
     color: var(--gray-400);
-  }
-  @media (prefers-reduced-motion: no-preference) {
-    .pulse-enabled .stack:hover :global(svg) {
-      animation: pulse 0.6s ease;
-    }
-  }
-  @keyframes pulse {
-    0%,
-    100% {
-      transform: scale(1);
-    }
-    50% {
-      transform: scale(1.1);
-    }
   }
 
   @media (min-width: 50em) {

@@ -18,11 +18,7 @@ export const collections = {
   flags: defineCollection({
     loader: glob({ base: './src/content/flags', pattern: '**/*.json' }),
     schema: z.object({
-      portfolio_tactile_v1: z.boolean().default(false),
-      enable_strategic_pulse: z.boolean().default(false),
-      portfolio_shimmer_v1: z.boolean().default(false),
       enable_product_manifesto: z.boolean().default(false),
-      enable_skills_pulse_v1: z.boolean().default(false),
     }),
   }),
 };
