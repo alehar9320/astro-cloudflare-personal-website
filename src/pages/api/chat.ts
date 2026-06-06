@@ -69,7 +69,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const rateLimitKey = `chat-limit:${ip}`;
 
   if (store) {
-    const currentCount = parseInt((await store.get(rateLimitKey)) || '0');
+    const stored = await store.get(rateLimitKey);
+    let currentCount = parseInt(stored || '0');
+
+    // Coerce malformed or NaN counts to 0 before arithmetic or comparisons
+    if (Number.isNaN(currentCount)) {
+      currentCount = 0;
+    }
+
     if (currentCount >= 20) {
       // 20 requests per hour limit
       return jsonError('Rate limit exceeded. Try again in an hour.', 429);
