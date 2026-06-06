@@ -92,7 +92,7 @@ describe('chat API', () => {
       "default-src 'none'; frame-ancestors 'none';"
     );
     await expect(readJson(response)).resolves.toEqual({
-      error: 'AI binding not found. Chat is only available on Cloudflare Workers.',
+      error: 'Chat is currently unavailable. Please try again later.',
     });
   });
 
@@ -103,7 +103,9 @@ describe('chat API', () => {
     const response = await POST(createContext(createRequest('{invalid json'), { AI: ai }));
 
     expect(response.status).toBe(400);
-    await expect(readJson(response)).resolves.toEqual({ error: 'Invalid JSON payload' });
+    await expect(readJson(response)).resolves.toEqual({
+      error: 'We couldn’t process your request. Please check your message and try again.',
+    });
     expect(consoleSpy).toHaveBeenCalledWith(
       expect.objectContaining({ event: 'chat_api_json_parse_error', error: expect.any(String) })
     );
@@ -120,7 +122,9 @@ describe('chat API', () => {
     const response = await POST(createContext(request, { AI: ai }));
 
     expect(response.status).toBe(400);
-    await expect(readJson(response)).resolves.toEqual({ error: 'Invalid JSON payload' });
+    await expect(readJson(response)).resolves.toEqual({
+      error: 'We couldn’t process your request. Please check your message and try again.',
+    });
     expect(consoleSpy).toHaveBeenCalledWith(
       expect.objectContaining({ event: 'chat_api_json_parse_error', error: 'malformed' })
     );
