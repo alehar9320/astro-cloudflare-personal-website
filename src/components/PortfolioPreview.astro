@@ -5,9 +5,17 @@ import flags from '../content/flags.json';
 
 interface Props {
   project: CollectionEntry<'work'>;
+  loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'low' | 'auto';
 }
 
-const { data, id } = Astro.props.project;
+/**
+ * PortfolioPreview - A card component for project previews.
+ * Optimization (⚡ Bolt): Support for loading and fetchpriority allows for LCP improvements
+ * on pages where the first project card is above the fold.
+ */
+const { project, loading = 'lazy', fetchpriority } = Astro.props;
+const { data, id } = project;
 const isTactileEnabled = z.boolean().default(false).parse(flags.portfolio_tactile_v1);
 const isShimmerEnabled = z.boolean().default(false).parse(flags.portfolio_shimmer_v1);
 ---
@@ -17,7 +25,13 @@ const isShimmerEnabled = z.boolean().default(false).parse(flags.portfolio_shimme
   href={`/work/${id}`}
 >
   <span class="title">{data.title}</span>
-  <img src={data.img} alt={data.img_alt || ''} loading="lazy" decoding="async" />
+  <img
+    src={data.img}
+    alt={data.img_alt || ''}
+    loading={loading}
+    fetchpriority={fetchpriority}
+    decoding="async"
+  />
 </a>
 
 <style>
