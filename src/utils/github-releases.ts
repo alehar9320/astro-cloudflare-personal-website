@@ -113,9 +113,19 @@ export async function fetchGitHubReleases(
     const result = z.array(GitHubReleaseApiItemSchema).safeParse(json);
 
     if (!result.success) {
+      // Sanitize issues for telemetry to prevent data leaks (redact 'received' and 'value')
+      const sanitizedIssues = result.error.issues.map((issue) => {
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const {
+          received: _,
+          value: __,
+          ...safeIssue
+        } = issue as unknown as Record<string, unknown>;
+        return safeIssue;
+      });
       console.error({
         event: 'github_releases_validation_failed',
-        issues: result.error.issues,
+        issues: sanitizedIssues,
       });
       return [];
     }

@@ -7,8 +7,10 @@ const MAX_TOTAL_CONTENT_LENGTH = 3000;
 
 const jsonHeaders = {
   'content-type': 'application/json',
+  'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'DENY',
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+  'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none';",
 } as const;
 
 export const prerender = false;
@@ -69,7 +71,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const rateLimitKey = `chat-limit:${ip}`;
 
   if (store) {
-    const currentCount = parseInt((await store.get(rateLimitKey)) || '0');
+    let currentCount = parseInt((await store.get(rateLimitKey)) || '0');
+    if (Number.isNaN(currentCount)) {
+      currentCount = 0;
+    }
+
     if (currentCount >= 20) {
       // 20 requests per hour limit
       return jsonError('Rate limit exceeded. Try again in an hour.', 429);
@@ -90,6 +96,14 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const result = ChatRequestSchema.safeParse(body);
 
   if (!result.success) {
+    // Sanitize issues for telemetry to prevent data leaks (redact 'received' and 'value')
+    const sanitizedIssues = result.error.issues.map((issue) => {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { received: _, value: __, ...safeIssue } = issue as unknown as Record<string, unknown>;
+      return safeIssue;
+    });
+    console.warn({ event: 'chat_api_validation_failed', issues: sanitizedIssues });
+
     // Return the first validation error message for simplicity and security (don't leak schema details)
     return jsonError(result.error.issues[0].message, 400);
   }
@@ -115,6 +129,7 @@ Keep your responses brief, typically 2-3 sentences.`;
         'X-Content-Type-Options': 'nosniff',
         'X-Frame-Options': 'DENY',
         'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
+        'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none';",
       },
     });
   } catch (e: unknown) {
