@@ -29,7 +29,11 @@ const schema = {
       description:
         'Strategic Product Leader specializing in Developer Experience (DevEx) and Industrial AI at IFS.',
       url: 'https://harenstam.com/',
-      sameAs: ['https://www.linkedin.com/in/alehar', 'https://github.com/alehar9320'],
+      sameAs: [
+        'https://www.linkedin.com/in/alehar/',
+        'https://github.com/alehar9320',
+        'https://blog.ifs.com/author/alexander-harenstam/',
+      ],
       worksFor: {
         '@type': 'Organization',
         name: 'IFS',
@@ -58,6 +62,19 @@ const schema = {
       description:
         'Alexander Härenstam is a Strategic Product Leader driving high-impact innovation, Industrial AI, and Developer Experience (DevEx) at IFS.',
     },
+    {
+      '@type': 'WebPage',
+      '@id': 'https://harenstam.com/#webpage',
+      url: 'https://harenstam.com/',
+      name: 'Alexander Härenstam | Strategic Product Leader',
+      about: { '@id': 'https://harenstam.com/#person' },
+      description:
+        'Alexander Härenstam is a Strategic Product Leader driving high-impact innovation, Industrial AI, and Developer Experience (DevEx) at IFS.',
+      primaryImageOfPage: {
+        '@type': 'ImageObject',
+        url: 'https://harenstam.com/assets/portrait.png',
+      },
+    },
   ],
 };
 
@@ -65,7 +82,10 @@ const schema = {
 // https://docs.astro.build/basics/astro-components/
 ---
 
-<BaseLayout>
+<BaseLayout
+  title="Alexander Härenstam | Strategic Product Leader"
+  description="Strategic Product Leader driving high-impact innovation, Industrial AI, and Developer Experience (DevEx) at IFS."
+>
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="stack gap-20 lg:gap-48">
     <div class="wrapper stack gap-8 lg:gap-20">
