@@ -1,7 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { z } from 'zod';
-import flags from '../content/flags.json';
+import { getEntry } from 'astro:content';
 
 interface Props {
   project: CollectionEntry<'work'>;
@@ -16,8 +15,9 @@ interface Props {
  */
 const { project, loading = 'lazy', fetchpriority } = Astro.props;
 const { data, id } = project;
-const isTactileEnabled = z.boolean().default(false).parse(flags.portfolio_tactile_v1);
-const isShimmerEnabled = z.boolean().default(false).parse(flags.portfolio_shimmer_v1);
+const flagsEntry = await getEntry('flags', 'config');
+const isTactileEnabled = flagsEntry?.data.portfolio_tactile_v1 ?? false;
+const isShimmerEnabled = flagsEntry?.data.portfolio_shimmer_v1 ?? false;
 ---
 
 <a
