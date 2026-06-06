@@ -363,15 +363,22 @@
 
   setStatus('idle');
 
-  const messages = JSON.parse(sessionStorage.getItem('chat-history') || '[]');
-
-  function saveMessages() {
-    sessionStorage.setItem('chat-history', JSON.stringify(messages));
-  }
-
   interface Message {
     role: string;
     content: string;
+  }
+
+  let messages: Message[] = [];
+  try {
+    messages = JSON.parse(sessionStorage.getItem('chat-history') || '[]');
+  } catch (e: unknown) {
+    const error = e instanceof Error ? e.message : String(e);
+    console.error({ event: 'chat_history_parse_error', error });
+    throw e;
+  }
+
+  function saveMessages() {
+    sessionStorage.setItem('chat-history', JSON.stringify(messages));
   }
 
   function normalizeMessage(message: Message): Message {

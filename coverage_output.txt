@@ -1,0 +1,99 @@
+
+> molecular-mars@0.0.1 test:coverage
+> vitest run --coverage --coverage.all=false
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.7 [39m[90m/app[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+[90mstdout[2m | __tests__/release.spec.ts[2m > [22m[2mrelease script[2m > [22m[2mwrites the version to GITHUB_OUTPUT without mutating tracked files
+[22m[39mBumping version to 2023.01.01.1200
+Outputs written to GITHUB_OUTPUT
+
+::notice title=Release Version::2023.01.01.1200
+Successfully prepared version 2023.01.01.1200
+
+[90mstdout[2m | __tests__/release.spec.ts[2m > [22m[2mrelease script[2m > [22m[2mformats changelog output from commits since the last tag
+[22m[39mBumping version to 2023.01.01.1200
+Outputs written to GITHUB_OUTPUT
+
+::notice title=Release Version::2023.01.01.1200
+Successfully prepared version 2023.01.01.1200
+
+[90mstdout[2m | __tests__/release.spec.ts[2m > [22m[2mrelease script[2m > [22m[2mskips [skip ci] commits and falls back to internal CI updates when needed
+[22m[39mBumping version to 2023.01.01.1200
+Outputs written to GITHUB_OUTPUT
+
+::notice title=Release Version::2023.01.01.1200
+Successfully prepared version 2023.01.01.1200
+
+[90mstdout[2m | __tests__/release.spec.ts[2m > [22m[2mrelease script[2m > [22m[2mhandles missing tags by using the full git log
+[22m[39mBumping version to 2023.01.01.1200
+No previous tags found. This might be the first release.
+Git describe error: No tags
+Outputs written to GITHUB_OUTPUT
+
+::notice title=Release Version::2023.01.01.1200
+Successfully prepared version 2023.01.01.1200
+
+[90mstdout[2m | __tests__/release.spec.ts[2m > [22m[2mrelease script[2m > [22m[2mfalls back to no documented changes when git log is unavailable
+[22m[39mBumping version to 2023.01.01.1200
+Git log error: Git log failed
+Outputs written to GITHUB_OUTPUT
+
+::notice title=Release Version::2023.01.01.1200
+Successfully prepared version 2023.01.01.1200
+
+[90mstdout[2m | __tests__/release.spec.ts[2m > [22m[2mrelease script[2m > [22m[2mexits when writing GitHub output fails
+[22m[39mBumping version to 2023.01.01.1200
+
+::notice title=Release Version::2023.01.01.1200
+Successfully prepared version 2023.01.01.1200
+
+[90mstdout[2m | __tests__/release.spec.ts[2m > [22m[2mrelease script[2m > [22m[2mskips writing to GITHUB_OUTPUT if the environment variable is not set
+[22m[39mBumping version to 2023.01.01.1200
+
+::notice title=Release Version::2023.01.01.1200
+Successfully prepared version 2023.01.01.1200
+
+ [32m✓[39m __tests__/release.spec.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 61[2mms[22m[39m
+ [32m✓[39m __tests__/sentry.client.config.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 73[2mms[22m[39m
+ [32m✓[39m __tests__/sentry.server.config.spec.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 75[2mms[22m[39m
+ [32m✓[39m src/__tests__/github-releases.test.ts [2m([22m[2m21 tests[22m[2m)[22m[32m 82[2mms[22m[39m
+ [32m✓[39m src/__tests__/chat-api.test.ts [2m([22m[2m25 tests[22m[2m)[22m[32m 118[2mms[22m[39m
+ [32m✓[39m __tests__/stunt-double.spec.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 39[2mms[22m[39m
+ [32m✓[39m src/__tests__/content.config.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m src/components/__tests__/IconPaths.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32m✓[39m src/utils/chat-stream.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 24[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m9 passed[39m[22m[90m (9)[39m
+[2m      Tests [22m [1m[32m82 passed[39m[22m[90m (82)[39m
+[2m   Start at [22m 05:25:15
+[2m   Duration [22m 6.71s[2m (transform 768ms, setup 0ms, import 1.44s, tests 504ms, environment 13.14s)[22m
+
+JUNIT report written to /app/junit.xml
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+-------------------|---------|----------|---------|---------|-------------------
+All files          |     100 |    98.46 |     100 |     100 |
+ app               |     100 |      100 |     100 |     100 |
+  ...ent.config.ts |     100 |      100 |     100 |     100 |
+  ...ver.config.ts |     100 |      100 |     100 |     100 |
+ app/scripts       |     100 |      100 |     100 |     100 |
+  release.js       |     100 |      100 |     100 |     100 |
+ app/src           |     100 |      100 |     100 |     100 |
+  ...ent.config.ts |     100 |      100 |     100 |     100 |
+ ..._tests__/mocks |     100 |      100 |     100 |     100 |
+  astro-content.ts |     100 |      100 |     100 |     100 |
+  astro-loaders.ts |     100 |      100 |     100 |     100 |
+  astro-zod.ts     |     100 |      100 |     100 |     100 |
+  ...re-workers.ts |     100 |      100 |     100 |     100 |
+ ...src/components |     100 |      100 |     100 |     100 |
+  IconPaths.ts     |     100 |      100 |     100 |     100 |
+ app/src/pages/api |     100 |    91.66 |     100 |     100 |
+  chat.ts          |     100 |    91.66 |     100 |     100 | 105-106
+ app/src/utils     |     100 |      100 |     100 |     100 |
+  chat-stream.ts   |     100 |      100 |     100 |     100 |
+  ...b-releases.ts |     100 |      100 |     100 |     100 |
+-------------------|---------|----------|---------|---------|-------------------

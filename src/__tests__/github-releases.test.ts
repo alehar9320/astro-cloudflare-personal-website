@@ -279,8 +279,9 @@ describe('github releases utility', () => {
       expect(setItem).toHaveBeenCalledWith('github-releases-cache', expect.any(String));
     });
 
-    it('handles cache read errors gracefully', async () => {
+    it('handles and logs cache read errors', async () => {
       vi.stubGlobal('window', {});
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       const getItem = vi.fn().mockImplementation(() => {
         throw new Error('access denied');
       });
@@ -295,10 +296,42 @@ describe('github releases utility', () => {
 
       expect(result).toEqual(mockReleases);
       expect(fetchMock).toHaveBeenCalledOnce();
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          event: 'github_releases_cache_read_error',
+          error: 'access denied',
+        })
+      );
     });
 
-    it('handles cache write errors gracefully', async () => {
+    it('handles and logs non-Error cache read errors', async () => {
       vi.stubGlobal('window', {});
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const getItem = vi.fn().mockImplementation(() => {
+        throw 'access denied string';
+      });
+      vi.stubGlobal('sessionStorage', { getItem });
+
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [{ body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: 'v1' }],
+      });
+
+      const result = await fetchGitHubReleases(fetchMock as typeof fetch);
+
+      expect(result).toEqual(mockReleases);
+      expect(fetchMock).toHaveBeenCalledOnce();
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          event: 'github_releases_cache_read_error',
+          error: 'access denied string',
+        })
+      );
+    });
+
+    it('handles and logs cache write errors', async () => {
+      vi.stubGlobal('window', {});
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
       const setItem = vi.fn().mockImplementation(() => {
         throw new Error('storage full');
       });
@@ -313,6 +346,37 @@ describe('github releases utility', () => {
 
       expect(result).toEqual(mockReleases);
       expect(fetchMock).toHaveBeenCalledOnce();
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          event: 'github_releases_cache_write_error',
+          error: 'storage full',
+        })
+      );
+    });
+
+    it('handles and logs non-Error cache write errors', async () => {
+      vi.stubGlobal('window', {});
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const setItem = vi.fn().mockImplementation(() => {
+        throw 'storage full string';
+      });
+      vi.stubGlobal('sessionStorage', { getItem: vi.fn().mockReturnValue(null), setItem });
+
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [{ body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: 'v1' }],
+      });
+
+      const result = await fetchGitHubReleases(fetchMock as typeof fetch);
+
+      expect(result).toEqual(mockReleases);
+      expect(fetchMock).toHaveBeenCalledOnce();
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          event: 'github_releases_cache_write_error',
+          error: 'storage full string',
+        })
+      );
     });
   });
 });
