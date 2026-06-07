@@ -84,9 +84,13 @@ const schema = {
       </div>
       <Grid variant="offset">
         {
-          projects.map((project) => (
+          projects.map((project, index) => (
             <li>
-              <PortfolioPreview project={project} />
+              <PortfolioPreview
+                project={project}
+                loading={index === 0 ? 'eager' : 'lazy'}
+                fetchpriority={index === 0 ? 'high' : 'auto'}
+              />
             </li>
           ))
         }
