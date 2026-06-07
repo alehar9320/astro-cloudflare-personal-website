@@ -4,9 +4,12 @@ import { getEntry } from 'astro:content';
 
 interface Props {
   project: CollectionEntry<'work'>;
+  loading?: 'lazy' | 'eager';
+  fetchpriority?: 'high' | 'low' | 'auto';
 }
 
-const { data, id } = Astro.props.project;
+const { project, loading = 'lazy', fetchpriority = 'auto' } = Astro.props;
+const { data, id } = project;
 const flagsEntry = await getEntry('flags', 'config');
 const isTactileEnabled = flagsEntry?.data.portfolio_tactile_v1 ?? false;
 const isShimmerEnabled = flagsEntry?.data.portfolio_shimmer_v1 ?? false;
@@ -17,7 +20,13 @@ const isShimmerEnabled = flagsEntry?.data.portfolio_shimmer_v1 ?? false;
   href={`/work/${id}`}
 >
   <span class="title">{data.title}</span>
-  <img src={data.img} alt={data.img_alt || ''} loading="lazy" decoding="async" />
+  <img
+    src={data.img}
+    alt={data.img_alt || ''}
+    loading={loading}
+    fetchpriority={fetchpriority}
+    decoding="async"
+  />
 </a>
 
 <style>
