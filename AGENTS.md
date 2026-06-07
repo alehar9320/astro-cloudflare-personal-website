@@ -29,7 +29,7 @@
 
 - **Workers-First Model:** Uses the modern Cloudflare Workers + Assets binding (`wrangler.jsonc`).
 - **Rendering:** Defaults to static pre-rendering (`output: "static"` in `astro.config.mjs`).
-- **Type Safety:** Strict TypeScript is mandatory. Use Zod for both compile-time and runtime validation. Run `npx wrangler types` after binding changes.
+- **Type Safety:** Strict TypeScript is mandatory. Use Zod for both compile-time and runtime validation (see [docs/zod-guidelines.md](docs/zod-guidelines.md) for best practices). Run `npx wrangler types` after binding changes.
 - **Naming Conventions:**
   - PascalCase for Astro components (`MyComponent.astro`).
   - kebab-case for other files (`my-script.ts`).
