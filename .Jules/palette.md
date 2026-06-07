@@ -41,3 +41,9 @@
 **Learning:** Standardizing interactive affordances across disparate components (Nav, Footer, Cards) creates a cohesive professional feel. A consistent `outline-offset: 4px` for focus states provides clear spatial feedback for keyboard users, while tactile `:active` transforms (`scale(0.97)`) offer physical responsiveness for touch and mouse users. Accessibility must be inclusive: `scroll-behavior: smooth` should always be gated by `prefers-reduced-motion` to prevent discomfort, and "Skip to Content" infrastructure requires site-wide `id="main-content"` consistency.
 
 **Action:** Standardized `outline-offset: 4px` and tactile scaling across `Nav.astro`, `Footer.astro`, and global link styles. Refined `global.css` to gate smooth scrolling behind `prefers-reduced-motion: no-preference`. Ensured site-wide "Skip to Content" functionality by adding `id="main-content"` to all primary page layouts and components.
+
+## 2026-05-19 - Optimizing LCP for Portfolio Galleries and Hero Assets
+
+**Learning:** To optimize Largest Contentful Paint (LCP) in Astro projects, primary visual assets (like hero images) and the first items in repeated galleries should be prioritised by the browser. Applying `loading="eager"` and `fetchpriority="high"` to these elements prevents the browser from delaying their loading, ensuring a faster perceived performance for users.
+
+**Action:** Enhanced the `PortfolioPreview` component to support dynamic `loading` and `fetchpriority` props. Updated `index.astro` and `work.astro` to prioritise the first project in their respective galleries. Explicitly added `loading="eager"` to the primary portrait image on the home page.
