@@ -49,7 +49,7 @@ export async function POST({ request }) {
   const result = RequestSchema.safeParse(body);
 
   if (!result.success) {
-    return new Response(JSON.stringify({ error: result.error.format() }), { status: 400 });
+    return new Response(JSON.stringify({ error: result.error.issues[0].message }), { status: 400 });
   }
 
   const { message, stream } = result.data; // Type-safe data
