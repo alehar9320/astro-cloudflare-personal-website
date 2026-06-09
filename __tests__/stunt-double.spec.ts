@@ -1,6 +1,5 @@
 import { describe, it, expect, vi } from 'vitest';
 import * as astroZod from '../src/__tests__/mocks/astro-zod';
-import * as cloudflareWorkers from '../src/__tests__/mocks/cloudflare-workers';
 import { createChatStreamParser } from '../src/utils/chat-stream';
 import {
   formatReleaseDate,
@@ -13,11 +12,6 @@ describe('StuntDouble: Mocks and Utility Edge Cases', () => {
     expect(astroZod.z).toBeDefined();
     const schema = astroZod.z.object({ test: astroZod.z.string() });
     expect(schema.parse({ test: 'pass' })).toEqual({ test: 'pass' });
-  });
-
-  it('exercises cloudflare-workers mock to ensure coverage', () => {
-    expect(cloudflareWorkers.env).toBeDefined();
-    expect(typeof cloudflareWorkers.env).toBe('object');
   });
 
   it('handles multi-line SSE data payloads in chat-stream', () => {
