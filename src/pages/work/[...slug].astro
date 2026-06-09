@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import { type CollectionEntry, getCollection, render } from 'astro:content';
 
 import ContactCTA from '../../components/ContactCTA.astro';
@@ -111,11 +112,14 @@ const schema = entry
           <main id="main-content" class="wrapper">
             <div class="stack gap-10 content">
               {entry.data.img && (
-                <img
+                <Image
                   src={entry.data.img}
                   alt={entry.data.img_alt || ''}
                   fetchpriority="high"
                   decoding="async"
+                  width={800}
+                  height={500}
+                  format="webp"
                 />
               )}
               <div class="content">{Content && <Content />}</div>
