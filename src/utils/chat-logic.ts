@@ -39,7 +39,12 @@ export function pruneMessages(messages: ChatMessage[]): ChatMessage[] {
   // 2. Limit by total character count (sliding window)
   let totalLength = pruned.reduce((acc, msg) => acc + msg.content.length, 0);
 
-  while (totalLength > MAX_TOTAL_CONTENT_LENGTH && pruned.length > 1) {
+  // Ensure we keep at least one message, but keep pruning if total length is over limit
+  while (pruned.length > 1) {
+    if (totalLength <= MAX_TOTAL_CONTENT_LENGTH) {
+      break;
+    }
+
     const removed = pruned.shift();
     if (removed) {
       totalLength -= removed.content.length;
