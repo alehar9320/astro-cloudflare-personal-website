@@ -5,4 +5,4 @@
 | 2026-05-19 | posthog.ts / posthog.test.ts              | 103              | 0MB               |
 | 2026-05-19 | posthog-node (dependency)                 | 0                | 0MB               |
 | 2026-06-09 | src/data/version.json                     | 3                | 0MB               |
-| 2026-06-09 | src/__tests__/mocks/cloudflare-workers.ts | 1                | 0MB               |
+| 2026-06-09 | src/**tests**/mocks/cloudflare-workers.ts | 1                | 0MB               |
