@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { z } from './mocks/astro-zod';
 import { glob } from 'astro/loaders';
 import { defineCollection } from 'astro:content';
@@ -24,5 +24,25 @@ describe('content.config', () => {
 
   it('should have the correct schema for work collection', () => {
     expect(collections.work).toHaveProperty('schema');
+
+    // Exercise the schema function to achieve 100% coverage
+    // @ts-expect-error - testing internal schema function
+    const schemaFn = collections.work.schema;
+    if (typeof schemaFn === 'function') {
+      const mockImage = vi.fn(() => z.string());
+      const schema = schemaFn({ image: mockImage });
+      expect(schema).toBeDefined();
+      expect(mockImage).toHaveBeenCalled();
+
+      const validData = {
+        title: 'Test Title',
+        description: 'Test Description',
+        publishDate: new Date(),
+        tags: ['tag1'],
+        img: 'image.png',
+        img_alt: 'Alt text',
+      };
+      expect(schema.parse(validData)).toBeDefined();
+    }
   });
 });

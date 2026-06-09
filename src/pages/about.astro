@@ -1,4 +1,6 @@
 ---
+import { Image } from 'astro:assets';
+import atWorkImg from '../assets/at-work.jpg';
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
@@ -68,12 +70,14 @@ const schema = {
         title="About"
         tagline="Aligning technical excellence with strategic innovation to deliver measurable market impact."
       >
-        <!--<img
-					width="1553"
-					height="873"
-					src="/assets/at-work.jpg"
-					alt="Alexander Härenstam at work with a colleague"
-				/>-->
+        <Image
+          src={atWorkImg}
+          alt="Alexander Härenstam at work with a colleague"
+          width={1553}
+          height={873}
+          loading="eager"
+          decoding="async"
+        />
       </Hero>
 
       <section>
