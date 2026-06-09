@@ -1,13 +1,13 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, type Mock } from 'vitest';
 
-import { POST } from '../pages/api/chat';
+import { POST, type ChatEnv } from '../pages/api/chat';
 
 const endpoint = 'https://example.com/api/chat';
 
 type ChatPostContext = Parameters<typeof POST>[0];
 
 interface MockAi {
-  run: ReturnType<typeof vi.fn>;
+  run: Mock;
 }
 
 function createRequest(body: unknown, headers?: HeadersInit) {
@@ -23,7 +23,7 @@ function createContext(request: Request, runtimeEnv: unknown = {}) {
     request,
     locals: {
       runtime: {
-        env: runtimeEnv,
+        env: runtimeEnv as ChatEnv,
       },
     },
   } as unknown as ChatPostContext;
@@ -342,6 +342,78 @@ describe('chat API', () => {
     const firstIssue = loggedCall.issues[0];
     expect(firstIssue).not.toHaveProperty('received');
     expect(firstIssue).not.toHaveProperty('value');
+  });
+
+  it('sanitizes Zod issues that contain "received" and "value" fields', async () => {
+    const ai = createAi();
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    // Trigger an invalid_type error which has "received" and "expected"
+    // Use an object that fails ChatRoleSchema (role: 'invalid')
+    const response = await postChat({ messages: [{ role: 'invalid', content: 'hello' }] }, ai);
+
+    expect(response.status).toBe(400);
+    const loggedCall = consoleSpy.mock.calls[0][0] as { issues: Record<string, unknown>[] };
+    const issue = loggedCall.issues[0];
+
+    // Zod enum error contains 'options' or 'expected' depending on version/type
+    expect(issue).not.toHaveProperty('received');
+    expect(issue).not.toHaveProperty('value');
+  });
+
+  it('handles missing cf-connecting-ip by defaulting to anonymous', async () => {
+    const ai = createAi();
+    const get = vi.fn().mockResolvedValue(null);
+    const put = vi.fn();
+    const store = { get, put } as unknown as KVNamespace;
+    const env = { AI: ai, CHAT_STORE: store };
+
+    const response = await POST(
+      createContext(
+        createRequest({ messages: [{ role: 'user', content: 'Hello' }] }), // No IP header
+        env
+      )
+    );
+
+    expect(response.status).toBe(200);
+    expect(get).toHaveBeenCalledWith('chat-limit:anonymous');
+  });
+
+  it('handles locals.runtime being defined but env missing', async () => {
+    const ai = createAi();
+    const originalEnv = process.env;
+    process.env = { ...originalEnv, AI: ai as unknown as (typeof process.env)['AI'] };
+
+    const request = createRequest({ messages: [{ role: 'user', content: 'Hello' }] });
+    const context = {
+      request,
+      locals: {
+        runtime: {} as { env: ChatEnv },
+      },
+    } as unknown as ChatPostContext;
+
+    const response = await POST(context);
+    expect(response.status).toBe(200);
+    expect(ai.run).toHaveBeenCalled();
+
+    process.env = originalEnv;
+  });
+
+  it('handles rate limit count being an empty string', async () => {
+    const ai = createAi();
+    const get = vi.fn().mockResolvedValue('');
+    const put = vi.fn();
+    const store = { get, put } as unknown as KVNamespace;
+    const env = { AI: ai, CHAT_STORE: store };
+
+    const context = createContext(
+      createRequest({ messages: [{ role: 'user', content: 'Hello' }] }),
+      env
+    );
+    const response = await POST(context);
+
+    expect(response.status).toBe(200);
+    expect(put).toHaveBeenCalledWith(expect.stringContaining('chat-limit'), '1', expect.anything());
   });
 
   it('returns a generic 500 error when AI execution fails', async () => {

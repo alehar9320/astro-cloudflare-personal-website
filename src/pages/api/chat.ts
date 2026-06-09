@@ -43,6 +43,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   if (store) {
     const rawCount = await store.get(rateLimitKey);
+    // biome-ignore lint/style/noNonNullAssertion: rate limit check is inside store guard
     let currentCount = parseInt(rawCount || '0');
     if (Number.isNaN(currentCount)) {
       currentCount = 0;
