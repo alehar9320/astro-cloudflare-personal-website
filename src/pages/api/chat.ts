@@ -7,6 +7,8 @@ const jsonHeaders = {
   'X-Frame-Options': 'DENY',
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
   'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none';",
+  'Referrer-Policy': 'strict-origin-when-cross-origin',
+  'Permissions-Policy': 'accelerometer=(), camera=(), geolocation=(), microphone=()',
 } as const;
 
 export const prerender = false;
@@ -107,6 +109,8 @@ Keep your responses brief, typically 2-3 sentences.`;
         'X-Frame-Options': 'DENY',
         'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',
         'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none';",
+        'Referrer-Policy': 'strict-origin-when-cross-origin',
+        'Permissions-Policy': 'accelerometer=(), camera=(), geolocation=(), microphone=()',
       },
     });
   } catch (e: unknown) {
