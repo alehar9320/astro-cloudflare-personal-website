@@ -157,7 +157,7 @@ You might be studying tech, business, or design — what matters most is that yo
 ✅ AI-first mindset with familiarity of using AI tools (like ChatGPT, Copilot, Perplexity, etc.) as part of your workflow
 ✅ Can operate confidently in a fast-paced, global virtual environment — with English as your working language
 
-You’l work on real initiatives that impact global engineering teams — from research and automation to internal tooling and productivity insights.
+You'll work on real initiatives that impact global engineering teams — from research and automation to internal tooling and productivity insights.
 
 🔗 Learn more and apply:
 https://lnkd.in/dBa3dwSK
@@ -179,7 +179,7 @@ Product @IFS | Developer Experience
 
 Exciting times as IFS Cloud customers can now make use of more than 200+ hashtag#industrialAI capabilities with the latest 25R1 release.
 
-Consumer AI experiences are great, but it's when it's rolled out for hard-to-solve enterprise and social impact use cases that I believe we'l see the greatest societal benefits ✨🚀
+Consumer AI experiences are great, but it's when it's rolled out for hard-to-solve enterprise and social impact use cases that I believe we'll see the greatest societal benefits ✨🚀
 …more
 View Christian Pedersen’s graphic link
 Christian Pedersen
@@ -254,7 +254,7 @@ My thesis revolved around business model innovation, and the opportunities and b
    Ericsson
    1 yr 3 mos
    Lindholmen, Göteborg
-   Sofware Developer
+   Software Developer
    Part-time
    Aug 2015 - Aug 2016 · 1 yr 1 moAug 2015 to Aug 2016 · 1 yr 1 mo
    Part-time job and third-time renewed summer internship: responsible for further development of an internal Java application used in the day-to-day work of full-time employees.
@@ -309,7 +309,7 @@ Other contributors
 5
 Display OS
 Sep 2016 - Jan 2017
-Our vision is a future where we are more and more dependent upon information. Thus, we have created a platform that allows you to get all the information you need, in just a glance, right when you need it. No matter if it's displayed on your tv, your fridge or projected on your wall. This is all made possible by combining a user-friendly GUI with API:s from the world-wide web.
+Our vision is a future where we are more and more dependent upon information. Thus, we have created a platform that allows you to get all the information you need, in just a glance, right when you need it. No matter if it's displayed on your tv, your fridge or projected on your wall. This is all made possible by combining a user-friendly GUI with APIs from the world-wide web.
 Other contributors
 
 Show all 5 projects
@@ -367,7 +367,7 @@ Issued by Udacity · Nov 2017
 Scholarship from Udacity, sponsored by Google. Focused on Front-End web development. Granted access to a Udacity course which seeks to give students the knowledge of how to turn digital design mockups into static webpages and how to build a responsive portfolio site to showcase your work.
 Participant East Sweden Hack 2016
 Issued by East Sweden Hack · Sep 2016
-As the team leader and initiatior, me and my chosen team applied for and participated in East Sweden Hack 2016 as one out of twenty teams. Unfortunately we did not win, but it was still a great experience of going from ideation to an actual product, involving both hardware and software.
+As the team leader and initiator, me and my chosen team applied for and participated in East Sweden Hack 2016 as one out of twenty teams. Unfortunately we did not win, but it was still a great experience of going from ideation to an actual product, involving both hardware and software.
 Show all 5 honors & awards
 Languages
 English
