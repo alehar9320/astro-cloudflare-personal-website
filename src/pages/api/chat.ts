@@ -1,9 +1,5 @@
 import type { APIRoute } from 'astro';
-import { z } from 'zod';
-
-const MAX_MESSAGES = 10;
-const MAX_MESSAGE_CONTENT_LENGTH = 500;
-const MAX_TOTAL_CONTENT_LENGTH = 3000;
+import { ChatRequestSchema, pruneMessages, type ChatMessage } from '../../utils/chat-logic';
 
 const jsonHeaders = {
   'content-type': 'application/json',
@@ -14,31 +10,6 @@ const jsonHeaders = {
 } as const;
 
 export const prerender = false;
-
-const ChatRoleSchema = z.enum(['user', 'assistant']);
-
-const ChatMessageSchema = z.object({
-  role: ChatRoleSchema,
-  content: z
-    .string()
-    .trim()
-    .min(1, 'Message content cannot be empty')
-    .max(
-      MAX_MESSAGE_CONTENT_LENGTH,
-      `Message cannot exceed ${MAX_MESSAGE_CONTENT_LENGTH} characters`
-    ),
-});
-
-const ChatRequestSchema = z.object({
-  messages: z
-    .array(ChatMessageSchema)
-    .min(1, 'Expected at least one message')
-    .max(MAX_MESSAGES, `Message history cannot exceed ${MAX_MESSAGES} messages`)
-    .refine(
-      (msgs) => msgs.reduce((acc, msg) => acc + msg.content.length, 0) <= MAX_TOTAL_CONTENT_LENGTH,
-      `Message history cannot exceed ${MAX_TOTAL_CONTENT_LENGTH} total characters`
-    ),
-});
 
 export interface ChatEnv {
   AI?: {
@@ -71,7 +42,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const rateLimitKey = `chat-limit:${ip}`;
 
   if (store) {
-    let currentCount = parseInt((await store.get(rateLimitKey)) || '0');
+    const rawCount = await store.get(rateLimitKey);
+    let currentCount = parseInt(rawCount || '0');
     if (Number.isNaN(currentCount)) {
       currentCount = 0;
     }
@@ -112,7 +84,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     return jsonError(result.error.issues[0].message, 400);
   }
 
-  const { messages } = result.data;
+  const prunedMessages = pruneMessages(result.data.messages as ChatMessage[]);
 
   const systemPrompt = `You are Alexander Härenstam, a strategic Product Leader at IFS.
 You are based in Nacka/Stockholm.
@@ -122,7 +94,7 @@ Keep your responses brief, typically 2-3 sentences.`;
 
   try {
     const stream = await ai.run('@cf/meta/llama-3.1-8b-instruct', {
-      messages: [{ role: 'system', content: systemPrompt }, ...messages],
+      messages: [{ role: 'system', content: systemPrompt }, ...prunedMessages],
       stream: true,
     });
 
