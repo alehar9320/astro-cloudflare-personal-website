@@ -4,5 +4,6 @@
   "portfolio_shimmer_v1": true,
   "enable_product_manifesto": true,
   "enable_skills_pulse_v1": true,
-  "enable_reading_list": true
+  "enable_reading_list": true,
+  "enable_pill_interaction_v1": true
 }
