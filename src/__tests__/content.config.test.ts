@@ -43,6 +43,15 @@ describe('content.config', () => {
         img_alt: 'Alt text',
       };
       expect(schema.parse(validData)).toBeDefined();
+
+      const dataWithoutAlt = {
+        title: 'Test Title',
+        description: 'Test Description',
+        publishDate: new Date(),
+        tags: ['tag1'],
+        img: 'image.png',
+      };
+      expect(schema.parse(dataWithoutAlt)).toBeDefined();
     }
   });
 });

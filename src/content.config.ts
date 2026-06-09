@@ -13,7 +13,7 @@ export const collections = {
         publishDate: z.coerce.date(),
         tags: z.array(z.string()),
         img: image(),
-        img_alt: z.string().min(1),
+        img_alt: z.string().min(1).optional(),
       }),
   }),
   flags: defineCollection({
