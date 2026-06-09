@@ -33,22 +33,12 @@ export const ChatRequestSchema = z.object({
  * @returns A pruned array of messages that satisfies all constraints.
  */
 export function pruneMessages(messages: ChatMessage[]): ChatMessage[] {
-  // 1. Limit by message count (sliding window)
   const pruned = messages.slice(-MAX_MESSAGES);
-
-  // 2. Limit by total character count (sliding window)
   let totalLength = pruned.reduce((acc, msg) => acc + msg.content.length, 0);
 
-  // Ensure we keep at least one message, but keep pruning if total length is over limit
-  while (pruned.length > 1) {
-    if (totalLength <= MAX_TOTAL_CONTENT_LENGTH) {
-      break;
-    }
-
-    const removed = pruned.shift();
-    if (removed) {
-      totalLength -= removed.content.length;
-    }
+  while (pruned.length > 1 && totalLength > MAX_TOTAL_CONTENT_LENGTH) {
+    // biome-ignore lint/style/noNonNullAssertion: loop guard ensures shift() returns an element
+    totalLength -= pruned.shift()!.content.length;
   }
 
   return pruned;
