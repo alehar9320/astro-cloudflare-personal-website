@@ -23,5 +23,35 @@
     background-size: 250% 100%;
     background-position: 0% 50%;
     box-shadow: var(--shadow-sm);
+    transition:
+      transform var(--theme-transition),
+      background-position 0.6s ease,
+      box-shadow var(--theme-transition);
+  }
+
+  /* Interaction states for tactile feedback and visual depth */
+  :global(.roles) .pill:hover,
+  :global(.tags) .pill:hover {
+    transform: translateY(-2px);
+    background-position: 100% 50%;
+    box-shadow:
+      0 8px 20px -5px hsla(210, 100%, 50%, 0.5),
+      var(--shadow-md);
+  }
+
+  :global(.roles) .pill:active,
+  :global(.tags) .pill:active {
+    transform: translateY(0) scale(0.97);
+    box-shadow: var(--shadow-sm);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pill {
+      transition: none;
+    }
+    :global(.roles) .pill:hover,
+    :global(.tags) .pill:hover {
+      transform: none;
+    }
   }
 </style>
