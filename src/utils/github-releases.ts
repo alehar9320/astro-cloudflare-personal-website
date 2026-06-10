@@ -31,6 +31,15 @@ const CACHE_KEY = 'github-releases-cache';
 const CACHE_TTL = 3600 * 1000; // 1 hour
 
 /**
+ * Redacts potential sensitive information, such as GitHub tokens, from error messages.
+ * @param error - The error to sanitize.
+ * @returns A redacted error message string.
+ */
+function redactSensitiveInfo(error: unknown): string {
+  return String(error).replace(/token\s+[a-zA-Z0-9_-]+/g, 'token [REDACTED]');
+}
+
+/**
  * Represents a single item within a release's changelog.
  */
 interface ReleaseItem {
@@ -145,9 +154,10 @@ export async function fetchGitHubReleases(
 
     return releases;
   } catch (error) {
-    // Redact potential token if error message contains it (defense in depth)
-    const safeErrorMessage = String(error).replace(/token\s+[a-zA-Z0-9_-]+/g, 'token [REDACTED]');
-    console.error({ event: 'github_releases_request_error', error: safeErrorMessage });
+    console.error({
+      event: 'github_releases_request_error',
+      error: redactSensitiveInfo(error),
+    });
     return [];
   }
 }
