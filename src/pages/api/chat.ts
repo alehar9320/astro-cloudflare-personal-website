@@ -34,6 +34,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const store = bindings.CHAT_STORE;
 
   if (!ai) {
+    console.error({ event: 'chat_api_missing_binding', binding: 'AI' });
     return jsonError('Chat is currently unavailable. Please try again later.', 503);
   }
 
@@ -42,19 +43,25 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const rateLimitKey = `chat-limit:${ip}`;
 
   if (store) {
-    const rawCount = await store.get(rateLimitKey);
-    // biome-ignore lint/style/noNonNullAssertion: rate limit check is inside store guard
-    let currentCount = parseInt(rawCount || '0');
-    if (Number.isNaN(currentCount)) {
-      currentCount = 0;
-    }
+    try {
+      const rawCount = await store.get(rateLimitKey);
+      // biome-ignore lint/style/noNonNullAssertion: rate limit check is inside store guard
+      let currentCount = parseInt(rawCount || '0');
+      if (Number.isNaN(currentCount)) {
+        currentCount = 0;
+      }
 
-    if (currentCount >= 20) {
-      // 20 requests per hour limit
-      return jsonError('Rate limit exceeded. Try again in an hour.', 429);
+      if (currentCount >= 20) {
+        // 20 requests per hour limit
+        console.warn({ event: 'chat_api_rate_limit_exceeded' });
+        return jsonError('Rate limit exceeded. Try again in an hour.', 429);
+      }
+      // Increment counter with 1 hour expiration
+      await store.put(rateLimitKey, (currentCount + 1).toString(), { expirationTtl: 3600 });
+    } catch (e: unknown) {
+      const error = e instanceof Error ? e.message : String(e);
+      console.error({ event: 'chat_api_kv_error', error });
     }
-    // Increment counter with 1 hour expiration
-    await store.put(rateLimitKey, (currentCount + 1).toString(), { expirationTtl: 3600 });
   }
 
   let body: unknown;

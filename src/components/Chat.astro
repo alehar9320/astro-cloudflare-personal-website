@@ -363,10 +363,21 @@
 
   setStatus('idle');
 
-  const messages = JSON.parse(sessionStorage.getItem('chat-history') || '[]');
+  let messages = [];
+  try {
+    messages = JSON.parse(sessionStorage.getItem('chat-history') || '[]');
+  } catch (e: unknown) {
+    const error = e instanceof Error ? e.message : String(e);
+    console.warn({ event: 'chat_client_history_load_error', error });
+  }
 
   function saveMessages() {
-    sessionStorage.setItem('chat-history', JSON.stringify(messages));
+    try {
+      sessionStorage.setItem('chat-history', JSON.stringify(messages));
+    } catch (e: unknown) {
+      const error = e instanceof Error ? e.message : String(e);
+      console.warn({ event: 'chat_client_session_storage_error', error });
+    }
   }
 
   interface Message {
@@ -453,7 +464,14 @@
         body: JSON.stringify({ messages }),
       });
 
-      if (!response.ok) throw new Error('Failed to fetch');
+      if (!response.ok) {
+        console.error({
+          event: 'chat_client_request_failed',
+          status: response.status,
+          statusText: response.statusText,
+        });
+        throw new Error('Failed to fetch');
+      }
 
       typingIndicator?.classList.add('hidden');
       const aiMessageDiv = appendMessage('assistant', '');

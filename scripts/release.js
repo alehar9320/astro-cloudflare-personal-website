@@ -27,7 +27,7 @@ try {
     commits = execSync('git log --oneline', { stdio: 'pipe' }).toString().trim();
   }
 } catch (e) {
-  console.warn('Could not fetch git commits. Ensure you are in a git repository with history.');
+  console.warn({ event: 'release_script_git_commits_fetch_failed', error: e.message });
   console.debug('Git log error:', e.message);
 }
 
@@ -57,7 +57,7 @@ if (githubOutput) {
     fs.appendFileSync(githubOutput, `changelog<<EOF\n${changelog}EOF\n`);
     console.log('Outputs written to GITHUB_OUTPUT');
   } catch (e) {
-    console.error(`Failed to write to GITHUB_OUTPUT: ${e.message}`);
+    console.error({ event: 'release_script_output_write_failed', error: e.message });
     process.exit(1);
   }
 }

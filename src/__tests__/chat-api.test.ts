@@ -313,6 +313,59 @@ describe('chat API', () => {
     expect(ai.run.mock.calls.length).toBe(1);
   });
 
+  it('logs an error when the AI binding is missing', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    await POST(
+      createContext(createRequest({ messages: [{ role: 'user', content: 'Hello' }] }), {})
+    );
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'chat_api_missing_binding', binding: 'AI' })
+    );
+  });
+
+  it('logs a warning when the rate limit is exceeded', async () => {
+    const ai = createAi();
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+    const store = {
+      get: vi.fn().mockResolvedValue('20'),
+      put: vi.fn(),
+    } as unknown as KVNamespace;
+
+    await POST(
+      createContext(createRequest({ messages: [{ role: 'user', content: 'Hello' }] }), {
+        AI: ai,
+        CHAT_STORE: store,
+      })
+    );
+
+    // console.warn is called for BOTH validation failed (due to many previous calls)
+    // AND rate limit exceeded. We want to check that it was called with rate limit event.
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'chat_api_rate_limit_exceeded' })
+    );
+  });
+
+  it('logs an error when a KV operation fails', async () => {
+    const ai = createAi();
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const store = {
+      get: vi.fn().mockRejectedValue(new Error('KV failure')),
+      put: vi.fn(),
+    } as unknown as KVNamespace;
+
+    await POST(
+      createContext(createRequest({ messages: [{ role: 'user', content: 'Hello' }] }), {
+        AI: ai,
+        CHAT_STORE: store,
+      })
+    );
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'chat_api_kv_error', error: 'KV failure' })
+    );
+  });
+
   it('sanitizes and logs validation failures to telemetry', async () => {
     const ai = createAi();
     const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
@@ -338,7 +391,11 @@ describe('chat API', () => {
     );
 
     // Ensure sensitive keys 'received' and 'value' are NOT in the logged issues
-    const loggedCall = consoleSpy.mock.calls[0][0] as { issues: Record<string, unknown>[] };
+    // Find the call that contains the validation failed event
+    const validationCall = consoleSpy.mock.calls.find(
+      (call) => (call[0] as { event?: string }).event === 'chat_api_validation_failed'
+    );
+    const loggedCall = validationCall?.[0] as { issues: Record<string, unknown>[] };
     const firstIssue = loggedCall.issues[0];
     expect(firstIssue).not.toHaveProperty('received');
     expect(firstIssue).not.toHaveProperty('value');
@@ -353,7 +410,10 @@ describe('chat API', () => {
     const response = await postChat({ messages: [{ role: 'invalid', content: 'hello' }] }, ai);
 
     expect(response.status).toBe(400);
-    const loggedCall = consoleSpy.mock.calls[0][0] as { issues: Record<string, unknown>[] };
+    const validationCall = consoleSpy.mock.calls.find(
+      (call) => (call[0] as { event?: string }).event === 'chat_api_validation_failed'
+    );
+    const loggedCall = validationCall?.[0] as { issues: Record<string, unknown>[] };
     const issue = loggedCall.issues[0];
 
     // Zod enum error contains 'options' or 'expected' depending on version/type
