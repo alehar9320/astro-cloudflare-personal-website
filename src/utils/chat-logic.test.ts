@@ -54,11 +54,6 @@ describe('chat logic utilities', () => {
     });
 
     it('handles the case where removed message from shift() is undefined', () => {
-      // Manually trigger the while loop and if (removed) branch
-      // Actually we can't easily trigger if (!removed) without mocking shift or using a sparse array
-      // But we can ensure the branch is covered by providing a case where shift returns something.
-      // The previous test already covers if (removed).
-      // To cover line 44, we just need to run the loop.
       const longMessages: ChatMessage[] = [
         { role: 'user', content: 'a'.repeat(MAX_TOTAL_CONTENT_LENGTH) },
         { role: 'user', content: 'b' },
@@ -67,14 +62,10 @@ describe('chat logic utilities', () => {
     });
 
     it('handles defensive check for shift() returning undefined (line coverage)', () => {
-      // This test is specifically to ensure line 44 is executed.
-      // Since shift() on a non-empty array (pruned.length > 1) in TS technically returns T | undefined,
-      // we check for it defensively.
       const messages: ChatMessage[] = [
         { role: 'user', content: 'a'.repeat(MAX_TOTAL_CONTENT_LENGTH + 1) },
         { role: 'user', content: 'b' },
       ];
-      // This will trigger shift() once.
       const pruned = pruneMessages(messages);
       expect(pruned).toHaveLength(1);
       expect(pruned[0].content).toBe('b');
@@ -85,8 +76,6 @@ describe('chat logic utilities', () => {
     });
 
     it('trims whitespace from message content', () => {
-      // Note: Zod schema handles trimming on parse,
-      // but pruneMessages operates on the raw content of the input objects.
       const messages: ChatMessage[] = [{ role: 'user', content: '  hello  ' }];
       expect(pruneMessages(messages)).toEqual([{ role: 'user', content: '  hello  ' }]);
     });
@@ -100,6 +89,25 @@ describe('chat logic utilities', () => {
       const pruned = pruneMessages(messages);
       expect(pruned).toHaveLength(1);
       expect(pruned[0].content).toBe('short');
+    });
+
+    it('preserves exactly MAX_MESSAGES when limit is reached', () => {
+      const messages: ChatMessage[] = Array.from({ length: MAX_MESSAGES }, (_, i) => ({
+        role: 'user',
+        content: `msg ${i}`,
+      }));
+      expect(pruneMessages(messages)).toHaveLength(MAX_MESSAGES);
+    });
+
+    it('preserves exactly MAX_TOTAL_CONTENT_LENGTH when limit is reached', () => {
+      const messages: ChatMessage[] = [
+        { role: 'user', content: 'a'.repeat(MAX_TOTAL_CONTENT_LENGTH - 10) },
+        { role: 'assistant', content: '1234567890' },
+      ];
+      const pruned = pruneMessages(messages);
+      const totalLen = pruned.reduce((acc, m) => acc + m.content.length, 0);
+      expect(totalLen).toBe(MAX_TOTAL_CONTENT_LENGTH);
+      expect(pruned).toHaveLength(2);
     });
   });
 });

@@ -6,6 +6,7 @@ import {
   formatReleaseDate,
   parseReleaseItem,
   fetchGitHubReleases,
+  normalizeRelease,
 } from '../src/utils/github-releases';
 
 describe('StuntDouble: Mocks and Utility Edge Cases', () => {
@@ -61,5 +62,48 @@ describe('StuntDouble: Mocks and Utility Edge Cases', () => {
       issues: expect.any(Array),
     });
     consoleSpy.mockRestore();
+  });
+
+  it('handles malformed JSON in sessionStorage for fetchGitHubReleases', async () => {
+    vi.stubGlobal('window', {});
+    vi.stubGlobal('sessionStorage', {
+      getItem: vi.fn().mockReturnValue('invalid-json'),
+    });
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [],
+    });
+
+    const result = await fetchGitHubReleases(fetchMock as typeof fetch);
+    expect(result).toEqual([]);
+    expect(fetchMock).toHaveBeenCalled();
+    vi.unstubAllGlobals();
+  });
+
+  it('handles whitespace-only name in normalizeRelease', () => {
+    const release = {
+      tag_name: 'v1.0.0',
+      name: '   ',
+      body: 'body',
+    };
+    const normalized = normalizeRelease(release);
+    expect(normalized?.title).toBe('v1.0.0');
+  });
+
+  it('skips cache when fetchGitHubReleases is called with a custom URL', async () => {
+    vi.stubGlobal('window', {});
+    const getItem = vi.fn();
+    vi.stubGlobal('sessionStorage', { getItem });
+
+    const customUrl = 'https://api.github.com/repos/user/repo/releases';
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [],
+    });
+
+    await fetchGitHubReleases(fetchMock as typeof fetch, customUrl);
+    expect(getItem).not.toHaveBeenCalled();
+    vi.unstubAllGlobals();
   });
 });
