@@ -19,16 +19,16 @@ describe('github releases utility', () => {
       normalizeRelease({
         body: '- feat: add release feed',
         html_url: 'https://github.com/example/release',
-        name: '2026.06.11.0414',
-        published_at: '2026-06-11T04:14:00Z',
-        tag_name: '2026.06.11.0414',
+        name: '2026.06.03.1841',
+        published_at: '2026-06-03T18:41:00Z',
+        tag_name: '2026.06.03.1841',
       })
     ).toEqual({
       body: '- feat: add release feed',
-      publishedAt: '2026-06-11T04:14:00Z',
-      title: '2026.06.11.0414',
+      publishedAt: '2026-06-03T18:41:00Z',
+      title: '2026.06.03.1841',
       url: 'https://github.com/example/release',
-      version: '2026.06.11.0414',
+      version: '2026.06.03.1841',
     });
   });
 
@@ -38,7 +38,7 @@ describe('github releases utility', () => {
       json: async () => [
         { draft: true, tag_name: 'draft-release' },
         { prerelease: true, tag_name: 'beta-release' },
-        { body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: '2026.06.11.0414' },
+        { body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: '2026.06.03.1841' },
       ],
     });
 
@@ -46,9 +46,9 @@ describe('github releases utility', () => {
       {
         body: '- feat: ship',
         publishedAt: null,
-        title: '2026.06.11.0414',
+        title: '2026.06.03.1841',
         url: RELEASES_PAGE_URL,
-        version: '2026.06.11.0414',
+        version: '2026.06.03.1841',
       },
     ]);
   });
@@ -285,13 +285,12 @@ describe('github releases utility', () => {
       expect(setItem).toHaveBeenCalledWith('github-releases-cache', expect.any(String));
     });
 
-    it('handles cache read errors gracefully and logs to telemetry', async () => {
+    it('handles cache read errors gracefully', async () => {
       vi.stubGlobal('window', {});
       const getItem = vi.fn().mockImplementation(() => {
         throw new Error('access denied');
       });
       vi.stubGlobal('sessionStorage', { getItem });
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
       const fetchMock = vi.fn().mockResolvedValue({
         ok: true,
@@ -302,21 +301,14 @@ describe('github releases utility', () => {
 
       expect(result).toEqual(mockReleases);
       expect(fetchMock).toHaveBeenCalledOnce();
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          event: 'github_releases_cache_read_failed',
-          error: 'access denied',
-        })
-      );
     });
 
-    it('handles cache write errors gracefully and logs to telemetry', async () => {
+    it('handles cache write errors gracefully', async () => {
       vi.stubGlobal('window', {});
       const setItem = vi.fn().mockImplementation(() => {
         throw new Error('storage full');
       });
       vi.stubGlobal('sessionStorage', { getItem: vi.fn().mockReturnValue(null), setItem });
-      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
       const fetchMock = vi.fn().mockResolvedValue({
         ok: true,
@@ -327,12 +319,6 @@ describe('github releases utility', () => {
 
       expect(result).toEqual(mockReleases);
       expect(fetchMock).toHaveBeenCalledOnce();
-      expect(consoleSpy).toHaveBeenCalledWith(
-        expect.objectContaining({
-          event: 'github_releases_cache_write_failed',
-          error: 'storage full',
-        })
-      );
     });
   });
 });

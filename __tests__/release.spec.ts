@@ -43,13 +43,15 @@ describe('release script', () => {
 
   afterEach(() => {
     vi.useRealTimers();
-    vi.clearAllMocks();
+    vi.resetAllMocks();
     delete process.env.GITHUB_OUTPUT;
   });
 
   it('writes the version to GITHUB_OUTPUT without mutating tracked files', async () => {
     process.env.GITHUB_OUTPUT = 'mock_github_output';
     vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('v1.0.0'));
+
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
     await import('../scripts/release.js?t=' + Date.now());
 
@@ -58,6 +60,9 @@ describe('release script', () => {
       expect.stringContaining('version=2023.01.01.1200')
     );
     expect(fsMock.default.writeFileSync).not.toHaveBeenCalled();
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'release_script_start', version: '2023.01.01.1200' })
+    );
   });
 
   it('formats changelog output from commits since the last tag', async () => {
@@ -101,11 +106,16 @@ describe('release script', () => {
       return Buffer.from('feat: initial release');
     });
 
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
     await import('../scripts/release.js?t=' + (Date.now() + 3));
 
     expect(fsMock.default.appendFileSync).toHaveBeenCalledWith(
       'mock_github_output',
       expect.stringContaining('- feat: initial release')
+    );
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'release_script_no_tags', error: 'No tags' })
     );
   });
 
@@ -117,11 +127,16 @@ describe('release script', () => {
       return Buffer.from('');
     });
 
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
     await import('../scripts/release.js?t=' + (Date.now() + 4));
 
     expect(fsMock.default.appendFileSync).toHaveBeenCalledWith(
       'mock_github_output',
       expect.stringContaining('- No documented changes.')
+    );
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'release_script_git_log_error', error: 'Git log failed' })
     );
   });
 
@@ -133,10 +148,50 @@ describe('release script', () => {
     });
 
     const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     await import('../scripts/release.js?t=' + (Date.now() + 5));
 
     expect(exitSpy).toHaveBeenCalledWith(1);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'release_script_output_error', error: 'Write failed' })
+    );
+    exitSpy.mockRestore();
+  });
+
+  it('handles non-Error exceptions when fetching git log', async () => {
+    process.env.GITHUB_OUTPUT = 'mock_github_output';
+    vi.mocked(child_process.execSync).mockImplementation((cmd) => {
+      if (typeof cmd === 'string' && cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
+      if (typeof cmd === 'string' && cmd.includes('log')) throw 'Git Log Fatal';
+      return Buffer.from('');
+    });
+
+    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
+
+    await import('../scripts/release.js?t=' + (Date.now() + 8));
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'release_script_git_log_error', error: 'Git Log Fatal' })
+    );
+  });
+
+  it('handles non-Error exceptions when writing to GITHUB_OUTPUT', async () => {
+    process.env.GITHUB_OUTPUT = 'invalid_path';
+    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('v1.0.0'));
+    fsMock.default.appendFileSync.mockImplementation(() => {
+      throw 'Write Fatal';
+    });
+
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    await import('../scripts/release.js?t=' + (Date.now() + 9));
+
+    expect(exitSpy).toHaveBeenCalledWith(1);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'release_script_output_error', error: 'Write Fatal' })
+    );
     exitSpy.mockRestore();
   });
 
@@ -147,5 +202,25 @@ describe('release script', () => {
     await import('../scripts/release.js?t=' + (Date.now() + 6));
 
     expect(fsMock.default.appendFileSync).not.toHaveBeenCalled();
+  });
+
+  it('handles non-Error exceptions in telemetry logging', async () => {
+    process.env.GITHUB_OUTPUT = 'mock_github_output';
+    vi.mocked(child_process.execSync).mockImplementation((cmd) => {
+      if (typeof cmd === 'string' && cmd.includes('describe --tags')) throw 'Fatal Git Error';
+      if (typeof cmd === 'string' && cmd.includes('log')) return Buffer.from('feat: test');
+      return Buffer.from('');
+    });
+
+    const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
+
+    await import('../scripts/release.js?t=' + (Date.now() + 7));
+
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'release_script_no_tags',
+        error: 'Fatal Git Error',
+      })
+    );
   });
 });

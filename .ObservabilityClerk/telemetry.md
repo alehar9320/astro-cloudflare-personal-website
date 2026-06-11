@@ -1,10 +1,10 @@
 # Telemetry Standardization Journal
 
-| Date       | Module                         | Events Standardized                                                                                                                                                                                                      |
-| :--------- | :----------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 2025-05-14 | `src/utils/github-releases.ts` | `github_releases_invalid_url`, `github_releases_request_failed`, `github_releases_validation_failed`, `github_releases_request_error`, `github_releases_cache_read_failed`, `github_releases_cache_write_failed`         |
-| 2025-05-14 | `src/components/Chat.astro`    | `chat_client_error`, `chat_client_history_load_error`, `chat_client_session_storage_error`, `chat_client_request_failed`                                                                                                 |
-| 2025-05-14 | `src/pages/api/chat.ts`        | `chat_api_json_parse_error`, `chat_api_run_error`, `chat_api_missing_binding`, `chat_api_kv_error`, `chat_api_rate_limit_exceeded`                                                                                       |
-| 2025-05-14 | `src/utils/chat-stream.ts`     | `chat_stream_parse_error`                                                                                                                                                                                                |
-| 2025-05-14 | `scripts/release.js`           | `release_script_git_commits_fetch_failed`, `release_script_output_write_failed`                                                                                                                                          |
-| 2025-05-14 | `src/__tests__/*.test.ts`      | Expanded unit tests to cover 100% of telemetry branches (including non-Error rejection cases, KV failures, rate limits, and cache errors). Verified 100% pass rate for `chat-api.test.ts` and `github-releases.test.ts`. |
+| Date       | Module                         | Events Standardized                                                                                                                        |
+| :--------- | :----------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------- |
+| 2025-05-14 | `src/utils/github-releases.ts` | `github_releases_invalid_url`, `github_releases_request_failed`, `github_releases_validation_failed`, `github_releases_request_error`      |
+| 2025-05-14 | `src/components/Chat.astro`    | `chat_client_error`                                                                                                                        |
+| 2025-05-14 | `src/pages/api/chat.ts`        | `chat_api_json_parse_error`, `chat_api_run_error`, `chat_api_rate_limit_exceeded`                                                          |
+| 2025-05-14 | `src/utils/chat-stream.ts`     | `chat_stream_parse_error`                                                                                                                  |
+| 2025-05-14 | `scripts/release.js`           | `release_script_start`, `release_script_no_tags`, `release_script_git_log_error`, `release_script_output_error`, `release_script_complete` |
+| 2025-05-14 | `src/__tests__/*.test.ts`      | Expanded unit tests to cover 100% of telemetry branches (including non-Error rejection cases).                                             |

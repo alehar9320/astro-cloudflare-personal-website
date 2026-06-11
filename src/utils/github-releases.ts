@@ -78,9 +78,8 @@ export async function fetchGitHubReleases(
           return data;
         }
       }
-    } catch (e: unknown) {
-      const error = e instanceof Error ? e.message : String(e);
-      console.warn({ event: 'github_releases_cache_read_failed', error });
+    } catch {
+      /* ignore cache errors */
     }
   }
 
@@ -139,9 +138,8 @@ export async function fetchGitHubReleases(
           CACHE_KEY,
           JSON.stringify({ data: releases, timestamp: Date.now() })
         );
-      } catch (e: unknown) {
-        const error = e instanceof Error ? e.message : String(e);
-        console.warn({ event: 'github_releases_cache_write_failed', error });
+      } catch {
+        /* ignore cache errors */
       }
     }
 
