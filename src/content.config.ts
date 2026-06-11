@@ -25,6 +25,7 @@ export const collections = {
       enable_product_manifesto: z.boolean().default(false),
       enable_skills_pulse_v1: z.boolean().default(false),
       enable_reading_list: z.boolean().default(false),
+      enable_logo_wobble_v1: z.boolean().default(false),
     }),
   }),
 };
