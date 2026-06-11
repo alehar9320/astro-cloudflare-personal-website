@@ -21,11 +21,19 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     let animationFrameId: number;
     let time = 0;
 
+    // Respect prefers-reduced-motion
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
     const resize = () => {
       const dpr = window.devicePixelRatio || 1;
       canvas.width = container.clientWidth * dpr;
       canvas.height = container.clientHeight * dpr;
+      ctx?.setTransform(1, 0, 0, 1, 0, 0);
       ctx?.scale(dpr, dpr);
+
+      if (motionQuery.matches) {
+        draw();
+      }
     };
 
     const draw = () => {
@@ -77,9 +85,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       draw();
       animationFrameId = requestAnimationFrame(animate);
     };
-
-    // Respect prefers-reduced-motion
-    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
 
     const handleQueryChange = () => {
       cancelAnimationFrame(animationFrameId);

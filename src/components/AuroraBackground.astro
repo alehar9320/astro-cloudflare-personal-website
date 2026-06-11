@@ -23,12 +23,20 @@
 
     const isDarkMode = () => document.documentElement.classList.contains('theme-dark');
 
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const mobileQuery = window.matchMedia('(max-width: 50em)');
+
     const resize = () => {
       const dpr = window.devicePixelRatio || 1;
       const rect = container.getBoundingClientRect();
       canvas.width = rect.width * dpr;
       canvas.height = rect.height * dpr;
+      ctx?.setTransform(1, 0, 0, 1, 0, 0);
       ctx?.scale(dpr, dpr);
+
+      if (motionQuery.matches || mobileQuery.matches) {
+        draw();
+      }
     };
 
     const draw = () => {
@@ -71,9 +79,6 @@
       draw();
       animationFrameId = requestAnimationFrame(animate);
     };
-
-    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
-    const mobileQuery = window.matchMedia('(max-width: 50em)');
 
     const handleQueryChange = () => {
       cancelAnimationFrame(animationFrameId);
