@@ -1,7 +1,11 @@
 ---
 import Icon from './Icon.astro';
+import { getEntry } from 'astro:content';
 import type { iconPaths } from './IconPaths';
 import ThemeToggle from './ThemeToggle.astro';
+
+const flagsEntry = await getEntry('flags', 'config');
+const isLogoWobbleEnabled = flagsEntry?.data.enable_logo_wobble_v1 ?? false;
 
 /** Main menu items */
 const textLinks: { label: string; href: string }[] = [
@@ -54,7 +58,7 @@ const isCurrentPage = (href: string) => {
 
 <nav aria-label="Main">
   <div class="menu-header">
-    <a href="/" class="site-title">
+    <a href="/" class:list={['site-title', { 'logo-wobble': isLogoWobbleEnabled }]}>
       <Icon icon="terminal-window" color="var(--accent-regular)" size="1.6em" gradient />
       Alexander Härenstam
     </a>
@@ -477,6 +481,24 @@ const isCurrentPage = (href: string) => {
 
     .link[aria-current='page'] {
       color: SelectedItem;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .logo-wobble:hover :global(svg) {
+      animation: wobble 0.5s ease-in-out;
+    }
+    @keyframes wobble {
+      0%,
+      100% {
+        rotate: 0deg;
+      }
+      25% {
+        rotate: 10deg;
+      }
+      75% {
+        rotate: -10deg;
+      }
     }
   }
 
