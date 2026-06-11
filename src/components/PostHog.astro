@@ -5,9 +5,18 @@
   const posthogHost = import.meta.env.PUBLIC_POSTHOG_HOST ?? 'https://app.posthog.com';
 
   if (posthogKey) {
-    posthog.init(posthogKey, {
-      api_host: posthogHost,
-      person_profiles: 'identified_only',
-    });
+    const initPostHog = () => {
+      posthog.init(posthogKey, {
+        api_host: posthogHost,
+        person_profiles: 'identified_only',
+      });
+    };
+
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(() => initPostHog());
+    } else {
+      // Fallback for browsers without requestIdleCallback
+      window.setTimeout(initPostHog, 1);
+    }
   }
 </script>

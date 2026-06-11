@@ -1,4 +1,5 @@
 ---
+import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 // Component Imports
 import CallToAction from '../components/CallToAction.astro';
@@ -12,6 +13,8 @@ import PortfolioPreview from '../components/PortfolioPreview.astro';
 import Skills from '../components/Skills.astro';
 // Layout import — provides basic page elements: <head>, <nav>, <footer> etc.
 import BaseLayout from '../layouts/BaseLayout.astro';
+
+import portraitImg from '../assets/portrait.png';
 
 // Content Fetching: List four most recent work projects
 const projects = (await getCollection('work'))
@@ -110,14 +113,16 @@ const schema = {
           </div>
         </Hero>
 
-        <img
+        <Image
           alt="Alexander Härenstam smiling in a red plaid shirt and tortoise shell glasses"
           width="480"
           height="620"
-          src="/assets/portrait.png"
+          src={portraitImg}
           loading="eager"
           fetchpriority="high"
           decoding="async"
+          format="webp"
+          class="hero-img"
         />
       </header>
 
@@ -218,7 +223,7 @@ const schema = {
     display: none;
   }
 
-  .hero img {
+  .hero-img {
     aspect-ratio: 5 / 4;
     object-fit: cover;
     object-position: top;
@@ -240,7 +245,7 @@ const schema = {
       gap: 0.5rem;
     }
 
-    .hero img {
+    .hero-img {
       aspect-ratio: 3 / 4;
       border-radius: 4.5rem;
       object-fit: cover;

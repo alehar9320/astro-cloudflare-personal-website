@@ -1,7 +1,7 @@
 ---
 title: IFS Design System
 publishDate: 2022-04-01 00:00:00
-img: /assets/stock-2.jpg
+img: ../../assets/stock-2.jpg
 img_alt: Design components
 description: |
   Scaling a global design system from inception to enterprise-wide scale, enabling 2x faster delivery and generating a financial return of 30x the initial investment.

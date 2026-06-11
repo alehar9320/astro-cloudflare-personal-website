@@ -1,7 +1,7 @@
 ---
 title: Business Model Innovation
 publishDate: 2017-06-01 00:00:00
-img: /assets/stock-1.jpg
+img: ../../assets/stock-1.jpg
 img_alt: Business structure concept
 description: |
   A strategic roadmap for digital transformation—identifying how data-driven innovation unlocks scalable growth and competitive advantage.
