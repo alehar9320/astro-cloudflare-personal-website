@@ -6,6 +6,13 @@ interface SseParserState {
   partialLine: string;
 }
 
+export interface ChatStreamParser {
+  /** Processes a new chunk of text and returns any completed parsed text. */
+  push: (chunk: string) => string;
+  /** Flushes any remaining buffered text and returns the final parsed result. */
+  flush: () => string;
+}
+
 /**
  * Type guard to check if a value is a non-null object.
  * @param value - The value to check.
@@ -40,9 +47,8 @@ function extractResponseFromPayload(payload: string): string {
     if (isRecord(parsed) && typeof parsed.response === 'string') {
       return parsed.response;
     }
-  } catch (e: unknown) {
-    const error = e instanceof Error ? e.message : String(e);
-    console.error({ event: 'chat_stream_parse_error', error });
+  } catch (error: unknown) {
+    console.error({ event: 'chat_stream_parse_error', error: String(error) });
     return '';
   }
 
@@ -96,15 +102,10 @@ function processBufferedText(state: SseParserState, input: string, isFinalChunk:
   return parsedText;
 }
 
-export interface ChatStreamParser {
-  push(chunk: string): string;
-  flush(): string;
-}
-
 /**
  * Creates a stateful parser for Server-Sent Events (SSE) chat streams.
  * Handles partial chunks and multi-line payloads.
- * @returns A stateful parser object.
+ * @returns A stateful parser object with `push` and `flush` methods.
  */
 export function createChatStreamParser(): ChatStreamParser {
   const state: SseParserState = {
