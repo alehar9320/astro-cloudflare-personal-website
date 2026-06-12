@@ -50,6 +50,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
     }
 
     if (currentCount >= 20) {
+      console.warn({ event: 'chat_api_rate_limit_exceeded' });
       // 20 requests per hour limit
       return jsonError('Rate limit exceeded. Try again in an hour.', 429);
     }

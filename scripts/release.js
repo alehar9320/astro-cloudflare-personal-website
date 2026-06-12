@@ -9,14 +9,14 @@ const HH = String(now.getUTCHours()).padStart(2, '0');
 const mm = String(now.getUTCMinutes()).padStart(2, '0');
 const version = `${YYYY}.${MM}.${DD}.${HH}${mm}`;
 
-console.log(`Bumping version to ${version}`);
+console.log({ event: 'release_script_start', version });
 
 let lastTag = '';
 try {
   lastTag = execSync('git describe --tags --abbrev=0', { stdio: 'pipe' }).toString().trim();
 } catch (e) {
-  console.log('No previous tags found. This might be the first release.');
-  console.debug('Git describe error:', e.message);
+  const error = String(e);
+  console.log({ event: 'release_script_no_tags', error });
 }
 
 let commits = '';
@@ -27,8 +27,8 @@ try {
     commits = execSync('git log --oneline', { stdio: 'pipe' }).toString().trim();
   }
 } catch (e) {
-  console.warn('Could not fetch git commits. Ensure you are in a git repository with history.');
-  console.debug('Git log error:', e.message);
+  const error = String(e);
+  console.warn({ event: 'release_script_git_log_error', error });
 }
 
 let changelog = '';
@@ -55,12 +55,13 @@ if (githubOutput) {
   try {
     fs.appendFileSync(githubOutput, `version=${version}\n`);
     fs.appendFileSync(githubOutput, `changelog<<EOF\n${changelog}EOF\n`);
-    console.log('Outputs written to GITHUB_OUTPUT');
+    console.log({ event: 'release_script_output_success' });
   } catch (e) {
-    console.error(`Failed to write to GITHUB_OUTPUT: ${e.message}`);
+    const error = String(e);
+    console.error({ event: 'release_script_output_error', error });
     process.exit(1);
   }
 }
 
 console.log(`\n::notice title=Release Version::${version}`);
-console.log(`Successfully prepared version ${version}`);
+console.log({ event: 'release_script_complete', version });
