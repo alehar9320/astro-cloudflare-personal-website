@@ -1,6 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 // Component Imports
+import AuroraBackground from '../components/AuroraBackground.astro';
 import CallToAction from '../components/CallToAction.astro';
 // Page section components
 import ContactCTA from '../components/ContactCTA.astro';
@@ -88,50 +89,54 @@ const schema = {
 >
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="stack gap-20 lg:gap-48">
-    <div class="wrapper stack gap-8 lg:gap-20">
-      <header class="hero">
-        <Hero
-          title="Elevating Developer Experience & Product Strategy"
-          align="start"
-          variant="primary"
-        >
-          <p slot="tagline" class="tagline">
-            I am <strong>Alexander Härenstam</strong>, a Strategic Product Leader championing
-            enterprise-scale Industrial AI at <a
-              href="https://www.ifs.com/"
-              target="_blank"
-              rel="noopener noreferrer">IFS</a
-            >.
+    <div class="hero-bg-wrapper">
+      <AuroraBackground />
+      <div class="wrapper stack gap-8 lg:gap-20">
+        <header class="hero">
+          <Hero
+            title="Elevating Developer Experience & Product Strategy"
+            align="start"
+            variant="primary"
+          >
+            <p slot="tagline" class="tagline">
+              I am <strong>Alexander Härenstam</strong>, a Strategic Product Leader championing
+              enterprise-scale Industrial AI at <a
+                href="https://www.ifs.com/"
+                target="_blank"
+                rel="noopener noreferrer">IFS</a
+              >.
+            </p>
+            <div class="roles">
+              <Pill><Icon icon="strategy" size="1.33em" /> Technical Product Management</Pill>
+              <Pill><Icon icon="terminal-window" size="1.33em" /> Developer Experience (DevEx)</Pill
+              >
+              <Pill><Icon icon="rocket-launch" size="1.33em" /> Applied Industrial AI</Pill>
+            </div>
+          </Hero>
+
+          <img
+            alt="Alexander Härenstam smiling in a red plaid shirt and tortoise shell glasses"
+            width="480"
+            height="620"
+            src="/assets/portrait.png"
+            loading="eager"
+            fetchpriority="high"
+            decoding="async"
+          />
+        </header>
+
+        <div class="tldr-box">
+          <p>
+            <strong>TL;DR:</strong> Strategic Product Leader at <strong>IFS</strong> specializing in <strong
+              >Industrial AI</strong
+            >, <strong>Developer Experience (DevEx)</strong>, and <strong>Design Systems</strong>. I
+            drive multi-million dollar ROI by aligning technical excellence with high-impact product
+            innovation.
           </p>
-          <div class="roles">
-            <Pill><Icon icon="strategy" size="1.33em" /> Technical Product Management</Pill>
-            <Pill><Icon icon="terminal-window" size="1.33em" /> Developer Experience (DevEx)</Pill>
-            <Pill><Icon icon="rocket-launch" size="1.33em" /> Applied Industrial AI</Pill>
-          </div>
-        </Hero>
+        </div>
 
-        <img
-          alt="Alexander Härenstam smiling in a red plaid shirt and tortoise shell glasses"
-          width="480"
-          height="620"
-          src="/assets/portrait.png"
-          loading="eager"
-          fetchpriority="high"
-          decoding="async"
-        />
-      </header>
-
-      <div class="tldr-box">
-        <p>
-          <strong>TL;DR:</strong> Strategic Product Leader at <strong>IFS</strong> specializing in <strong
-            >Industrial AI</strong
-          >, <strong>Developer Experience (DevEx)</strong>, and <strong>Design Systems</strong>. I
-          drive multi-million dollar ROI by aligning technical excellence with high-impact product
-          innovation.
-        </p>
+        <Skills />
       </div>
-
-      <Skills />
     </div>
 
     <main id="main-content" class="wrapper stack gap-20 lg:gap-48">
@@ -207,6 +212,11 @@ const schema = {
 </BaseLayout>
 
 <style>
+  .hero-bg-wrapper {
+    position: relative;
+    overflow: hidden;
+  }
+
   .hero {
     display: flex;
     flex-direction: column;

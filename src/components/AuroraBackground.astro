@@ -1,0 +1,143 @@
+---
+/**
+ * AuroraBackground.astro
+ * An immersive, performant background component that renders animated
+ * "Northern Lights" using HTML5 Canvas.
+ */
+---
+
+<div class="aurora-container" aria-hidden="true">
+  <canvas id="aurora-canvas-bg"></canvas>
+</div>
+
+<script>
+  import { calculateAuroraPoint, getAuroraColors } from '../utils/aurora-logic';
+
+  const canvas = document.getElementById('aurora-canvas-bg') as HTMLCanvasElement | null;
+  const container = canvas?.parentElement;
+
+  if (canvas && container) {
+    const ctx = canvas.getContext('2d', { alpha: true });
+    let animationFrameId: number;
+    let time = 0;
+
+    const isDarkMode = () => document.documentElement.classList.contains('theme-dark');
+
+    const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const mobileQuery = window.matchMedia('(max-width: 50em)');
+
+    const resize = () => {
+      const dpr = window.devicePixelRatio || 1;
+      const rect = container.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx?.setTransform(1, 0, 0, 1, 0, 0);
+      ctx?.scale(dpr, dpr);
+
+      if (motionQuery.matches || mobileQuery.matches) {
+        draw();
+      }
+    };
+
+    const draw = () => {
+      if (!ctx || !canvas) return;
+
+      const dpr = window.devicePixelRatio || 1;
+      const width = canvas.width / dpr;
+      const height = canvas.height / dpr;
+
+      ctx.clearRect(0, 0, width, height);
+
+      time += 0.004;
+
+      const colors = getAuroraColors(isDarkMode());
+
+      // Render multiple overlapping waves
+      colors.forEach((color, i) => {
+        ctx.beginPath();
+        ctx.moveTo(0, height);
+
+        const gradient = ctx.createLinearGradient(0, 0, 0, height);
+        gradient.addColorStop(0, color);
+        gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+        ctx.fillStyle = gradient;
+
+        // Resolution of the wave line (lower is more performant)
+        const step = 15;
+        for (let x = 0; x <= width + step; x += step) {
+          const y = calculateAuroraPoint(x, time, i, height);
+          ctx.lineTo(x, y);
+        }
+
+        ctx.lineTo(width, height);
+        ctx.fill();
+      });
+    };
+
+    const animate = () => {
+      draw();
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    const handleQueryChange = () => {
+      cancelAnimationFrame(animationFrameId);
+      if (!motionQuery.matches && !mobileQuery.matches) {
+        animationFrameId = requestAnimationFrame(animate);
+      } else {
+        draw();
+      }
+    };
+
+    const init = () => {
+      resize();
+      handleQueryChange();
+    };
+
+    window.addEventListener('resize', resize);
+    motionQuery.addEventListener('change', handleQueryChange);
+    mobileQuery.addEventListener('change', handleQueryChange);
+
+    init();
+
+    // Cleanup for Astro SPA-like transitions
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+        motionQuery.removeEventListener('change', handleQueryChange);
+        mobileQuery.removeEventListener('change', handleQueryChange);
+      },
+      { once: true }
+    );
+  }
+</script>
+
+<style>
+  .aurora-container {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    mask-image: linear-gradient(to bottom, black 0%, transparent 90%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 90%);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    filter: blur(50px);
+    opacity: 0.6;
+    transform: translateZ(0); /* Force hardware acceleration */
+  }
+
+  @media (max-width: 50em) {
+    canvas {
+      opacity: 0.4; /* Slightly more subtle on small screens */
+      filter: blur(30px);
+    }
+  }
+</style>
