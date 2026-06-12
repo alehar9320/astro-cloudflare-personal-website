@@ -336,15 +336,18 @@ const schema = {
     justify-content: center;
     align-items: center;
     text-align: center;
-    border: 1px solid var(--gray-800);
+    border: 1px solid hsla(var(--gray-999-basis), 0.1);
     border-radius: 1.5rem;
     color: var(--gray-300);
-    background: var(--gradient-subtle);
+    background: hsla(var(--gray-999-basis), 0.05);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     box-shadow: var(--shadow-sm);
     transition:
       transform var(--theme-transition),
       box-shadow var(--theme-transition),
-      border-color var(--theme-transition);
+      border-color var(--theme-transition),
+      background-color var(--theme-transition);
   }
 
   .mention-card a {
@@ -360,9 +363,12 @@ const schema = {
 
   .mention-card:hover,
   .mention-card:focus-within {
-    transform: translateY(-2px);
-    border-color: color-mix(in oklab, var(--accent-regular), var(--gray-800) 60%);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-4px);
+    border-color: var(--accent-regular);
+    background-color: hsla(var(--gray-999-basis), 0.08);
+    box-shadow:
+      0 12px 30px -5px hsla(210, 100%, 45%, 0.3),
+      var(--shadow-md);
   }
 
   .mention-card a:focus-visible {
@@ -375,6 +381,16 @@ const schema = {
     .mention-card {
       border-radius: 1.5rem;
       height: 9.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mention-card {
+      transition: none;
+    }
+    .mention-card:hover,
+    .mention-card:focus-within {
+      transform: none;
     }
   }
 </style>
