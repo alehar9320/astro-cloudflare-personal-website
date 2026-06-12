@@ -60,9 +60,8 @@ export const POST: APIRoute = async ({ request, locals }) => {
   let body: unknown;
   try {
     body = await request.json();
-  } catch (e: unknown) {
-    const error = e instanceof Error ? e.message : String(e);
-    console.error({ event: 'chat_api_json_parse_error', error });
+  } catch (error: unknown) {
+    console.error({ event: 'chat_api_json_parse_error', error: String(error) });
     return jsonError(
       'We couldn’t process your request. Please check your message and try again.',
       400
@@ -109,9 +108,8 @@ Keep your responses brief, typically 2-3 sentences.`;
         'Content-Security-Policy': "default-src 'none'; frame-ancestors 'none';",
       },
     });
-  } catch (e: unknown) {
-    const errorMessage = e instanceof Error ? e.message : String(e);
-    console.error({ event: 'chat_api_run_error', error: errorMessage });
+  } catch (error: unknown) {
+    console.error({ event: 'chat_api_run_error', error: String(error) });
     // Defense in Depth: Never expose raw error messages to the UI for server-side failures
     return jsonError('An internal error occurred. Please try again later.', 500);
   }
