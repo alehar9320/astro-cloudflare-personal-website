@@ -15,7 +15,7 @@ let lastTag = '';
 try {
   lastTag = execSync('git describe --tags --abbrev=0', { stdio: 'pipe' }).toString().trim();
 } catch (e) {
-  const error = e instanceof Error ? e.message : String(e);
+  const error = String(e);
   console.log({ event: 'release_script_no_tags', error });
 }
 
@@ -27,7 +27,7 @@ try {
     commits = execSync('git log --oneline', { stdio: 'pipe' }).toString().trim();
   }
 } catch (e) {
-  const error = e instanceof Error ? e.message : String(e);
+  const error = String(e);
   console.warn({ event: 'release_script_git_log_error', error });
 }
 
@@ -57,7 +57,7 @@ if (githubOutput) {
     fs.appendFileSync(githubOutput, `changelog<<EOF\n${changelog}EOF\n`);
     console.log({ event: 'release_script_output_success' });
   } catch (e) {
-    const error = e instanceof Error ? e.message : String(e);
+    const error = String(e);
     console.error({ event: 'release_script_output_error', error });
     process.exit(1);
   }
