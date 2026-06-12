@@ -27,7 +27,7 @@ SENTRY_AUTH_TOKEN=your-sentry-auth-token-for-source-map-uploads
 # R2_BUCKET_ENDPOINT=https://bucket.r2.example.com
 
 # Example: KV Namespace (if configured)
-# SESSION_KV_NAMESPACE_ID=your-kv-namespace-id
+# CHAT_STORE=your-kv-namespace-id
 
 # PostHog Analytics
 # PUBLIC_POSTHOG_KEY is required for client-side tracking
