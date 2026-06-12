@@ -29,6 +29,7 @@ const currentYear = new Date().getFullYear();
         Report an issue
       </a>
     </p>
+    <p id="mau-count" class="mau" data-mau-placeholder style="display:none">0 MAU this month</p>
     <p class="ai-notice">
       Human + AI Collaboration. Optimized for humans & agents. Content may have flaws; verify for
       accuracy.
@@ -66,6 +67,12 @@ const currentYear = new Date().getFullYear();
       versionLink.textContent = 'Latest Updates';
     });
   }
+
+  // Fetch and display Monthly Active Users
+  const mauElement = document.getElementById('mau-count');
+  if (mauElement) {
+    import('../utils/display-mau').then(({ displayMauCount }) => displayMauCount(mauElement));
+  }
 </script>
 
 <style>
@@ -102,6 +109,11 @@ const currentYear = new Date().getFullYear();
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
+  }
+
+  .mau {
+    font-size: var(--text-sm);
+    color: var(--gray-400);
   }
 
   .socials {
