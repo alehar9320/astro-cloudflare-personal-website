@@ -114,7 +114,10 @@ describe('release script', () => {
       expect.stringContaining('- feat: initial release')
     );
     expect(consoleSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ event: 'release_script_no_tags', error: expect.stringContaining('No tags') })
+      expect.objectContaining({
+        event: 'release_script_no_tags',
+        error: expect.stringContaining('No tags'),
+      })
     );
   });
 
@@ -134,7 +137,10 @@ describe('release script', () => {
       expect.stringContaining('- No documented changes.')
     );
     expect(consoleSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ event: 'release_script_git_log_error', error: expect.stringContaining('Git log failed') })
+      expect.objectContaining({
+        event: 'release_script_git_log_error',
+        error: expect.stringContaining('Git log failed'),
+      })
     );
   });
 
@@ -151,7 +157,10 @@ describe('release script', () => {
 
     expect(exitSpy).toHaveBeenCalledWith(1);
     expect(consoleSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ event: 'release_script_output_error', error: expect.stringContaining('Write failed') })
+      expect.objectContaining({
+        event: 'release_script_output_error',
+        error: expect.stringContaining('Write failed'),
+      })
     );
   });
 
