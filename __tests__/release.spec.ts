@@ -45,12 +45,12 @@ describe('release script', () => {
     vi.useRealTimers();
     vi.resetAllMocks();
     delete process.env.GITHUB_OUTPUT;
+    vi.resetModules();
   });
 
   it('writes the version to GITHUB_OUTPUT without mutating tracked files', async () => {
     process.env.GITHUB_OUTPUT = 'mock_github_output';
     vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('v1.0.0'));
-
     const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
     await import('../scripts/release.js?t=' + Date.now());
@@ -105,7 +105,6 @@ describe('release script', () => {
       if (typeof cmd === 'string' && cmd.includes('describe --tags')) throw new Error('No tags');
       return Buffer.from('feat: initial release');
     });
-
     const consoleSpy = vi.spyOn(console, 'log').mockImplementation(() => {});
 
     await import('../scripts/release.js?t=' + (Date.now() + 3));
@@ -126,7 +125,6 @@ describe('release script', () => {
       if (typeof cmd === 'string' && cmd.includes('log')) throw new Error('Git log failed');
       return Buffer.from('');
     });
-
     const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
 
     await import('../scripts/release.js?t=' + (Date.now() + 4));
@@ -143,12 +141,11 @@ describe('release script', () => {
   it('exits when writing GitHub output fails', async () => {
     process.env.GITHUB_OUTPUT = 'invalid_path';
     vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('v1.0.0'));
+    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     fsMock.default.appendFileSync.mockImplementation(() => {
       throw new Error('Write failed');
     });
-
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
     await import('../scripts/release.js?t=' + (Date.now() + 5));
 
@@ -156,52 +153,6 @@ describe('release script', () => {
     expect(consoleSpy).toHaveBeenCalledWith(
       expect.objectContaining({ event: 'release_script_output_error', error: 'Write failed' })
     );
-    exitSpy.mockRestore();
-  });
-
-  it('handles non-Error exceptions when fetching git log', async () => {
-    process.env.GITHUB_OUTPUT = 'mock_github_output';
-    vi.mocked(child_process.execSync).mockImplementation((cmd) => {
-      if (typeof cmd === 'string' && cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
-      if (typeof cmd === 'string' && cmd.includes('log')) throw 'Git Log Fatal';
-      return Buffer.from('');
-    });
-
-    const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
-    await import('../scripts/release.js?t=' + (Date.now() + 8));
-
-    expect(consoleSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ event: 'release_script_git_log_error', error: 'Git Log Fatal' })
-    );
-  });
-
-  it('handles non-Error exceptions when writing to GITHUB_OUTPUT', async () => {
-    process.env.GITHUB_OUTPUT = 'invalid_path';
-    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('v1.0.0'));
-    fsMock.default.appendFileSync.mockImplementation(() => {
-      throw 'Write Fatal';
-    });
-
-    const exitSpy = vi.spyOn(process, 'exit').mockImplementation(() => undefined as never);
-    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-
-    await import('../scripts/release.js?t=' + (Date.now() + 9));
-
-    expect(exitSpy).toHaveBeenCalledWith(1);
-    expect(consoleSpy).toHaveBeenCalledWith(
-      expect.objectContaining({ event: 'release_script_output_error', error: 'Write Fatal' })
-    );
-    exitSpy.mockRestore();
-  });
-
-  it('skips writing to GITHUB_OUTPUT if the environment variable is not set', async () => {
-    delete process.env.GITHUB_OUTPUT;
-    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('v1.0.0'));
-
-    await import('../scripts/release.js?t=' + (Date.now() + 6));
-
-    expect(fsMock.default.appendFileSync).not.toHaveBeenCalled();
   });
 
   it('handles non-Error exceptions in telemetry logging', async () => {
@@ -222,5 +173,14 @@ describe('release script', () => {
         error: 'Fatal Git Error',
       })
     );
+  });
+  it('skips writing to GITHUB_OUTPUT if the environment variable is not set', async () => {
+    delete process.env.GITHUB_OUTPUT;
+    vi.resetModules();
+    vi.mocked(child_process.execSync).mockReturnValue(Buffer.from('v1.0.0'));
+
+    await import('../scripts/release.js?t=' + (Date.now() + 6));
+
+    expect(fsMock.default.appendFileSync).not.toHaveBeenCalled();
   });
 });

@@ -26,8 +26,8 @@ export default defineConfig({
         'scripts/release.js',
       ],
       exclude: [
-        'src/**/*.d.ts',
         'src/**/*.astro',
+        'src/**/*.d.ts',
         'src/content/**',
         'src/data/**',
         'src/styles/**',
