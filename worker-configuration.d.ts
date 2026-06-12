@@ -35,7 +35,7 @@ declare var onmessage: never;
 declare class DOMException extends Error {
   constructor(message?: string, name?: string);
   /**
-   * The **`message`** read-only property of the a message or description associated with the given error name.
+   * The **`message`** read-only property of a message or description associated with the given error name.
    *
    * [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMException/message)
    */
@@ -1524,7 +1524,7 @@ declare class MessageEvent extends Event {
    */
   readonly lastEventId: string;
   /**
-   * The **`source`** read-only property of the a WindowProxy, MessagePort, or a `MessageEventSource` (which can be a WindowProxy, message emitter.
+   * The **`source`** read-only property of a WindowProxy, MessagePort, or a `MessageEventSource` (which can be a WindowProxy, message emitter.
    *
    * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessageEvent/source)
    */
@@ -12116,7 +12116,7 @@ type StreamUrlUploadParams = {
    */
   meta?: Record<string, string>;
   /**
-   * Indicates whether the video can be a accessed using the id. When
+   * Indicates whether the video can be accessed using the id. When
    * set to `true`, a signed token must be generated with a signing key to view the
    * video.
    */
@@ -12296,7 +12296,7 @@ type StreamUpdateVideoParams = {
    */
   meta?: Record<string, string>;
   /**
-   * Indicates whether the video can be a accessed using the id. When
+   * Indicates whether the video can be accessed using the id. When
    * set to `true`, a signed token must be generated with a signing key to view the
    * video.
    */
