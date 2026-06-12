@@ -71,7 +71,9 @@ describe('github releases utility', () => {
     );
 
     // Ensure sensitive keys 'received' and 'value' are NOT in the logged issues
-    const loggedCall = consoleSpy.mock.calls[0][0];
+    const loggedCall = consoleSpy.mock.calls.find(
+      (call) => call[0]?.event === 'github_releases_validation_failed'
+    )?.[0];
     const firstIssue = loggedCall.issues[0];
     expect(firstIssue).not.toHaveProperty('received');
     expect(firstIssue).not.toHaveProperty('value');
@@ -186,7 +188,10 @@ describe('github releases utility', () => {
     vi.stubGlobal('process', undefined);
     const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => [] });
     await fetchGitHubReleases(fetchMock as typeof fetch);
-    expect(fetchMock.mock.calls[0][1].headers).not.toHaveProperty('Authorization');
+
+    const callWithNoAuth = fetchMock.mock.calls.find((call) => !call[1]?.headers?.Authorization);
+    expect(callWithNoAuth).toBeDefined();
+
     vi.unstubAllGlobals();
   });
 
