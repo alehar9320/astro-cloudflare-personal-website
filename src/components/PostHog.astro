@@ -5,9 +5,19 @@
   const posthogHost = import.meta.env.PUBLIC_POSTHOG_HOST ?? 'https://app.posthog.com';
 
   if (posthogKey) {
-    posthog.init(posthogKey, {
-      api_host: posthogHost,
-      person_profiles: 'identified_only',
-    });
+    // Defer PostHog initialization (⚡ Bolt) to avoid blocking the main thread.
+    // This improves Total Blocking Time (TBT) and ensures the page is interactive sooner.
+    const initPostHog = () => {
+      posthog.init(posthogKey, {
+        api_host: posthogHost,
+        person_profiles: 'identified_only',
+      });
+    };
+
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(initPostHog);
+    } else {
+      setTimeout(initPostHog, 3000);
+    }
   }
 </script>
