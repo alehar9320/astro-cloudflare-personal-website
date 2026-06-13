@@ -1,13 +1,13 @@
 <script>
-  import posthog from 'posthog-js';
-
   const posthogKey = import.meta.env.PUBLIC_POSTHOG_KEY;
   const posthogHost = import.meta.env.PUBLIC_POSTHOG_HOST ?? 'https://app.posthog.com';
 
   if (posthogKey) {
     // Defer PostHog initialization (⚡ Bolt) to avoid blocking the main thread.
+    // We use a dynamic import to also defer the script download.
     // This improves Total Blocking Time (TBT) and ensures the page is interactive sooner.
-    const initPostHog = () => {
+    const initPostHog = async () => {
+      const { default: posthog } = await import('posthog-js');
       posthog.init(posthogKey, {
         api_host: posthogHost,
         person_profiles: 'identified_only',
@@ -15,7 +15,10 @@
     };
 
     if ('requestIdleCallback' in window) {
-      window.requestIdleCallback(initPostHog);
+      window.requestIdleCallback(() => {
+        // Adding a slight delay to ensure it really is after initial load
+        setTimeout(initPostHog, 500);
+      });
     } else {
       setTimeout(initPostHog, 3000);
     }
