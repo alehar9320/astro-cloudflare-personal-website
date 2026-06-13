@@ -14,21 +14,33 @@ const schema = {
       description:
         'Strategic Product Leader specializing in Developer Experience (DevEx) and Industrial AI at IFS.',
       url: 'https://harenstam.com/',
-      sameAs: ['https://www.linkedin.com/in/alehar'],
+      sameAs: [
+        'https://www.linkedin.com/in/alehar/',
+        'https://github.com/alehar9320',
+        'https://blog.ifs.com/author/alexander-harenstam/',
+      ],
       worksFor: {
         '@type': 'Organization',
         name: 'IFS',
         url: 'https://www.ifs.com/',
       },
+      knowsAbout: [
+        'Strategic Product Management',
+        'Developer Experience (DevEx)',
+        'Industrial AI',
+        'Design Systems',
+        'Digital Transformation',
+      ],
       alumniOf: {
         '@type': 'CollegeOrUniversity',
         name: 'Chalmers University of Technology',
         url: 'https://www.chalmers.se/en/',
       },
+      award: 'Zeroheight Design System Awards - Runner-up',
     },
     {
-      '@type': 'WebPage',
-      '@id': 'https://harenstam.com/about/#webpage',
+      '@type': 'AboutPage',
+      '@id': 'https://harenstam.com/about/#aboutpage',
       url: 'https://harenstam.com/about/',
       name: 'About | Alexander Härenstam',
       about: { '@id': 'https://harenstam.com/#person' },
