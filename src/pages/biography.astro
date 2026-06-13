@@ -30,7 +30,7 @@ const schema = {
       '@type': 'WebPage',
       '@id': 'https://harenstam.com/biography/#webpage',
       url: 'https://harenstam.com/biography/',
-      name: 'Biography | Alexander Härenstam',
+      name: 'Professional Narrative | Alexander Härenstam',
       about: { '@id': 'https://harenstam.com/#person' },
       description:
         'Explore the professional journey of Alexander Härenstam, from software engineering to strategic product leadership.',
@@ -57,14 +57,17 @@ const schema = {
 ---
 
 <BaseLayout
-  title="Biography | Alexander Härenstam"
+  title="Professional Narrative | Alexander Härenstam"
   description="Explore the professional journey of Alexander Härenstam, from software engineering to strategic product leadership."
 >
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
 
   <div class="stack gap-20">
     <main id="main-content" class="wrapper about">
-      <Hero title="Biography" tagline="A journey through technology, strategy, and innovation." />
+      <Hero
+        title="Professional Narrative"
+        tagline="The evolution of a strategic product leader, from engineering roots to multi-million dollar business impact."
+      />
 
       <section>
         <h2 class="section-title">The Journey</h2>
