@@ -63,7 +63,7 @@
       <input
         type="text"
         id="chat-input"
-        placeholder="Ask me something..."
+        placeholder="Ask about Industrial AI, DevEx, or strategy..."
         required
         autocomplete="off"
       />
@@ -490,7 +490,10 @@
       const message = error instanceof Error ? error.message : String(error);
       console.error({ event: 'chat_client_error', error: message });
       typingIndicator?.classList.add('hidden');
-      appendMessage('assistant', 'Sorry, something went wrong. Please try again.');
+      appendMessage(
+        'assistant',
+        "I'm having trouble connecting right now. Please try your message again in a moment."
+      );
       setStatus('error');
     }
   });
