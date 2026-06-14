@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-20 - Refining Chat Interactivity & Standardizing Typography
+
+**Learning:** Micro-interactions in fixed-position components (like chat overlays) benefit from tactile feedback (e.g., `scale(0.96)` on `:active`) to reinforce the feeling of a physical object. Standardizing typography in these components to use brand variables (`var(--font-brand)`, `var(--font-body)`) ensures a cohesive professional aesthetic that bridges the gap between different functional areas of the site. Using `var(--theme-transition)` for all state changes (colors, transforms, outlines) maintains a consistent rhythm for interactive feedback.
+
+**Action:** Refined `Chat.astro` with tactile `:active` states for all buttons. Standardized chat container typography to use `var(--font-body)` and `var(--font-brand)`. Implemented focus states for the chat input field with accent borders and a subtle glow. Modernized all internal transitions to use standardized theme variables.
+
 ## 2026-05-17 - Enhancing Content Selection and Standardizing Focus Spatiality
 
 **Learning:** Using `user-select: none` on informational badges (like `Pill`) creates unnecessary friction for users trying to copy text for reference. Additionally, consistent `outline-offset: 4px` across all interactive elements (including theme toggles and cards) reinforces a predictable spatial model for keyboard users. Adding `target="_blank"` with `rel="noopener noreferrer"` to external informational links (like the Astro framework link in the footer) ensures a non-disruptive navigation experience that preserves the user's session.
