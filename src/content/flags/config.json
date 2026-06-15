@@ -5,5 +5,6 @@
   "enable_product_manifesto": true,
   "enable_skills_pulse_v1": true,
   "enable_reading_list": true,
-  "enable_logo_wobble_v1": true
+  "enable_logo_wobble_v1": true,
+  "enable_strategic_toolkit": true
 }

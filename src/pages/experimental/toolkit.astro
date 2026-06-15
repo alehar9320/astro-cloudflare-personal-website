@@ -5,41 +5,29 @@ import Hero from '../../components/Hero.astro';
 import Icon from '../../components/Icon.astro';
 
 const flags = await getEntry('flags', 'config');
-if (!flags?.data.enable_product_manifesto) return Astro.redirect('/404/');
+if (!flags?.data.enable_strategic_toolkit) return Astro.redirect('/404/');
 
-const principles = [
-  {
-    t: 'Impact-Driven',
-    d: 'Focus on shipping outcomes, not outputs.',
-    i: 'rocket-launch' as const,
-  },
-  {
-    t: 'Strategic Clarity',
-    d: 'Synthesize complex signals into roadmaps.',
-    i: 'strategy' as const,
-  },
-  {
-    t: 'Dev Empowerment',
-    d: 'Build tools that amplify productivity.',
-    i: 'terminal-window' as const,
-  },
+const tools = [
+  { n: 'Linear', d: 'High-velocity execution and issue tracking.', i: 'terminal-window' as const },
+  { n: 'Notion', d: 'Consolidating knowledge and strategic clarity.', i: 'strategy' as const },
+  { n: 'FigJam', d: 'Collaborative ideation and system mapping.', i: 'rocket-launch' as const },
 ];
 ---
 
-<BaseLayout title="Manifesto" description="Core product principles.">
+<BaseLayout title="Strategic Toolkit" description="Core tools for product strategy.">
   <main class="wrapper stack gap-8" style="margin-top: 4rem;">
     <Hero
-      title="Product Manifesto"
-      tagline="Simple primitives for building better products."
+      title="Strategic Toolkit"
+      tagline="The platforms that drive my product velocity."
       align="start"
     />
     <div class="grid">
       {
-        principles.map((p) => (
+        tools.map((t) => (
           <section class="card">
-            <Icon icon={p.i} color="var(--accent-regular)" size="2.5rem" gradient />
-            <h2>{p.t}</h2>
-            <p>{p.d}</p>
+            <Icon icon={t.i} color="var(--accent-regular)" size="2.5rem" gradient />
+            <h2>{t.n}</h2>
+            <p>{t.d}</p>
           </section>
         ))
       }
