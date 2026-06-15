@@ -1,0 +1,37 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Icon from '../../components/Icon.astro';
+
+const flags = await getEntry('flags', 'config');
+if (!flags?.data.enable_strategic_toolkit) return Astro.redirect('/404/');
+
+const tools = [
+  { n: 'Linear', d: 'High-velocity execution and issue tracking.', i: 'terminal-window' as const },
+  { n: 'Notion', d: 'Consolidating knowledge and strategic clarity.', i: 'strategy' as const },
+  { n: 'FigJam', d: 'Collaborative ideation and system mapping.', i: 'rocket-launch' as const },
+];
+---
+
+<BaseLayout title="Strategic Toolkit" description="Core tools for product strategy.">
+  <main class="wrapper stack gap-8" style="margin-top: 4rem;">
+    <Hero title="Strategic Toolkit" tagline="The platforms that drive my product velocity." align="start" />
+    <div class="grid">
+      {tools.map((t) => (
+        <section class="card">
+          <Icon icon={t.i} color="var(--accent-regular)" size="2.5rem" gradient />
+          <h2>{t.n}</h2>
+          <p>{t.d}</p>
+        </section>
+      ))}
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .grid { display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+  .card { padding: 2rem; background: var(--gradient-subtle); border: 1px solid var(--gray-800); border-radius: 0.75rem; }
+  .card h2 { font-size: var(--text-xl); margin: 1rem 0 0.5rem; color: var(--gray-0); }
+  .card p { color: var(--gray-300); line-height: 1.5; }
+</style>
