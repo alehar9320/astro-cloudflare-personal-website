@@ -1,0 +1,108 @@
+# npm audit report
+
+@opentelemetry/core  <2.8.0
+Severity: moderate
+OpenTelemetry Core: Unbounded memory allocation in W3C Baggage propagation - https://github.com/advisories/GHSA-8988-4f7v-96qf
+fix available via `npm audit fix`
+node_modules/@opentelemetry/exporter-logs-otlp-http/node_modules/@opentelemetry/core
+node_modules/@opentelemetry/instrumentation-http/node_modules/@opentelemetry/core
+node_modules/@opentelemetry/otlp-exporter-base/node_modules/@opentelemetry/core
+node_modules/@opentelemetry/otlp-transformer/node_modules/@opentelemetry/core
+node_modules/@opentelemetry/resources/node_modules/@opentelemetry/core
+node_modules/@opentelemetry/sdk-logs/node_modules/@opentelemetry/core
+node_modules/@opentelemetry/sdk-metrics/node_modules/@opentelemetry/core
+node_modules/@opentelemetry/sdk-trace-base/node_modules/@opentelemetry/core
+  @opentelemetry/exporter-logs-otlp-http  <=0.218.0
+  Depends on vulnerable versions of @opentelemetry/core
+  Depends on vulnerable versions of @opentelemetry/otlp-exporter-base
+  Depends on vulnerable versions of @opentelemetry/otlp-transformer
+  Depends on vulnerable versions of @opentelemetry/sdk-logs
+  node_modules/@opentelemetry/exporter-logs-otlp-http
+    posthog-js  1.319.0 - 1.379.0
+    Depends on vulnerable versions of @opentelemetry/exporter-logs-otlp-http
+    Depends on vulnerable versions of @opentelemetry/sdk-logs
+    node_modules/posthog-js
+  @opentelemetry/instrumentation-http  <=0.16.0 || 0.19.1-alpha.7 - 0.218.0
+  Depends on vulnerable versions of @opentelemetry/core
+  node_modules/@opentelemetry/instrumentation-http
+    @sentry/node  8.0.0-alpha.1 - 10.53.1
+    Depends on vulnerable versions of @opentelemetry/instrumentation-http
+    node_modules/@sentry/node
+      @sentry/astro  8.0.0-alpha.2 - 10.53.1
+      Depends on vulnerable versions of @sentry/node
+      node_modules/@sentry/astro
+  @opentelemetry/otlp-exporter-base  <=0.218.0
+  Depends on vulnerable versions of @opentelemetry/core
+  Depends on vulnerable versions of @opentelemetry/otlp-transformer
+  node_modules/@opentelemetry/otlp-exporter-base
+  @opentelemetry/otlp-transformer  <=0.218.0
+  Depends on vulnerable versions of @opentelemetry/core
+  Depends on vulnerable versions of @opentelemetry/resources
+  Depends on vulnerable versions of @opentelemetry/sdk-logs
+  Depends on vulnerable versions of @opentelemetry/sdk-metrics
+  Depends on vulnerable versions of @opentelemetry/sdk-trace-base
+  node_modules/@opentelemetry/otlp-transformer
+  @opentelemetry/resources  0.8.0 - 2.7.1
+  Depends on vulnerable versions of @opentelemetry/core
+  node_modules/@opentelemetry/otlp-transformer/node_modules/@opentelemetry/resources
+  node_modules/@opentelemetry/resources
+  node_modules/@opentelemetry/sdk-logs/node_modules/@opentelemetry/resources
+  node_modules/@opentelemetry/sdk-metrics/node_modules/@opentelemetry/resources
+  @opentelemetry/sdk-logs  <=0.218.0
+  Depends on vulnerable versions of @opentelemetry/core
+  Depends on vulnerable versions of @opentelemetry/resources
+  node_modules/@opentelemetry/sdk-logs
+  @opentelemetry/sdk-metrics  <=2.7.1
+  Depends on vulnerable versions of @opentelemetry/core
+  Depends on vulnerable versions of @opentelemetry/resources
+  node_modules/@opentelemetry/sdk-metrics
+  @opentelemetry/sdk-trace-base  <=2.7.1
+  Depends on vulnerable versions of @opentelemetry/core
+  Depends on vulnerable versions of @opentelemetry/resources
+  node_modules/@opentelemetry/otlp-transformer/node_modules/@opentelemetry/sdk-trace-base
+  node_modules/@opentelemetry/sdk-trace-base
+
+esbuild  0.17.0 - 0.28.0
+Severity: high
+esbuild: Missing binary integrity verification in Deno module enables remote code execution via NPM_CONFIG_REGISTRY - https://github.com/advisories/GHSA-gv7w-rqvm-qjhr
+esbuild allows arbitrary file read when running the development server on Windows - https://github.com/advisories/GHSA-g7r4-m6w7-qqqr
+fix available via `npm audit fix --force`
+Will install astro@2.4.5, which is a breaking change
+node_modules/@astrojs/cloudflare/node_modules/esbuild
+node_modules/@cloudflare/vite-plugin/node_modules/esbuild
+node_modules/astro/node_modules/esbuild
+node_modules/vite/node_modules/esbuild
+node_modules/wrangler/node_modules/esbuild
+  astro  <=0.0.0-head-body-content-20240329190922 || 2.2.0 - 7.0.0-alpha.1
+  Depends on vulnerable versions of esbuild
+  Depends on vulnerable versions of vite
+  node_modules/astro
+    @astrojs/cloudflare  <=0.0.0-vercel-speed-insights-20230912155045 || >=6.3.0
+    Depends on vulnerable versions of @cloudflare/vite-plugin
+    Depends on vulnerable versions of astro
+    Depends on vulnerable versions of vite
+    Depends on vulnerable versions of wrangler
+    node_modules/@astrojs/cloudflare
+    @astrojs/node  <=0.0.2-next.0 || 5.1.4 - 10.1.4
+    Depends on vulnerable versions of astro
+    node_modules/@astrojs/node
+  vite  4.2.0-beta.0 - 8.0.3
+  Depends on vulnerable versions of esbuild
+  node_modules/@astrojs/cloudflare/node_modules/vite
+  node_modules/astro/node_modules/vite
+  node_modules/vite
+  wrangler  <=0.0.0-kickoff-demo || >=3.7.0
+  Depends on vulnerable versions of esbuild
+  node_modules/@cloudflare/vite-plugin/node_modules/wrangler
+  node_modules/wrangler
+    @cloudflare/vite-plugin  *
+    Depends on vulnerable versions of wrangler
+    node_modules/@cloudflare/vite-plugin
+
+19 vulnerabilities (12 moderate, 7 high)
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
