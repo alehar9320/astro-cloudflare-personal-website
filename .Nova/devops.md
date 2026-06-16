@@ -11,5 +11,5 @@
 
 - **Optimization**: Dependency Security Patching & Cloudflare Smart Placement.
 - **Signal**: `npm audit` (21 vulnerabilities, 7 high) and performance best practices for Workers with KV/AI bindings.
-- **Metric**: 0 high-severity runtime vulnerabilities, enabled `smart` placement mode for reduced latency.
-- **Abort Triggers**: Build failure triggered by `esbuild 0.28.1` override (destructuring transformation error); reverted build tool overrides to maintain stability while keeping runtime security patches.
+- **Metric**: 0 vulnerabilities (from 21), enabled `smart` placement mode for reduced latency.
+- **Abort Triggers**: Initial build failure with `esbuild 0.28.1` (destructuring transformation error) resolved by setting Cloudflare adapter target to `esnext` in `astro.config.mjs`.
