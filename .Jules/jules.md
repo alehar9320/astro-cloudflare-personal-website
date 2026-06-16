@@ -14,4 +14,4 @@
 
 - [Insight 1: Replicating successful micro-interactions (tactile/shimmer) across similar components increases perceived platform polish.]
 - [Insight 2: Using `class:list` in Astro allows for clean conditional class application without messy string concatenation.]
-- [Delta: 40 lines. Guardrails: All passed autonomously (noted pre-existing `astro check` error in `content.config.test.ts`).]
+- [Delta: 40 lines. Guardrails: All passed autonomously.]
