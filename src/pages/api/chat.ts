@@ -1,5 +1,11 @@
 import type { APIRoute } from 'astro';
-import { ChatRequestSchema, pruneMessages, type ChatMessage } from '../../utils/chat-logic';
+import {
+  ChatRequestSchema,
+  pruneMessages,
+  sanitizeZodIssues,
+  SYSTEM_PROMPT,
+  type ChatMessage,
+} from '../../utils/chat-logic';
 
 const jsonHeaders = {
   'content-type': 'application/json',
@@ -26,9 +32,8 @@ function jsonError(error: string, status: number) {
 }
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  // Access bindings through locals.runtime.env or process.env (fallback for non-Cloudflare)
-  const bindings = ((locals as unknown as { runtime?: { env: ChatEnv } }).runtime?.env ||
-    process.env) as unknown as ChatEnv;
+  // Access bindings through locals.runtime.env or process.env
+  const bindings = (locals.runtime?.env || process.env) as unknown as ChatEnv;
 
   const ai = bindings.AI;
   const store = bindings.CHAT_STORE;
@@ -72,12 +77,7 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   if (!result.success) {
     // Sanitize issues for telemetry to prevent data leaks (redact 'received' and 'value')
-    const sanitizedIssues = result.error.issues.map((issue) => {
-      const safeIssue = { ...issue } as Record<string, unknown>;
-      delete safeIssue.received;
-      delete safeIssue.value;
-      return safeIssue;
-    });
+    const sanitizedIssues = sanitizeZodIssues(result.error.issues);
     console.warn({ event: 'chat_api_validation_failed', issues: sanitizedIssues });
 
     // Return the first validation error message for simplicity and security (don't leak schema details)
@@ -86,15 +86,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   const prunedMessages = pruneMessages(result.data.messages as ChatMessage[]);
 
-  const systemPrompt = `You are Alexander Härenstam, a strategic Product Leader at IFS.
-You are based in Nacka/Stockholm.
-Your tone is professional, insightful, and empathetic.
-You have a background in Software Engineering and Innovation Management.
-Keep your responses brief, typically 2-3 sentences.`;
-
   try {
     const stream = await ai.run('@cf/meta/llama-3.1-8b-instruct', {
-      messages: [{ role: 'system', content: systemPrompt }, ...prunedMessages],
+      messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...prunedMessages],
       stream: true,
     });
 

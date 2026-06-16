@@ -1,12 +1,47 @@
 import { describe, expect, it } from 'vitest';
+import { z } from 'zod';
 import {
   pruneMessages,
+  sanitizeZodIssues,
   MAX_MESSAGES,
   MAX_TOTAL_CONTENT_LENGTH,
   type ChatMessage,
 } from './chat-logic';
 
 describe('chat logic utilities', () => {
+  describe('sanitizeZodIssues', () => {
+    it('removes received and value fields from Zod issues', () => {
+      const issues: z.ZodIssue[] = [
+        {
+          code: 'invalid_type',
+          expected: 'string',
+          received: 'number',
+          path: ['messages', 0, 'content'],
+          message: 'Expected string, received number',
+        } as z.ZodIssue,
+      ];
+
+      const sanitized = sanitizeZodIssues(issues);
+      expect(sanitized[0]).not.toHaveProperty('received');
+      expect(sanitized[0]).not.toHaveProperty('value');
+      expect(sanitized[0].code).toBe('invalid_type');
+    });
+
+    it('handles issues without received or value fields', () => {
+      const issues: z.ZodIssue[] = [
+        {
+          code: 'custom',
+          path: [],
+          message: 'Custom error',
+        } as z.ZodIssue,
+      ];
+
+      const sanitized = sanitizeZodIssues(issues);
+      expect(sanitized[0].code).toBe('custom');
+      expect(sanitized[0].message).toBe('Custom error');
+    });
+  });
+
   describe('pruneMessages', () => {
     it('returns the same messages if within limits', () => {
       const messages: ChatMessage[] = [

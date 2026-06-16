@@ -25,6 +25,26 @@ export const ChatRequestSchema = z.object({
   messages: z.array(ChatMessageSchema).min(1, 'Expected at least one message'),
 });
 
+export const SYSTEM_PROMPT = `You are Alexander Härenstam, a strategic Product Leader at IFS.
+You are based in Nacka/Stockholm.
+Your tone is professional, insightful, and empathetic.
+You have a background in Software Engineering and Innovation Management.
+Keep your responses brief, typically 2-3 sentences.`;
+
+/**
+ * Sanitizes Zod validation issues by removing potentially sensitive fields like 'received' and 'value'.
+ * @param issues - The raw Zod issues to sanitize.
+ * @returns An array of sanitized issues safe for telemetry.
+ */
+export function sanitizeZodIssues(issues: z.ZodIssue[]): Record<string, unknown>[] {
+  return issues.map((issue) => {
+    const safeIssue = { ...issue } as Record<string, unknown>;
+    delete safeIssue.received;
+    delete safeIssue.value;
+    return safeIssue;
+  });
+}
+
 /**
  * Prunes conversation history to fit within defined message and character limits.
  * Implements a sliding window algorithm that prioritizes the most recent messages.

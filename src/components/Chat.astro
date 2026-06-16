@@ -337,6 +337,7 @@
 
 <script>
   import { createChatStreamParser, extractAssistantTextFromSse } from '../utils/chat-stream';
+  import { pruneMessages } from '../utils/chat-logic';
 
   const chatToggle = document.getElementById('chat-toggle');
   const chatWindow = document.getElementById('chat-window');
@@ -363,7 +364,7 @@
 
   setStatus('idle');
 
-  const messages = JSON.parse(sessionStorage.getItem('chat-history') || '[]');
+  let messages = JSON.parse(sessionStorage.getItem('chat-history') || '[]');
 
   function saveMessages() {
     sessionStorage.setItem('chat-history', JSON.stringify(messages));
@@ -375,18 +376,21 @@
   }
 
   function normalizeMessage(message: Message): Message {
-    if (message.role !== 'assistant') {
-      return message;
+    const role = message.role === 'ai' ? 'assistant' : message.role;
+
+    if (role !== 'assistant') {
+      return { ...message, role };
     }
 
     const normalizedContent = extractAssistantTextFromSse(message.content);
 
     if (normalizedContent.length === 0) {
-      return message;
+      return { ...message, role };
     }
 
     return {
       ...message,
+      role,
       content: normalizedContent,
     };
   }
@@ -400,10 +404,12 @@
     return messageDiv;
   }
 
-  // Load history
-  messages.map(normalizeMessage).forEach((msg: Message) => {
-    const displayRole = msg.role === 'ai' ? 'assistant' : msg.role;
-    appendMessage(displayRole, msg.content);
+  // Load and migrate history
+  messages = messages.map(normalizeMessage);
+  saveMessages(); // Persist migrated roles
+
+  messages.forEach((msg: Message) => {
+    appendMessage(msg.role, msg.content);
   });
 
   const setChatExpanded = (expand: boolean) => {
@@ -440,6 +446,7 @@
     chatInput.value = '';
     appendMessage('user', content);
     messages.push({ role: 'user', content });
+    messages = pruneMessages(messages);
     saveMessages();
 
     typingIndicator?.classList.remove('hidden');

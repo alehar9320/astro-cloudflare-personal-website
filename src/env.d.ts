@@ -1,16 +1,17 @@
 /// <reference types="astro/client" />
 
-type Runtime = import('@astrojs/cloudflare').Runtime<Env>;
-
-declare namespace App {
-  interface Locals extends Runtime {
-    title: string;
-  }
+interface Env {
+  AI: any;
+  CHAT_STORE: KVNamespace;
 }
 
-interface Env {
-  AI: {
-    run: (model: string, input: unknown) => Promise<ReadableStream>;
-  };
-  CHAT_STORE: KVNamespace;
+declare namespace App {
+  interface Locals {
+    runtime: {
+      env: Env;
+      cf: import('@astrojs/cloudflare').IncomingRequestCfProperties;
+      ctx: ExecutionContext;
+    };
+    title: string;
+  }
 }
