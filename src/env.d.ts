@@ -1,7 +1,7 @@
 /// <reference types="astro/client" />
 
 interface Env {
-  AI: any;
+  AI: unknown;
   CHAT_STORE: KVNamespace;
 }
 
