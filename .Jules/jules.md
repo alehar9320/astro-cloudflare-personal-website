@@ -9,3 +9,9 @@
 - [Insight 1: Shimmer micro-interactions provide high-quality visual feedback without increasing JS bundle size.]
 - [Insight 2: Using `translateX` for the shimmer sweep is more performant than animating `background-position` as it avoids layout repaints.]
 - [Delta: 18 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-02 - Mention Card Tactile & Shimmer | Signal: Technical/Synthetic | Lean Implementation: Flagged CSS + List Class List
+
+- [Insight 1: Replicating successful micro-interactions (tactile/shimmer) across similar components increases perceived platform polish.]
+- [Insight 2: Using `class:list` in Astro allows for clean conditional class application without messy string concatenation.]
+- [Delta: 40 lines. Guardrails: All passed autonomously (noted pre-existing `astro check` error in `content.config.test.ts`).]
