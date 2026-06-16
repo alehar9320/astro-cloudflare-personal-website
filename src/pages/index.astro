@@ -339,12 +339,15 @@ const schema = {
     border: 1px solid var(--gray-800);
     border-radius: 1.5rem;
     color: var(--gray-300);
-    background: var(--gradient-subtle);
+    background: hsla(var(--gray-999-basis), 0.3);
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
     box-shadow: var(--shadow-sm);
     transition:
       transform var(--theme-transition),
       box-shadow var(--theme-transition),
-      border-color var(--theme-transition);
+      border-color var(--theme-transition),
+      background-color var(--theme-transition);
   }
 
   .mention-card a {
@@ -360,9 +363,17 @@ const schema = {
 
   .mention-card:hover,
   .mention-card:focus-within {
-    transform: translateY(-2px);
-    border-color: color-mix(in oklab, var(--accent-regular), var(--gray-800) 60%);
-    box-shadow: var(--shadow-md);
+    transform: translateY(-4px);
+    border-color: var(--accent-regular);
+    background-color: var(--accent-subtle-overlay);
+    box-shadow:
+      0 12px 30px -5px var(--accent-overlay),
+      var(--shadow-md);
+  }
+
+  .mention-card:active {
+    transform: translateY(-2px) scale(0.98);
+    background-color: var(--accent-overlay);
   }
 
   .mention-card a:focus-visible {
@@ -375,6 +386,50 @@ const schema = {
     .mention-card {
       border-radius: 1.5rem;
       height: 9.5rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .mention-card,
+    .mention-card:hover,
+    .mention-card:focus-within,
+    .mention-card:active {
+      transform: none;
+      transition: none;
+    }
+  }
+
+  @keyframes fade-in-up {
+    from {
+      opacity: 0;
+      transform: translateY(1rem);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .roles > * {
+      opacity: 0;
+      animation: fade-in-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    .roles > *:nth-child(1) {
+      animation-delay: 0.1s;
+    }
+    .roles > *:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .roles > *:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+    .roles > *:nth-child(4) {
+      animation-delay: 0.4s;
+    }
+    .roles > *:nth-child(5) {
+      animation-delay: 0.5s;
     }
   }
 </style>
