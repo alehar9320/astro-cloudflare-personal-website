@@ -67,7 +67,7 @@ Stand out to employers
 Enhance your profile, craft standout messages, and assess job fit with Premium.
 
 Try Premium for SEK 0
-1-month free trial. Cancel whenever. We’l remind you 7 days before your trial ends.
+1-month free trial. Cancel whenever. We'll remind you 7 days before your trial ends.
 
 Dismiss premium promotion
 
@@ -140,8 +140,7 @@ Create a post
 Posts
 
 Comments
-Loaded 9 Posts posts
-View Alexander Härenstam’s graphic link
+Loaded 9 Posts
 Alexander Härenstam
 • YouVerified • You
 Product @IFS | Developer Experience
@@ -157,7 +156,7 @@ You might be studying tech, business, or design — what matters most is that yo
 ✅ AI-first mindset with familiarity of using AI tools (like ChatGPT, Copilot, Perplexity, etc.) as part of your workflow
 ✅ Can operate confidently in a fast-paced, global virtual environment — with English as your working language
 
-You’l work on real initiatives that impact global engineering teams — from research and automation to internal tooling and productivity insights.
+You'll work on real initiatives that impact global engineering teams — from research and automation to internal tooling and productivity insights.
 
 🔗 Learn more and apply:
 https://lnkd.in/dBa3dwSK
@@ -171,7 +170,6 @@ likelovesupport
 32
 7 reposts
 
-View Alexander Härenstam’s graphic link
 Alexander Härenstam
 • YouVerified • You
 Product @IFS | Developer Experience
@@ -179,9 +177,8 @@ Product @IFS | Developer Experience
 
 Exciting times as IFS Cloud customers can now make use of more than 200+ hashtag#industrialAI capabilities with the latest 25R1 release.
 
-Consumer AI experiences are great, but it's when it's rolled out for hard-to-solve enterprise and social impact use cases that I believe we'l see the greatest societal benefits ✨🚀
+Consumer AI experiences are great, but it's when it's rolled out for hard-to-solve enterprise and social impact use cases that I believe we'll see the greatest societal benefits ✨🚀
 …more
-View Christian Pedersen’s graphic link
 Christian Pedersen
 • FollowingPremium • Following
 Chief Product Officer @ IFS | Leader in Industrial AI
@@ -194,9 +191,6 @@ Our specialized focus, inherent agentic capabilities, and agile integration of A
 Our mission is to power the next industrial revolution with AI, and I am so proud of the impactful advancements we are bringing to customers in 25R1 💜
 https://ifs.link/T5Xjtc
 …more
-Activate to view larger image,
-No alternative text description for this image
-Activate to view larger image,
 likecelebrate
 6
 
@@ -207,7 +201,7 @@ IFS logo
 IFS
 Full-time · 8 yrs 5 mos
 Product Manager - Developer Experience
-Feb 2025 - Present · 1 yr 2 mosFeb 2025 to Present · 1 yr 2 mos
+Feb 2025 - Present · 1 yr 2 mos
 Stockholm, Stockholm County, Sweden · Hybrid
 IFS is a double-digit growth company in the enterprise software industry.
 
@@ -215,7 +209,7 @@ As Product Manager for Developer Experience at IFS, I set the strategy for the t
 
 One key pillar has been the rollout of AI Coding Copilots; a strategic initiative driving business value in the size of several millions.IFS is a double-digit growth company in the enterprise software industry. As Product Manager for Developer Experience at IFS, I set the strategy for the tools and platforms that empower internal engineering teams, global partners, and customers. The work translates to increased efficiency and accelerated time-to-market for the company's offerings. One key pillar has been the rollout of AI Coding Copilots; a strategic initiative driving business value in the size of several millions.…see more
 Product Manager - Product Experience (Design System)
-Apr 2022 - Feb 2025 · 2 yrs 1 mosApr 2022 to Feb 2025 · 2 yrs 1 mos
+Apr 2022 - Feb 2025 · 2 yrs 1 mos
 Gothenburg, Västra Götaland County, Sweden · Hybrid
 IFS is a double-digit growth company in the enterprise software industry.
 
@@ -232,7 +226,7 @@ UX-design, Technological Innovation and +3 skills
 IFS Design System
 Design and development resources for creating the highest quality end-to-end experiences in the enterprise software industry.
 Lead Software Designer
-Sep 2021 - Apr 2022 · 8 mosSep 2021 to Apr 2022 · 8 mos
+Sep 2021 - Apr 2022 · 8 mos
 Gothenburg, Västra Götaland County, Sweden · Hybrid
 Product Lead working with internal systems aimed at scaling a consistent user experience across the full customer journey.
 IFS Design System
@@ -241,7 +235,7 @@ Show all 6 experiences
 Knowit Solutions CoCreate logo
 Master Thesis Worker
 Invativa - Specialister på Digitala Affärer · Contract
-Jan 2017 - Jun 2017 · 6 mosJan 2017 to Jun 2017 · 6 mos
+Jan 2017 - Jun 2017 · 6 mos
 Göteborg, Sverige
 Invativa is a specialist consulting company helping others create and improve their digital business. This is done by identifying how digital technology can be applied to improve the business model; digitalization.
 
@@ -254,18 +248,18 @@ My thesis revolved around business model innovation, and the opportunities and b
    Ericsson
    1 yr 3 mos
    Lindholmen, Göteborg
-   Sofware Developer
+   Software Developer
    Part-time
-   Aug 2015 - Aug 2016 · 1 yr 1 moAug 2015 to Aug 2016 · 1 yr 1 mo
+   Aug 2015 - Aug 2016 · 1 yr 1 mo
    Part-time job and third-time renewed summer internship: responsible for further development of an internal Java application used in the day-to-day work of full-time employees.
    Software Engineer
    Internship
-   Jun 2015 - Aug 2015 · 3 mosJun 2015 to Aug 2015 · 3 mos
+   Jun 2015 - Aug 2015 · 3 mos
    Summer internship: responsible for further development of an internal Java application used in the day-to-day work of full-time employees. The goal was to extend user interface functionality to allow the display of multiple files, side-by-side, instead of just one. Thus, the work involved a pre-study with user interviews, development, as well as testing and deployment.…see more
    Ericsson logo
    Software Engineer
    Ericsson · Internship
-   Jun 2014 - Aug 2014 · 3 mosJun 2014 to Aug 2014 · 3 mos
+   Jun 2014 - Aug 2014 · 3 mos
    Lindholmen, Göteborg
    Summer internship where I completed several pre-defined tasks together with another intern. Carried out in a Linux-based environment. Tasks involved parsing of text using Python-regex as well as minor adjustments to a Perl-based application.…see more
    Education
