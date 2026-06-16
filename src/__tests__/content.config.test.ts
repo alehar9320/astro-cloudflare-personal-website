@@ -29,6 +29,7 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
+    // @ts-expect-error - Astro schemas can be functions, but in this test context we treat them as Zod objects
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -49,6 +50,7 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
+    // @ts-expect-error - Astro schemas can be functions, but in this test context we treat them as Zod objects
     const result = schema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {

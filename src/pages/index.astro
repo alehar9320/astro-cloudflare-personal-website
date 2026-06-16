@@ -10,6 +10,8 @@ import Icon from '../components/Icon.astro';
 import Pill from '../components/Pill.astro';
 import PortfolioPreview from '../components/PortfolioPreview.astro';
 import Skills from '../components/Skills.astro';
+import { Image } from 'astro:assets';
+import portraitImg from '../assets/portrait.png';
 // Layout import — provides basic page elements: <head>, <nav>, <footer> etc.
 import BaseLayout from '../layouts/BaseLayout.astro';
 
@@ -110,14 +112,15 @@ const schema = {
           </div>
         </Hero>
 
-        <img
+        <Image
+          src={portraitImg}
           alt="Alexander Härenstam smiling in a red plaid shirt and tortoise shell glasses"
-          width="480"
-          height="620"
-          src="/assets/portrait.png"
+          width={480}
+          height={620}
           loading="eager"
           fetchpriority="high"
           decoding="async"
+          format="webp"
         />
       </header>
 

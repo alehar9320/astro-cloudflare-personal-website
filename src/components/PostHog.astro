@@ -1,13 +1,34 @@
 <script>
-  import posthog from 'posthog-js';
+  /**
+   * PostHog initialization deferred to idle time to improve TBT (Total Blocking Time).
+   * This moves the 185KB+ bundle out of the critical rendering path.
+   */
+  const initPostHog = async () => {
+    const { default: posthog } = await import('posthog-js');
+    const posthogKey = import.meta.env.PUBLIC_POSTHOG_KEY;
+    const posthogHost = import.meta.env.PUBLIC_POSTHOG_HOST ?? 'https://app.posthog.com';
 
-  const posthogKey = import.meta.env.PUBLIC_POSTHOG_KEY;
-  const posthogHost = import.meta.env.PUBLIC_POSTHOG_HOST ?? 'https://app.posthog.com';
+    if (posthogKey) {
+      posthog.init(posthogKey, {
+        api_host: posthogHost,
+        person_profiles: 'identified_only',
+      });
+    }
+  };
 
-  if (posthogKey) {
-    posthog.init(posthogKey, {
-      api_host: posthogHost,
-      person_profiles: 'identified_only',
-    });
+  if (typeof window !== 'undefined') {
+    const triggerIdle = () => {
+      if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(() => initPostHog());
+      } else {
+        setTimeout(initPostHog, 3000);
+      }
+    };
+
+    if (document.readyState === 'complete') {
+      triggerIdle();
+    } else {
+      window.addEventListener('load', triggerIdle);
+    }
   }
 </script>
