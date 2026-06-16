@@ -181,19 +181,34 @@ const schema = {
 
         <div class="gallery">
           <Grid variant="small">
-            <li class:list={["mention-card", { tactile: isMentionEffectsEnabled, shimmer: isMentionEffectsEnabled }]}>
+            <li
+              class:list={[
+                'mention-card',
+                { tactile: isMentionEffectsEnabled, shimmer: isMentionEffectsEnabled },
+              ]}
+            >
               <a
                 href="https://blog.ifs.com/author/alexander-harenstam/"
                 target="_blank"
                 rel="noopener noreferrer">Strategic Insights on IFS Blog</a
               >
             </li>
-            <li class:list={["mention-card", { tactile: isMentionEffectsEnabled, shimmer: isMentionEffectsEnabled }]}>
+            <li
+              class:list={[
+                'mention-card',
+                { tactile: isMentionEffectsEnabled, shimmer: isMentionEffectsEnabled },
+              ]}
+            >
               <a href="https://www.chalmers.se/en/" target="_blank" rel="noopener noreferrer"
                 >Alumnus of Chalmers University</a
               >
             </li>
-            <li class:list={["mention-card", { tactile: isMentionEffectsEnabled, shimmer: isMentionEffectsEnabled }]}>
+            <li
+              class:list={[
+                'mention-card',
+                { tactile: isMentionEffectsEnabled, shimmer: isMentionEffectsEnabled },
+              ]}
+            >
               <a
                 href="https://zeroheight.com/events/design-system-awards/"
                 target="_blank"
@@ -379,10 +394,33 @@ const schema = {
       height: 9.5rem;
     }
   }
-  .mention-card { overflow: hidden; }
-  .mention-card.tactile:active { transform: translateY(2px) scale(0.98); }
-  .mention-card.shimmer { position: relative; }
-  .mention-card.shimmer::after { content: ""; position: absolute; inset: 0; left: -100%; width: 100%; background: linear-gradient(90deg, transparent, hsla(var(--gray-999-basis), 0.15), transparent); pointer-events: none; }
-  .mention-card.shimmer:hover::after { animation: shimmer-sweep 1s ease-in-out; }
-  @keyframes shimmer-sweep { 0% { transform: translateX(0); } 100% { transform: translateX(200%); } }
+  .mention-card {
+    overflow: hidden;
+  }
+  .mention-card.tactile:active {
+    transform: translateY(2px) scale(0.98);
+  }
+  .mention-card.shimmer {
+    position: relative;
+  }
+  .mention-card.shimmer::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    left: -100%;
+    width: 100%;
+    background: linear-gradient(90deg, transparent, hsla(var(--gray-999-basis), 0.15), transparent);
+    pointer-events: none;
+  }
+  .mention-card.shimmer:hover::after {
+    animation: shimmer-sweep 1s ease-in-out;
+  }
+  @keyframes shimmer-sweep {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(200%);
+    }
+  }
 </style>

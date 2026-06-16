@@ -28,21 +28,26 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const col = collections.flags; const schema: any = typeof col.schema === "function" ? (col.schema as any)({ image: () => ({}) }) : col.schema;
+    const collection = collections.flags;
+    const schema = typeof collection.schema === "function"
+      ? (collection.schema as (ctx: unknown) => { safeParse: (data: unknown) => { success: boolean; data: unknown } })({ image: () => ({}) })
+      : collection.schema;
+
+    // @ts-expect-error - schema is unknown but we expect safeParse
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
-      // Use toMatchObject to ensure all fixture properties are correctly validated
-      // while allowing for Zod-injected default values.
       expect(result.data).toMatchObject(flagsFixture);
     }
   });
 
   it('validates work schema with sample data', () => {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const col = collections.work; const schema: any = typeof col.schema === "function" ? (col.schema as any)({ image: () => ({}) }) : col.schema;
+    const collection = collections.work;
+    const schema = typeof collection.schema === "function"
+      ? (collection.schema as (ctx: unknown) => { safeParse: (data: unknown) => { success: boolean; data: unknown } })({ image: () => ({}) })
+      : collection.schema;
+
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -51,10 +56,14 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
+
+    // @ts-expect-error - schema is unknown but we expect safeParse
     const result = schema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
+      // @ts-expect-error - result.data is unknown
       expect(result.data.title).toBe(sampleWork.title);
+      // @ts-expect-error - result.data is unknown
       expect(result.data.publishDate).toBeInstanceOf(Date);
     }
   });
