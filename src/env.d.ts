@@ -1,7 +1,9 @@
 /// <reference types="astro/client" />
 
 interface Env {
-  AI: unknown;
+  AI: {
+    run: (model: string, input: unknown) => Promise<ReadableStream>;
+  };
   CHAT_STORE: KVNamespace;
 }
 
