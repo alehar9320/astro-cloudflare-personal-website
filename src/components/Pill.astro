@@ -2,4 +2,38 @@
 import { getEntry } from 'astro:content';
 const f = (await getEntry('flags', 'config'))?.data;
 ---
-<div class:list={['pill', { shimmer: f?.enable_pill_shimmer_v1 }]}><slot /></div><style>.pill{display:flex;padding:0.5rem 1rem;gap:0.5rem;color:var(--accent-text-over);border:1px solid var(--accent-regular);background-color:var(--accent-regular);border-radius:999rem;font-size:var(--text-md);line-height:1.35;white-space:nowrap;background-image:linear-gradient(110deg,var(--accent-regular) 0%,var(--gradient-stop-1) 50%,var(--gradient-stop-3) 100%);background-size:250% 100%;background-position:0% 50%;box-shadow:var(--shadow-sm)}.shimmer:hover{animation:s 1.2s ease-in-out}@keyframes s{0%{background-position:0% 50%}100%{background-position:100% 50%}}</style>
+
+<div class:list={['pill', { shimmer: f?.enable_pill_shimmer_v1 }]}><slot /></div><style>
+  .pill {
+    display: flex;
+    padding: 0.5rem 1rem;
+    gap: 0.5rem;
+    color: var(--accent-text-over);
+    border: 1px solid var(--accent-regular);
+    background-color: var(--accent-regular);
+    border-radius: 999rem;
+    font-size: var(--text-md);
+    line-height: 1.35;
+    white-space: nowrap;
+    background-image: linear-gradient(
+      110deg,
+      var(--accent-regular) 0%,
+      var(--gradient-stop-1) 50%,
+      var(--gradient-stop-3) 100%
+    );
+    background-size: 250% 100%;
+    background-position: 0% 50%;
+    box-shadow: var(--shadow-sm);
+  }
+  .shimmer:hover {
+    animation: s 1.2s ease-in-out;
+  }
+  @keyframes s {
+    0% {
+      background-position: 0% 50%;
+    }
+    100% {
+      background-position: 100% 50%;
+    }
+  }
+</style>
