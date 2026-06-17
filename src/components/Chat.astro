@@ -363,10 +363,19 @@
 
   setStatus('idle');
 
-  const messages = JSON.parse(sessionStorage.getItem('chat-history') || '[]');
+  let messages: Message[] = [];
+  try {
+    messages = JSON.parse(sessionStorage.getItem('chat-history') || '[]');
+  } catch (error) {
+    console.error({ event: 'chat_history_parse_error', error: String(error) });
+  }
 
   function saveMessages() {
-    sessionStorage.setItem('chat-history', JSON.stringify(messages));
+    try {
+      sessionStorage.setItem('chat-history', JSON.stringify(messages));
+    } catch (error) {
+      console.error({ event: 'chat_history_write_error', error: String(error) });
+    }
   }
 
   interface Message {
