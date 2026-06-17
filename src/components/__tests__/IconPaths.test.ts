@@ -15,4 +15,14 @@ describe('iconPaths', () => {
       expect(path.length).toBeGreaterThan(0);
     });
   });
+
+  it('should start with a valid SVG element tag (<path, <circle, <rect, <g)', () => {
+    Object.values(iconPaths).forEach((path) => {
+      const trimmed = path.trim();
+      const startsWithValidTag = ['<path', '<circle', '<rect', '<g'].some((tag) =>
+        trimmed.startsWith(tag)
+      );
+      expect(startsWithValidTag).toBe(true);
+    });
+  });
 });

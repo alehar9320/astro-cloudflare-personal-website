@@ -5,6 +5,7 @@ import {
   fetchGitHubReleases,
   formatReleaseDate,
   normalizeRelease,
+  parseReleaseItem,
   splitReleaseBody,
 } from '../utils/github-releases';
 
@@ -152,6 +153,25 @@ describe('github releases utility', () => {
     });
   });
 
+  it('returns null when tag_name is missing during normalization', () => {
+    expect(normalizeRelease({ body: 'some body' })).toBeNull();
+  });
+
+  it('formats dates without time component and empty strings', () => {
+    expect(formatReleaseDate('2026-04-06')).toBe('2026-04-06');
+    expect(formatReleaseDate('')).toBe('Unknown date');
+  });
+
+  it('strict 7-character hash matching in parseReleaseItem', () => {
+    expect(parseReleaseItem('123456 message')).toEqual({ message: '123456 message' });
+    expect(parseReleaseItem('12345678 message')).toEqual({ message: '12345678 message' });
+    expect(parseReleaseItem('G123456 message')).toEqual({ message: 'G123456 message' });
+  });
+
+  it('matches only lowercase hashes by default in parseReleaseItem', () => {
+    expect(parseReleaseItem('ABCDEFG message')).toEqual({ message: 'ABCDEFG message' });
+  });
+
   it('uses GITHUB_TOKEN and logs status on error', async () => {
     vi.stubEnv('GITHUB_TOKEN', 'test-token');
     vi.stubGlobal('process', { env: { GITHUB_TOKEN: 'test-token' } });
@@ -288,6 +308,17 @@ describe('github releases utility', () => {
 
       expect(result).toEqual(mockReleases);
       expect(setItem).toHaveBeenCalledWith('github-releases-cache', expect.any(String));
+    });
+
+    it('does not update cache when fetched releases list is empty', async () => {
+      vi.stubGlobal('window', {});
+      const setItem = vi.fn();
+      vi.stubGlobal('sessionStorage', { getItem: vi.fn().mockReturnValue(null), setItem });
+
+      const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => [] });
+      await fetchGitHubReleases(fetchMock as typeof fetch);
+
+      expect(setItem).not.toHaveBeenCalled();
     });
 
     it('handles cache read errors gracefully', async () => {

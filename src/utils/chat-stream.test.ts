@@ -76,4 +76,19 @@ describe('chat stream parser', () => {
   it('falls back to plain text when the input is not SSE', () => {
     expect(extractAssistantTextFromSse('Hello world')).toBe('Hello world');
   });
+
+  it('handles CRLF line endings in SSE stream', () => {
+    const raw = `data: {"response":"Part 1"}\r\n\r\ndata: {"response":"Part 2"}\r\n\r\n`;
+    expect(extractAssistantTextFromSse(raw)).toBe('Part 1Part 2');
+  });
+
+  it('handles multi-line data fields for a single event', () => {
+    const raw = 'data: {\ndata: "response": "Combined"\ndata: }\n\n';
+    expect(extractAssistantTextFromSse(raw)).toBe('Combined');
+  });
+
+  it('handles data: prefix with varied spacing', () => {
+    const raw = 'data:{"response":"No space"}\n\ndata:    {"response":"Many spaces"}\n\n';
+    expect(extractAssistantTextFromSse(raw)).toBe('No spaceMany spaces');
+  });
 });

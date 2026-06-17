@@ -148,4 +148,23 @@ describe('release script', () => {
 
     expect(fsMock.default.appendFileSync).not.toHaveBeenCalled();
   });
+
+  it('handles empty commits since last tag by falling back to internal CI updates', async () => {
+    process.env.GITHUB_OUTPUT = 'mock_github_output';
+    vi.mocked(child_process.execSync).mockImplementation((cmd) => {
+      if (typeof cmd === 'string' && cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
+      if (typeof cmd === 'string' && cmd.includes('log')) return Buffer.from('');
+      return Buffer.from('');
+    });
+
+    // Mock appendFileSync to NOT throw
+    fsMock.default.appendFileSync.mockImplementation(() => {});
+
+    await import('../scripts/release.js?t=' + (Date.now() + 7));
+
+    expect(fsMock.default.appendFileSync).toHaveBeenCalledWith(
+      'mock_github_output',
+      expect.stringContaining('- No documented changes.')
+    );
+  });
 });

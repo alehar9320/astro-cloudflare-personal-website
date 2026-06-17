@@ -101,5 +101,13 @@ describe('chat logic utilities', () => {
       expect(pruned).toHaveLength(1);
       expect(pruned[0].content).toBe('short');
     });
+
+    it('does not prune when total length is exactly MAX_TOTAL_CONTENT_LENGTH', () => {
+      const messages: ChatMessage[] = [
+        { role: 'user', content: 'a'.repeat(MAX_TOTAL_CONTENT_LENGTH - 1) },
+        { role: 'user', content: 'b' },
+      ];
+      expect(pruneMessages(messages)).toHaveLength(2);
+    });
   });
 });
