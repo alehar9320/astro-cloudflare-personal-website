@@ -31,6 +31,8 @@ export default defineConfig({
         'src/data/**',
         'src/styles/**',
         'src/**/*.astro',
+        'src/**/__tests__/**',
+        'src/**/*.{test,spec}.ts',
       ],
     },
   },

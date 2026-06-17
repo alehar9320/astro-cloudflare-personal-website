@@ -24,9 +24,11 @@
   "dependencies": {
     "@astrojs/cloudflare": "^13.5.4",
     "@astrojs/node": "^10.1.1",
+    "@opentelemetry/core": "2.8.0",
     "@sentry/astro": "^10.50.0",
     "@sentry/cloudflare": "^10.50.0",
     "astro": "6.4.7",
+    "dompurify": "3.4.10",
     "posthog-js": "^1.372.6",
     "wrangler": "^4.95.0",
     "zod": "^4.4.3"
@@ -50,10 +52,6 @@
     "vitest": "^4.1.2"
   },
   "overrides": {
-    "esbuild": "$esbuild",
-    "astro": "$astro",
-    "dompurify": "^3.4.10",
-    "@opentelemetry/core": "^2.8.0",
     "brace-expansion": "^5.0.6",
     "postcss": "^8.5.10",
     "yaml": "^2.8.3",
