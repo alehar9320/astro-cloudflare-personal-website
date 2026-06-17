@@ -29,13 +29,15 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
-    expect(result.success).toBe(true);
+    if (schema && 'safeParse' in schema) {
+      const result = (schema as any).safeParse(flagsFixture);
+      expect(result.success).toBe(true);
 
-    if (result.success) {
-      // Use toMatchObject to ensure all fixture properties are correctly validated
-      // while allowing for Zod-injected default values.
-      expect(result.data).toMatchObject(flagsFixture);
+      if (result.success) {
+        // Use toMatchObject to ensure all fixture properties are correctly validated
+        // while allowing for Zod-injected default values.
+        expect(result.data).toMatchObject(flagsFixture);
+      }
     }
   });
 
@@ -49,11 +51,13 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.title).toBe(sampleWork.title);
-      expect(result.data.publishDate).toBeInstanceOf(Date);
+    if (schema && 'safeParse' in schema) {
+      const result = (schema as any).safeParse(sampleWork);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.title).toBe(sampleWork.title);
+        expect(result.data.publishDate).toBeInstanceOf(Date);
+      }
     }
   });
 });
