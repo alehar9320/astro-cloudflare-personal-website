@@ -29,7 +29,7 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
+    const result = (schema as any).safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
@@ -49,7 +49,7 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
+    const result = (schema as any).safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.title).toBe(sampleWork.title);

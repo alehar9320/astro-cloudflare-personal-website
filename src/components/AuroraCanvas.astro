@@ -42,8 +42,8 @@
       // Marine Blue to Cyan
       const colors = [
         'rgba(0, 255, 255, 0.15)', // Cyan
-        'rgba(0, 150, 255, 0.1)',  // Blue
-        'rgba(100, 255, 200, 0.05)' // Greenish cyan
+        'rgba(0, 150, 255, 0.1)', // Blue
+        'rgba(100, 255, 200, 0.05)', // Greenish cyan
       ];
 
       for (let i = 0; i < 3; i++) {
@@ -55,7 +55,7 @@
         const speed = 0.001 + i * 0.0005;
 
         for (let x = 0; x <= width; x += 5) {
-          const noise = layeredSine((time * speed) + (x * 0.002) + offset, 3, 0.5);
+          const noise = layeredSine(time * speed + x * 0.002 + offset, 3, 0.5);
           const y = height * 0.5 + noise * (height * 0.3);
 
           if (x === 0) {
@@ -82,10 +82,14 @@
     draw();
 
     // Clean up when navigating away
-    document.addEventListener('astro:before-swap', () => {
-      cancelAnimationFrame(animationFrameId);
-      window.removeEventListener('resize', resize);
-    }, { once: true });
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+      },
+      { once: true }
+    );
   }
 </script>
 
@@ -99,8 +103,8 @@
     pointer-events: none;
     z-index: -1;
     opacity: 0.6;
-    mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0));
-    -webkit-mask-image: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,0));
+    mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
+    -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1), rgba(0, 0, 0, 0));
   }
 
   canvas {

@@ -18,10 +18,10 @@ const showAurora = flagsEntry?.data.enable_aurora_canvas && variant === 'primary
 <div class:list={['hero-container', { 'with-aurora': showAurora }]}>
   {showAurora && <AuroraCanvas />}
   <div class:list={['hero stack gap-4', align, variant]}>
-  <div class="stack gap-2">
-    <h1 class="title">{title}</h1>
-    <slot name="tagline">{tagline && <p class="tagline">{tagline}</p>}</slot>
-  </div>
+    <div class="stack gap-2">
+      <h1 class="title">{title}</h1>
+      <slot name="tagline">{tagline && <p class="tagline">{tagline}</p>}</slot>
+    </div>
     <slot />
   </div>
 </div>
