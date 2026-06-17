@@ -29,12 +29,16 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    // @ts-ignore
-    const result = schema && 'safeParse' in schema ? (schema as any).safeParse(flagsFixture) : { success: false };
+    // @ts-expect-error - Astro 6 schema types are complex unions
+    const result =
+      schema && 'safeParse' in schema
+        ? (schema as { safeParse: (d: unknown) => { success: boolean; data: unknown } }).safeParse(
+            flagsFixture
+          )
+        : { success: false };
     expect(result.success).toBe(true);
 
-    // @ts-ignore
-    if (result.success) {
+    if (result.success && 'data' in result) {
       // Use toMatchObject to ensure all fixture properties are correctly validated
       // while allowing for Zod-injected default values.
       expect(result.data).toMatchObject(flagsFixture);
@@ -51,13 +55,18 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    // @ts-ignore
-    const result = schema && 'safeParse' in schema ? (schema as any).safeParse(sampleWork) : { success: false };
+    // @ts-expect-error - Astro 6 schema types are complex unions
+    const result =
+      schema && 'safeParse' in schema
+        ? (schema as { safeParse: (d: unknown) => { success: boolean; data: unknown } }).safeParse(
+            sampleWork
+          )
+        : { success: false };
     expect(result.success).toBe(true);
-    // @ts-ignore
-    if (result.success) {
-      expect(result.data.title).toBe(sampleWork.title);
-      expect(result.data.publishDate).toBeInstanceOf(Date);
+    if (result.success && 'data' in result) {
+      const data = result.data as Record<string, unknown>;
+      expect(data.title).toBe(sampleWork.title);
+      expect(data.publishDate).toBeInstanceOf(Date);
     }
   });
 });
