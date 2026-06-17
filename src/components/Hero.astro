@@ -1,4 +1,7 @@
 ---
+import { getEntry } from 'astro:content';
+import AuroraCanvas from './AuroraCanvas.astro';
+
 interface Props {
   title: string;
   tagline?: string;
@@ -7,17 +10,33 @@ interface Props {
 }
 
 const { align = 'center', tagline, title, variant = 'secondary' } = Astro.props;
+
+const flagsEntry = await getEntry('flags', 'config');
+const showAurora = flagsEntry?.data.enable_aurora_canvas && variant === 'primary';
 ---
 
-<div class:list={['hero stack gap-4', align, variant]}>
+<div class:list={['hero-container', { 'with-aurora': showAurora }]}>
+  {showAurora && <AuroraCanvas />}
+  <div class:list={['hero stack gap-4', align, variant]}>
   <div class="stack gap-2">
     <h1 class="title">{title}</h1>
     <slot name="tagline">{tagline && <p class="tagline">{tagline}</p>}</slot>
   </div>
-  <slot />
+    <slot />
+  </div>
 </div>
 
 <style>
+  .hero-container {
+    position: relative;
+    width: 100%;
+  }
+
+  .with-aurora {
+    padding-top: 2rem;
+    padding-bottom: 2rem;
+  }
+
   .hero {
     font-size: var(--text-lg);
     text-align: center;
