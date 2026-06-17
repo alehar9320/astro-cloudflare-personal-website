@@ -66,4 +66,15 @@ describe('content.config', () => {
       expect(result.data.publishDate).toBeInstanceOf(Date);
     }
   });
+
+  it('handles function schemas (Titan robustness check)', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const mockSchema = (ctx: any) => z.object({ test: ctx.image() });
+    const collection = { schema: mockSchema };
+    const zodSchema =
+      typeof collection.schema === 'function'
+        ? collection.schema({ image: () => z.string() } as unknown as never)
+        : collection.schema;
+    expect(zodSchema.safeParse({ test: 'img' }).success).toBe(true);
+  });
 });
