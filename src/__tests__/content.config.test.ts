@@ -29,6 +29,7 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     const result = (schema as any).safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -49,6 +50,7 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     const result = (schema as any).safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
