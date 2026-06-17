@@ -29,10 +29,15 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
-    expect(result.success).toBe(true);
+    // In Astro, schema can be a function or a Zod object.
+    const zodSchema =
+      typeof schema === 'function'
+        ? schema({ image: () => z.string() } as unknown as never)
+        : schema;
+    const result = zodSchema?.safeParse(flagsFixture);
+    expect(result?.success).toBe(true);
 
-    if (result.success) {
+    if (result?.success) {
       // Use toMatchObject to ensure all fixture properties are correctly validated
       // while allowing for Zod-injected default values.
       expect(result.data).toMatchObject(flagsFixture);
@@ -41,6 +46,11 @@ describe('content.config', () => {
 
   it('validates work schema with sample data', () => {
     const { schema } = collections.work;
+    // In Astro, schema can be a function or a Zod object.
+    const zodSchema =
+      typeof schema === 'function'
+        ? schema({ image: () => z.string() } as unknown as never)
+        : schema;
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -49,9 +59,9 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
-    expect(result.success).toBe(true);
-    if (result.success) {
+    const result = zodSchema?.safeParse(sampleWork);
+    expect(result?.success).toBe(true);
+    if (result?.success) {
       expect(result.data.title).toBe(sampleWork.title);
       expect(result.data.publishDate).toBeInstanceOf(Date);
     }

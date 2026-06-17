@@ -337,6 +337,7 @@
 
 <script>
   import { createChatStreamParser, extractAssistantTextFromSse } from '../utils/chat-stream';
+  import type { ChatMessage } from '../utils/chat-logic';
 
   const chatToggle = document.getElementById('chat-toggle');
   const chatWindow = document.getElementById('chat-window');
@@ -363,18 +364,13 @@
 
   setStatus('idle');
 
-  const messages = JSON.parse(sessionStorage.getItem('chat-history') || '[]');
+  const messages: ChatMessage[] = JSON.parse(sessionStorage.getItem('chat-history') || '[]');
 
   function saveMessages() {
     sessionStorage.setItem('chat-history', JSON.stringify(messages));
   }
 
-  interface Message {
-    role: string;
-    content: string;
-  }
-
-  function normalizeMessage(message: Message): Message {
+  function normalizeMessage(message: ChatMessage): ChatMessage {
     if (message.role !== 'assistant') {
       return message;
     }
@@ -401,9 +397,8 @@
   }
 
   // Load history
-  messages.map(normalizeMessage).forEach((msg: Message) => {
-    const displayRole = msg.role === 'ai' ? 'assistant' : msg.role;
-    appendMessage(displayRole, msg.content);
+  messages.map(normalizeMessage).forEach((msg: ChatMessage) => {
+    appendMessage(msg.role, msg.content);
   });
 
   const setChatExpanded = (expand: boolean) => {
