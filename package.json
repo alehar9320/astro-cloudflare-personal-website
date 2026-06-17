@@ -57,6 +57,11 @@
     },
     "@actions/http-client": {
       "undici": "7.24.7"
-    }
+    },
+    "@babel/core": "^7.29.7",
+    "@opentelemetry/core": "^2.8.0",
+    "dompurify": "^3.4.10",
+    "esbuild": "^0.28.1",
+    "protobufjs": "^8.6.4"
   }
 }
