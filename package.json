@@ -26,7 +26,7 @@
     "@astrojs/node": "^10.1.1",
     "@sentry/astro": "^10.50.0",
     "@sentry/cloudflare": "^10.50.0",
-    "astro": "^6.4.2",
+    "astro": "6.4.7",
     "posthog-js": "^1.372.6",
     "wrangler": "^4.95.0",
     "zod": "^4.4.3"
@@ -34,9 +34,11 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "@codecov/vite-plugin": "^2.0.1",
+    "@types/node": "^25.9.3",
     "@typescript-eslint/parser": "^8.60.0",
     "@vitest/coverage-v8": "^4.1.7",
     "@vitest/ui": "^4.1.2",
+    "esbuild": "^0.28.1",
     "eslint": "^10.4.1",
     "eslint-plugin-astro": "^1.7.0",
     "husky": "^9.1.7",
@@ -48,6 +50,10 @@
     "vitest": "^4.1.2"
   },
   "overrides": {
+    "esbuild": "$esbuild",
+    "astro": "$astro",
+    "dompurify": "^3.4.10",
+    "@opentelemetry/core": "^2.8.0",
     "brace-expansion": "^5.0.6",
     "postcss": "^8.5.10",
     "yaml": "^2.8.3",
