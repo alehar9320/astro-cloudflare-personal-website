@@ -6,3 +6,6 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-17 - Pill Shimmer | Signal: Competitive | Lean Implementation: Pill shimmer on hover via flag.
+- Insight: Shimmer effect elevates perceived quality. | Target: Surprise | Abort: None | Reaction: N/A
