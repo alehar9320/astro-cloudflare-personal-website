@@ -23,6 +23,15 @@
 | `wrangler.jsonc`    | None                  | Verified           |
 | `render.yaml`       | None                  | Verified           |
 
+## 2026-03-20 - Deep Hygiene & Template Synchronization
+
+| Verified Template   | Corrected Keys                                        | Validation State   |
+| :------------------ | :---------------------------------------------------- | :----------------- |
+| `.dev.vars.example` | `SENTRY_DSN`, `SENTRY_ENVIRONMENT`, `SENTRY_RELEASE`, `CHAT_STORE` | Verified           |
+| `wrangler.jsonc`    | None                                                  | Verified           |
+| `render.yaml`       | None                                                  | Verified           |
+| `mcp_config.json`   | None                                                  | Verified (Generic) |
+
 **Notes:**
 
 - Initialized GripTight hygiene checks.

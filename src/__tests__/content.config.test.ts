@@ -29,10 +29,10 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
-    expect(result.success).toBe(true);
+    const result = schema && typeof schema !== 'function' ? schema.safeParse(flagsFixture) : null;
+    expect(result?.success).toBe(true);
 
-    if (result.success) {
+    if (result?.success) {
       // Use toMatchObject to ensure all fixture properties are correctly validated
       // while allowing for Zod-injected default values.
       expect(result.data).toMatchObject(flagsFixture);
@@ -49,9 +49,9 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
-    expect(result.success).toBe(true);
-    if (result.success) {
+    const result = schema && typeof schema !== 'function' ? schema.safeParse(sampleWork) : null;
+    expect(result?.success).toBe(true);
+    if (result?.success) {
       expect(result.data.title).toBe(sampleWork.title);
       expect(result.data.publishDate).toBeInstanceOf(Date);
     }

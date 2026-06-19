@@ -14,6 +14,10 @@ PUBLIC_SENTRY_ENVIRONMENT=development
 PUBLIC_SENTRY_RELEASE=local-dev
 
 # Server-side Sentry configuration (NOT exposed to browser)
+# Note: DSN is also checked here as a fallback if PUBLIC_SENTRY_DSN is not used
+SENTRY_DSN=https://your-sentry-public-key@o0.ingest.sentry.io/your-project-id
+SENTRY_ENVIRONMENT=development
+SENTRY_RELEASE=local-dev
 SENTRY_AUTH_TOKEN=your-sentry-auth-token-for-source-map-uploads
 
 # Cloudflare Bindings
@@ -26,8 +30,8 @@ SENTRY_AUTH_TOKEN=your-sentry-auth-token-for-source-map-uploads
 # R2_BUCKET_NAME=my-local-bucket
 # R2_BUCKET_ENDPOINT=https://bucket.r2.example.com
 
-# Example: KV Namespace (if configured)
-# SESSION_KV_NAMESPACE_ID=your-kv-namespace-id
+# Example: KV Namespace (if configured in wrangler.jsonc)
+# CHAT_STORE=your-kv-namespace-id
 
 # PostHog Analytics
 # PUBLIC_POSTHOG_KEY is required for client-side tracking
