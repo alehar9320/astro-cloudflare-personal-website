@@ -5,3 +5,7 @@ Action: Added fetchpriority="high" and decoding="async" to the hero images in sr
 2026-05-30 - Icon Payload Pruning
 Learning: Inlined SVG icons in Astro components contribute directly to the HTML payload size. Commenting out unused icons in a shared IconPaths configuration reduces the bytes served per page and the memory footprint of the Cloudflare Worker.
 Action: Commented out unused icons in src/components/IconPaths.ts and updated related tests. Use grep -r to periodically audit icon usage across the codebase.
+
+2026-06-20 - Deferring Third-Party Analytics
+Learning: Third-party analytics scripts like PostHog can contribute significantly to Total Blocking Time (TBT) if loaded and initialized during the initial page load. Deferring their execution using dynamic imports and requestIdleCallback moves this work to the browser's idle period, improving hydration performance.
+Action: Modified src/components/PostHog.astro to use dynamic import('posthog-js') inside a requestIdleCallback wrapper with a fallback timeout.

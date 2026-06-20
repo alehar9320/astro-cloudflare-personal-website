@@ -1,13 +1,29 @@
 <script>
-  import posthog from 'posthog-js';
-
+  /**
+   * Optimization (⚡ Bolt): Defer PostHog initialization using dynamic import and
+   * requestIdleCallback. This reduces Total Blocking Time (TBT) by moving heavy
+   * third-party analytics script loading and execution to the browser's idle period.
+   * Benchmark: Reduces initial JS bundle size and avoids main-thread contention during hydration.
+   */
   const posthogKey = import.meta.env.PUBLIC_POSTHOG_KEY;
   const posthogHost = import.meta.env.PUBLIC_POSTHOG_HOST ?? 'https://app.posthog.com';
 
   if (posthogKey) {
-    posthog.init(posthogKey, {
-      api_host: posthogHost,
-      person_profiles: 'identified_only',
-    });
+    const initPostHog = async () => {
+      const { default: posthog } = await import('posthog-js');
+      posthog.init(posthogKey, {
+        api_host: posthogHost,
+        person_profiles: 'identified_only',
+        // Ensure we don't capture before consent if needed, though not specified here
+        capture_pageview: true,
+      });
+    };
+
+    if ('requestIdleCallback' in window) {
+      window.requestIdleCallback(() => initPostHog());
+    } else {
+      // Fallback for browsers without requestIdleCallback
+      setTimeout(initPostHog, 3000);
+    }
   }
 </script>
