@@ -29,6 +29,9 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
+    if (!schema || typeof schema === 'function') {
+      throw new Error('Schema is not a Zod object');
+    }
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -41,6 +44,9 @@ describe('content.config', () => {
 
   it('validates work schema with sample data', () => {
     const { schema } = collections.work;
+    if (!schema || typeof schema === 'function') {
+      throw new Error('Schema is not a Zod object');
+    }
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
