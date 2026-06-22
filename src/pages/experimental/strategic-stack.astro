@@ -8,22 +8,24 @@ const flags = await getEntry('flags', 'config');
 if (!flags?.data.enable_strategic_stack) return Astro.redirect('/404');
 
 const tools = [
-	{ name: 'Miro', desc: 'Visual collaboration for strategic mapping.', icon: 'strategy' },
-	{ name: 'Linear', desc: 'High-performance execution and tracking.', icon: 'rocket' },
-	{ name: 'Claude', desc: 'Strategic reasoning and synthesis.', icon: 'terminal' },
-	{ name: 'Cursor', desc: 'AI-native engineering velocity.', icon: 'pencil' },
+  { name: 'Miro', desc: 'Visual collaboration for strategic mapping.', icon: 'strategy' },
+  { name: 'Linear', desc: 'High-performance execution and tracking.', icon: 'rocket' },
+  { name: 'Claude', desc: 'Strategic reasoning and synthesis.', icon: 'terminal' },
+  { name: 'Cursor', desc: 'AI-native engineering velocity.', icon: 'pencil' },
 ] as const;
 ---
 
 <BaseLayout title="Strategic Stack" description="Product leadership tools.">
-	<Hero title="Strategic Stack" tagline="High-leverage tools for product leadership." />
-	<div class="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto px-6 pb-24">
-		{tools.map((t) => (
-			<div class="p-6 rounded-2xl bg-white/50 dark:bg-white/5 border border-black/5 dark:border-white/10">
-				<Icon icon={t.icon} color="var(--accent-regular)" size="1.5rem" />
-				<h3 class="text-xl font-semibold mt-4 mb-2">{t.name}</h3>
-				<p class="text-gray-600 dark:text-gray-400 text-sm">{t.desc}</p>
-			</div>
-		))}
-	</div>
+  <Hero title="Strategic Stack" tagline="High-leverage tools for product leadership." />
+  <div class="grid md:grid-cols-2 gap-4 max-w-4xl mx-auto px-6 pb-24">
+    {
+      tools.map((t) => (
+        <div class="p-6 rounded-2xl bg-white/50 dark:bg-white/5 border border-black/5 dark:border-white/10">
+          <Icon icon={t.icon} color="var(--accent-regular)" size="1.5rem" />
+          <h3 class="text-xl font-semibold mt-4 mb-2">{t.name}</h3>
+          <p class="text-gray-600 dark:text-gray-400 text-sm">{t.desc}</p>
+        </div>
+      ))
+    }
+  </div>
 </BaseLayout>
