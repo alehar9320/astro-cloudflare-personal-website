@@ -9,9 +9,3 @@
 - [Insight 1: Shimmer micro-interactions provide high-quality visual feedback without increasing JS bundle size.]
 - [Insight 2: Using `translateX` for the shimmer sweep is more performant than animating `background-position` as it avoids layout repaints.]
 - [Delta: 18 lines. Guardrails: All passed autonomously.]
-
-## 2026-06-02 - Pill Tactile Feedback | Signal: Technical | Lean Implementation: Flagged CSS Transform
-
-- [Insight 1: Reusing established tactile patterns (scale-down on active) across all interactive elements (Pills) increases perceived responsiveness and UI consistency.]
-- [Insight 2: Astro 6 content schemas using `image()` require explicit resolution in Vitest to access `safeParse`, necessitating a reusable schema-thunk pattern in tests.]
-- [Delta: 15 lines (Pill.astro) + test infra fix. Guardrails: All passed autonomously.]
