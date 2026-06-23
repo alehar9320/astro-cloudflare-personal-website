@@ -489,4 +489,23 @@ describe('chat API', () => {
 
     process.env = originalEnv;
   });
+
+  it('returns 400 when the last message is not from the user', async () => {
+    const ai = createAi();
+    const response = await postChat(
+      {
+        messages: [
+          { role: 'user', content: 'Hello' },
+          { role: 'assistant', content: 'Hi, how can I help?' },
+        ],
+      },
+      ai
+    );
+
+    expect(response.status).toBe(400);
+    await expect(readJson(response)).resolves.toEqual({
+      error: 'The conversation must end with a user message.',
+    });
+    expect(ai.run).not.toHaveBeenCalled();
+  });
 });
