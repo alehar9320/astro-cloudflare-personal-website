@@ -26,9 +26,8 @@ function jsonError(error: string, status: number) {
 }
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  // Access bindings through locals.runtime.env or process.env (fallback for non-Cloudflare)
-  const bindings = ((locals as unknown as { runtime?: { env: ChatEnv } }).runtime?.env ||
-    process.env) as unknown as ChatEnv;
+  // Access bindings through locals.runtime.env
+  const bindings = locals.runtime?.env || (process.env as unknown as ChatEnv);
 
   const ai = bindings.AI;
   const store = bindings.CHAT_STORE;
@@ -85,6 +84,10 @@ export const POST: APIRoute = async ({ request, locals }) => {
   }
 
   const prunedMessages = pruneMessages(result.data.messages as ChatMessage[]);
+
+  if (prunedMessages.length === 0 || prunedMessages[prunedMessages.length - 1].role !== 'user') {
+    return jsonError('The conversation must end with a user message.', 400);
+  }
 
   const systemPrompt = `You are Alexander Härenstam, a strategic Product Leader at IFS.
 You are based in Nacka/Stockholm.

@@ -336,7 +336,9 @@
 </style>
 
 <script>
+  import { z } from 'zod';
   import { createChatStreamParser, extractAssistantTextFromSse } from '../utils/chat-stream';
+  import { ChatMessageSchema, type ChatMessage } from '../utils/chat-logic';
 
   const chatToggle = document.getElementById('chat-toggle');
   const chatWindow = document.getElementById('chat-window');
@@ -363,18 +365,29 @@
 
   setStatus('idle');
 
-  const messages = JSON.parse(sessionStorage.getItem('chat-history') || '[]');
+  const rawHistory = sessionStorage.getItem('chat-history');
+  let messages: ChatMessage[] = [];
+
+  try {
+    const parsed = JSON.parse(rawHistory || '[]');
+    const result = z.array(ChatMessageSchema).safeParse(parsed);
+    if (result.success) {
+      messages = result.data;
+    } else {
+      console.warn({ event: 'chat_history_validation_failed', issues: result.error.issues });
+      // Clear corrupted history
+      sessionStorage.removeItem('chat-history');
+    }
+  } catch (error) {
+    console.error({ event: 'chat_history_parse_error', error: String(error) });
+    sessionStorage.removeItem('chat-history');
+  }
 
   function saveMessages() {
     sessionStorage.setItem('chat-history', JSON.stringify(messages));
   }
 
-  interface Message {
-    role: string;
-    content: string;
-  }
-
-  function normalizeMessage(message: Message): Message {
+  function normalizeMessage(message: ChatMessage): ChatMessage {
     if (message.role !== 'assistant') {
       return message;
     }
@@ -401,9 +414,8 @@
   }
 
   // Load history
-  messages.map(normalizeMessage).forEach((msg: Message) => {
-    const displayRole = msg.role === 'ai' ? 'assistant' : msg.role;
-    appendMessage(displayRole, msg.content);
+  messages.map(normalizeMessage).forEach((msg: ChatMessage) => {
+    appendMessage(msg.role, msg.content);
   });
 
   const setChatExpanded = (expand: boolean) => {

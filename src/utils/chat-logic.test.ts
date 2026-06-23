@@ -98,8 +98,30 @@ describe('chat logic utilities', () => {
         { role: 'assistant', content: 'short' },
       ];
       const pruned = pruneMessages(messages);
-      expect(pruned).toHaveLength(1);
-      expect(pruned[0].content).toBe('short');
+      // It should be 0 because after removing the long user message, 'short' is assistant
+      expect(pruned).toHaveLength(0);
+    });
+
+    it('ensures history starts with a user message', () => {
+      const messages: ChatMessage[] = [
+        { role: 'assistant', content: 'Hello' },
+        { role: 'user', content: 'Hi' },
+        { role: 'assistant', content: 'How are you?' },
+        { role: 'user', content: 'I am good' },
+      ];
+      const pruned = pruneMessages(messages);
+      expect(pruned[0].role).toBe('user');
+      expect(pruned[0].content).toBe('Hi');
+      expect(pruned).toHaveLength(3);
+    });
+
+    it('returns empty array if all messages are assistant messages', () => {
+      const messages: ChatMessage[] = [
+        { role: 'assistant', content: 'Hello' },
+        { role: 'assistant', content: 'Hi' },
+      ];
+      const pruned = pruneMessages(messages);
+      expect(pruned).toHaveLength(0);
     });
   });
 });

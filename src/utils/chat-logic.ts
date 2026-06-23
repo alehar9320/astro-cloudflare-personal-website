@@ -41,5 +41,10 @@ export function pruneMessages(messages: ChatMessage[]): ChatMessage[] {
     totalLength -= pruned.shift()!.content.length;
   }
 
+  // Ensure history starts with a user message to maintain expected LLM cadence
+  while (pruned.length > 0 && pruned[0].role === 'assistant') {
+    pruned.shift();
+  }
+
   return pruned;
 }
