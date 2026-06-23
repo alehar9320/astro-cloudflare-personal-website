@@ -28,7 +28,9 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
+    const rawSchema = collections.flags.schema;
+    const schema = typeof rawSchema === 'function' ? rawSchema({ image: () => z.any() } as any) : rawSchema;
+    if (!schema) throw new Error('Schema not found');
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -40,7 +42,9 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const rawSchema = collections.work.schema;
+    const schema = typeof rawSchema === 'function' ? rawSchema({ image: () => z.any() } as any) : rawSchema;
+    if (!schema) throw new Error('Schema not found');
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
