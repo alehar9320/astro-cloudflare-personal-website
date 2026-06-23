@@ -67,7 +67,7 @@ Stand out to employers
 Enhance your profile, craft standout messages, and assess job fit with Premium.
 
 Try Premium for SEK 0
-1-month free trial. Cancel whenever. We’l remind you 7 days before your trial ends.
+1-month free trial. Cancel whenever. We'll remind you 7 days before your trial ends.
 
 Dismiss premium promotion
 
@@ -140,7 +140,7 @@ Create a post
 Posts
 
 Comments
-Loaded 9 Posts posts
+Loaded 9 posts
 View Alexander Härenstam’s graphic link
 Alexander Härenstam
 • YouVerified • You
@@ -157,7 +157,7 @@ You might be studying tech, business, or design — what matters most is that yo
 ✅ AI-first mindset with familiarity of using AI tools (like ChatGPT, Copilot, Perplexity, etc.) as part of your workflow
 ✅ Can operate confidently in a fast-paced, global virtual environment — with English as your working language
 
-You’l work on real initiatives that impact global engineering teams — from research and automation to internal tooling and productivity insights.
+You'll work on real initiatives that impact global engineering teams — from research and automation to internal tooling and productivity insights.
 
 🔗 Learn more and apply:
 https://lnkd.in/dBa3dwSK
