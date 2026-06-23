@@ -30,8 +30,10 @@ describe('content.config', () => {
   it('validates flags fixture against schema', async () => {
     let schema = collections.flags.schema;
     if (typeof schema === 'function') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       schema = (schema as any)({ image: () => z.any() });
     }
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = (schema as any).safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -45,6 +47,7 @@ describe('content.config', () => {
   it('validates work schema with sample data', () => {
     let schema = collections.work.schema;
     if (typeof schema === 'function') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       schema = (schema as any)({ image: () => z.any() });
     }
     const sampleWork = {
@@ -55,6 +58,7 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const result = (schema as any).safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
