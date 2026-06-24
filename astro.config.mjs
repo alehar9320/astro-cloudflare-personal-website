@@ -53,7 +53,8 @@ export default defineConfig({
     }),
   ],
   vite: {
-    // @ts-expect-error Codecov's Vite plugin is typed against a different Vite instance than Astro's bundled one.
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore Codecov's Vite plugin is typed against a different Vite instance than Astro's bundled one.
     plugins: [codecovPlugin],
   },
 });
