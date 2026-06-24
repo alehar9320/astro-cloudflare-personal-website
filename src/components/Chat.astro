@@ -363,30 +363,15 @@
 
   setStatus('idle');
 
+  const messages = JSON.parse(sessionStorage.getItem('chat-history') || '[]');
+
+  function saveMessages() {
+    sessionStorage.setItem('chat-history', JSON.stringify(messages));
+  }
+
   interface Message {
     role: string;
     content: string;
-  }
-
-  let messages: Message[] = [];
-  try {
-    messages = JSON.parse(sessionStorage.getItem('chat-history') || '[]');
-  } catch (error) {
-    console.error({
-      event: 'chat_history_read_error',
-      error: error instanceof Error ? error.message : String(error),
-    });
-  }
-
-  function saveMessages() {
-    try {
-      sessionStorage.setItem('chat-history', JSON.stringify(messages));
-    } catch (error) {
-      console.error({
-        event: 'chat_history_write_error',
-        error: error instanceof Error ? error.message : String(error),
-      });
-    }
   }
 
   function normalizeMessage(message: Message): Message {
