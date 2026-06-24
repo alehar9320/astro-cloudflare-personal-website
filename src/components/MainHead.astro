@@ -45,8 +45,15 @@ const {
 <script is:inline>
   // This code is inlined in the head to make dark mode instant & blocking.
   const getThemePreference = () => {
-    if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
-      return localStorage.getItem('theme');
+    try {
+      if (typeof localStorage !== 'undefined' && localStorage.getItem('theme')) {
+        return localStorage.getItem('theme');
+      }
+    } catch (error) {
+      console.error({
+        event: 'theme_persistence_read_error',
+        error: error instanceof Error ? error.message : String(error),
+      });
     }
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
   };
@@ -56,8 +63,15 @@ const {
   if (typeof localStorage !== 'undefined') {
     // Watch the document element and persist user preference when it changes.
     const observer = new MutationObserver(() => {
-      const isDark = document.documentElement.classList.contains('theme-dark');
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      try {
+        const isDark = document.documentElement.classList.contains('theme-dark');
+        localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      } catch (error) {
+        console.error({
+          event: 'theme_persistence_write_error',
+          error: error instanceof Error ? error.message : String(error),
+        });
+      }
     });
     observer.observe(document.documentElement, {
       attributes: true,

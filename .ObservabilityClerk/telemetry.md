@@ -7,3 +7,6 @@
 | 2025-05-14 | `src/pages/api/chat.ts`        | `chat_api_json_parse_error`, `chat_api_run_error`                                                                                     |
 | 2025-05-14 | `src/utils/chat-stream.ts`     | `chat_stream_parse_error`                                                                                                             |
 | 2025-05-14 | `src/__tests__/*.test.ts`      | Expanded unit tests to cover 100% of telemetry branches (including non-Error rejection cases).                                        |
+| 2026-06-24 | `src/utils/github-releases.ts` | `github_releases_cache_read_error`, `github_releases_cache_write_error`                                                               |
+| 2026-06-24 | `src/components/Chat.astro`    | `chat_history_read_error`, `chat_history_write_error`                                                                                 |
+| 2026-06-24 | `src/components/MainHead.astro` | `theme_persistence_read_error`, `theme_persistence_write_error`                                                                       |
