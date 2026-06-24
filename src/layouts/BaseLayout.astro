@@ -2,8 +2,10 @@
 // Learn about using Astro layouts:
 // https://docs.astro.build/en/basics/layouts/
 
+import { getEntry } from 'astro:content';
 import Chat from '../components/Chat.astro';
 import Footer from '../components/Footer.astro';
+import InteractiveAurora from '../components/InteractiveAurora.astro';
 // Component Imports
 import MainHead from '../components/MainHead.astro';
 import Nav from '../components/Nav.astro';
@@ -14,6 +16,9 @@ interface Props {
 }
 
 const { title, description } = Astro.props;
+
+const flagsEntry = await getEntry('flags', 'config');
+const isAuroraEnabled = flagsEntry?.data.enable_interactive_aurora_v1 ?? false;
 ---
 
 <html lang="en">
@@ -25,6 +30,7 @@ const { title, description } = Astro.props;
     <a href="#main-content" class="sr-only focus-visible">Skip to content</a>
 
     <div class="stack backgrounds">
+      {isAuroraEnabled && <InteractiveAurora />}
       <Nav />
       <slot />
       <Footer />

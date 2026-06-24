@@ -1,0 +1,83 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+---
+
+<BaseLayout
+  title="Aurora Lab | Experimental"
+  description="Testing the interactive Northern Lights effect."
+>
+  <div class="stack gap-20">
+    <main class="wrapper stack gap-8">
+      <Hero
+        title="Interactive Aurora Lab"
+        tagline="A playground for testing fluid, math-driven Northern Lights animations."
+        align="start"
+      />
+
+      <div class="test-content">
+        <section class="card">
+          <h2>Effect Specs</h2>
+          <ul>
+            <li><strong>Engine:</strong> HTML5 Canvas 2D</li>
+            <li><strong>Method:</strong> Dynamic Sine Waves + Gaussian Blur</li>
+            <li><strong>Interactivity:</strong> Mouse-positional distortion</li>
+            <li><strong>Performance:</strong> 60fps target with native requestAnimationFrame</li>
+          </ul>
+        </section>
+
+        <section class="card">
+          <h2>Visual Controls</h2>
+          <p>
+            Move your mouse across the screen to see the aurora bands react to your presence. The
+            effect is designed to be subtle and glassmorphic, strictly adhering to the Northern
+            Lights aesthetic.
+          </p>
+        </section>
+      </div>
+    </main>
+  </div>
+</BaseLayout>
+
+<style>
+  .test-content {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin-top: 4rem;
+  }
+
+  .card {
+    padding: 2rem;
+    background: var(--gray-999_40);
+    border: 1px solid var(--gray-800);
+    border-radius: 1.5rem;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .card h2 {
+    font-size: var(--text-2xl);
+    margin-bottom: 1.5rem;
+  }
+
+  .card ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  .card li {
+    margin-bottom: 0.5rem;
+    color: var(--gray-300);
+  }
+
+  .card strong {
+    color: var(--accent-regular);
+  }
+
+  @media (max-width: 50em) {
+    .test-content {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,0 +1,173 @@
+---
+/**
+ * InteractiveAurora.astro
+ * Immersive "Northern Lights" background effect using HTML5 Canvas.
+ * Optimized for performance and strictly following Alexander Härenstam's aesthetic.
+ */
+---
+
+<div class="aurora-container" aria-hidden="true">
+  <canvas id="aurora-canvas"></canvas>
+</div>
+
+<script>
+  class AuroraEffect {
+    canvas: HTMLCanvasElement;
+    ctx: CanvasRenderingContext2D;
+    width: number = 0;
+    height: number = 0;
+    animationFrameId: number = 0;
+    mouse = { x: -1000, y: -1000 };
+    lastMouse = { x: -1000, y: -1000 };
+
+    // Aurora parameters
+    bands: {
+      y: number;
+      amplitude: number;
+      frequency: number;
+      offset: number;
+      speed: number;
+      color: string;
+      thickness: number;
+    }[] = [];
+    numBands = 4;
+
+    constructor(canvas: HTMLCanvasElement) {
+      this.canvas = canvas;
+      this.ctx = canvas.getContext('2d', { alpha: true })!;
+
+      this.init();
+      this.handleResize();
+      this.createBands();
+      this.draw();
+
+      window.addEventListener('resize', this.handleResize);
+      window.addEventListener('mousemove', this.handleMouseMove);
+
+      document.addEventListener('astro:before-swap', () => this.cleanup(), { once: true });
+    }
+
+    init() {
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        this.cleanup();
+        this.canvas.style.display = 'none';
+        return;
+      }
+    }
+
+    handleResize = () => {
+      this.width = window.innerWidth;
+      this.height = window.innerHeight;
+      this.canvas.width = this.width;
+      this.canvas.height = this.height;
+      this.createBands(); // Re-create bands to fit new size
+    };
+
+    handleMouseMove = (e: MouseEvent) => {
+      this.mouse.x = e.clientX;
+      this.mouse.y = e.clientY;
+    };
+
+    createBands() {
+      this.bands = [];
+      const colors = [
+        'rgba(0, 210, 255, 0.15)',
+        'rgba(0, 102, 204, 0.15)',
+        'rgba(0, 255, 255, 0.1)',
+      ];
+
+      for (let i = 0; i < this.numBands; i++) {
+        this.bands.push({
+          y: this.height * (0.2 + Math.random() * 0.6),
+          amplitude: 50 + Math.random() * 100,
+          frequency: 0.001 + Math.random() * 0.002,
+          offset: Math.random() * 1000,
+          speed: 0.005 + Math.random() * 0.01,
+          color: colors[i % colors.length],
+          thickness: 150 + Math.random() * 200,
+        });
+      }
+    }
+
+    draw() {
+      this.ctx.clearRect(0, 0, this.width, this.height);
+
+      // Smooth mouse movement for "refraction" feel
+      this.lastMouse.x += (this.mouse.x - this.lastMouse.x) * 0.05;
+      this.lastMouse.y += (this.mouse.y - this.lastMouse.y) * 0.05;
+
+      this.bands.forEach((band) => {
+        this.ctx.beginPath();
+        this.ctx.strokeStyle = band.color;
+        this.ctx.lineWidth = band.thickness;
+        this.ctx.lineCap = 'round';
+        this.ctx.filter = 'blur(60px)'; // Create the soft aurora glow
+
+        band.offset += band.speed;
+
+        for (let x = 0; x <= this.width; x += 10) {
+          // Base sine wave movement
+          const dx = x - this.lastMouse.x;
+          const dy = band.y - this.lastMouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          // Distortion based on mouse proximity
+          const distortion = Math.max(0, (200 - dist) / 200) * 50;
+
+          const y =
+            band.y + Math.sin(x * band.frequency + band.offset) * band.amplitude + distortion;
+
+          if (x === 0) {
+            this.ctx.moveTo(x, y);
+          } else {
+            this.ctx.lineTo(x, y);
+          }
+        }
+        this.ctx.stroke();
+      });
+
+      this.animationFrameId = requestAnimationFrame(() => this.draw());
+    }
+
+    cleanup() {
+      cancelAnimationFrame(this.animationFrameId);
+      window.removeEventListener('resize', this.handleResize);
+      window.removeEventListener('mousemove', this.handleMouseMove);
+    }
+  }
+
+  const canvas = document.getElementById('aurora-canvas') as HTMLCanvasElement | null;
+  if (canvas) {
+    new AuroraEffect(canvas);
+  }
+</script>
+
+<style>
+  .aurora-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -2; /* Stay behind everything, even BaseLayout backgrounds if they have -1 */
+    pointer-events: none;
+    overflow: hidden;
+    background: transparent;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0.6;
+    mix-blend-mode: screen;
+  }
+
+  @media (max-width: 50em) {
+    /* Scale down or disable for mobile if performance is an issue,
+       but for now we just lower opacity to keep it subtle */
+    canvas {
+      opacity: 0.3;
+    }
+  }
+</style>
