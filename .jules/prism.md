@@ -4,18 +4,19 @@
 
 ### Performance & Metrics
 
-- **Frame Rate:** Maintained a consistent 60fps on desktop and mobile (simulated) environments.
-- **Memory Management:** Implemented strict cleanup of `requestAnimationFrame` and event listeners using the `astro:before-swap` event. Verified via manual inspection that the canvas context is released when navigating away.
-- **Reduced Motion:** Integrated `window.matchMedia('(prefers-reduced-motion: reduce)')` check to proactively disable the animation loop for accessibility compliance.
+- **Frame Rate:** Maintained a consistent 60fps on desktop.
+- **Memory Management:** Implemented strict cleanup of `requestAnimationFrame` and event listeners using the `astro:before-swap` event.
+- **Reduced Motion:** Integrated `window.matchMedia('(prefers-reduced-motion: reduce)')` check to proactively disable the animation loop and event listeners for accessibility compliance.
+- **Mobile Optimization:** Automatically disables the animation loop and hides the component on viewports < 800px to preserve battery and performance on mobile devices.
+- **Resolution Scaling:** Implemented a `resolutionScale` of 0.5, drawing the canvas at half the display size and scaling up via CSS to drastically reduce fill-rate costs.
 
 ### Math Logic Setup
 
-- **Aurora Movement:** Used three overlapping sine waves with different frequencies and phase offsets to simulate fluid, non-repeating horizontal motion.
+- **Aurora Movement:** Used four overlapping sine waves with randomized but stable vertical positions.
 - **Refraction Effect:** Implemented a mouse-follow "distortion" where the vertical phase of the sine waves is shifted based on proximity to the cursor.
-- **Visuals:** Leveraged CSS `filter: blur(80px)` on the canvas element itself to achieve the soft, ethereal Northern Lights glow while keeping the actual canvas drawing resolution low (scaled to 1/2 of display resolution) for peak performance.
+- **Visuals:** Offloaded blurring to CSS `filter: blur(80px)` with hardware acceleration, replacing expensive in-canvas blur filters.
 
 ### Mobile Adaptation
 
-- **Scaling:** Canvas resolution is dynamically calculated based on `devicePixelRatio` but capped to ensure fill-rate doesn't bottleneck on high-DPI mobile screens.
-- **Touch Interaction:** Interaction is currently limited to mouse movement (`mousemove`); for future iterations, touch events could be mapped to provide similar spatial feedback on mobile.
-- **Culling:** The effect is placed behind a glassmorphic background, ensuring that even if the canvas is slightly unoptimized, it doesn't interfere with text readability.
+- **Disabling:** Following the creative principle of "automatically scale down or disable their loops on mobile", the JS loop is completely bypassed on mobile viewports.
+- **Consistency:** The background remains a clean, minimalist gradient/solid color on mobile, preserving the site's core structure.

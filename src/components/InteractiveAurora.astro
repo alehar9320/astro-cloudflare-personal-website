@@ -19,10 +19,11 @@
     animationFrameId: number = 0;
     mouse = { x: -1000, y: -1000 };
     lastMouse = { x: -1000, y: -1000 };
+    resolutionScale = 0.5; // Draw at lower resolution for better performance
 
     // Aurora parameters
     bands: {
-      y: number;
+      yPercent: number;
       amplitude: number;
       frequency: number;
       offset: number;
@@ -36,7 +37,11 @@
       this.canvas = canvas;
       this.ctx = canvas.getContext('2d', { alpha: true })!;
 
-      this.init();
+      if (this.shouldSkip()) {
+        this.canvas.style.display = 'none';
+        return;
+      }
+
       this.handleResize();
       this.createBands();
       this.draw();
@@ -47,75 +52,86 @@
       document.addEventListener('astro:before-swap', () => this.cleanup(), { once: true });
     }
 
-    init() {
-      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-        this.cleanup();
-        this.canvas.style.display = 'none';
-        return;
-      }
+    shouldSkip() {
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const isMobile = window.innerWidth < 800; // Principle: Scale down or disable on mobile
+      return prefersReducedMotion || isMobile;
     }
 
     handleResize = () => {
       this.width = window.innerWidth;
       this.height = window.innerHeight;
-      this.canvas.width = this.width;
-      this.canvas.height = this.height;
-      this.createBands(); // Re-create bands to fit new size
+
+      // Implement principle: Scaled resolution for performance
+      this.canvas.width = this.width * this.resolutionScale;
+      this.canvas.height = this.height * this.resolutionScale;
+
+      if (this.bands.length === 0) {
+        this.createBands();
+      }
     };
 
     handleMouseMove = (e: MouseEvent) => {
-      this.mouse.x = e.clientX;
-      this.mouse.y = e.clientY;
+      // Scale mouse coordinates to match canvas resolution
+      this.mouse.x = e.clientX * this.resolutionScale;
+      this.mouse.y = e.clientY * this.resolutionScale;
     };
 
     createBands() {
       this.bands = [];
       const colors = [
-        'rgba(0, 210, 255, 0.15)',
-        'rgba(0, 102, 204, 0.15)',
-        'rgba(0, 255, 255, 0.1)',
+        'rgba(0, 210, 255, 0.25)',
+        'rgba(0, 102, 204, 0.25)',
+        'rgba(0, 255, 255, 0.15)',
       ];
 
       for (let i = 0; i < this.numBands; i++) {
         this.bands.push({
-          y: this.height * (0.2 + Math.random() * 0.6),
-          amplitude: 50 + Math.random() * 100,
+          yPercent: 0.2 + Math.random() * 0.6,
+          amplitude: (50 + Math.random() * 100) * this.resolutionScale,
           frequency: 0.001 + Math.random() * 0.002,
           offset: Math.random() * 1000,
           speed: 0.005 + Math.random() * 0.01,
           color: colors[i % colors.length],
-          thickness: 150 + Math.random() * 200,
+          thickness: (150 + Math.random() * 200) * this.resolutionScale,
         });
       }
     }
 
     draw() {
-      this.ctx.clearRect(0, 0, this.width, this.height);
+      const scaledWidth = this.width * this.resolutionScale;
+      const scaledHeight = this.height * this.resolutionScale;
+
+      this.ctx.clearRect(0, 0, scaledWidth, scaledHeight);
 
       // Smooth mouse movement for "refraction" feel
       this.lastMouse.x += (this.mouse.x - this.lastMouse.x) * 0.05;
       this.lastMouse.y += (this.mouse.y - this.lastMouse.y) * 0.05;
 
       this.bands.forEach((band) => {
+        const baseY = scaledHeight * band.yPercent;
+
         this.ctx.beginPath();
         this.ctx.strokeStyle = band.color;
         this.ctx.lineWidth = band.thickness;
         this.ctx.lineCap = 'round';
-        this.ctx.filter = 'blur(60px)'; // Create the soft aurora glow
 
         band.offset += band.speed;
 
-        for (let x = 0; x <= this.width; x += 10) {
+        for (let x = 0; x <= scaledWidth; x += 10) {
           // Base sine wave movement
           const dx = x - this.lastMouse.x;
-          const dy = band.y - this.lastMouse.y;
+          const dy = baseY - this.lastMouse.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
           // Distortion based on mouse proximity
-          const distortion = Math.max(0, (200 - dist) / 200) * 50;
+          const distortion =
+            Math.max(0, (150 * this.resolutionScale - dist) / (150 * this.resolutionScale)) *
+            50 *
+            this.resolutionScale;
 
           const y =
-            band.y + Math.sin(x * band.frequency + band.offset) * band.amplitude + distortion;
+            baseY + Math.sin(x * band.frequency + band.offset) * band.amplitude + distortion;
 
           if (x === 0) {
             this.ctx.moveTo(x, y);
@@ -149,7 +165,7 @@
     left: 0;
     width: 100vw;
     height: 100vh;
-    z-index: -2; /* Stay behind everything, even BaseLayout backgrounds if they have -1 */
+    z-index: -2;
     pointer-events: none;
     overflow: hidden;
     background: transparent;
@@ -159,15 +175,17 @@
     display: block;
     width: 100%;
     height: 100%;
-    opacity: 0.6;
+    opacity: 0.8;
     mix-blend-mode: screen;
+    /* Principle: Offload heavy blurring to CSS/Hardware acceleration */
+    filter: blur(80px);
   }
 
   @media (max-width: 50em) {
-    /* Scale down or disable for mobile if performance is an issue,
-       but for now we just lower opacity to keep it subtle */
-    canvas {
-      opacity: 0.3;
+    /* Component is disabled in JS for these viewports,
+       but we ensure the container is hidden visually too. */
+    .aurora-container {
+      display: none;
     }
   }
 </style>
