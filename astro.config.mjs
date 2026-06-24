@@ -53,6 +53,7 @@ export default defineConfig({
     }),
   ],
   vite: {
+    // @ts-expect-error Codecov's Vite plugin is typed against a different Vite instance than Astro's bundled one.
     plugins: [codecovPlugin],
   },
 });

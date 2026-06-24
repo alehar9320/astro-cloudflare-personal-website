@@ -29,12 +29,7 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const resolvedSchema =
-      typeof schema === 'function'
-        ? schema({ image: () => z.any(), z } as unknown as Parameters<Extract<typeof schema, (...args: unknown[]) => unknown>>[0])
-        : schema;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result = (resolvedSchema as any)!.safeParse(flagsFixture);
+    const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
@@ -54,12 +49,7 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const resolvedSchema =
-      typeof schema === 'function'
-        ? schema({ image: () => z.any(), z } as unknown as Parameters<Extract<typeof schema, (...args: unknown[]) => unknown>>[0])
-        : schema;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const result = (resolvedSchema as any)!.safeParse(sampleWork);
+    const result = schema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.title).toBe(sampleWork.title);
