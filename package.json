@@ -53,10 +53,16 @@
     "yaml": "^2.8.3",
     "ws": "^8.20.1",
     "@actions/github": {
-      "undici": "7.24.7"
+      "undici": "7.27.2"
     },
     "@actions/http-client": {
-      "undici": "7.24.7"
-    }
+      "undici": "7.27.2"
+    },
+    "@opentelemetry/core": "2.8.0",
+    "esbuild": "0.28.1",
+    "vite": "8.1.0",
+    "dompurify": "3.4.11",
+    "@babel/core": "8.0.1",
+    "protobufjs": "8.6.5"
   }
 }
