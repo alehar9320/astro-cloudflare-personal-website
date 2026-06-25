@@ -28,7 +28,15 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
+    const schemaOrFn = collections.flags.schema;
+    const schema =
+      typeof schemaOrFn === 'function'
+        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          schemaOrFn({ image: () => z.any(), z } as any)
+        : schemaOrFn;
+
+    if (!schema) throw new Error('Flags schema not found');
+
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -40,7 +48,15 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const schemaOrFn = collections.work.schema;
+    const schema =
+      typeof schemaOrFn === 'function'
+        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          schemaOrFn({ image: () => z.any(), z } as any)
+        : schemaOrFn;
+
+    if (!schema) throw new Error('Work schema not found');
+
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',

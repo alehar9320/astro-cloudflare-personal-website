@@ -19,16 +19,16 @@ describe('github releases utility', () => {
       normalizeRelease({
         body: '- feat: add release feed',
         html_url: 'https://github.com/example/release',
-        name: '2026.06.11.0414',
-        published_at: '2026-06-11T04:14:00Z',
-        tag_name: '2026.06.11.0414',
+        name: '2026.06.25.0434',
+        published_at: '2026-06-25T04:34:00Z',
+        tag_name: '2026.06.25.0434',
       })
     ).toEqual({
       body: '- feat: add release feed',
-      publishedAt: '2026-06-11T04:14:00Z',
-      title: '2026.06.11.0414',
+      publishedAt: '2026-06-25T04:34:00Z',
+      title: '2026.06.25.0434',
       url: 'https://github.com/example/release',
-      version: '2026.06.11.0414',
+      version: '2026.06.25.0434',
     });
   });
 
@@ -38,7 +38,7 @@ describe('github releases utility', () => {
       json: async () => [
         { draft: true, tag_name: 'draft-release' },
         { prerelease: true, tag_name: 'beta-release' },
-        { body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: '2026.06.11.0414' },
+        { body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: '2026.06.25.0434' },
       ],
     });
 
@@ -46,9 +46,9 @@ describe('github releases utility', () => {
       {
         body: '- feat: ship',
         publishedAt: null,
-        title: '2026.06.11.0414',
+        title: '2026.06.25.0434',
         url: RELEASES_PAGE_URL,
-        version: '2026.06.11.0414',
+        version: '2026.06.25.0434',
       },
     ]);
   });
