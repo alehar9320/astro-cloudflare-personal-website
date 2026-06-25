@@ -29,9 +29,10 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     const resolvedSchema =
       typeof schema === 'function' ? (schema as any)({ image: () => z.any(), z } as any) : schema;
+    /* eslint-enable @typescript-eslint/no-explicit-any */
     if (!resolvedSchema) throw new Error('Schema is undefined');
     const result = resolvedSchema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
@@ -53,9 +54,10 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     const resolvedSchema =
       typeof schema === 'function' ? (schema as any)({ image: () => z.any(), z } as any) : schema;
+    /* eslint-enable @typescript-eslint/no-explicit-any */
     if (!resolvedSchema) throw new Error('Schema is undefined');
     const result = resolvedSchema.safeParse(sampleWork);
     expect(result.success).toBe(true);
