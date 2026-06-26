@@ -23,6 +23,15 @@
 | `wrangler.jsonc`    | None                  | Verified           |
 | `render.yaml`       | None                  | Verified           |
 
+## 2026-04-12 - Environment & Configuration Security Baseline
+
+| Verified Template   | Corrected Keys                                                              | Validation State   |
+| :------------------ | :-------------------------------------------------------------------------- | :----------------- |
+| `.dev.vars.example` | `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN`                         | Verified (Generic) |
+| `astro.config.mjs`  | `SENTRY_ORG`, `SENTRY_PROJECT` (moved to env with generic fallbacks)         | Verified           |
+| `render.yaml`       | `PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN`, `PUBLIC_POSTHOG_KEY`, `GITHUB_TOKEN`, `CODECOV_TOKEN` | Verified           |
+| `README.md`         | Added setup step for `.dev.vars`                                            | Verified           |
+
 **Notes:**
 
 - Initialized GripTight hygiene checks.

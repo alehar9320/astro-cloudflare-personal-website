@@ -47,8 +47,8 @@ export default defineConfig({
   integrations: [
     sentry({
       authToken: process.env.SENTRY_AUTH_TOKEN,
-      org: 'personal-projects-1c',
-      project: 'astro-cloudflare-site',
+      org: process.env.SENTRY_ORG || 'your-sentry-org',
+      project: process.env.SENTRY_PROJECT || 'your-sentry-project',
       telemetry: false,
     }),
   ],
