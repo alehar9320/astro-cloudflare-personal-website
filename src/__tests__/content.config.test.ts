@@ -31,7 +31,10 @@ describe('content.config', () => {
     const { schema } = collections.flags;
     if (!schema) throw new Error('Schema not found');
     const resolvedSchema =
-      typeof schema === 'function' ? schema({ image: () => z.any(), z } as any) : schema;
+      typeof schema === 'function'
+        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          schema({ image: () => z.any(), z } as any)
+        : schema;
     const result = resolvedSchema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -46,7 +49,10 @@ describe('content.config', () => {
     const { schema } = collections.work;
     if (!schema) throw new Error('Schema not found');
     const resolvedSchema =
-      typeof schema === 'function' ? schema({ image: () => z.any(), z } as any) : schema;
+      typeof schema === 'function'
+        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          schema({ image: () => z.any(), z } as any)
+        : schema;
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
