@@ -22,13 +22,14 @@
     "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
-    "@astrojs/cloudflare": "^13.5.4",
-    "@astrojs/node": "^10.1.1",
+    "@astrojs/cloudflare": "^13.7.0",
+    "@astrojs/node": "^10.1.4",
     "@sentry/astro": "^10.50.0",
     "@sentry/cloudflare": "^10.50.0",
-    "astro": "^6.4.2",
+    "astro": "^6.4.8",
+    "esbuild": "0.27.4",
     "posthog-js": "^1.372.6",
-    "wrangler": "^4.95.0",
+    "wrangler": "^4.105.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
@@ -64,6 +65,8 @@
     "dompurify": "^3.4.11",
     "protobufjs": "^7.6.4",
     "vite": "^6.4.3",
-    "@babel/core": "^7.29.1"
+    "@babel/core": "^7.29.1",
+    "miniflare": "^4.20260625.0",
+    "vitefu": "^1.1.0"
   }
 }
