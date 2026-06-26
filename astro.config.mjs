@@ -19,7 +19,7 @@ const codecovPlugin = /** @type {import('vite').PluginOption} */ (
 
 // https://astro.build/config
 export default defineConfig({
-  site: process.env.SITE_URL || 'https://your-site-url.com',
+  site: 'https://me.alehar.workers.dev',
   output: isRender ? 'server' : 'static',
   server: isRender
     ? {

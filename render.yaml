@@ -13,9 +13,15 @@ services:
         sync: false
       - key: SENTRY_AUTH_TOKEN
         sync: false
+      - key: SENTRY_ORG
+        sync: false
+      - key: SENTRY_PROJECT
+        sync: false
       - key: PUBLIC_POSTHOG_KEY
         sync: false
       - key: GITHUB_TOKEN
         sync: false
       - key: CODECOV_TOKEN
+        sync: false
+      - key: SITE_URL
         sync: false
