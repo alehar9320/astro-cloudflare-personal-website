@@ -19,6 +19,7 @@ const codecovPlugin = /** @type {import('vite').PluginOption} */ (
 
 // https://astro.build/config
 export default defineConfig({
+  site: process.env.SITE_URL || 'https://your-site-url.com',
   output: isRender ? 'server' : 'static',
   server: isRender
     ? {
@@ -53,7 +54,6 @@ export default defineConfig({
     }),
   ],
   vite: {
-    // @ts-expect-error Codecov's Vite plugin is typed against a different Vite instance than Astro's bundled one.
     plugins: [codecovPlugin],
   },
 });

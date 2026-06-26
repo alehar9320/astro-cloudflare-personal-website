@@ -28,8 +28,8 @@
 | Verified Template   | Corrected Keys                                                                                  | Validation State   |
 | :------------------ | :---------------------------------------------------------------------------------------------- | :----------------- |
 | `.dev.vars.example` | `SENTRY_ORG`, `SENTRY_PROJECT`, `SENTRY_AUTH_TOKEN`                                             | Verified (Generic) |
-| `astro.config.mjs`  | `SENTRY_ORG`, `SENTRY_PROJECT` (moved to env with generic fallbacks)                            | Verified           |
-| `render.yaml`       | `PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN`, `PUBLIC_POSTHOG_KEY`, `GITHUB_TOKEN`, `CODECOV_TOKEN` | Verified           |
+| `astro.config.mjs`  | `SENTRY_ORG`, `SENTRY_PROJECT`, `SITE_URL` (generalized)                    | Verified           |
+| `render.yaml`       | `PUBLIC_SENTRY_DSN`, `SENTRY_AUTH_TOKEN`, `PUBLIC_POSTHOG_KEY`, `GITHUB_TOKEN`, `CODECOV_TOKEN` | Verified (Sync Disabled) |
 | `README.md`         | Added setup step for `.dev.vars`                                                                | Verified           |
 
 **Notes:**
