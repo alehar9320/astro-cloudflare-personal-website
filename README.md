@@ -61,11 +61,12 @@ To run this project locally on your machine, follow these steps:
    ```
 
 2. Install dependencies:
+
    ```sh
    npm install
    ```
 
-4. Setup environment variables:
+3. Setup environment variables:
    Copy `.dev.vars.example` to `.dev.vars` and fill in your values:
    ```sh
    cp .dev.vars.example .dev.vars
