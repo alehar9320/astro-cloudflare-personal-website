@@ -4,7 +4,7 @@ publishDate: 2023-01-01 00:00:00
 img: /assets/stock-3.jpg
 img_alt: Analytics graphs
 description: |
-  Spearheading a critical IFS Cloud capability that ensures roadmap decisions are grounded in telemetry, optimizing R&D resources and preventing over-engineering.
+  Spearheaded a critical IFS Cloud capability that ensures roadmap decisions are grounded in telemetry, optimizing R&D resources and preventing over-engineering.
 tags:
   - Analytics
   - User Behavior
