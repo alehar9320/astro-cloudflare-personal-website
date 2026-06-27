@@ -2,6 +2,39 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
+import { fetchGitHubReleases, formatReleaseDate, splitReleaseBody } from '../utils/github-releases';
+
+// Fetch releases at build-time (⚡ Bolt: performance-obsessed build-time rendering)
+const releases = await fetchGitHubReleases();
+
+// Generate summary from prioritized items
+const summaryItems = releases
+  .flatMap((r) => splitReleaseBody(r.body))
+  .filter((item) => {
+    const msg = item.message.toLowerCase();
+    return (
+      msg.includes('feat') ||
+      msg.includes('fix') ||
+      msg.includes('scribe') ||
+      msg.includes('oracle') ||
+      msg.includes('sentinel') ||
+      msg.includes('palette') ||
+      msg.includes('vantage') ||
+      msg.includes('bolt')
+    );
+  })
+  .slice(0, 3)
+  .map((item) => item.message);
+
+// Fallback to first 3 items if no prioritized items found
+if (summaryItems.length === 0) {
+  summaryItems.push(
+    ...releases
+      .flatMap((r) => splitReleaseBody(r.body))
+      .slice(0, 3)
+      .map((item) => item.message)
+  );
+}
 
 const schema = {
   '@context': 'https://schema.org',
@@ -52,172 +85,77 @@ const schema = {
 
       <div class="content">
         <div data-release-summary>
-          <div class="tldr-box">
-            <p>
-              <strong>Topical Anchor:</strong> This page serves as the <strong
-                >Source of Truth</strong
-              >
-              for the latest technical refinements, portfolio updates, and professional milestones. It
-              is optimized for both human readers and <strong>AI agents</strong> to synthesize Alexander
-              Härenstam's real-time project impact.
-            </p>
-          </div>
+          {
+            summaryItems.length > 0 ? (
+              <div class="tldr-box">
+                <p>
+                  <strong>Recent Highlights:</strong> {summaryItems.join('; ')}.
+                </p>
+              </div>
+            ) : (
+              <div class="tldr-box">
+                <p>
+                  <strong>Topical Anchor:</strong> This page serves as the
+                  <strong>Source of Truth</strong> for the latest technical refinements, portfolio
+                  updates, and professional milestones.
+                </p>
+              </div>
+            )
+          }
         </div>
-        <div class="release-list" data-release-list>
-          <p class="release-status">Fetching latest project updates...</p>
+        <div class="release-list">
+          {
+            releases.length === 0 ? (
+              <p class="release-status">
+                Project history is currently unavailable.{' '}
+                <a href="https://github.com/alehar9320/astro-cloudflare-personal-website/releases">
+                  View GitHub Releases
+                </a>
+                .
+              </p>
+            ) : (
+              releases.map((release) => {
+                const bodyItems = splitReleaseBody(release.body);
+                return (
+                  <article class="release-card">
+                    <h2>{release.version}</h2>
+                    <p class="release-meta">{formatReleaseDate(release.publishedAt)}</p>
+                    {bodyItems.length > 0 ? (
+                      <ul>
+                        {bodyItems.map((item) => (
+                          <li>
+                            {item.hash && item.url ? (
+                              <>
+                                <code class="commit-hash">
+                                  <a href={item.url} target="_blank" rel="noopener noreferrer">
+                                    {item.hash}
+                                  </a>
+                                </code>{' '}
+                                {item.message}
+                              </>
+                            ) : (
+                              item.message
+                            )}
+                          </li>
+                        ))}
+                      </ul>
+                    ) : (
+                      <p class="release-status">No release notes published for this version.</p>
+                    )}
+                    <a href={release.url} class="release-link">
+                      View on GitHub
+                    </a>
+                  </article>
+                );
+              })
+            )
+          }
         </div>
-        <noscript>
-          <p class="release-status">
-            Release history is available on
-            <a href="https://github.com/alehar9320/astro-cloudflare-personal-website/releases">
-              GitHub Releases
-            </a>.
-          </p>
-        </noscript>
       </div>
     </main>
     <ContactCTA />
   </div>
 </BaseLayout>
-
-<script>
-  import {
-    RELEASES_PAGE_URL,
-    fetchGitHubReleases,
-    formatReleaseDate,
-    splitReleaseBody,
-  } from '../utils/github-releases';
-
-  const releaseList = document.querySelector('[data-release-list]');
-
-  if (releaseList instanceof HTMLDivElement) {
-    fetchGitHubReleases().then((releases) => {
-      if (releases.length === 0) {
-        const empty = document.createElement('p');
-        empty.className = 'release-status';
-        empty.textContent = 'Project history is currently unavailable.';
-
-        const link = document.createElement('a');
-        link.href = RELEASES_PAGE_URL;
-        link.textContent = 'View GitHub Releases';
-
-        empty.appendChild(document.createTextNode(' '));
-        empty.appendChild(link);
-        empty.appendChild(document.createTextNode('.'));
-
-        releaseList.replaceChildren(empty);
-        return;
-      }
-
-      const fragment = document.createDocumentFragment();
-
-      // Generate summary from the first 3 most significant items across latest releases
-      const summaryItems = releases
-        .flatMap((r) => splitReleaseBody(r.body))
-        .filter((item) => {
-          const msg = item.message.toLowerCase();
-          // Prioritize features, fixes, and persona-driven updates
-          return (
-            msg.includes('feat') ||
-            msg.includes('fix') ||
-            msg.includes('scribe') ||
-            msg.includes('oracle') ||
-            msg.includes('sentinel') ||
-            msg.includes('palette') ||
-            msg.includes('vantage') ||
-            msg.includes('bolt')
-          );
-        })
-        .slice(0, 3)
-        .map((item) => item.message);
-
-      // Fallback to first 3 items if no prioritized items found
-      if (summaryItems.length === 0) {
-        summaryItems.push(
-          ...releases
-            .flatMap((r) => splitReleaseBody(r.body))
-            .slice(0, 3)
-            .map((item) => item.message)
-        );
-      }
-
-      if (summaryItems.length > 0) {
-        const summaryContainer = document.querySelector('[data-release-summary]');
-        if (summaryContainer) {
-          const tldr = document.createElement('div');
-          tldr.className = 'tldr-box';
-          const p = document.createElement('p');
-          const strong = document.createElement('strong');
-          strong.textContent = 'Recent Highlights:';
-          p.appendChild(strong);
-          p.appendChild(document.createTextNode(` ${summaryItems.join('; ')}.`));
-          tldr.appendChild(p);
-          summaryContainer.replaceChildren(tldr);
-        }
-      }
-
-      releases.forEach((release) => {
-        const article = document.createElement('article');
-        article.className = 'release-card';
-
-        const heading = document.createElement('h2');
-        heading.textContent = release.version;
-
-        const meta = document.createElement('p');
-        meta.className = 'release-meta';
-        meta.textContent = formatReleaseDate(release.publishedAt);
-
-        const bodyItems = splitReleaseBody(release.body);
-
-        if (bodyItems.length > 0) {
-          const list = document.createElement('ul');
-
-          bodyItems.forEach((item) => {
-            const listItem = document.createElement('li');
-
-            if (item.hash && item.url) {
-              const code = document.createElement('code');
-              code.className = 'commit-hash';
-              const link = document.createElement('a');
-              link.href = item.url;
-              link.target = '_blank';
-              link.rel = 'noopener noreferrer';
-              link.textContent = item.hash;
-              code.appendChild(link);
-              listItem.appendChild(code);
-              listItem.appendChild(document.createTextNode(` ${item.message}`));
-            } else {
-              listItem.textContent = item.message;
-            }
-
-            list.appendChild(listItem);
-          });
-
-          article.appendChild(heading);
-          article.appendChild(meta);
-          article.appendChild(list);
-        } else {
-          const fallback = document.createElement('p');
-          fallback.className = 'release-status';
-          fallback.textContent = 'No release notes were published for this version.';
-          article.appendChild(heading);
-          article.appendChild(meta);
-          article.appendChild(fallback);
-        }
-
-        const link = document.createElement('a');
-        link.href = release.url;
-        link.className = 'release-link';
-        link.textContent = 'View on GitHub';
-        article.appendChild(link);
-
-        fragment.appendChild(article);
-      });
-
-      releaseList.replaceChildren(fragment);
-    });
-  }
-</script>
 
 <style>
   .content {

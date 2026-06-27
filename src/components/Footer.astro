@@ -1,7 +1,13 @@
 ---
 import Icon from './Icon.astro';
+import { fetchGitHubReleases } from '../utils/github-releases';
 
 const currentYear = new Date().getFullYear();
+
+// Fetch latest version at build-time (⚡ Bolt: move to build-time for better performance)
+const releases = await fetchGitHubReleases();
+const latestVersion = releases[0]?.version;
+const versionLabel = latestVersion ? `Latest Updates (v${latestVersion})` : 'Latest Updates';
 ---
 
 <footer>
@@ -20,7 +26,7 @@ const currentYear = new Date().getFullYear();
     </p>
     <p>&copy; {currentYear} Alexander Härenstam</p>
     <p>
-      <a href="/whats-new" class="version-link" data-latest-version>Latest Updates</a>
+      <a href="/whats-new" class="version-link">{versionLabel}</a>
       <span class="separator" aria-hidden="true">&bull;</span>
       <a
         href="https://github.com/alehar9320/astro-cloudflare-personal-website/issues"
@@ -50,23 +56,6 @@ const currentYear = new Date().getFullYear();
     </a>
   </p>
 </footer>
-
-<script>
-  import { fetchGitHubReleases } from '../utils/github-releases';
-
-  const versionLink = document.querySelector('[data-latest-version]');
-
-  if (versionLink instanceof HTMLAnchorElement) {
-    fetchGitHubReleases().then((releases) => {
-      if (releases[0]) {
-        versionLink.textContent = `Latest Updates (v${releases[0].version})`;
-        return;
-      }
-
-      versionLink.textContent = 'Latest Updates';
-    });
-  }
-</script>
 
 <style>
   footer {

@@ -1,10 +1,11 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
   RELEASES_PAGE_URL,
   fetchGitHubReleases,
   formatReleaseDate,
   normalizeRelease,
+  resetBuildTimeCache,
   splitReleaseBody,
 } from '../utils/github-releases';
 
@@ -12,6 +13,11 @@ describe('github releases utility', () => {
   beforeEach(() => {
     vi.stubGlobal('window', undefined);
     vi.stubGlobal('sessionStorage', undefined);
+    resetBuildTimeCache();
+  });
+
+  afterEach(() => {
+    vi.resetAllMocks();
   });
 
   it('normalizes published releases', () => {
