@@ -21,7 +21,6 @@ export const ChatMessageSchema = z.object({
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
 export const ChatRequestSchema = z.object({
-  // Ensure the message sequence ends with a user message for valid inference
   messages: z
     .array(ChatMessageSchema)
     .min(1, 'Expected at least one message')
@@ -33,23 +32,34 @@ export const ChatRequestSchema = z.object({
 /**
  * Prunes conversation history to fit within defined message and character limits.
  * Implements a sliding window algorithm that prioritizes the most recent messages.
- * Always ensures the resulting history starts with a 'user' message for LLM cadence.
+ * Enforces a strict protocol where the sequence must always start with a 'user' message.
  *
  * @param messages - The history of chat messages.
  * @returns A pruned array of messages that satisfies all constraints.
  */
 export function pruneMessages(messages: ChatMessage[]): ChatMessage[] {
-  const pruned = messages.slice(-MAX_MESSAGES);
+  // Ensure we always start with a user message to maintain conversational cadence
+  const firstUserIndex = messages.findIndex((m) => m.role === 'user');
+  if (firstUserIndex === -1) return [];
+
+  const pruned = messages.slice(firstUserIndex).slice(-MAX_MESSAGES);
+
+  // Re-verify that the slice still starts with a user message after sliding window
+  while (pruned.length > 0 && pruned[0].role !== 'user') {
+    pruned.shift();
+  }
+
   let totalLength = pruned.reduce((acc, msg) => acc + msg.content.length, 0);
 
   while (pruned.length > 1 && totalLength > MAX_TOTAL_CONTENT_LENGTH) {
     // biome-ignore lint/style/noNonNullAssertion: loop guard ensures shift() returns an element
     totalLength -= pruned.shift()!.content.length;
-  }
 
-  // Technical Standard: Always start with a 'user' message to maintain LLM cadence
-  while (pruned.length > 1 && pruned[0].role !== 'user') {
-    pruned.shift();
+    // After shifting, ensure the sequence still starts with 'user'
+    while (pruned.length > 0 && pruned[0].role !== 'user') {
+      // biome-ignore lint/style/noNonNullAssertion: loop guard ensures shift() returns an element
+      totalLength -= pruned.shift()!.content.length;
+    }
   }
 
   return pruned;

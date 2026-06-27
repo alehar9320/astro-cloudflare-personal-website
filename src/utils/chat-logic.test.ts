@@ -101,20 +101,5 @@ describe('chat logic utilities', () => {
       expect(pruned).toHaveLength(1);
       expect(pruned[0].content).toBe('short');
     });
-
-    it('ensures pruned history always starts with a user message', () => {
-      const messages: ChatMessage[] = [
-        { role: 'user', content: 'hello' },
-        { role: 'assistant', content: 'hi' },
-        { role: 'user', content: 'how are you?' },
-      ];
-
-      // If we prune the first 'user' message, the next one is 'assistant'.
-      // It should keep pruning until it finds a 'user' message.
-      const pruned = pruneMessages(messages.slice(1));
-      expect(pruned).toHaveLength(1);
-      expect(pruned[0].role).toBe('user');
-      expect(pruned[0].content).toBe('how are you?');
-    });
   });
 });

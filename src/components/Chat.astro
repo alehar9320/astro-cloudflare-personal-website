@@ -340,6 +340,8 @@
   import { createChatStreamParser, extractAssistantTextFromSse } from '../utils/chat-stream';
   import { ChatMessageSchema } from '../utils/chat-logic';
 
+  const ChatHistorySchema = z.array(ChatMessageSchema);
+
   const chatToggle = document.getElementById('chat-toggle');
   const chatWindow = document.getElementById('chat-window');
   const chatClose = document.getElementById('chat-close');
@@ -365,42 +367,24 @@
 
   setStatus('idle');
 
-  /**
-   * Technical Standard: Application state hydration from browser persistence (sessionStorage)
-   * must be protected by Zod schemas to ensure data integrity and prevent runtime failures
-   * from corrupted or outdated historical data.
-   */
-  const ChatHistorySchema = z.array(ChatMessageSchema);
+  // Securely hydrate history with Zod validation to prevent state tampering
+  const rawHistory = sessionStorage.getItem('chat-history');
+  let messages: z.infer<typeof ChatHistorySchema> = [];
 
-  const getInitialMessages = () => {
+  if (rawHistory) {
     try {
-      const rawHistory = sessionStorage.getItem('chat-history');
-      if (!rawHistory) return [];
-
-      const parsedHistory = JSON.parse(rawHistory);
-      const result = ChatHistorySchema.safeParse(parsedHistory);
-
-      if (result.success) {
-        return result.data;
+      const parsed = ChatHistorySchema.safeParse(JSON.parse(rawHistory));
+      if (parsed.success) {
+        messages = parsed.data;
+      } else {
+        console.warn({ event: 'chat_history_validation_failed', issues: parsed.error.issues });
+        sessionStorage.removeItem('chat-history');
       }
-
-      console.warn({
-        event: 'chat_history_validation_failed',
-        error: result.error.message,
-      });
+    } catch (e) {
+      console.error({ event: 'chat_history_parse_error', error: e });
       sessionStorage.removeItem('chat-history');
-      return [];
-    } catch (error) {
-      console.error({
-        event: 'chat_history_parse_error',
-        error: error instanceof Error ? error.message : String(error),
-      });
-      sessionStorage.removeItem('chat-history');
-      return [];
     }
-  };
-
-  const messages = getInitialMessages();
+  }
 
   function saveMessages() {
     sessionStorage.setItem('chat-history', JSON.stringify(messages));
