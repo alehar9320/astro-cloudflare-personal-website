@@ -5,6 +5,7 @@ import Grid from '../components/Grid.astro';
 import Hero from '../components/Hero.astro';
 import PortfolioPreview from '../components/PortfolioPreview.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { PERSON_SCHEMA } from '../constants/schema';
 
 const projects = (await getCollection('work')).sort(
   (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
@@ -13,25 +14,7 @@ const projects = (await getCollection('work')).sort(
 const schema = {
   '@context': 'https://schema.org',
   '@graph': [
-    {
-      '@type': 'Person',
-      '@id': 'https://harenstam.com/#person',
-      name: 'Alexander Härenstam',
-      jobTitle: 'Strategic Product Leader',
-      description:
-        'Strategic Product Leader specializing in Developer Experience (DevEx) and Industrial AI at IFS.',
-      url: 'https://harenstam.com/',
-      sameAs: [
-        'https://www.linkedin.com/in/alehar/',
-        'https://github.com/alehar9320/',
-        'https://blog.ifs.com/author/alexander-harenstam/',
-      ],
-      worksFor: {
-        '@type': 'Organization',
-        name: 'IFS',
-        url: 'https://www.ifs.com/',
-      },
-    },
+    PERSON_SCHEMA,
     {
       '@type': 'WebPage',
       '@id': 'https://harenstam.com/work/#webpage',

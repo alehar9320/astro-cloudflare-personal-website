@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { PERSON_SCHEMA } from '../constants/schema';
 // Component Imports
 import CallToAction from '../components/CallToAction.astro';
 // Page section components
@@ -22,23 +23,7 @@ const schema = {
   '@context': 'https://schema.org',
   '@graph': [
     {
-      '@type': 'Person',
-      '@id': 'https://harenstam.com/#person',
-      name: 'Alexander Härenstam',
-      jobTitle: 'Strategic Product Leader',
-      description:
-        'Strategic Product Leader specializing in Developer Experience (DevEx) and Industrial AI at IFS.',
-      url: 'https://harenstam.com/',
-      sameAs: [
-        'https://www.linkedin.com/in/alehar/',
-        'https://github.com/alehar9320/',
-        'https://blog.ifs.com/author/alexander-harenstam/',
-      ],
-      worksFor: {
-        '@type': 'Organization',
-        name: 'IFS',
-        url: 'https://www.ifs.com/',
-      },
+      ...PERSON_SCHEMA,
       knowsAbout: [
         'Strategic Product Management',
         'Developer Experience (DevEx)',
@@ -46,11 +31,6 @@ const schema = {
         'Design Systems',
         'Digital Transformation',
       ],
-      alumniOf: {
-        '@type': 'CollegeOrUniversity',
-        name: 'Chalmers University of Technology',
-        url: 'https://www.chalmers.se/en/',
-      },
       award: 'Zeroheight Design System Awards - Runner-up',
     },
     {
