@@ -71,10 +71,7 @@ describe('chat API', () => {
     expect(ai.run).toHaveBeenCalledWith(
       '@cf/meta/llama-3.1-8b-instruct',
       expect.objectContaining({
-        messages: [
-          expect.objectContaining({ role: 'system' }),
-          { role: 'user', content: 'Hello' },
-        ],
+        messages: [expect.objectContaining({ role: 'system' }), { role: 'user', content: 'Hello' }],
         stream: true,
       })
     );
