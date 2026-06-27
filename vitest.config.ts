@@ -25,7 +25,14 @@ export default defineConfig({
         'sentry.client.config.ts',
         'scripts/release.js',
       ],
-      exclude: ['src/**/*.d.ts', 'src/content/**', 'src/data/**', 'src/styles/**'],
+      exclude: [
+        'src/**/*.d.ts',
+        'src/**/*.astro',
+        'src/**/__tests__/**',
+        'src/content/**',
+        'src/data/**',
+        'src/styles/**',
+      ],
     },
   },
 });

@@ -101,5 +101,42 @@ describe('chat logic utilities', () => {
       expect(pruned).toHaveLength(1);
       expect(pruned[0].content).toBe('short');
     });
+
+    it('removes non-user messages at the start of pruned list after sliding window', () => {
+      const messages: ChatMessage[] = [
+        { role: 'user', content: '1' },
+        { role: 'assistant', content: '2' },
+        { role: 'user', content: '3' },
+        { role: 'assistant', content: '4' },
+        { role: 'user', content: '5' },
+        { role: 'assistant', content: '6' },
+        { role: 'user', content: '7' },
+        { role: 'assistant', content: '8' },
+        { role: 'user', content: '9' },
+        { role: 'assistant', content: '10' },
+        { role: 'user', content: '11' },
+      ];
+      // MAX_MESSAGES is 10.
+      // slice(-10) gives ['assistant' 2, ..., 'user' 11]
+      // The while loop (line 48) should remove 'assistant' 2.
+      const pruned = pruneMessages(messages);
+      expect(pruned[0].role).toBe('user');
+      expect(pruned[0].content).toBe('3');
+    });
+
+    it('removes non-user messages at the start after total length pruning', () => {
+      const messages: ChatMessage[] = [
+        { role: 'user', content: 'a'.repeat(MAX_TOTAL_CONTENT_LENGTH) },
+        { role: 'assistant', content: 'b' },
+        { role: 'user', content: 'c' },
+      ];
+      // totalLength is MAX + 2.
+      // First shift removes 'a'.
+      // Second shift in while loop (line 59) removes 'b'.
+      const pruned = pruneMessages(messages);
+      expect(pruned).toHaveLength(1);
+      expect(pruned[0].content).toBe('c');
+      expect(pruned[0].role).toBe('user');
+    });
   });
 });
