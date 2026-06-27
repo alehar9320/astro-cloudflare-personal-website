@@ -2,12 +2,30 @@
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { PERSON_SCHEMA } from '../constants/schema';
 
 const schema = {
   '@context': 'https://schema.org',
   '@graph': [
-    PERSON_SCHEMA,
+    {
+      '@type': 'Person',
+      '@id': 'https://harenstam.com/#person',
+      name: 'Alexander Härenstam',
+      jobTitle: 'Strategic Product Leader',
+      description:
+        'Strategic Product Leader specializing in Developer Experience (DevEx) and Industrial AI at IFS.',
+      url: 'https://harenstam.com/',
+      sameAs: ['https://www.linkedin.com/in/alehar'],
+      worksFor: {
+        '@type': 'Organization',
+        name: 'IFS',
+        url: 'https://www.ifs.com/',
+      },
+      alumniOf: {
+        '@type': 'CollegeOrUniversity',
+        name: 'Chalmers University of Technology',
+        url: 'https://www.chalmers.se/en/',
+      },
+    },
     {
       '@type': 'WebPage',
       '@id': 'https://harenstam.com/about/#webpage',

@@ -5,6 +5,7 @@ import Pill from '../../components/Pill.astro';
 import Icon from '../../components/Icon.astro';
 import type { iconPaths } from '../../components/IconPaths';
 import { getEntry } from 'astro:content';
+import { PERSON_SCHEMA } from '../../constants/schema';
 
 const flagsEntry = await getEntry('flags', 'config');
 if (!flagsEntry?.data.enable_strategic_pulse) return Astro.redirect('/404/');
@@ -17,8 +18,9 @@ const focus: { l: string; i: keyof typeof iconPaths }[] = [
 
 <BaseLayout
   title="Strategic Pulse | Alexander Härenstam"
-  description="Explore Alexander Härenstam's current high-impact focus areas, including Industrial AI, DevEx, and Strategic Planning."
+  description="Current high-impact focus areas in Industrial AI, Developer Experience (DevEx), and Strategic Product Management."
 >
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(PERSON_SCHEMA)} />
   <main id="main-content" class="wrapper stack gap-20">
     <Hero title="Strategic Pulse" tagline="Current high-impact focus areas." align="start" />
     <div

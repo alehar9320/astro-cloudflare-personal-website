@@ -7,7 +7,6 @@ import Icon from '../../components/Icon.astro';
 import NotFoundContent from '../../components/NotFoundContent.astro';
 import Pill from '../../components/Pill.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import { PERSON_SCHEMA } from '../../constants/schema';
 
 interface Props {
   entry?: CollectionEntry<'work'>;
@@ -37,7 +36,6 @@ const schema = entry
   ? {
       '@context': 'https://schema.org',
       '@graph': [
-        PERSON_SCHEMA,
         {
           '@type': 'WebPage',
           '@id': `https://harenstam.com/work/${entry.id}/#webpage`,
@@ -70,14 +68,14 @@ const schema = entry
         },
         {
           '@type': 'CreativeWork',
-          '@id': `https://harenstam.com/work/${entry.id}/#creativework`,
           name: entry.data.title,
           description: entry.data.description,
           datePublished: entry.data.publishDate.toISOString(),
-          author: { '@id': 'https://harenstam.com/#person' },
+          author: {
+            '@id': 'https://harenstam.com/#person',
+          },
           image: entry.data.img ? `https://harenstam.com${entry.data.img}` : undefined,
           keywords: entry.data.tags.join(', '),
-          mainEntityOfPage: { '@id': `https://harenstam.com/work/${entry.id}/#webpage` },
         },
       ],
     }

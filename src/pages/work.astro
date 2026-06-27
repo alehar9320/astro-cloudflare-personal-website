@@ -5,7 +5,6 @@ import Grid from '../components/Grid.astro';
 import Hero from '../components/Hero.astro';
 import PortfolioPreview from '../components/PortfolioPreview.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { PERSON_SCHEMA } from '../constants/schema';
 
 const projects = (await getCollection('work')).sort(
   (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
@@ -14,7 +13,6 @@ const projects = (await getCollection('work')).sort(
 const schema = {
   '@context': 'https://schema.org',
   '@graph': [
-    PERSON_SCHEMA,
     {
       '@type': 'WebPage',
       '@id': 'https://harenstam.com/work/#webpage',
@@ -39,7 +37,11 @@ const schema = {
           },
         ],
       },
-      publisher: { '@id': 'https://harenstam.com/#person' },
+      publisher: {
+        '@type': 'Person',
+        '@id': 'https://harenstam.com/#person',
+        name: 'Alexander Härenstam',
+      },
     },
     {
       '@type': 'ItemList',
@@ -50,12 +52,9 @@ const schema = {
       itemListElement: projects.map((project, index) => ({
         '@type': 'ListItem',
         position: index + 1,
-        item: {
-          '@type': 'CreativeWork',
-          name: project.data.title,
-          url: `https://harenstam.com/work/${project.id}/`,
-          description: project.data.description,
-        },
+        name: project.data.title,
+        url: `https://harenstam.com/work/${project.id}/`,
+        description: project.data.description,
       })),
     },
   ],

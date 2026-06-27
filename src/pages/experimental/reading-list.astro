@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getEntry } from 'astro:content';
+import { PERSON_SCHEMA } from '../../constants/schema';
 const f = await getEntry('flags', 'config');
 if (!f?.data.enable_reading_list) return Astro.redirect('/404/');
 const b = [
@@ -11,9 +12,10 @@ const b = [
 ---
 
 <BaseLayout
-  title="Reading List | Alexander Härenstam"
-  description="A curated selection of books influencing Alexander Härenstam's approach to product management, strategy, and innovation."
+  title="Strategic Reading List | Alexander Härenstam"
+  description="A curated selection of high-impact literature on product management, strategy, and business innovation."
 >
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(PERSON_SCHEMA)} />
   <main id="main-content" role="main" class="wrapper stack gap-10">
     <h1>Reading List</h1>
     <div class="grid">

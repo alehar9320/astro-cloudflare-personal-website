@@ -2,12 +2,10 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
-import { PERSON_SCHEMA } from '../constants/schema';
 
 const schema = {
   '@context': 'https://schema.org',
   '@graph': [
-    PERSON_SCHEMA,
     {
       '@type': 'WebPage',
       '@id': 'https://harenstam.com/whats-new/#webpage',
@@ -32,7 +30,11 @@ const schema = {
           },
         ],
       },
-      publisher: { '@id': 'https://harenstam.com/#person' },
+      publisher: {
+        '@type': 'Person',
+        '@id': 'https://harenstam.com/#person',
+        name: 'Alexander Härenstam',
+      },
     },
   ],
 };

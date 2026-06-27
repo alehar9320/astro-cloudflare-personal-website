@@ -3,6 +3,7 @@ import { getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Hero from '../../components/Hero.astro';
 import Icon from '../../components/Icon.astro';
+import { PERSON_SCHEMA } from '../../constants/schema';
 
 const flags = await getEntry('flags', 'config');
 if (!flags?.data.enable_product_manifesto) return Astro.redirect('/404/');
@@ -27,9 +28,10 @@ const principles = [
 ---
 
 <BaseLayout
-  title="Product Manifesto | Alexander Härenstam"
-  description="Alexander Härenstam's core product principles: Impact-Driven, Strategic Clarity, and Developer Empowerment."
+  title="Product Management Manifesto | Alexander Härenstam"
+  description="Core product management principles and strategic primitives for building high-impact enterprise solutions."
 >
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(PERSON_SCHEMA)} />
   <main class="wrapper stack gap-8" style="margin-top: 4rem;">
     <Hero
       title="Product Manifesto"
