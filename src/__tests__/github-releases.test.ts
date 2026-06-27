@@ -331,5 +331,41 @@ describe('github releases utility', () => {
       expect(result).toEqual(mockReleases);
       expect(fetchMock).toHaveBeenCalledOnce();
     });
+
+    it('uses buildTimeCache on server-side after first fetch', async () => {
+      vi.stubGlobal('window', undefined);
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [{ body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: 'v1' }],
+      });
+
+      // First call populates cache
+      const firstResult = await fetchGitHubReleases(fetchMock as typeof fetch);
+      expect(firstResult).toEqual(mockReleases);
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+
+      // Second call uses cache
+      const secondResult = await fetchGitHubReleases(fetchMock as typeof fetch);
+      expect(secondResult).toEqual(mockReleases);
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('bypasses buildTimeCache when custom URL is provided', async () => {
+      vi.stubGlobal('window', undefined);
+      const customUrl = 'https://api.github.com/repos/other/repo/releases';
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [{ body: '- feat: custom', html_url: RELEASES_PAGE_URL, tag_name: 'v2' }],
+      });
+
+      // Populate main cache
+      await fetchGitHubReleases(fetchMock as typeof fetch);
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+
+      // Call with custom URL should bypass cache and fetch again
+      const result = await fetchGitHubReleases(fetchMock as typeof fetch, customUrl);
+      expect(result[0].version).toBe('v2');
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
   });
 });
