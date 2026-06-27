@@ -37,6 +37,25 @@ const schema = entry
       '@context': 'https://schema.org',
       '@graph': [
         {
+          '@type': 'Person',
+          '@id': 'https://harenstam.com/#person',
+          name: 'Alexander Härenstam',
+          jobTitle: 'Strategic Product Leader',
+          description:
+            'Strategic Product Leader specializing in Developer Experience (DevEx) and Industrial AI at IFS.',
+          url: 'https://harenstam.com/',
+          sameAs: [
+            'https://www.linkedin.com/in/alehar/',
+            'https://github.com/alehar9320/',
+            'https://blog.ifs.com/author/alexander-harenstam/',
+          ],
+          worksFor: {
+            '@type': 'Organization',
+            name: 'IFS',
+            url: 'https://www.ifs.com/',
+          },
+        },
+        {
           '@type': 'WebPage',
           '@id': `https://harenstam.com/work/${entry.id}/#webpage`,
           url: `https://harenstam.com/work/${entry.id}/`,
@@ -68,14 +87,14 @@ const schema = entry
         },
         {
           '@type': 'CreativeWork',
+          '@id': `https://harenstam.com/work/${entry.id}/#creativework`,
           name: entry.data.title,
           description: entry.data.description,
           datePublished: entry.data.publishDate.toISOString(),
-          author: {
-            '@id': 'https://harenstam.com/#person',
-          },
+          author: { '@id': 'https://harenstam.com/#person' },
           image: entry.data.img ? `https://harenstam.com${entry.data.img}` : undefined,
           keywords: entry.data.tags.join(', '),
+          mainEntityOfPage: { '@id': `https://harenstam.com/work/${entry.id}/#webpage` },
         },
       ],
     }

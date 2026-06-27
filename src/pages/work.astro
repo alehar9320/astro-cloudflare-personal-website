@@ -14,6 +14,25 @@ const schema = {
   '@context': 'https://schema.org',
   '@graph': [
     {
+      '@type': 'Person',
+      '@id': 'https://harenstam.com/#person',
+      name: 'Alexander Härenstam',
+      jobTitle: 'Strategic Product Leader',
+      description:
+        'Strategic Product Leader specializing in Developer Experience (DevEx) and Industrial AI at IFS.',
+      url: 'https://harenstam.com/',
+      sameAs: [
+        'https://www.linkedin.com/in/alehar/',
+        'https://github.com/alehar9320/',
+        'https://blog.ifs.com/author/alexander-harenstam/',
+      ],
+      worksFor: {
+        '@type': 'Organization',
+        name: 'IFS',
+        url: 'https://www.ifs.com/',
+      },
+    },
+    {
       '@type': 'WebPage',
       '@id': 'https://harenstam.com/work/#webpage',
       url: 'https://harenstam.com/work/',
@@ -37,11 +56,7 @@ const schema = {
           },
         ],
       },
-      publisher: {
-        '@type': 'Person',
-        '@id': 'https://harenstam.com/#person',
-        name: 'Alexander Härenstam',
-      },
+      publisher: { '@id': 'https://harenstam.com/#person' },
     },
     {
       '@type': 'ItemList',
@@ -52,9 +67,12 @@ const schema = {
       itemListElement: projects.map((project, index) => ({
         '@type': 'ListItem',
         position: index + 1,
-        name: project.data.title,
-        url: `https://harenstam.com/work/${project.id}/`,
-        description: project.data.description,
+        item: {
+          '@type': 'CreativeWork',
+          name: project.data.title,
+          url: `https://harenstam.com/work/${project.id}/`,
+          description: project.data.description,
+        },
       })),
     },
   ],
