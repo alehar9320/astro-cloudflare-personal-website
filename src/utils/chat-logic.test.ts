@@ -95,11 +95,26 @@ describe('chat logic utilities', () => {
       const veryLongContent = 'a'.repeat(MAX_TOTAL_CONTENT_LENGTH + 1);
       const messages: ChatMessage[] = [
         { role: 'user', content: veryLongContent },
-        { role: 'assistant', content: 'short' },
+        { role: 'user', content: 'short' },
       ];
       const pruned = pruneMessages(messages);
       expect(pruned).toHaveLength(1);
       expect(pruned[0].content).toBe('short');
+    });
+
+    it('ensures pruned history always starts with a user message', () => {
+      const messages: ChatMessage[] = [
+        { role: 'user', content: 'hello' },
+        { role: 'assistant', content: 'hi' },
+        { role: 'user', content: 'how are you?' },
+      ];
+
+      // If we prune the first 'user' message, the next one is 'assistant'.
+      // It should keep pruning until it finds a 'user' message.
+      const pruned = pruneMessages(messages.slice(1));
+      expect(pruned).toHaveLength(1);
+      expect(pruned[0].role).toBe('user');
+      expect(pruned[0].content).toBe('how are you?');
     });
   });
 });

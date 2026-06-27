@@ -51,8 +51,8 @@ describe('chat API', () => {
     const response = await postChat(
       {
         messages: [
-          { role: 'user', content: '  Hello  ', ignored: 'field' },
           { role: 'assistant', content: 'Hi there' },
+          { role: 'user', content: '  Hello  ', ignored: 'field' },
         ],
       },
       ai
@@ -74,7 +74,6 @@ describe('chat API', () => {
         messages: [
           expect.objectContaining({ role: 'system' }),
           { role: 'user', content: 'Hello' },
-          { role: 'assistant', content: 'Hi there' },
         ],
         stream: true,
       })
