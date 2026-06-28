@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-06-20 - Enhancing Chat Interactivity and Accessibility
+
+**Learning:** Micro-interactions in persistent overlays (like chat) significantly impact the perceived quality of a portfolio. Standardizing ARIA labels for non-labeled inputs and hiding decorative SVGs from screen readers are essential for "hidden" accessibility. Tactile feedback through `:active` states (scaling to 0.97) and refined focus glows using themed `hsla` values creates a more responsive, "high-end" feel that aligns with the Northern Lights aesthetic.
+
+**Action:** Refined `Chat.astro` with explicit `aria-label` for the input and `aria-hidden` for decorative icons. Implemented a comprehensive set of interactive states (`:hover`, `:active`, `:focus-visible`) for all chat controls. Standardized input focus with a themed border and subtle glow effect (`hsla(var(--accent-regular-rgb), 0.3)`), ensuring consistency with the site's glassmorphic design system.
+
 ## 2026-05-17 - Enhancing Content Selection and Standardizing Focus Spatiality
 
 **Learning:** Using `user-select: none` on informational badges (like `Pill`) creates unnecessary friction for users trying to copy text for reference. Additionally, consistent `outline-offset: 4px` across all interactive elements (including theme toggles and cards) reinforces a predictable spatial model for keyboard users. Adding `target="_blank"` with `rel="noopener noreferrer"` to external informational links (like the Astro framework link in the footer) ensures a non-disruptive navigation experience that preserves the user's session.
