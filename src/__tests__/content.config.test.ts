@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { z } from './mocks/astro-zod';
+import type { ZodTypeAny } from 'zod';
 import { glob } from 'astro/loaders';
 import { defineCollection } from 'astro:content';
 import { collections } from '../content.config';
@@ -28,11 +29,15 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    let { schema } = collections.flags;
-    if (typeof schema === 'function') {
-      schema = (schema as any)({ image: () => z.any(), z });
+    const schemaOrFn = collections.flags.schema;
+    let schema: ZodTypeAny;
+    if (typeof schemaOrFn === 'function') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      schema = (schemaOrFn as any)({ image: () => z.any(), z }) as ZodTypeAny;
+    } else {
+      schema = schemaOrFn as ZodTypeAny;
     }
-    const result = (schema as any).safeParse(flagsFixture);
+    const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
@@ -43,9 +48,13 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    let { schema } = collections.work;
-    if (typeof schema === 'function') {
-      schema = (schema as any)({ image: () => z.any(), z });
+    const schemaOrFn = collections.work.schema;
+    let schema: ZodTypeAny;
+    if (typeof schemaOrFn === 'function') {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      schema = (schemaOrFn as any)({ image: () => z.any(), z }) as ZodTypeAny;
+    } else {
+      schema = schemaOrFn as ZodTypeAny;
     }
     const sampleWork = {
       title: 'Sample Work',
@@ -55,11 +64,13 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = (schema as any).safeParse(sampleWork);
+    const result = schema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.title).toBe(sampleWork.title);
-      expect(result.data.publishDate).toBeInstanceOf(Date);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const data = result.data as any;
+      expect(data.title).toBe(sampleWork.title);
+      expect(data.publishDate).toBeInstanceOf(Date);
     }
   });
 });
