@@ -20,8 +20,7 @@
       stroke="currentColor"
       stroke-width="2"
       stroke-linecap="round"
-      stroke-linejoin="round"
-      aria-hidden="true"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"></path></svg
+      stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"></path></svg
     >
     <span class="status-dot" aria-hidden="true"></span>
     <span role="tooltip" id="status-tooltip" class="status-tooltip">Available</span>
@@ -43,8 +42,7 @@
           stroke="currentColor"
           stroke-width="2"
           stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg
+          stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg
         >
       </button>
     </div>
@@ -80,7 +78,7 @@
           stroke-width="2"
           stroke-linecap="round"
           stroke-linejoin="round"
-          aria-hidden="true"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg
+          ><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg
         >
       </button>
     </form>
@@ -116,10 +114,6 @@
     transform: scale(1.1);
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
-  }
-
-  .chat-toggle:active {
-    transform: scale(0.97);
   }
 
   /* Status dot shared styles */
@@ -240,11 +234,6 @@
     color: var(--gray-400);
     cursor: pointer;
     padding: 0.25rem;
-    transition: transform 0.2s ease;
-  }
-
-  .chat-close:active {
-    transform: scale(0.9);
   }
 
   .chat-messages {
@@ -336,11 +325,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s ease;
-  }
-
-  .chat-form button:active {
-    transform: scale(0.95);
   }
 
   @media (max-width: 400px) {
