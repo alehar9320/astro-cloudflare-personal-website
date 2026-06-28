@@ -20,8 +20,7 @@
       stroke="currentColor"
       stroke-width="2"
       stroke-linecap="round"
-      stroke-linejoin="round"
-      aria-hidden="true"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"></path></svg
+      stroke-linejoin="round"><path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"></path></svg
     >
     <span class="status-dot" aria-hidden="true"></span>
     <span role="tooltip" id="status-tooltip" class="status-tooltip">Available</span>
@@ -43,8 +42,7 @@
           stroke="currentColor"
           stroke-width="2"
           stroke-linecap="round"
-          stroke-linejoin="round"
-          aria-hidden="true"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg
+          stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg
         >
       </button>
     </div>
@@ -68,7 +66,7 @@
         placeholder="Ask me something..."
         required
         autocomplete="off"
-        aria-label="Ask a question"
+        aria-label="Chat message"
       />
       <button type="submit" aria-label="Send message">
         <svg
@@ -102,36 +100,26 @@
     height: 3.5rem;
     border-radius: 50%;
     background-color: var(--accent-regular);
-    color: var(--accent-text-over);
+    color: white;
     border: none;
     cursor: pointer;
     box-shadow: var(--shadow-md);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition:
-      transform var(--theme-transition),
-      background-color var(--theme-transition),
-      box-shadow var(--theme-transition);
+    transition: transform 0.2s ease;
   }
 
   .chat-toggle:hover,
   .chat-toggle:focus-visible {
     transform: translateY(-2px) scale(1.05);
     background-color: var(--accent-light);
-    box-shadow:
-      0 10px 20px -5px hsla(210, 100%, 50%, 0.4),
-      var(--shadow-md);
-  }
-
-  .chat-toggle:focus-visible {
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
   }
 
   .chat-toggle:active {
-    transform: translateY(0) scale(0.97);
-    background-color: var(--accent-dark);
+    transform: scale(0.97);
   }
 
   /* Status dot shared styles */
@@ -254,19 +242,19 @@
     padding: 0.25rem;
     border-radius: 0.25rem;
     transition:
-      color var(--theme-transition),
-      background-color var(--theme-transition),
-      transform var(--theme-transition);
+      color 0.2s ease,
+      background-color 0.2s ease,
+      transform 0.1s ease;
   }
 
   .chat-close:hover,
   .chat-close:focus-visible {
     color: var(--gray-0);
-    background-color: var(--gray-800);
+    background-color: rgba(255, 255, 255, 0.1);
   }
 
   .chat-close:focus-visible {
-    outline: 2px solid var(--accent-regular);
+    outline: 2px solid var(--accent-light);
     outline-offset: 2px;
   }
 
@@ -294,7 +282,7 @@
   .user-message {
     align-self: flex-end;
     background-color: var(--accent-regular);
-    color: var(--accent-text-over);
+    color: white;
   }
 
   .ai-message {
@@ -348,49 +336,47 @@
     flex: 1;
     padding: 0.5rem;
     border: 1px solid var(--gray-800);
-    border-radius: 0.5rem;
+    border-radius: 0.25rem;
     background: var(--gray-900);
     color: var(--gray-0);
     transition:
-      border-color var(--theme-transition),
-      box-shadow var(--theme-transition);
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
   }
 
   .chat-form input:focus {
     outline: none;
     border-color: var(--accent-regular);
-    box-shadow: 0 0 0 2px var(--accent-overlay);
+    box-shadow: 0 0 0 2px hsla(var(--accent-regular-rgb), 0.3);
   }
 
   .chat-form button {
     background-color: var(--accent-regular);
-    color: var(--accent-text-over);
+    color: white;
     border: none;
-    border-radius: 0.5rem;
+    border-radius: 0.25rem;
     padding: 0.5rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition:
-      background-color var(--theme-transition),
-      transform var(--theme-transition);
+      background-color 0.2s ease,
+      transform 0.1s ease;
   }
 
-  .chat-form button:hover,
-  .chat-form button:focus-visible {
-    background-color: var(--accent-light);
+  .chat-form button:hover:not(:disabled) {
+    background-color: var(--accent-dark);
     transform: translateY(-1px);
+  }
+
+  .chat-form button:active:not(:disabled) {
+    transform: scale(0.95);
   }
 
   .chat-form button:focus-visible {
     outline: 2px solid var(--accent-regular);
     outline-offset: 2px;
-  }
-
-  .chat-form button:active {
-    background-color: var(--accent-dark);
-    transform: translateY(0) scale(0.95);
   }
 
   @media (max-width: 400px) {
