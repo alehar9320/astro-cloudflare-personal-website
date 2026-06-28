@@ -28,8 +28,11 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
+    let { schema } = collections.flags;
+    if (typeof schema === 'function') {
+      schema = (schema as any)({ image: () => z.any(), z });
+    }
+    const result = (schema as any).safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
@@ -40,7 +43,10 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    let { schema } = collections.work;
+    if (typeof schema === 'function') {
+      schema = (schema as any)({ image: () => z.any(), z });
+    }
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -49,7 +55,7 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
+    const result = (schema as any).safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.title).toBe(sampleWork.title);

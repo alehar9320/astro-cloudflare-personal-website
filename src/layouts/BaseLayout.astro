@@ -26,7 +26,9 @@ const { title, description } = Astro.props;
 
     <div class="stack backgrounds">
       <Nav />
-      <slot />
+      <main id="main-content">
+        <slot />
+      </main>
       <Footer />
     </div>
 
