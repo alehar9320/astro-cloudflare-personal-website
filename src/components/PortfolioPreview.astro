@@ -1,7 +1,6 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import { getEntry } from 'astro:content';
-import { Image } from 'astro:assets';
 
 interface Props {
   project: CollectionEntry<'work'>;
@@ -21,14 +20,12 @@ const isShimmerEnabled = flagsEntry?.data.portfolio_shimmer_v1 ?? false;
   href={`/work/${id}`}
 >
   <span class="title">{data.title}</span>
-  <Image
+  <img
     src={data.img}
     alt={data.img_alt || ''}
     loading={loading}
     fetchpriority={fetchpriority}
     decoding="async"
-    width={480}
-    height={320}
   />
 </a>
 

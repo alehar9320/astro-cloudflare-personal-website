@@ -4,6 +4,14 @@ import { glob } from 'astro/loaders';
 import { defineCollection } from 'astro:content';
 import { collections } from '../content.config';
 import flagsFixture from '../content/flags/config.json';
+import type { ZodTypeAny } from 'zod';
+
+const mockContext = {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  image: () => z.string() as any,
+  z,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+} as any;
 
 describe('content.config', () => {
   it('exercises infrastructure mocks', () => {
@@ -28,9 +36,12 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    const result = (schema as any).safeParse(flagsFixture);
+    const rawSchema = collections.flags.schema;
+    const schema = (
+      typeof rawSchema === 'function' ? rawSchema(mockContext) : rawSchema
+    ) as ZodTypeAny;
+
+    const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
@@ -41,30 +52,25 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema: schemaFn } = collections.work;
-    // Call the schema function with mocks for image() and z
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    const schema = (schemaFn as any)({
-      image: () => z.any(),
-      z,
-    });
+    const rawSchema = collections.work.schema;
+    const schema = (
+      typeof rawSchema === 'function' ? rawSchema(mockContext) : rawSchema
+    ) as ZodTypeAny;
 
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
       publishDate: '2025-01-01',
       tags: ['tag1', 'tag2'],
-      img: '../../assets/work/stock-1.jpg',
+      img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-    const result = (schema as any).safeParse(sampleWork);
+    const result = schema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
-      /* eslint-disable @typescript-eslint/no-explicit-any */
-      expect((result.data as any).title).toBe(sampleWork.title);
-      expect((result.data as any).publishDate).toBeInstanceOf(Date);
-      /* eslint-enable @typescript-eslint/no-explicit-any */
+      const data = result.data as Record<string, unknown>;
+      expect(data.title).toBe(sampleWork.title);
+      expect(data.publishDate).toBeInstanceOf(Date);
     }
   });
 });

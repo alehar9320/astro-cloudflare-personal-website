@@ -1,7 +1,5 @@
 ---
 import { getCollection } from 'astro:content';
-import { Image, getImage } from 'astro:assets';
-import portraitImg from '../assets/portrait.png';
 // Component Imports
 import CallToAction from '../components/CallToAction.astro';
 // Page section components
@@ -80,14 +78,6 @@ const schema = {
   ],
 };
 
-// Optimize hero image for preload
-const optimizedPortrait = await getImage({
-  src: portraitImg,
-  width: 480,
-  height: 620,
-  format: 'webp',
-});
-
 // Full Astro Component Syntax:
 // https://docs.astro.build/basics/astro-components/
 ---
@@ -96,7 +86,6 @@ const optimizedPortrait = await getImage({
   title="Alexander Härenstam | Strategic Product Leader"
   description="Strategic Product Leader driving high-impact innovation, Industrial AI, and Developer Experience (DevEx) at IFS."
 >
-  <link rel="preload" as="image" href={optimizedPortrait.src} slot="head" />
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="stack gap-20 lg:gap-48">
     <div class="wrapper stack gap-8 lg:gap-20">
@@ -121,11 +110,11 @@ const optimizedPortrait = await getImage({
           </div>
         </Hero>
 
-        <Image
+        <img
           alt="Alexander Härenstam smiling in a red plaid shirt and tortoise shell glasses"
-          width={480}
-          height={620}
-          src={portraitImg}
+          width="480"
+          height="620"
+          src="/assets/portrait.png"
           loading="eager"
           fetchpriority="high"
           decoding="async"
