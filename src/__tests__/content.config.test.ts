@@ -29,7 +29,8 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    const result = (schema as any).safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
@@ -40,20 +41,30 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const { schema: schemaFn } = collections.work;
+    // Call the schema function with mocks for image() and z
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    const schema = (schemaFn as any)({
+      image: () => z.any(),
+      z,
+    });
+
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
       publishDate: '2025-01-01',
       tags: ['tag1', 'tag2'],
-      img: '/assets/sample.jpg',
+      img: '../../assets/work/stock-1.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+    const result = (schema as any).safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.title).toBe(sampleWork.title);
-      expect(result.data.publishDate).toBeInstanceOf(Date);
+      /* eslint-disable @typescript-eslint/no-explicit-any */
+      expect((result.data as any).title).toBe(sampleWork.title);
+      expect((result.data as any).publishDate).toBeInstanceOf(Date);
+      /* eslint-enable @typescript-eslint/no-explicit-any */
     }
   });
 });
