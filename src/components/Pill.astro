@@ -1,10 +1,10 @@
 ---
 import { getEntry } from 'astro:content';
-const flagsEntry = await getEntry('flags', 'config');
-const isTactileEnabled = flagsEntry?.data.enable_pill_tactile_v1 ?? false;
+const config = await getEntry('flags', 'config');
+const isTactile = config?.data?.enable_pill_tactile_v1 ?? false;
 ---
 
-<div class={`pill ${isTactileEnabled ? 'tactile' : ''}`}><slot /></div>
+<div class:list={['pill', { 'is-tactile': isTactile }]}><slot /></div>
 
 <style>
   .pill {
@@ -29,29 +29,26 @@ const isTactileEnabled = flagsEntry?.data.enable_pill_tactile_v1 ?? false;
     background-size: 250% 100%;
     background-position: 0% 50%;
     box-shadow: var(--shadow-sm);
-    transition:
-      background-position 0.4s cubic-bezier(0.22, 1, 0.36, 1),
-      transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
-      box-shadow 0.3s ease;
   }
 
-  .pill.tactile:hover {
-    background-position: 100% 50%;
+  .is-tactile {
+    transition:
+      transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+      box-shadow 0.2s ease,
+      background-position 0.4s ease;
+    will-change: transform, box-shadow;
+    cursor: default;
+  }
+
+  .is-tactile:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-md);
+    background-position: 100% 50%;
   }
 
-  .pill.tactile:active {
+  .is-tactile:active {
     transform: translateY(0) scale(0.97);
-    transition: transform 0.1s ease;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .pill {
-      transition: none;
-    }
-    .pill.tactile:hover {
-      transform: none;
-    }
+    box-shadow: var(--shadow-sm);
+    transition-duration: 0.1s;
   }
 </style>

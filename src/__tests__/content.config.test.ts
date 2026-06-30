@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { type ZodTypeAny } from 'zod';
+import type { ZodTypeAny } from 'zod';
 import { z } from './mocks/astro-zod';
 import { glob } from 'astro/loaders';
 import { defineCollection } from 'astro:content';
@@ -29,12 +29,14 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
-    const context = { image: () => z.any(), z } as unknown;
-    const zodSchema = (
-      typeof schema === 'function' ? schema(context as never) : schema
+    const rawSchema = collections.flags.schema;
+    const schema = (
+      typeof rawSchema === 'function'
+        ? rawSchema({ image: () => z.any(), z } as unknown as Parameters<Extract<typeof rawSchema, (...args: unknown[]) => unknown>>[0])
+        : rawSchema
     ) as ZodTypeAny;
-    const result = zodSchema.safeParse(flagsFixture);
+
+    const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
@@ -45,7 +47,13 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const rawSchema = collections.work.schema;
+    const schema = (
+      typeof rawSchema === 'function'
+        ? rawSchema({ image: () => z.any(), z } as unknown as Parameters<Extract<typeof rawSchema, (...args: unknown[]) => unknown>>[0])
+        : rawSchema
+    ) as ZodTypeAny;
+
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -54,14 +62,10 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const context = { image: () => z.any(), z } as unknown;
-    const zodSchema = (
-      typeof schema === 'function' ? schema(context as never) : schema
-    ) as ZodTypeAny;
-    const result = zodSchema.safeParse(sampleWork);
+    const result = schema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
-      const data = result.data as { title: string; publishDate: Date };
+      const data = result.data as Record<string, unknown>;
       expect(data.title).toBe(sampleWork.title);
       expect(data.publishDate).toBeInstanceOf(Date);
     }

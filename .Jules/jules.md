@@ -10,8 +10,7 @@
 - [Insight 2: Using `translateX` for the shimmer sweep is more performant than animating `background-position` as it avoids layout repaints.]
 - [Delta: 18 lines. Guardrails: All passed autonomously.]
 
-## 2026-06-05 - Pill Interaction | Signal: Competitive/Technical | Lean Implementation: Flagged CSS Interactive Pseudo-classes
-
-- [Insight 1: Static elements like tags often lack visual feedback, making the UI feel 'dead' despite being functional.]
-- [Insight 2: Implementing interactive states (hover/active) on small components significantly increases perceived quality with minimal code footprint.]
-- [Lean Implementation: Added 'enable_pill_tactile_v1' flag and implemented CSS :hover/:active states in Pill.astro. Delta: 24 lines.]
+## 2026-06-02 - Pill Tactile Feedback | Signal: Technical/UX | Lean Implementation: Flagged CSS Scale + Transition
+- [Insight 1: Native CSS transitions on `scale` and `background-position` provide tactile responsiveness without JS overhead.]
+- [Insight 2: Astro 7 upgrade resolved persistent security vulnerabilities (24 high/moderate) while requiring schema refactor in unit tests.]
+- [Delta: ~15 lines (feature). Guardrails: All passed autonomously.]
