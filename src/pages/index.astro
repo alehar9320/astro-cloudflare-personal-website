@@ -331,6 +331,11 @@ const schema = {
   /* ====================================================== */
 
   .mention-card {
+    --card-blur: 16px;
+    --card-bg-opacity: 0.4;
+    --card-hover-offset: -4px;
+    --card-glow-color: hsla(210, 100%, 45%, 0.3);
+
     display: flex;
     height: 7rem;
     justify-content: center;
@@ -339,9 +344,9 @@ const schema = {
     border: 1px solid var(--gray-800);
     border-radius: 1.5rem;
     color: var(--gray-300);
-    background: hsla(var(--gray-999-basis), 0.4);
-    backdrop-filter: blur(16px) saturate(120%);
-    -webkit-backdrop-filter: blur(16px) saturate(120%);
+    background: hsla(var(--gray-999-basis), var(--card-bg-opacity));
+    backdrop-filter: blur(var(--card-blur)) saturate(120%);
+    -webkit-backdrop-filter: blur(var(--card-blur)) saturate(120%);
     box-shadow: var(--shadow-sm);
     transition:
       transform var(--theme-transition),
@@ -362,10 +367,10 @@ const schema = {
 
   .mention-card:hover,
   .mention-card:focus-within {
-    transform: translateY(-4px);
+    transform: translateY(var(--card-hover-offset));
     border-color: var(--accent-regular);
     box-shadow:
-      0 12px 30px -5px hsla(210, 100%, 45%, 0.3),
+      0 12px 30px -5px var(--card-glow-color),
       var(--shadow-md);
   }
 
