@@ -1,6 +1,6 @@
 import { z } from 'zod';
 
-export const GitHubReleaseApiItemSchema = z.object({
+const GitHubReleaseApiItemSchema = z.object({
   body: z.string().nullable().optional(),
   draft: z.boolean().optional(),
   html_url: z.string().optional(),
@@ -10,9 +10,9 @@ export const GitHubReleaseApiItemSchema = z.object({
   tag_name: z.string().optional(),
 });
 
-export type GitHubReleaseApiItem = z.infer<typeof GitHubReleaseApiItemSchema>;
+type GitHubReleaseApiItem = z.infer<typeof GitHubReleaseApiItemSchema>;
 
-export const SiteReleaseSchema = z.object({
+const SiteReleaseSchema = z.object({
   body: z.string(),
   publishedAt: z.string().nullable(),
   title: z.string(),

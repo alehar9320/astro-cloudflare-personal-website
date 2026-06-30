@@ -6,7 +6,7 @@ export const MAX_TOTAL_CONTENT_LENGTH = 3000;
 
 export const ChatRoleSchema = z.enum(['user', 'assistant']);
 
-export const ChatMessageSchema = z.object({
+const ChatMessageSchema = z.object({
   role: ChatRoleSchema,
   content: z
     .string()
