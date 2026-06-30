@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import { type ZodTypeAny } from 'zod';
 import { z } from './mocks/astro-zod';
 import { glob } from 'astro/loaders';
 import { defineCollection } from 'astro:content';
@@ -29,7 +30,9 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
+    const context = { image: () => z.any(), z } as unknown;
+    const zodSchema = (typeof schema === 'function' ? schema(context as never) : schema) as ZodTypeAny;
+    const result = zodSchema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
@@ -49,11 +52,14 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
+    const context = { image: () => z.any(), z } as unknown;
+    const zodSchema = (typeof schema === 'function' ? schema(context as never) : schema) as ZodTypeAny;
+    const result = zodSchema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.title).toBe(sampleWork.title);
-      expect(result.data.publishDate).toBeInstanceOf(Date);
+      const data = result.data as { title: string; publishDate: Date };
+      expect(data.title).toBe(sampleWork.title);
+      expect(data.publishDate).toBeInstanceOf(Date);
     }
   });
 });
