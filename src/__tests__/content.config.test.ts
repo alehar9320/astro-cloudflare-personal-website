@@ -33,8 +33,9 @@ describe('content.config', () => {
     if (!schema) throw new Error('Schema is undefined');
 
     // To satisfy Astro 6/7 schemas in tests, resolve them by calling with mock context if functional
+    const mockContext = { image: () => z.any(), z };
     const resolvedSchema = (
-      typeof schema === 'function' ? schema({ image: () => z.any(), z } as any) : schema
+      typeof schema === 'function' ? schema(mockContext as never) : schema
     ) as ZodTypeAny;
 
     const result = resolvedSchema.safeParse(flagsFixture);
@@ -52,8 +53,9 @@ describe('content.config', () => {
     if (!schema) throw new Error('Schema is undefined');
 
     // To satisfy Astro 6/7 schemas in tests, resolve them by calling with mock context if functional
+    const mockContext = { image: () => z.any(), z };
     const resolvedSchema = (
-      typeof schema === 'function' ? schema({ image: () => z.any(), z } as any) : schema
+      typeof schema === 'function' ? schema(mockContext as never) : schema
     ) as ZodTypeAny;
 
     const sampleWork = {
@@ -68,7 +70,7 @@ describe('content.config', () => {
     const result = resolvedSchema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
-      const data = result.data as any;
+      const data = result.data as Record<string, unknown>;
       expect(data.title).toBe(sampleWork.title);
       expect(data.publishDate).toBeInstanceOf(Date);
     }
