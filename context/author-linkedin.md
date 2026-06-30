@@ -67,7 +67,7 @@ Stand out to employers
 Enhance your profile, craft standout messages, and assess job fit with Premium.
 
 Try Premium for SEK 0
-1-month free trial. Cancel whenever. We’l remind you 7 days before your trial ends.
+1-month free trial. Cancel whenever. We'll remind you 7 days before your trial ends.
 
 Dismiss premium promotion
 
@@ -157,7 +157,7 @@ You might be studying tech, business, or design — what matters most is that yo
 ✅ AI-first mindset with familiarity of using AI tools (like ChatGPT, Copilot, Perplexity, etc.) as part of your workflow
 ✅ Can operate confidently in a fast-paced, global virtual environment — with English as your working language
 
-You’l work on real initiatives that impact global engineering teams — from research and automation to internal tooling and productivity insights.
+You'll work on real initiatives that impact global engineering teams — from research and automation to internal tooling and productivity insights.
 
 🔗 Learn more and apply:
 https://lnkd.in/dBa3dwSK
@@ -179,7 +179,7 @@ Product @IFS | Developer Experience
 
 Exciting times as IFS Cloud customers can now make use of more than 200+ hashtag#industrialAI capabilities with the latest 25R1 release.
 
-Consumer AI experiences are great, but it's when it's rolled out for hard-to-solve enterprise and social impact use cases that I believe we'l see the greatest societal benefits ✨🚀
+Consumer AI experiences are great, but it's when it's rolled out for hard-to-solve enterprise and social impact use cases that I believe we'll see the greatest societal benefits ✨🚀
 …more
 View Christian Pedersen’s graphic link
 Christian Pedersen
@@ -213,7 +213,7 @@ IFS is a double-digit growth company in the enterprise software industry.
 
 As Product Manager for Developer Experience at IFS, I set the strategy for the tools and platforms that empower internal engineering teams, global partners, and customers. The work translates to increased efficiency and accelerated time-to-market for the company's offerings.
 
-One key pillar has been the rollout of AI Coding Copilots; a strategic initiative driving business value in the size of several millions.IFS is a double-digit growth company in the enterprise software industry. As Product Manager for Developer Experience at IFS, I set the strategy for the tools and platforms that empower internal engineering teams, global partners, and customers. The work translates to increased efficiency and accelerated time-to-market for the company's offerings. One key pillar has been the rollout of AI Coding Copilots; a strategic initiative driving business value in the size of several millions.…see more
+One key pillar has been the rollout of AI Coding Copilots; a strategic initiative driving business value in the size of several millions. …see more
 Product Manager - Product Experience (Design System)
 Apr 2022 - Feb 2025 · 2 yrs 1 mosApr 2022 to Feb 2025 · 2 yrs 1 mos
 Gothenburg, Västra Götaland County, Sweden · Hybrid
@@ -227,7 +227,7 @@ Scaling the IFS Design System: Took the platform from 0 to 1 with limited resour
 
 Spearheading the User Behavior Analytics Platform: This key capability for IFS Cloud ensures features are grounded in genuine customer needs, preventing over-engineering and optimizing development resources.
 
-These achievements were made possible through the dedication and talent of the incredible teams I've had the privilege to work with.IFS is a double-digit growth company in the enterprise software industry. As Product Manager for the company design system, I championed the tools and platforms that empowered internal engineering teams, global partners, and customers. The work by the team translated to increased efficiency and accelerated time-to-market for the IFS Cloud ecosystem. A proven track record of delivering quantifiable business value through platform innovation, including but not limited to: Scaling the IFS Design System: Took the platform from 0 to 1 with limited resources, enabling product teams to deliver new functionality 2x faster and generating a financial return of up to 30x the initial investment. This work was recognized as a runner-up in the prestigious Zeroheight Design System Awards. Spearheading the User Behavior Analytics Platform: This key capability for IFS Cloud ensures features are grounded in genuine customer needs, preventing over-engineering and optimizing development resources. These achievements were made possible through the dedication and talent of the incredible teams I've had the privilege to work with.…see more
+These achievements were made possible through the dedication and talent of the incredible teams I've had the privilege to work with. …see more
 UX-design, Technological Innovation and +3 skills
 IFS Design System
 Design and development resources for creating the highest quality end-to-end experiences in the enterprise software industry.
@@ -249,7 +249,7 @@ My thesis revolved around business model innovation, and the opportunities and b
 
 1. Academically mapping out what it means to transform a business with the help of digitalization.
 2. Studying a specific business case where digitalization was part of changing the business model.
-3. Identifying the gap between what theory stipulates and the business case at hand.Invativa is a specialist consulting company helping others create and improve their digital business. This is done by identifying how digital technology can be applied to improve the business model; digitalization. My thesis revolved around business model innovation, and the opportunities and barriers that digitalization creates. This was done by: 1) Academically mapping out what it means to transform a business with the help of digitalization. 2) Studying a specific business case where digitalization was part of changing the business model. 3) Identifying the gap between what theory stipulates and the business case at hand.…see more
+3. Identifying the gap between what theory stipulates and the business case at hand. …see more
    Ericsson logo
    Ericsson
    1 yr 3 mos
