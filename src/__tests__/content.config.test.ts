@@ -31,7 +31,9 @@ describe('content.config', () => {
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
     const context = { image: () => z.any(), z } as unknown;
-    const zodSchema = (typeof schema === 'function' ? schema(context as never) : schema) as ZodTypeAny;
+    const zodSchema = (
+      typeof schema === 'function' ? schema(context as never) : schema
+    ) as ZodTypeAny;
     const result = zodSchema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -53,7 +55,9 @@ describe('content.config', () => {
       img_alt: 'Sample alt text',
     };
     const context = { image: () => z.any(), z } as unknown;
-    const zodSchema = (typeof schema === 'function' ? schema(context as never) : schema) as ZodTypeAny;
+    const zodSchema = (
+      typeof schema === 'function' ? schema(context as never) : schema
+    ) as ZodTypeAny;
     const result = zodSchema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
