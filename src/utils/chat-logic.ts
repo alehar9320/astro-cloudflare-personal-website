@@ -22,12 +22,19 @@ export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
 export const ChatRequestSchema = z.object({
   // Relaxed constraints: pruneMessages will handle the sliding window to fit model limits.
-  messages: z.array(ChatMessageSchema).min(1, 'Expected at least one message'),
+  messages: z
+    .array(ChatMessageSchema)
+    .min(1, 'Expected at least one message')
+    .refine((msgs) => msgs[msgs.length - 1]?.role === 'user', {
+      message: 'The last message must be from the user',
+    }),
 });
 
 /**
  * Prunes conversation history to fit within defined message and character limits.
  * Implements a sliding window algorithm that prioritizes the most recent messages.
+ *
+ * Ensures the resulting conversation starts with a 'user' message to maintain LLM cadence.
  *
  * @param messages - The history of chat messages.
  * @returns A pruned array of messages that satisfies all constraints.
@@ -39,6 +46,11 @@ export function pruneMessages(messages: ChatMessage[]): ChatMessage[] {
   while (pruned.length > 1 && totalLength > MAX_TOTAL_CONTENT_LENGTH) {
     // biome-ignore lint/style/noNonNullAssertion: loop guard ensures shift() returns an element
     totalLength -= pruned.shift()!.content.length;
+  }
+
+  // Ensure conversation starts with a user message for better LLM cadence
+  while (pruned.length > 1 && pruned[0].role !== 'user') {
+    pruned.shift();
   }
 
   return pruned;

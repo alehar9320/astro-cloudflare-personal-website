@@ -336,7 +336,15 @@
 </style>
 
 <script>
+  import { z } from 'zod';
   import { createChatStreamParser, extractAssistantTextFromSse } from '../utils/chat-stream';
+  import { ChatMessageSchema } from '../utils/chat-logic';
+
+  /**
+   * Schema for validating chat history stored in sessionStorage.
+   * Ensures data integrity when hydrating the client-side state.
+   */
+  const ChatHistorySchema = z.array(ChatMessageSchema);
 
   const chatToggle = document.getElementById('chat-toggle');
   const chatWindow = document.getElementById('chat-window');
@@ -363,7 +371,27 @@
 
   setStatus('idle');
 
-  const messages = JSON.parse(sessionStorage.getItem('chat-history') || '[]');
+  function getInitialMessages() {
+    try {
+      const rawHistory = sessionStorage.getItem('chat-history');
+      if (!rawHistory) return [];
+
+      const parsed = JSON.parse(rawHistory);
+      const result = ChatHistorySchema.safeParse(parsed);
+
+      if (result.success) {
+        return result.data;
+      }
+
+      console.warn({ event: 'chat_history_validation_failed', error: result.error });
+      return [];
+    } catch (error) {
+      console.error({ event: 'chat_history_parse_error', error });
+      return [];
+    }
+  }
+
+  const messages = getInitialMessages();
 
   function saveMessages() {
     sessionStorage.setItem('chat-history', JSON.stringify(messages));

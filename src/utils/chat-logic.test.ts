@@ -4,6 +4,7 @@ import {
   MAX_MESSAGES,
   MAX_TOTAL_CONTENT_LENGTH,
   type ChatMessage,
+  ChatRequestSchema,
 } from './chat-logic';
 
 describe('chat logic utilities', () => {
@@ -98,8 +99,42 @@ describe('chat logic utilities', () => {
         { role: 'assistant', content: 'short' },
       ];
       const pruned = pruneMessages(messages);
+      // It will shift the first message because it's too long.
+      // The second message is 'assistant', so it will shift it too to find a 'user' message.
+      // But it keeps at least one message.
       expect(pruned).toHaveLength(1);
       expect(pruned[0].content).toBe('short');
+    });
+
+    it('ensures pruned history starts with a user message', () => {
+      const messages: ChatMessage[] = [
+        { role: 'user', content: 'Initial' },
+        { role: 'assistant', content: 'Response' },
+        { role: 'user', content: 'Follow up' },
+      ];
+
+      // If we force it to prune the first message
+      const pruned = pruneMessages(messages.slice(1));
+      expect(pruned[0].role).toBe('user');
+      expect(pruned).toHaveLength(1);
+      expect(pruned[0].content).toBe('Follow up');
+    });
+  });
+
+  describe('ChatRequestSchema', () => {
+    it('rejects history that does not end with a user message', () => {
+      const messages = [
+        { role: 'user', content: 'Hello' },
+        { role: 'assistant', content: 'Hi' },
+      ];
+      const result = ChatRequestSchema.safeParse({ messages });
+      expect(result.success).toBe(false);
+    });
+
+    it('accepts history that ends with a user message', () => {
+      const messages = [{ role: 'user', content: 'Hello' }];
+      const result = ChatRequestSchema.safeParse({ messages });
+      expect(result.success).toBe(true);
     });
   });
 });

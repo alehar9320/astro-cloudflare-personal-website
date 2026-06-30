@@ -53,6 +53,7 @@ describe('chat API', () => {
         messages: [
           { role: 'user', content: '  Hello  ', ignored: 'field' },
           { role: 'assistant', content: 'Hi there' },
+          { role: 'user', content: 'Continuing' },
         ],
       },
       ai
@@ -75,6 +76,7 @@ describe('chat API', () => {
           expect.objectContaining({ role: 'system' }),
           { role: 'user', content: 'Hello' },
           { role: 'assistant', content: 'Hi there' },
+          { role: 'user', content: 'Continuing' },
         ],
         stream: true,
       })

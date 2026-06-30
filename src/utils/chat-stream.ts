@@ -1,5 +1,14 @@
+import { z } from 'zod';
+
 const DATA_PREFIX = 'data:';
 const DONE_MARKER = '[DONE]';
+
+/**
+ * Schema for validating incoming AI response chunks from Cloudflare Workers AI.
+ */
+export const AiResponseChunkSchema = z.object({
+  response: z.string(),
+});
 
 interface SseParserState {
   currentEventLines: string[];
@@ -11,15 +20,6 @@ export interface ChatStreamParser {
   push: (chunk: string) => string;
   /** Flushes any remaining buffered text and returns the final parsed result. */
   flush: () => string;
-}
-
-/**
- * Type guard to check if a value is a non-null object.
- * @param value - The value to check.
- * @returns True if the value is a Record.
- */
-function isRecord(value: unknown): value is Record<string, unknown> {
-  return typeof value === 'object' && value !== null;
 }
 
 /**
@@ -43,9 +43,10 @@ function extractResponseFromPayload(payload: string): string {
 
   try {
     const parsed: unknown = JSON.parse(payload);
+    const result = AiResponseChunkSchema.safeParse(parsed);
 
-    if (isRecord(parsed) && typeof parsed.response === 'string') {
-      return parsed.response;
+    if (result.success) {
+      return result.data.response;
     }
   } catch (error: unknown) {
     console.error({ event: 'chat_stream_parse_error', error: String(error) });

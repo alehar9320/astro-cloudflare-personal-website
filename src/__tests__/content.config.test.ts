@@ -1,4 +1,5 @@
 import { describe, it, expect } from 'vitest';
+import type { ZodTypeAny } from 'zod';
 import { z } from './mocks/astro-zod';
 import { glob } from 'astro/loaders';
 import { defineCollection } from 'astro:content';
@@ -28,8 +29,15 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
+    const schema = collections.flags.schema;
+    if (!schema) throw new Error('Schema is undefined');
+
+    // To satisfy Astro 6/7 schemas in tests, resolve them by calling with mock context if functional
+    const resolvedSchema = (
+      typeof schema === 'function' ? schema({ image: () => z.any(), z } as any) : schema
+    ) as ZodTypeAny;
+
+    const result = resolvedSchema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
@@ -40,7 +48,14 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const schema = collections.work.schema;
+    if (!schema) throw new Error('Schema is undefined');
+
+    // To satisfy Astro 6/7 schemas in tests, resolve them by calling with mock context if functional
+    const resolvedSchema = (
+      typeof schema === 'function' ? schema({ image: () => z.any(), z } as any) : schema
+    ) as ZodTypeAny;
+
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -49,11 +64,13 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
+
+    const result = resolvedSchema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.title).toBe(sampleWork.title);
-      expect(result.data.publishDate).toBeInstanceOf(Date);
+      const data = result.data as any;
+      expect(data.title).toBe(sampleWork.title);
+      expect(data.publishDate).toBeInstanceOf(Date);
     }
   });
 });
