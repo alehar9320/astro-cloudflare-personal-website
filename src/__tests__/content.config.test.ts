@@ -29,6 +29,7 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let schema = collections.flags.schema as any;
     if (typeof schema === 'function') {
       schema = schema({ image: () => z.any(), z });
@@ -44,6 +45,7 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let schema = collections.work.schema as any;
     if (typeof schema === 'function') {
       schema = schema({ image: () => z.any(), z });
@@ -59,8 +61,9 @@ describe('content.config', () => {
     const result = (schema as ZodTypeAny).safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
-      expect((result.data as any).title).toBe(sampleWork.title);
-      expect((result.data as any).publishDate).toBeInstanceOf(Date);
+      const data = result.data as Record<string, unknown>;
+      expect(data.title).toBe(sampleWork.title);
+      expect(data.publishDate).toBeInstanceOf(Date);
     }
   });
 });
