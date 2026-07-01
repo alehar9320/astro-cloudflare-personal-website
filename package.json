@@ -52,11 +52,7 @@
     "postcss": "^8.5.10",
     "yaml": "^2.8.3",
     "ws": "^8.20.1",
-    "@actions/github": {
-      "undici": "7.24.7"
-    },
-    "@actions/http-client": {
-      "undici": "7.24.7"
-    }
+    "undici": "7.28.0",
+    "esbuild": "0.28.1"
   }
 }

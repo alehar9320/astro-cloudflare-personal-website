@@ -37,10 +37,9 @@ export function pruneMessages(messages: ChatMessage[]): ChatMessage[] {
   let totalLength = pruned.reduce((acc, msg) => acc + msg.content.length, 0);
 
   while (pruned.length > 1 && totalLength > MAX_TOTAL_CONTENT_LENGTH) {
-    const removed = pruned.shift();
-    if (removed) {
-      totalLength -= removed.content.length;
-    }
+    // Loop guard ensures shift() returns an element. Cast satisfies coverage.
+    const removed = pruned.shift() as ChatMessage;
+    totalLength -= removed.content.length;
   }
 
   return pruned;
