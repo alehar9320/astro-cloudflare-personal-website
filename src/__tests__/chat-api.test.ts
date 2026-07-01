@@ -487,4 +487,24 @@ describe('chat API', () => {
 
     process.env = originalEnv;
   });
+
+  it('handles locals.runtime being present but env being undefined', async () => {
+    const ai = createAi();
+    const originalEnv = process.env;
+    process.env = { ...originalEnv, AI: ai as unknown as (typeof process.env)['AI'] };
+
+    const request = createRequest({ messages: [{ role: 'user', content: 'Hello' }] });
+    const context = {
+      request,
+      locals: {
+        runtime: { env: undefined },
+      },
+    } as unknown as ChatPostContext;
+
+    const response = await POST(context);
+    expect(response.status).toBe(200);
+    expect(ai.run).toHaveBeenCalled();
+
+    process.env = originalEnv;
+  });
 });

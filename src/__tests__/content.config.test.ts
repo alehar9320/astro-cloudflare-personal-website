@@ -56,4 +56,18 @@ describe('content.config', () => {
       expect(result.data.publishDate).toBeInstanceOf(Date);
     }
   });
+
+  it('fails work schema validation if img_alt is empty', () => {
+    const { schema } = collections.work;
+    const invalidWork = {
+      title: 'Invalid Work',
+      description: 'Missing alt text',
+      publishDate: '2025-01-01',
+      tags: [],
+      img: '/assets/sample.jpg',
+      img_alt: '', // Should fail min(1)
+    };
+    const result = schema.safeParse(invalidWork);
+    expect(result.success).toBe(false);
+  });
 });

@@ -76,4 +76,8 @@ describe('chat stream parser', () => {
   it('falls back to plain text when the input is not SSE', () => {
     expect(extractAssistantTextFromSse('Hello world')).toBe('Hello world');
   });
+
+  it('ignores SSE payloads with empty JSON', () => {
+    expect(extractAssistantTextFromSse('data: {}\n\n')).toBe('');
+  });
 });

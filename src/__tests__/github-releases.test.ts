@@ -325,5 +325,39 @@ describe('github releases utility', () => {
       expect(result).toEqual(mockReleases);
       expect(fetchMock).toHaveBeenCalledOnce();
     });
+
+    it('handles malformed JSON in cache gracefully', async () => {
+      vi.stubGlobal('window', {});
+      vi.stubGlobal('sessionStorage', {
+        getItem: vi.fn().mockReturnValue('invalid-json'),
+      });
+
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [{ body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: 'v1' }],
+      });
+
+      const result = await fetchGitHubReleases(fetchMock as typeof fetch);
+
+      expect(result).toEqual(mockReleases);
+      expect(fetchMock).toHaveBeenCalledOnce();
+    });
+
+    it('handles missing data or timestamp in cache JSON gracefully', async () => {
+      vi.stubGlobal('window', {});
+      vi.stubGlobal('sessionStorage', {
+        getItem: vi.fn().mockReturnValue(JSON.stringify({ data: mockReleases })), // missing timestamp
+      });
+
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [{ body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: 'v1' }],
+      });
+
+      const result = await fetchGitHubReleases(fetchMock as typeof fetch);
+
+      expect(result).toEqual(mockReleases);
+      expect(fetchMock).toHaveBeenCalledOnce();
+    });
   });
 });
