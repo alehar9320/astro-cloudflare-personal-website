@@ -28,7 +28,8 @@ const RELEASES_PAGE_URL =
   'https://github.com/alehar9320/astro-cloudflare-personal-website/releases';
 const REPO_URL = 'https://github.com/alehar9320/astro-cloudflare-personal-website';
 const CACHE_KEY = 'github-releases-cache';
-const CACHE_TTL = 3600 * 1000; // 1 hour
+const ONE_HOUR_MS = 3600 * 1000;
+const CACHE_TTL = ONE_HOUR_MS;
 
 /**
  * Represents a single item within a release's changelog.
