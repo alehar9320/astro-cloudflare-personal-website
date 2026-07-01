@@ -78,8 +78,8 @@ export async function fetchGitHubReleases(
           return data;
         }
       }
-    } catch (error) {
-      console.error({ event: 'storage_releases_cache_read_error', error: String(error) });
+    } catch {
+      /* ignore cache errors */
     }
   }
 
@@ -138,8 +138,8 @@ export async function fetchGitHubReleases(
           CACHE_KEY,
           JSON.stringify({ data: releases, timestamp: Date.now() })
         );
-      } catch (error) {
-        console.error({ event: 'storage_releases_cache_write_error', error: String(error) });
+      } catch {
+        /* ignore cache errors */
       }
     }
 

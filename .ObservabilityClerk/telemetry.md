@@ -1,12 +1,9 @@
 # Telemetry Standardization Journal
 
-| Date       | Module                          | Events Standardized                                                                                                                   |
-| :--------- | :------------------------------ | :------------------------------------------------------------------------------------------------------------------------------------ |
-| 2025-05-14 | `src/utils/github-releases.ts`  | `github_releases_invalid_url`, `github_releases_request_failed`, `github_releases_validation_failed`, `github_releases_request_error` |
-| 2025-05-14 | `src/components/Chat.astro`     | `chat_client_error`                                                                                                                   |
-| 2025-05-14 | `src/pages/api/chat.ts`         | `chat_api_json_parse_error`, `chat_api_run_error`                                                                                     |
-| 2025-05-14 | `src/utils/chat-stream.ts`      | `chat_stream_parse_error`                                                                                                             |
-| 2025-05-14 | `src/__tests__/*.test.ts`       | Expanded unit tests to cover 100% of telemetry branches (including non-Error rejection cases).                                        |
-| 2025-05-14 | `src/components/MainHead.astro` | `storage_theme_read_error`, `storage_theme_write_error`                                                                               |
-| 2025-05-14 | `src/components/Chat.astro`     | `storage_chat_history_read_error`, `storage_chat_history_write_error`                                                                 |
-| 2025-05-14 | `src/utils/github-releases.ts`  | `storage_releases_cache_read_error`, `storage_releases_cache_write_error`                                                             |
+| Date       | Module                         | Events Standardized                                                                                                                   |
+| :--------- | :----------------------------- | :------------------------------------------------------------------------------------------------------------------------------------ |
+| 2025-05-14 | `src/utils/github-releases.ts` | `github_releases_invalid_url`, `github_releases_request_failed`, `github_releases_validation_failed`, `github_releases_request_error` |
+| 2025-05-14 | `src/components/Chat.astro`    | `chat_client_error`                                                                                                                   |
+| 2025-05-14 | `src/pages/api/chat.ts`        | `chat_api_json_parse_error`, `chat_api_run_error`                                                                                     |
+| 2025-05-14 | `src/utils/chat-stream.ts`     | `chat_stream_parse_error`                                                                                                             |
+| 2025-05-14 | `src/__tests__/*.test.ts`      | Expanded unit tests to cover 100% of telemetry branches (including non-Error rejection cases).                                        |
