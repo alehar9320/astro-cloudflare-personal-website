@@ -24,16 +24,17 @@
   "dependencies": {
     "@astrojs/cloudflare": "^13.5.4",
     "@astrojs/node": "^10.1.1",
-    "@sentry/astro": "^10.50.0",
-    "@sentry/cloudflare": "^10.50.0",
-    "astro": "^6.4.2",
-    "posthog-js": "^1.372.6",
+    "@sentry/astro": "^10.62.0",
+    "@sentry/cloudflare": "^10.62.0",
+    "astro": "^6.4.8",
+    "posthog-js": "^1.396.3",
     "wrangler": "^4.95.0",
     "zod": "^4.4.3"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "@codecov/vite-plugin": "^2.0.1",
+    "@types/node": "^26.0.1",
     "@typescript-eslint/parser": "^8.60.0",
     "@vitest/coverage-v8": "^4.1.7",
     "@vitest/ui": "^4.1.2",
@@ -52,11 +53,10 @@
     "postcss": "^8.5.10",
     "yaml": "^2.8.3",
     "ws": "^8.20.1",
-    "@actions/github": {
-      "undici": "7.24.7"
-    },
-    "@actions/http-client": {
-      "undici": "7.24.7"
-    }
+    "esbuild": "0.28.1",
+    "dompurify": "^3.4.11",
+    "vite": "^7.3.6",
+    "@babel/core": "^7.29.7",
+    "undici": "7.28.0"
   }
 }
