@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { z } from './mocks/astro-zod';
+import type { ZodObject, ZodTypeAny } from 'zod';
 import { glob } from 'astro/loaders';
 import { defineCollection } from 'astro:content';
 import { collections } from '../content.config';
@@ -28,7 +29,11 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
+    // Resolve functional schema using a mock context to satisfy safeParse access
+    const schema = (typeof collections.flags.schema === 'function'
+      ? collections.flags.schema({ image: () => {} } as never)
+      : collections.flags.schema) as unknown as ZodObject<Record<string, ZodTypeAny>>;
+
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -40,7 +45,11 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    // Resolve functional schema using a mock context to satisfy safeParse access
+    const schema = (typeof collections.work.schema === 'function'
+      ? collections.work.schema({ image: () => {} } as never)
+      : collections.work.schema) as unknown as ZodObject<Record<string, ZodTypeAny>>;
+
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',

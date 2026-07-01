@@ -1,0 +1,125 @@
+---
+/**
+ * HeroAurora Component
+ *
+ * An immersive, animated background element using HTML5 Canvas.
+ * It renders fluid "Northern Lights" (Aurora Borealis) style waves.
+ * Performance optimized: auto-resizes, respects reduced motion, and cleans up on page navigation.
+ */
+---
+
+<div class="aurora-container" aria-hidden="true">
+  <canvas id="hero-aurora-canvas"></canvas>
+</div>
+
+<script>
+  import { createAuroraWaves, drawAuroraWave, type AuroraWave } from '../utils/aurora-math';
+
+  const canvas = document.getElementById('hero-aurora-canvas') as HTMLCanvasElement | null;
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let animationFrameId: number;
+    let time = 0;
+    let lastTimestamp = 0;
+    let width = 0;
+    let height = 0;
+    let waves: AuroraWave[] = [];
+
+    // Respect user's motion preferences
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const resize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      // Set canvas dimensions to match container, with high DPI support
+      const dpr = window.devicePixelRatio || 1;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      width = rect.width;
+      height = rect.height;
+
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      if (ctx) {
+        ctx.scale(dpr, dpr);
+      }
+
+      // Re-initialize waves based on new dimensions
+      waves = createAuroraWaves(width, height);
+    };
+
+    const draw = (timestamp: number) => {
+      if (!ctx || !canvas) return;
+
+      // Handle time delta for frame-rate independence
+      if (!lastTimestamp) lastTimestamp = timestamp;
+      const delta = (timestamp - lastTimestamp) / 16.667; // Normalize to 60fps
+      lastTimestamp = timestamp;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Render each wave
+      waves.forEach((wave) => {
+        drawAuroraWave(ctx, wave, width, height, time);
+      });
+
+      time += delta;
+      animationFrameId = requestAnimationFrame(draw);
+    };
+
+    // Initialize
+    window.addEventListener('resize', resize);
+    resize();
+
+    // Only start the animation loop if the user doesn't prefer reduced motion
+    if (!prefersReducedMotion) {
+      animationFrameId = requestAnimationFrame(draw);
+    } else {
+      // Draw a static frame for accessibility
+      if (ctx && canvas) {
+        waves.forEach((wave) => {
+          drawAuroraWave(ctx, wave, width, height, 0);
+        });
+      }
+    }
+
+    // Astro lifecycle cleanup
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+      },
+      { once: true }
+    );
+  }
+</script>
+
+<style>
+  .aurora-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+    overflow: hidden;
+    opacity: 0.6;
+    mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    filter: blur(20px);
+  }
+
+  :root.theme-dark .aurora-container {
+    opacity: 0.4;
+  }
+</style>
