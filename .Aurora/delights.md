@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-07-01 - Theme Wobble | Signal: Competitive | Lean Implementation: Added ±15deg rotation on hover to the sun/moon icons in ThemeToggle.astro.
+
+- Insight: Competitive portfolios often use micro-animations on interactive utility elements like theme togglers to increase perceived refinement and engagement.
+- User Target: Joy
+- Abort Triggers: None
+- User Reaction: Pending synthetic feedback.

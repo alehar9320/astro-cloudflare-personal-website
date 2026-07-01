@@ -1,8 +1,10 @@
 ---
 import Icon from './Icon.astro';
+import { getEntry } from 'astro:content';
+const flags = await getEntry('flags', 'config');
 ---
 
-<theme-toggle>
+<theme-toggle class={flags?.data.enable_theme_wobble_v1 ? 'wobble-enabled' : ''}>
   <button type="button" aria-label="Toggle theme">
     <span class="icon light"><Icon icon="sun" /></span>
     <span class="icon dark"><Icon icon="moon-stars" /></span>
@@ -77,6 +79,22 @@ import Icon from './Icon.astro';
         color var(--theme-transition),
         background-color var(--theme-transition),
         box-shadow var(--theme-transition);
+    }
+
+    .wobble-enabled button:hover .icon {
+      animation: wobble 0.5s ease-in-out;
+    }
+    @keyframes wobble {
+      0%,
+      100% {
+        rotate: 0deg;
+      }
+      25% {
+        rotate: 15deg;
+      }
+      75% {
+        rotate: -15deg;
+      }
     }
   }
 
