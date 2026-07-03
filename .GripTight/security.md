@@ -25,11 +25,11 @@
 
 ## 2026-11-20 - Sentry Configuration & Template Hygiene (GripTight)
 
-| Verified Template   | Corrected Keys                | Validation State   |
-| :------------------ | :---------------------------- | :----------------- |
-| `astro.config.mjs`  | `SENTRY_ORG`, `SENTRY_PROJECT`| Verified (Generic) |
-| `.dev.vars.example` | `SENTRY_ORG`, `SENTRY_PROJECT`| Verified (Generic) |
-| `mcp_config.json`   | None                          | Verified (Generic) |
+| Verified Template   | Corrected Keys                 | Validation State   |
+| :------------------ | :----------------------------- | :----------------- |
+| `astro.config.mjs`  | `SENTRY_ORG`, `SENTRY_PROJECT` | Verified (Generic) |
+| `.dev.vars.example` | `SENTRY_ORG`, `SENTRY_PROJECT` | Verified (Generic) |
+| `mcp_config.json`   | None                           | Verified (Generic) |
 
 **Notes:**
 
