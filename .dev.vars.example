@@ -15,6 +15,8 @@ PUBLIC_SENTRY_RELEASE=local-dev
 
 # Server-side Sentry configuration (NOT exposed to browser)
 SENTRY_AUTH_TOKEN=your-sentry-auth-token-for-source-map-uploads
+SENTRY_ORG=your-sentry-organization-slug
+SENTRY_PROJECT=your-sentry-project-slug
 
 # Cloudflare Bindings
 # These are referenced in wrangler.jsonc and accessible via Astro.locals.runtime.env
@@ -56,8 +58,10 @@ CODECOV_TOKEN=your-codecov-token
 #
 # SECRETS (encrypted - used by CI/CD only):
 # 1. SENTRY_AUTH_TOKEN (for automatic source map uploads)
-# 2. CLOUDFLARE_API_TOKEN (for Pages deployment)
-# 3. CLOUDFLARE_ACCOUNT_ID (for Pages deployment)
+# 2. SENTRY_ORG (your Sentry organization slug)
+# 3. SENTRY_PROJECT (your Sentry project slug)
+# 4. CLOUDFLARE_API_TOKEN (for Pages deployment)
+# 5. CLOUDFLARE_ACCOUNT_ID (for Pages deployment)
 
 # Notes on Environment Variable Scope:
 # - This file is never committed to git (.gitignore includes .dev.vars)
