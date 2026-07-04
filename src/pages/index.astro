@@ -1,5 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image, getImage } from 'astro:assets';
+import portraitImage from '../assets/portrait.png';
+
 // Component Imports
 import CallToAction from '../components/CallToAction.astro';
 // Page section components
@@ -78,6 +81,16 @@ const schema = {
   ],
 };
 
+// Optimize hero image for LCP optimization.
+// Benchmark: Reduces LCP by triggering image discovery before CSS/JS parsing.
+// Format is forced to webp to match the <Image /> component below and prevent double downloads.
+const optimizedPortrait = await getImage({
+  src: portraitImage,
+  format: 'webp',
+  width: 480,
+  height: 620,
+});
+
 // Full Astro Component Syntax:
 // https://docs.astro.build/basics/astro-components/
 ---
@@ -86,6 +99,7 @@ const schema = {
   title="Alexander Härenstam | Strategic Product Leader"
   description="Strategic Product Leader driving high-impact innovation, Industrial AI, and Developer Experience (DevEx) at IFS."
 >
+  <link rel="preload" as="image" href={optimizedPortrait.src} slot="head" />
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="stack gap-20 lg:gap-48">
     <div class="wrapper stack gap-8 lg:gap-20">
@@ -110,11 +124,12 @@ const schema = {
           </div>
         </Hero>
 
-        <img
+        <Image
+          src={portraitImage}
+          format="webp"
           alt="Alexander Härenstam smiling in a red plaid shirt and tortoise shell glasses"
-          width="480"
-          height="620"
-          src="/assets/portrait.png"
+          width={480}
+          height={620}
           loading="eager"
           fetchpriority="high"
           decoding="async"
