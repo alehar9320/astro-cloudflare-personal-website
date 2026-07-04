@@ -29,8 +29,9 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema: rawSchema } = collections.flags;
-    const schema =
-      typeof rawSchema === 'function' ? rawSchema({ image: () => {} } as never) : rawSchema;
+    const schema = (
+      typeof rawSchema === 'function' ? rawSchema({ image: () => {} } as never) : rawSchema
+    ) as import('zod').ZodTypeAny;
     if (!schema) throw new Error('Flags schema not found');
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
@@ -44,8 +45,9 @@ describe('content.config', () => {
 
   it('validates work schema with sample data', () => {
     const { schema: rawSchema } = collections.work;
-    const schema =
-      typeof rawSchema === 'function' ? rawSchema({ image: () => {} } as never) : rawSchema;
+    const schema = (
+      typeof rawSchema === 'function' ? rawSchema({ image: () => {} } as never) : rawSchema
+    ) as import('zod').ZodTypeAny;
     if (!schema) throw new Error('Work schema not found');
     const sampleWork = {
       title: 'Sample Work',
@@ -58,8 +60,9 @@ describe('content.config', () => {
     const result = schema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.title).toBe(sampleWork.title);
-      expect(result.data.publishDate).toBeInstanceOf(Date);
+      const data = result.data as { title: string; publishDate: Date };
+      expect(data.title).toBe(sampleWork.title);
+      expect(data.publishDate).toBeInstanceOf(Date);
     }
   });
 });

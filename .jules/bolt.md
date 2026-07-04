@@ -1,6 +1,7 @@
-# Bolt Journal - Performance Optimizations
+2026-05-03 - LCP Optimization for Hero Images
+Learning: Above-the-fold images, such as the portrait hero on the home page and the main project image on work detail pages, are critical for Largest Contentful Paint (LCP). Explicitly setting fetchpriority="high" and decoding="async" ensures the browser prioritizes these assets, improving perceived and actual load performance.
+Action: Added fetchpriority="high" and decoding="async" to the hero images in src/pages/index.astro and src/pages/work/[...slug].astro.
 
-## 2026-07-04 - LCP Optimization: Hero Image Preload & WebP
-
-Learning: Preloading hero images that are processed by Astro's Image component requires using the `getImage` function to obtain the final optimized URL for the `<link rel="preload">` tag. It is critical to align the `format` between `getImage` and the `<Image />` component to avoid double downloads.
-Action: Always synchronize format, width, and height between `getImage` (for preloads) and the actual image component.
+2026-05-30 - Icon Payload Pruning
+Learning: Inlined SVG icons in Astro components contribute directly to the HTML payload size. Commenting out unused icons in a shared IconPaths configuration reduces the bytes served per page and the memory footprint of the Cloudflare Worker.
+Action: Commented out unused icons in src/components/IconPaths.ts and updated related tests. Use grep -r to periodically audit icon usage across the codebase.
