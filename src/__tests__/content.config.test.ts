@@ -1,12 +1,14 @@
 import { describe, it, expect } from 'vitest';
-import type { z as ZodType } from 'zod';
 import { z } from './mocks/astro-zod';
+import type { ZodTypeAny } from 'zod';
 import { glob } from 'astro/loaders';
 import { defineCollection } from 'astro:content';
 import { collections } from '../content.config';
 import flagsFixture from '../content/flags/config.json';
 
 describe('content.config', () => {
+  const mockContext = { image: () => z.any() } as never;
+
   it('exercises infrastructure mocks', () => {
     const schema = z.object({ test: z.string() });
     expect(schema.parse({ test: 'value' })).toEqual({ test: 'value' });
@@ -29,19 +31,28 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const schema = collections.flags.schema as ZodType.ZodTypeAny;
+    const { schema: schemaRaw } = collections.flags;
+    const schema = (
+      typeof schemaRaw === 'function' ? schemaRaw(mockContext) : schemaRaw
+    ) as ZodTypeAny;
+
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
+      const data = result.data as Record<string, unknown>;
       // Use toMatchObject to ensure all fixture properties are correctly validated
       // while allowing for Zod-injected default values.
-      expect(result.data).toMatchObject(flagsFixture);
+      expect(data).toMatchObject(flagsFixture);
     }
   });
 
   it('validates work schema with sample data', () => {
-    const schema = collections.work.schema as ZodType.ZodTypeAny;
+    const { schema: schemaRaw } = collections.work;
+    const schema = (
+      typeof schemaRaw === 'function' ? schemaRaw(mockContext) : schemaRaw
+    ) as ZodTypeAny;
+
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
