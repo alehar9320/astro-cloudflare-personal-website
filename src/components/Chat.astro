@@ -116,6 +116,10 @@
     outline-offset: 4px;
   }
 
+  .chat-toggle:active {
+    transform: scale(0.95);
+  }
+
   /* Status dot shared styles */
   .status-dot {
     display: inline-block;
@@ -154,6 +158,21 @@
   @media (prefers-reduced-motion: reduce) {
     .status-dot.loading {
       animation: none;
+    }
+
+    .chat-toggle,
+    .chat-close,
+    .chat-form button,
+    .chat-form input {
+      transition: none !important;
+    }
+
+    .chat-toggle:hover,
+    .chat-toggle:focus-visible,
+    .chat-toggle:active,
+    .chat-close:active,
+    .chat-form button:active {
+      transform: none !important;
     }
   }
 
@@ -234,6 +253,24 @@
     color: var(--gray-400);
     cursor: pointer;
     padding: 0.25rem;
+    transition:
+      color var(--theme-transition),
+      transform var(--theme-transition);
+  }
+
+  .chat-close:hover,
+  .chat-close:focus-visible {
+    color: var(--gray-0);
+  }
+
+  .chat-close:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+    border-radius: 4px;
+  }
+
+  .chat-close:active {
+    transform: scale(0.9);
   }
 
   .chat-messages {
@@ -313,6 +350,12 @@
     border-radius: 0.25rem;
     background: var(--gray-900);
     color: var(--gray-0);
+    transition: border-color var(--theme-transition);
+  }
+
+  .chat-form input:focus {
+    outline: 2px solid var(--accent-regular);
+    border-color: transparent;
   }
 
   .chat-form button {
@@ -325,6 +368,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transition:
+      background-color var(--theme-transition),
+      transform var(--theme-transition);
+  }
+
+  .chat-form button:hover,
+  .chat-form button:focus-visible {
+    background-color: var(--accent-dark);
+  }
+
+  .chat-form button:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+  }
+
+  .chat-form button:active {
+    transform: scale(0.95);
   }
 
   @media (max-width: 400px) {

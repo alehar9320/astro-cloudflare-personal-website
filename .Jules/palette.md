@@ -47,3 +47,9 @@
 **Learning:** To optimize Largest Contentful Paint (LCP) in Astro projects, primary visual assets (like hero images) and the first items in repeated galleries should be prioritised by the browser. Applying `loading="eager"` and `fetchpriority="high"` to these elements prevents the browser from delaying their loading, ensuring a faster perceived performance for users.
 
 **Action:** Enhanced the `PortfolioPreview` component to support dynamic `loading` and `fetchpriority` props. Updated `index.astro` and `work.astro` to prioritise the first project in their respective galleries. Explicitly added `loading="eager"` to the primary portrait image on the home page.
+
+## 2026-07-05 - Tactile Feedback and Motion-Safe Focus Indicators
+
+**Learning:** Tactile feedback via subtle scaling (`:active { transform: scale(0.95) }`) and consistent, high-visibility focus indicators (`:focus-visible` with `outline-offset: 4px`) significantly elevate the professional polish and accessibility of interactive overlays. In complex glassmorphic components like chat windows, these indicators provide necessary contrast against translucent backgrounds. Gating all motion-based transforms and transitions behind `prefers-reduced-motion` is essential for ensuring an inclusive experience for users with motion sensitivities.
+
+**Action:** Enhanced `Chat.astro` with tactile `:active` states for the toggle, close, and send buttons. Standardized accessibility by applying cyan focus outlines with a 4px offset to all interactive elements. Implemented a comprehensive `prefers-reduced-motion` block to disable scales and transitions for sensitive users. Resolved a content entry routing bug in `manifesto.astro` to ensure internal link integrity.
