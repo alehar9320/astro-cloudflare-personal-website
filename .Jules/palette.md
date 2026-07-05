@@ -48,8 +48,8 @@
 
 **Action:** Enhanced the `PortfolioPreview` component to support dynamic `loading` and `fetchpriority` props. Updated `index.astro` and `work.astro` to prioritise the first project in their respective galleries. Explicitly added `loading="eager"` to the primary portrait image on the home page.
 
-## 2026-07-05 - Tactile Feedback and Motion-Safe Focus Indicators
+## 2026-07-05 - Tactile Feedback and Motion-Safe Focus Indicators in Chat
 
-**Learning:** Tactile feedback via subtle scaling (`:active { transform: scale(0.95) }`) and consistent, high-visibility focus indicators (`:focus-visible` with `outline-offset: 4px`) significantly elevate the professional polish and accessibility of interactive overlays. In complex glassmorphic components like chat windows, these indicators provide necessary contrast against translucent backgrounds. Gating all motion-based transforms and transitions behind `prefers-reduced-motion` is essential for ensuring an inclusive experience for users with motion sensitivities.
+**Learning:** Enhancing interactive overlays like `Chat.astro` with tactile `:active` scales (`0.95` for main toggles, `0.9` for close buttons) provides immediate physical reinforcement of user actions. To maintain accessibility, these transforms and transitions must be explicitly disabled via `prefers-reduced-motion` media queries. Standardizing high-visibility focus states (`outline-offset: 4px`) across all chat sub-elements (inputs, buttons) ensures a predictable and inclusive navigational experience for keyboard users.
 
-**Action:** Enhanced `Chat.astro` with tactile `:active` states for the toggle, close, and send buttons. Standardized accessibility by applying cyan focus outlines with a 4px offset to all interactive elements. Implemented a comprehensive `prefers-reduced-motion` block to disable scales and transitions for sensitive users. Resolved a content entry routing bug in `manifesto.astro` to ensure internal link integrity.
+**Action:** Implemented tactile scaling and standardized `:focus-visible` indicators for the chat FAB, close button, and form elements. Added a comprehensive accessibility guard for reduced motion users.
