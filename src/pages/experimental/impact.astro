@@ -4,28 +4,22 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Hero from '../../components/Hero.astro';
 const flags = await getEntry('flags', 'config');
 if (!flags?.data.enable_strategic_impact) return Astro.redirect('/404/');
+const m = [
+  { t: '30x ROI', d: 'Enterprise scale.' },
+  { t: 'Efficiency', d: 'AI optimization.' },
+];
 ---
 
 <BaseLayout title="Impact">
   <main class="wrapper stack gap-8" style="padding-top: 8rem;">
-    <Hero
-      title="Strategic Impact"
-      tagline="High-impact outcomes and measurable ROI."
-      align="start"
-    />
-    <div
-      style="display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));"
-    >
+    <Hero title="Strategic Impact" tagline="High-impact outcomes." align="start" />
+    <div style="display: grid; gap: 2rem; grid-template-columns: 1fr 1fr;">
       {
-        [
-          { t: '30x ROI', d: 'Enterprise scale systems.' },
-          { t: 'Fast TTM', d: 'AI initiative optimization.' },
-          { t: 'Growth', d: 'Industrial AI adoption.' },
-        ].map((m) => (
-          <section style="padding: 2rem; background: var(--gradient-subtle); border-radius: 0.75rem; border: 1px solid var(--gray-800);">
-            <h2 style="font-size: var(--text-xl); color: var(--gray-0);">{m.t}</h2>
-            <p style="color: var(--gray-300);">{m.d}</p>
-          </section>
+        m.map((i) => (
+          <div style="padding: 1.5rem; background: var(--gradient-subtle); border: 1px solid var(--gray-800); border-radius: 0.75rem;">
+            <h2 style="font-size: var(--text-lg); color: var(--gray-0);">{i.t}</h2>
+            <p style="color: var(--gray-300);">{i.d}</p>
+          </div>
         ))
       }
     </div>
