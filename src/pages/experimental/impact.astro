@@ -5,20 +5,29 @@ import Hero from '../../components/Hero.astro';
 const flags = await getEntry('flags', 'config');
 if (!flags?.data.enable_strategic_impact) return Astro.redirect('/404/');
 ---
+
 <BaseLayout title="Impact">
   <main class="wrapper stack gap-8" style="padding-top: 8rem;">
-    <Hero title="Strategic Impact" tagline="High-impact outcomes and measurable ROI." align="start" />
-    <div style="display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
-      {[
-        { t: '30x ROI', d: 'Enterprise scale systems.' },
-        { t: 'Fast TTM', d: 'AI initiative optimization.' },
-        { t: 'Growth', d: 'Industrial AI adoption.' },
-      ].map((m) => (
-        <section style="padding: 2rem; background: var(--gradient-subtle); border-radius: 0.75rem; border: 1px solid var(--gray-800);">
-          <h2 style="font-size: var(--text-xl); color: var(--gray-0);">{m.t}</h2>
-          <p style="color: var(--gray-300);">{m.d}</p>
-        </section>
-      ))}
+    <Hero
+      title="Strategic Impact"
+      tagline="High-impact outcomes and measurable ROI."
+      align="start"
+    />
+    <div
+      style="display: grid; gap: 2rem; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));"
+    >
+      {
+        [
+          { t: '30x ROI', d: 'Enterprise scale systems.' },
+          { t: 'Fast TTM', d: 'AI initiative optimization.' },
+          { t: 'Growth', d: 'Industrial AI adoption.' },
+        ].map((m) => (
+          <section style="padding: 2rem; background: var(--gradient-subtle); border-radius: 0.75rem; border: 1px solid var(--gray-800);">
+            <h2 style="font-size: var(--text-xl); color: var(--gray-0);">{m.t}</h2>
+            <p style="color: var(--gray-300);">{m.d}</p>
+          </section>
+        ))
+      }
     </div>
   </main>
 </BaseLayout>
