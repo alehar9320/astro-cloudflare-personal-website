@@ -11,7 +11,7 @@
 
 - **Architectural Shift:** Established `src/utils/edge-helpers.ts` as the standard for interacting with the Cloudflare edge environment. This decouples the API logic from the specific structure of `locals` and provides a consistent interface for both production and local development.
 - **Newly Established TypeScript Utilities:**
-    - `getEdgeContext(locals)`: A type-safe way to extract AI and KV bindings with automatic fallback to `process.env`.
-    - `getClientIp(request)`: A robust utility for IP detection that prioritizes Cloudflare-specific headers but handles common fallbacks.
+  - `getEdgeContext(locals)`: A type-safe way to extract AI and KV bindings with automatic fallback to `process.env`.
+  - `getClientIp(request)`: A robust utility for IP detection that prioritizes Cloudflare-specific headers but handles common fallbacks.
 - **Hardened Chat API:** Refactored the `/api/chat` route to use these new helpers, resulting in cleaner, more maintainable code with improved type safety and reduced duplication.
 - **Test Coverage:** Achieved 100% test coverage for the new edge utilities and ensured the chat API remains fully verified.
