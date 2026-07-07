@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { ChatRequestSchema, pruneMessages, type ChatMessage } from '../../utils/chat-logic';
+import { getEdgeContext, getClientIp } from '../../utils/edge-helpers';
 
 const jsonHeaders = {
   'content-type': 'application/json',
@@ -11,13 +12,6 @@ const jsonHeaders = {
 
 export const prerender = false;
 
-export interface ChatEnv {
-  AI?: {
-    run: (model: string, input: unknown) => Promise<ReadableStream>;
-  };
-  CHAT_STORE?: KVNamespace;
-}
-
 function jsonError(error: string, status: number) {
   return new Response(JSON.stringify({ error }), {
     status,
@@ -26,19 +20,14 @@ function jsonError(error: string, status: number) {
 }
 
 export const POST: APIRoute = async ({ request, locals }) => {
-  // Access bindings through locals.runtime.env or process.env (fallback for non-Cloudflare)
-  const bindings = ((locals as unknown as { runtime?: { env: ChatEnv } }).runtime?.env ||
-    process.env) as unknown as ChatEnv;
-
-  const ai = bindings.AI;
-  const store = bindings.CHAT_STORE;
+  const { AI: ai, CHAT_STORE: store } = getEdgeContext(locals);
 
   if (!ai) {
     return jsonError('Chat is currently unavailable. Please try again later.', 503);
   }
 
   // Basic Security: Client IP-based rate limiting
-  const ip = request.headers.get('cf-connecting-ip') || 'anonymous';
+  const ip = getClientIp(request);
   const rateLimitKey = `chat-limit:${ip}`;
 
   if (store) {

@@ -1,6 +1,7 @@
 import { describe, expect, it, vi, type Mock } from 'vitest';
 
-import { POST, type ChatEnv } from '../pages/api/chat';
+import { POST } from '../pages/api/chat';
+import type { EdgeContext } from '../utils/edge-helpers';
 
 const endpoint = 'https://example.com/api/chat';
 
@@ -23,7 +24,7 @@ function createContext(request: Request, runtimeEnv: unknown = {}) {
     request,
     locals: {
       runtime: {
-        env: runtimeEnv as ChatEnv,
+        env: runtimeEnv as EdgeContext,
       },
     },
   } as unknown as ChatPostContext;
@@ -399,7 +400,7 @@ describe('chat API', () => {
     const context = {
       request,
       locals: {
-        runtime: {} as { env: ChatEnv },
+        runtime: {} as { env: EdgeContext },
       },
     } as unknown as ChatPostContext;
 
