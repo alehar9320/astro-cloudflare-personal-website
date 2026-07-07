@@ -1,5 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
+import { Image, getImage } from 'astro:assets';
+import portraitImg from '../assets/portrait.png';
 // Component Imports
 import CallToAction from '../components/CallToAction.astro';
 // Page section components
@@ -17,6 +19,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const projects = (await getCollection('work'))
   .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
   .slice(0, 4);
+
+// Optimize hero image for preloading
+const optimizedHero = await getImage({
+  src: portraitImg,
+  width: 480,
+  height: 620,
+  format: 'webp',
+});
 
 const schema = {
   '@context': 'https://schema.org',
@@ -86,6 +96,7 @@ const schema = {
   title="Alexander Härenstam | Strategic Product Leader"
   description="Strategic Product Leader driving high-impact innovation, Industrial AI, and Developer Experience (DevEx) at IFS."
 >
+  <link rel="preload" as="image" href={optimizedHero.src} slot="head" />
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="stack gap-20 lg:gap-48">
     <div class="wrapper stack gap-8 lg:gap-20">
@@ -110,11 +121,12 @@ const schema = {
           </div>
         </Hero>
 
-        <img
+        <Image
+          src={portraitImg}
           alt="Alexander Härenstam smiling in a red plaid shirt and tortoise shell glasses"
-          width="480"
-          height="620"
-          src="/assets/portrait.png"
+          width={480}
+          height={620}
+          format="webp"
           loading="eager"
           fetchpriority="high"
           decoding="async"
