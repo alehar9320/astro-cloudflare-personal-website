@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest';
-import { z } from './mocks/astro-zod';
+import { z } from 'zod';
+import { z as mockZ } from './mocks/astro-zod';
 import { glob } from 'astro/loaders';
 import { defineCollection } from 'astro:content';
 import { collections } from '../content.config';
@@ -7,9 +8,9 @@ import flagsFixture from '../content/flags/config.json';
 
 describe('content.config', () => {
   it('exercises infrastructure mocks', () => {
-    const schema = z.object({ test: z.string() });
+    const schema = mockZ.object({ test: mockZ.string() });
     expect(schema.parse({ test: 'value' })).toEqual({ test: 'value' });
-    expect(z.exerciseMock()).toBe(true);
+    expect(mockZ.exerciseMock()).toBe(true);
 
     expect(glob).toBeDefined();
     expect(defineCollection).toBeDefined();
@@ -29,7 +30,10 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
+    const resolvedSchema =
+      typeof schema === 'function' ? schema({ image: () => z.any() } as never) : schema;
+    if (!resolvedSchema) throw new Error('Schema not found');
+    const result = resolvedSchema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
@@ -41,6 +45,9 @@ describe('content.config', () => {
 
   it('validates work schema with sample data', () => {
     const { schema } = collections.work;
+    const resolvedSchema =
+      typeof schema === 'function' ? schema({ image: () => z.any() } as never) : schema;
+    if (!resolvedSchema) throw new Error('Schema not found');
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -49,11 +56,12 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
+    const result = resolvedSchema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.title).toBe(sampleWork.title);
-      expect(result.data.publishDate).toBeInstanceOf(Date);
+      const data = result.data as { title: string; publishDate: Date };
+      expect(data.title).toBe(sampleWork.title);
+      expect(data.publishDate).toBeInstanceOf(Date);
     }
   });
 });
