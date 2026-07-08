@@ -29,3 +29,4 @@
 - **Unit Tests:** `src/utils/__tests__/aurora-math.test.ts` passed (100% coverage on core wave math).
 - **Build:** Verified successful compilation of canvas contexts and asset processing via `npm run build`.
 - **Visuals:** Playwright screenshot confirmed alignment with glassmorphic design tokens (blur, transparency).
+- **CI Compliance:** Applied mandatory security overrides (`undici`, `esbuild`, `vite`, etc.) and updated `astro` to `^6.4.8` to resolve `npm audit` failures in the GitHub CI pipeline.
