@@ -1,0 +1,103 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import AuroraCanvas from '../../components/AuroraCanvas.astro';
+---
+
+<BaseLayout
+  title="Aurora Lab | Alexander Härenstam"
+  description="Experimental Aurora Borealis animation using HTML5 Canvas and math-driven waves."
+>
+  <main class="aurora-lab">
+    <AuroraCanvas opacity={0.8} />
+
+    <div class="wrapper stack gap-20">
+      <header class="hero-section">
+        <Hero
+          title="The Aurora Laboratory"
+          tagline="Exploring fluid, math-driven motion and the Northern Lights aesthetic."
+          align="center"
+        />
+      </header>
+
+      <section class="content-section">
+        <div class="glass-card">
+          <h2>Technical Deep Dive</h2>
+          <p>
+            This experiment utilizes three overlapping sine-wave layers with varied frequencies and
+            phase shifts to simulate the organic, flowing motion of an aurora.
+          </p>
+          <ul class="specs">
+            <li><strong>Renderer:</strong> HTML5 Canvas 2D API</li>
+            <li><strong>Shading:</strong> Dynamic CSS Blurs & Canvas Line Gradients</li>
+            <li>
+              <strong>Optimization:</strong> Zero dependencies, <code>requestAnimationFrame</code> with
+              lifecycle cleanup
+            </li>
+            <li>
+              <strong>Accessibility:</strong> Automatic pause on <code>prefers-reduced-motion</code>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .aurora-lab {
+    position: relative;
+    min-height: 100vh;
+    padding-top: 8rem;
+    padding-bottom: 8rem;
+    overflow: hidden;
+  }
+
+  .hero-section {
+    z-index: 1;
+  }
+
+  .glass-card {
+    padding: 2.5rem;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1.5rem;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: var(--shadow-lg);
+  }
+
+  .glass-card h2 {
+    color: var(--gray-0);
+    margin-bottom: 1rem;
+  }
+
+  .glass-card p {
+    color: var(--gray-300);
+    font-size: var(--text-md);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .specs {
+    list-style: none;
+    padding: 0;
+    display: grid;
+    gap: 1rem;
+  }
+
+  .specs li {
+    color: var(--gray-200);
+    font-size: var(--text-sm);
+  }
+
+  .specs strong {
+    color: var(--accent-light);
+  }
+
+  :root.theme-dark .glass-card {
+    background: rgba(0, 0, 0, 0.2);
+    border-color: rgba(255, 255, 255, 0.05);
+  }
+</style>

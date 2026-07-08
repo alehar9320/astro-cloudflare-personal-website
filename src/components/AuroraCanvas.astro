@@ -1,0 +1,116 @@
+---
+/**
+ * AuroraCanvas.astro
+ * An immersive, math-driven background component that evokes the Northern Lights.
+ */
+interface Props {
+  opacity?: number;
+}
+
+const { opacity = 0.6 } = Astro.props;
+---
+
+<div class="aurora-container" style={`opacity: ${opacity};`}>
+  <canvas id="aurora-canvas" aria-hidden="true"></canvas>
+</div>
+
+<script>
+  import { calculateAuroraPoint } from '../utils/aurora-math';
+
+  const canvas = document.getElementById('aurora-canvas') as HTMLCanvasElement | null;
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let animationFrameId: number;
+    let time = 0;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const resize = () => {
+      if (!canvas) return;
+      canvas.width = canvas.parentElement?.clientWidth || window.innerWidth;
+      canvas.height = canvas.parentElement?.clientHeight || window.innerHeight;
+    };
+
+    const draw = () => {
+      if (!ctx || !canvas) return;
+      if (prefersReducedMotion.matches) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const width = canvas.width;
+      const height = canvas.height;
+      const midHeight = height / 2;
+
+      // Draw multiple layers of aurora waves
+      const layers = [
+        { amp: 60, freq: 0.005, speed: 0.02, color: 'rgba(0, 210, 255, 0.3)' }, // Cyan
+        { amp: 40, freq: 0.008, speed: 0.015, color: 'rgba(0, 102, 204, 0.2)' }, // Marine Blue
+        { amp: 80, freq: 0.003, speed: 0.01, color: 'rgba(0, 34, 102, 0.15)' }, // Dark Blue
+      ];
+
+      layers.forEach((layer) => {
+        ctx.beginPath();
+        ctx.strokeStyle = layer.color;
+        ctx.lineWidth = 150;
+        ctx.lineCap = 'round';
+        ctx.filter = 'blur(60px)';
+
+        for (let x = 0; x < width; x += 10) {
+          const offset = calculateAuroraPoint(x, time, layer.amp, layer.freq, layer.speed);
+
+          const y = midHeight + offset;
+          if (x === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+        ctx.stroke();
+      });
+
+      time += 0.5;
+      animationFrameId = requestAnimationFrame(draw);
+    };
+
+    window.addEventListener('resize', resize);
+    resize();
+
+    if (!prefersReducedMotion.matches) {
+      draw();
+    }
+
+    // Clean up when navigating away
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+      },
+      { once: true }
+    );
+  }
+</script>
+
+<style>
+  .aurora-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    overflow: hidden;
+    pointer-events: none;
+    mix-blend-mode: screen;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  :root.theme-dark .aurora-container {
+    mix-blend-mode: lighten;
+  }
+</style>
