@@ -1,11 +1,20 @@
+/**
+ * Core chat logic and validation schemas for the AI assistant.
+ * Handles message pruning, character limits, and Zod schema definitions.
+ */
 import { z } from 'zod';
 
+/** Maximum number of messages allowed in the sliding window history. */
 export const MAX_MESSAGES = 10;
+/** Maximum character length for a single message. */
 export const MAX_MESSAGE_CONTENT_LENGTH = 500;
+/** Maximum total character length across all messages in the pruned history. */
 export const MAX_TOTAL_CONTENT_LENGTH = 3000;
 
+/** Valid roles for participants in a chat conversation. */
 export const ChatRoleSchema = z.enum(['user', 'assistant']);
 
+/** Schema for a single chat message, enforcing content length and role. */
 export const ChatMessageSchema = z.object({
   role: ChatRoleSchema,
   content: z
@@ -20,6 +29,7 @@ export const ChatMessageSchema = z.object({
 
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
+/** Schema for validating chat requests, ensuring at least one message is present. */
 export const ChatRequestSchema = z.object({
   // Relaxed constraints: pruneMessages will handle the sliding window to fit model limits.
   messages: z.array(ChatMessageSchema).min(1, 'Expected at least one message'),
