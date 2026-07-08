@@ -20,6 +20,21 @@ export const ChatMessageSchema = z.object({
 
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
+/**
+ * Safely loads chat history from storage.
+ */
+export function loadChatHistory(storage: Storage): ChatMessage[] {
+  try {
+    const raw = storage.getItem('chat-history');
+    const parsed = raw ? JSON.parse(raw) : null;
+    return Array.isArray(parsed)
+      ? parsed.filter((m) => ChatMessageSchema.safeParse(m).success)
+      : [];
+  } catch {
+    return [];
+  }
+}
+
 export const ChatRequestSchema = z.object({
   // Relaxed constraints: pruneMessages will handle the sliding window to fit model limits.
   messages: z.array(ChatMessageSchema).min(1, 'Expected at least one message'),
@@ -37,10 +52,8 @@ export function pruneMessages(messages: ChatMessage[]): ChatMessage[] {
   let totalLength = pruned.reduce((acc, msg) => acc + msg.content.length, 0);
 
   while (pruned.length > 1 && totalLength > MAX_TOTAL_CONTENT_LENGTH) {
-    const shifted = pruned.shift();
-    if (shifted) {
-      totalLength -= shifted.content.length;
-    }
+    totalLength -= pruned[0].content.length;
+    pruned.shift();
   }
 
   return pruned;

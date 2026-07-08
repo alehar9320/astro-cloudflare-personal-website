@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   pruneMessages,
+  loadChatHistory,
   MAX_MESSAGES,
   MAX_TOTAL_CONTENT_LENGTH,
   type ChatMessage,
@@ -100,6 +101,54 @@ describe('chat logic utilities', () => {
       const pruned = pruneMessages(messages);
       expect(pruned).toHaveLength(1);
       expect(pruned[0].content).toBe('short');
+    });
+  });
+
+  describe('loadChatHistory', () => {
+    it('returns empty array if no history', () => {
+      const mockStorage = {
+        getItem: () => null,
+      } as unknown as Storage;
+      expect(loadChatHistory(mockStorage)).toEqual([]);
+    });
+
+    it('returns empty array if invalid JSON', () => {
+      const mockStorage = {
+        getItem: () => 'invalid',
+      } as unknown as Storage;
+      expect(loadChatHistory(mockStorage)).toEqual([]);
+    });
+
+    it('returns empty array if not an array', () => {
+      const mockStorage = {
+        getItem: () => JSON.stringify({}),
+      } as unknown as Storage;
+      expect(loadChatHistory(mockStorage)).toEqual([]);
+    });
+
+    it('filters invalid messages', () => {
+      const history = [
+        { role: 'user', content: 'hello' },
+        { role: 'invalid', content: 'oops' },
+        { role: 'assistant', content: '' }, // empty content is invalid per schema
+      ];
+      const mockStorage = {
+        getItem: () => JSON.stringify(history),
+      } as unknown as Storage;
+      const loaded = loadChatHistory(mockStorage);
+      expect(loaded).toHaveLength(1);
+      expect(loaded[0]).toEqual({ role: 'user', content: 'hello' });
+    });
+
+    it('returns valid history', () => {
+      const history = [
+        { role: 'user', content: 'hello' },
+        { role: 'assistant', content: 'hi' },
+      ];
+      const mockStorage = {
+        getItem: () => JSON.stringify(history),
+      } as unknown as Storage;
+      expect(loadChatHistory(mockStorage)).toEqual(history);
     });
   });
 });
