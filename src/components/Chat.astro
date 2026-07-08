@@ -363,7 +363,20 @@
 
   setStatus('idle');
 
-  const messages = JSON.parse(sessionStorage.getItem('chat-history') || '[]');
+  let messages: Message[] = [];
+  try {
+    const storedHistory = sessionStorage.getItem('chat-history');
+    if (storedHistory) {
+      const parsed = JSON.parse(storedHistory);
+      if (Array.isArray(parsed)) {
+        messages = parsed;
+      }
+    }
+  } catch (error) {
+    console.error({ event: 'chat_history_load_error', error: String(error) });
+    // Fallback to empty history on error
+    messages = [];
+  }
 
   function saveMessages() {
     sessionStorage.setItem('chat-history', JSON.stringify(messages));
