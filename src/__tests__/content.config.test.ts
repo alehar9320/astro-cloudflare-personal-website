@@ -29,7 +29,11 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
+    const resolvedSchema =
+      typeof schema === 'function'
+        ? (schema({ image: () => z.any() } as never) as import('zod').ZodTypeAny)
+        : schema;
+    const result = resolvedSchema!.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
@@ -49,11 +53,16 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
+    const resolvedSchema =
+      typeof schema === 'function'
+        ? (schema({ image: () => z.any() } as never) as import('zod').ZodTypeAny)
+        : schema;
+    const result = resolvedSchema!.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.title).toBe(sampleWork.title);
-      expect(result.data.publishDate).toBeInstanceOf(Date);
+      const data = result.data as Record<string, unknown>;
+      expect(data.title).toBe(sampleWork.title);
+      expect(data.publishDate).toBeInstanceOf(Date);
     }
   });
 });
