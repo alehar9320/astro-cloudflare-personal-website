@@ -1,9 +1,17 @@
 import { describe, it, expect } from 'vitest';
+import { type ZodTypeAny } from 'zod';
 import { z } from './mocks/astro-zod';
 import { glob } from 'astro/loaders';
 import { defineCollection } from 'astro:content';
 import { collections } from '../content.config';
 import flagsFixture from '../content/flags/config.json';
+
+const resolveSchema = (schema: unknown): ZodTypeAny => {
+  if (typeof schema === 'function') {
+    return schema({ image: () => z.any() } as never);
+  }
+  return schema as ZodTypeAny;
+};
 
 describe('content.config', () => {
   it('exercises infrastructure mocks', () => {
@@ -28,7 +36,7 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
+    const schema = resolveSchema(collections.flags.schema);
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -40,7 +48,7 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const schema = resolveSchema(collections.work.schema);
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -52,8 +60,9 @@ describe('content.config', () => {
     const result = schema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.title).toBe(sampleWork.title);
-      expect(result.data.publishDate).toBeInstanceOf(Date);
+      const data = result.data as Record<string, unknown>;
+      expect(data.title).toBe(sampleWork.title);
+      expect(data.publishDate).toBeInstanceOf(Date);
     }
   });
 });

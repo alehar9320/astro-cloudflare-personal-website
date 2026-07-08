@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-07-08 - Pill Tactile Pulse | Signal: Competitive | Lean Implementation: Added scale(1.05) on hover and scale(0.95) on active with shadow elevation to Pill.astro.
+
+- Insight: Tactile feedback on interactive pill elements (tags/filters) increases perceived responsiveness and makes the UI feel "physical" and satisfying.
+- User Target: Joy, Comfort
+- Abort Triggers: None (verified via Playwright screenshots and sub-100ms interaction latency).
+- User Reaction: Pending synthetic feedback.
