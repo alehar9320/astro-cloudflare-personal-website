@@ -16,7 +16,6 @@ describe('StuntDouble Expansion: Deep Edge Cases', () => {
 
     it('handles JSON payloads where "response" is not a string', () => {
       const parser = createChatStreamParser();
-      // @ts-expect-error - testing invalid runtime data
       parser.push('data: {"response": 123}\n\n');
       expect(parser.flush()).toBe('');
     });
