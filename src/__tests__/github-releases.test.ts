@@ -290,8 +290,9 @@ describe('github releases utility', () => {
       expect(setItem).toHaveBeenCalledWith('github-releases-cache', expect.any(String));
     });
 
-    it('handles cache read errors gracefully', async () => {
+    it('handles cache read errors gracefully and logs telemetry', async () => {
       vi.stubGlobal('window', {});
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       const getItem = vi.fn().mockImplementation(() => {
         throw new Error('access denied');
       });
@@ -306,10 +307,17 @@ describe('github releases utility', () => {
 
       expect(result).toEqual(mockReleases);
       expect(fetchMock).toHaveBeenCalledOnce();
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          event: 'github_releases_cache_read_error',
+          error: expect.stringContaining('access denied'),
+        })
+      );
     });
 
-    it('handles cache write errors gracefully', async () => {
+    it('handles cache write errors gracefully and logs telemetry', async () => {
       vi.stubGlobal('window', {});
+      const consoleSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
       const setItem = vi.fn().mockImplementation(() => {
         throw new Error('storage full');
       });
@@ -324,6 +332,12 @@ describe('github releases utility', () => {
 
       expect(result).toEqual(mockReleases);
       expect(fetchMock).toHaveBeenCalledOnce();
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          event: 'github_releases_cache_write_error',
+          error: expect.stringContaining('storage full'),
+        })
+      );
     });
   });
 });
