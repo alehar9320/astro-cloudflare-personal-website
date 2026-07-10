@@ -23,6 +23,15 @@
 | `wrangler.jsonc`    | None                  | Verified           |
 | `render.yaml`       | None                  | Verified           |
 
+## 2026-07-10 - Environment Template Alignment (GripTight)
+
+| Verified Template   | Corrected Keys               | Validation State   |
+| :------------------ | :--------------------------- | :----------------- |
+| `.dev.vars.example` | `RENDER`, `AI`, `CHAT_STORE` | Verified (Generic) |
+| `wrangler.jsonc`    | None                         | Verified           |
+| `render.yaml`       | None                         | Verified           |
+| `mcp_config.json`   | None                         | Verified           |
+
 **Notes:**
 
 - Initialized GripTight hygiene checks.

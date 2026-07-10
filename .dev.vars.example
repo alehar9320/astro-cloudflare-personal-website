@@ -28,6 +28,10 @@ SENTRY_AUTH_TOKEN=your-sentry-auth-token-for-source-map-uploads
 
 # Example: KV Namespace (if configured)
 # SESSION_KV_NAMESPACE_ID=your-kv-namespace-id
+# CHAT_STORE=your-kv-namespace-id
+
+# Example: AI Binding (if configured)
+# AI=true
 
 # PostHog Analytics
 # PUBLIC_POSTHOG_KEY is required for client-side tracking
@@ -71,6 +75,7 @@ CODECOV_TOKEN=your-codecov-token
 # In astro.config.mjs, the constant 'isRender' (process.env.RENDER === 'true')
 # is used to toggle between the @astrojs/node adapter (for Render) and the
 # @astrojs/cloudflare adapter (for Cloudflare Pages).
-#
+RENDER=false
+
 # To test the Render/Node configuration locally:
 # RENDER=true npm run dev

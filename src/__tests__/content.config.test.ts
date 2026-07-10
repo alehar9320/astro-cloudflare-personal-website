@@ -29,7 +29,11 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
+    if (typeof schema === 'function') {
+      throw new Error('Flags schema is a function, cannot validate directly in this test.');
+    }
+    const result = schema?.safeParse(flagsFixture);
+    if (!result) throw new Error('Schema is undefined');
     expect(result.success).toBe(true);
 
     if (result.success) {
@@ -41,6 +45,9 @@ describe('content.config', () => {
 
   it('validates work schema with sample data', () => {
     const { schema } = collections.work;
+    if (typeof schema === 'function') {
+      throw new Error('Work schema is a function, cannot validate directly in this test.');
+    }
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -49,7 +56,8 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
+    const result = schema?.safeParse(sampleWork);
+    if (!result) throw new Error('Schema is undefined');
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.title).toBe(sampleWork.title);
