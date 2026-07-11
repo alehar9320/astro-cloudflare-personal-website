@@ -29,10 +29,13 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
+    if (!schema || typeof schema === 'function') {
+      throw new Error('Schema is missing or a function, not a Zod object');
+    }
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
-    if (result.success) {
+    if (result && result.success) {
       // Use toMatchObject to ensure all fixture properties are correctly validated
       // while allowing for Zod-injected default values.
       expect(result.data).toMatchObject(flagsFixture);
@@ -41,6 +44,9 @@ describe('content.config', () => {
 
   it('validates work schema with sample data', () => {
     const { schema } = collections.work;
+    if (!schema || typeof schema === 'function') {
+      throw new Error('Schema is missing or a function, not a Zod object');
+    }
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -51,7 +57,7 @@ describe('content.config', () => {
     };
     const result = schema.safeParse(sampleWork);
     expect(result.success).toBe(true);
-    if (result.success) {
+    if (result && result.success) {
       expect(result.data.title).toBe(sampleWork.title);
       expect(result.data.publishDate).toBeInstanceOf(Date);
     }
