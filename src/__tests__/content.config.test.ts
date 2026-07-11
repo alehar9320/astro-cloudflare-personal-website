@@ -28,6 +28,7 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let schema: any = collections.flags.schema;
     if (typeof schema === 'function') {
       schema = schema({ image: () => z.string() });
@@ -43,6 +44,7 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let schema: any = collections.work.schema;
     if (typeof schema === 'function') {
       schema = schema({ image: () => z.string() });
