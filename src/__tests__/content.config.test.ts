@@ -35,7 +35,7 @@ describe('content.config', () => {
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
-    if (result && result.success) {
+    if (result.success) {
       // Use toMatchObject to ensure all fixture properties are correctly validated
       // while allowing for Zod-injected default values.
       expect(result.data).toMatchObject(flagsFixture);
@@ -57,7 +57,7 @@ describe('content.config', () => {
     };
     const result = schema.safeParse(sampleWork);
     expect(result.success).toBe(true);
-    if (result && result.success) {
+    if (result.success) {
       expect(result.data.title).toBe(sampleWork.title);
       expect(result.data.publishDate).toBeInstanceOf(Date);
     }
