@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-07-12 - AI Transparency and Strategic Microcopy
+
+**Learning:** Microcopy for AI features should prioritize functional transparency over anthropomorphism to build trust and set accurate user expectations. Using labels like "AI is thinking..." instead of "Alexander is typing..." clearly delineates the AI's nature. Furthermore, strategic placeholders in chat inputs (e.g., "Ask about my product philosophy...") provide better guidance than generic prompts, nudging users toward high-value interactions.
+
+**Action:** Updated `Chat.astro` to use "AI is thinking..." as the typing indicator and "Ask about my product philosophy..." as the input placeholder.
+
 ## 2026-05-17 - Enhancing Content Selection and Standardizing Focus Spatiality
 
 **Learning:** Using `user-select: none` on informational badges (like `Pill`) creates unnecessary friction for users trying to copy text for reference. Additionally, consistent `outline-offset: 4px` across all interactive elements (including theme toggles and cards) reinforces a predictable spatial model for keyboard users. Adding `target="_blank"` with `rel="noopener noreferrer"` to external informational links (like the Astro framework link in the footer) ensures a non-disruptive navigation experience that preserves the user's session.
