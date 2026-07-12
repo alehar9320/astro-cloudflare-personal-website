@@ -29,8 +29,11 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const zodSchema = typeof schema === 'function' ? schema({ image: () => z.string() } as any) : schema;
+    const zodSchema =
+      typeof schema === 'function'
+        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          schema({ image: () => z.string() } as any)
+        : schema;
     const result = zodSchema!.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -43,8 +46,11 @@ describe('content.config', () => {
 
   it('validates work schema with sample data', () => {
     const { schema } = collections.work;
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const zodSchema = typeof schema === 'function' ? schema({ image: () => z.string() } as any) : schema;
+    const zodSchema =
+      typeof schema === 'function'
+        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          schema({ image: () => z.string() } as any)
+        : schema;
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
