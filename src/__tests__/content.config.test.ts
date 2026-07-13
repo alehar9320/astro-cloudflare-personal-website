@@ -29,10 +29,17 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
+    if (!schema) throw new Error('Flags schema not found');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const zodSchema: any =
+      typeof schema === 'function'
+        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          schema({ image: () => z.string() } as any)
+        : schema;
+    const result = zodSchema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
-    if (result.success) {
+    if (result && result.success) {
       // Use toMatchObject to ensure all fixture properties are correctly validated
       // while allowing for Zod-injected default values.
       expect(result.data).toMatchObject(flagsFixture);
@@ -41,6 +48,13 @@ describe('content.config', () => {
 
   it('validates work schema with sample data', () => {
     const { schema } = collections.work;
+    if (!schema) throw new Error('Work schema not found');
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const zodSchema: any =
+      typeof schema === 'function'
+        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          schema({ image: () => z.string() } as any)
+        : schema;
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -49,9 +63,9 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
+    const result = zodSchema.safeParse(sampleWork);
     expect(result.success).toBe(true);
-    if (result.success) {
+    if (result && result.success) {
       expect(result.data.title).toBe(sampleWork.title);
       expect(result.data.publishDate).toBeInstanceOf(Date);
     }
