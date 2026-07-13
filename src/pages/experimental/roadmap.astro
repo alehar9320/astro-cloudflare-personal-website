@@ -1,0 +1,36 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Pill from '../../components/Pill.astro';
+import Icon from '../../components/Icon.astro';
+import { getEntry } from 'astro:content';
+
+const f = await getEntry('flags', 'config');
+if (!f?.data.enable_strategic_roadmap) return Astro.redirect('/404/');
+const roadmap = [
+  { t: 'Now', items: ['Industrial AI Scaling', 'DevEx Optimization'], i: 'rocket-launch' as const },
+  { t: 'Next', items: ['Autonomous Portfolio Agents', 'Multi-Agent Orchestration'], i: 'strategy' as const },
+  { t: 'Later', items: ['Predictive Product Roadmaps', 'AI-First Design Systems'], i: 'terminal-window' as const },
+];
+---
+
+<BaseLayout title="Strategic Roadmap">
+  <main class="wrapper stack gap-8" style="margin-top: 4rem;">
+    <Hero title="Strategic Roadmap" tagline="Current and future focus areas." align="start" />
+    <div class="grid">
+      {roadmap.map((col) => (
+        <section class="card">
+          <div class="header"><Icon icon={col.i} size="1.5rem" gradient /> <h2>{col.t}</h2></div>
+          <ul>{col.items.map((item) => (<li><Pill>{item}</Pill></li>))}</ul>
+        </section>
+      ))}
+    </div>
+  </main>
+</BaseLayout>
+<style>
+  .grid { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); }
+  .card { padding: 1.5rem; background: var(--gradient-subtle); border: 1px solid var(--gray-800); border-radius: 0.75rem; }
+  .header { display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem; }
+  .card h2 { font-size: var(--text-lg); color: var(--gray-0); }
+  ul { list-style: none; padding: 0; display: flex; flex-direction: column; gap: 0.75rem; }
+</style>
