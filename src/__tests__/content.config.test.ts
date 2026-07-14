@@ -28,8 +28,14 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
+    const schema = collections.flags.schema;
+    if (!schema) throw new Error('Schema not found');
+    const zodSchema =
+      typeof schema === 'function'
+        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (schema as (context: any) => any)({ image: () => z.string() })
+        : schema;
+    const result = zodSchema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
@@ -40,7 +46,8 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const schema = collections.work.schema;
+    if (!schema) throw new Error('Schema not found');
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -49,7 +56,12 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
+    const zodSchema =
+      typeof schema === 'function'
+        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          (schema as (context: any) => any)({ image: () => z.string() })
+        : schema;
+    const result = zodSchema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.title).toBe(sampleWork.title);
