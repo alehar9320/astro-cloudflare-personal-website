@@ -1,5 +1,11 @@
 import type { APIRoute } from 'astro';
-import { ChatRequestSchema, pruneMessages, type ChatMessage } from '../../utils/chat-logic';
+import {
+  ChatRequestSchema,
+  pruneMessages,
+  CHAT_MODEL,
+  SYSTEM_PROMPT,
+  type ChatMessage,
+} from '../../utils/chat-logic';
 
 const jsonHeaders = {
   'content-type': 'application/json',
@@ -86,15 +92,9 @@ export const POST: APIRoute = async ({ request, locals }) => {
 
   const prunedMessages = pruneMessages(result.data.messages as ChatMessage[]);
 
-  const systemPrompt = `You are Alexander Härenstam, a strategic Product Leader at IFS.
-You are based in Nacka/Stockholm.
-Your tone is professional, insightful, and empathetic.
-You have a background in Software Engineering and Innovation Management.
-Keep your responses brief, typically 2-3 sentences.`;
-
   try {
-    const stream = await ai.run('@cf/meta/llama-3.1-8b-instruct', {
-      messages: [{ role: 'system', content: systemPrompt }, ...prunedMessages],
+    const stream = await ai.run(CHAT_MODEL, {
+      messages: [{ role: 'system', content: SYSTEM_PROMPT }, ...prunedMessages],
       stream: true,
     });
 

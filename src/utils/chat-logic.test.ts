@@ -97,9 +97,25 @@ describe('chat logic utilities', () => {
         { role: 'user', content: veryLongContent },
         { role: 'assistant', content: 'short' },
       ];
+      // In this case, 'short' remains, but it's role: 'assistant'.
+      // If pruned.length is 1, we don't force 'user' role (since that would leave 0 messages).
       const pruned = pruneMessages(messages);
       expect(pruned).toHaveLength(1);
       expect(pruned[0].content).toBe('short');
+    });
+
+    it('ensures pruned history starts with a user message when multiple messages exist', () => {
+      // Force pruning of U1 by length or count (using small MAX_MESSAGES equivalent)
+      // Here we simulate it by using a history where we want to ensure it doesn't start with assistant
+      const assistantStart: ChatMessage[] = [
+        { role: 'assistant', content: 'Old Assistant Message' },
+        { role: 'user', content: 'Recent User Message' },
+        { role: 'assistant', content: 'Recent Assistant Message' },
+      ];
+
+      const pruned = pruneMessages(assistantStart);
+      expect(pruned[0].role).toBe('user');
+      expect(pruned[0].content).toBe('Recent User Message');
     });
   });
 });

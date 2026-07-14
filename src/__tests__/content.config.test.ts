@@ -29,7 +29,16 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
+    // biome-ignore lint/suspicious/noExplicitAny: mock context for functional schemas
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const zodSchema =
+      typeof schema === 'function' ? schema({ image: () => z.string() } as any) : schema;
+
+    if (!zodSchema) {
+      throw new Error('Flags schema is not defined');
+    }
+
+    const result = zodSchema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
@@ -41,6 +50,15 @@ describe('content.config', () => {
 
   it('validates work schema with sample data', () => {
     const { schema } = collections.work;
+    // biome-ignore lint/suspicious/noExplicitAny: mock context for functional schemas
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const zodSchema =
+      typeof schema === 'function' ? schema({ image: () => z.string() } as any) : schema;
+
+    if (!zodSchema) {
+      throw new Error('Work schema is not defined');
+    }
+
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -49,7 +67,7 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
+    const result = zodSchema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.title).toBe(sampleWork.title);
