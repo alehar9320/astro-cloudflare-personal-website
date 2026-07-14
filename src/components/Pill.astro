@@ -1,4 +1,10 @@
-<div class="pill"><slot /></div>
+---
+import { getEntry } from 'astro:content';
+const flagsEntry = await getEntry('flags', 'config');
+const isShimmerEnabled = flagsEntry?.data.enable_pill_shimmer_v1 ?? false;
+---
+
+<div class:list={['pill', { shimmer: isShimmerEnabled }]}><slot /></div>
 
 <style>
   .pill {
@@ -23,5 +29,46 @@
     background-size: 250% 100%;
     background-position: 0% 50%;
     box-shadow: var(--shadow-sm);
+    transition:
+      transform 0.3s ease,
+      box-shadow 0.3s ease,
+      background-position 0.3s ease;
+  }
+
+  .shimmer {
+    animation: background-sweep 8s linear infinite;
+  }
+
+  .pill:hover,
+  .pill:focus-within {
+    transform: scale(1.02);
+    box-shadow:
+      0 0 15px hsla(210, 100%, 45%, 0.4),
+      var(--shadow-md);
+    background-position: 100% 50%;
+  }
+
+  @keyframes background-sweep {
+    0% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+    100% {
+      background-position: 0% 50%;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pill {
+      transition: none;
+    }
+    .shimmer {
+      animation: none;
+    }
+    .pill:hover {
+      transform: none;
+    }
   }
 </style>
