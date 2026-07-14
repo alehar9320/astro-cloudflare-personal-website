@@ -30,9 +30,11 @@ describe('content.config', () => {
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
     // biome-ignore lint/suspicious/noExplicitAny: mock context for functional schemas
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const zodSchema =
-      typeof schema === 'function' ? schema({ image: () => z.string() } as any) : schema;
+      typeof schema === 'function'
+        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          schema({ image: () => z.string() } as any)
+        : schema;
 
     if (!zodSchema) {
       throw new Error('Flags schema is not defined');
@@ -51,9 +53,11 @@ describe('content.config', () => {
   it('validates work schema with sample data', () => {
     const { schema } = collections.work;
     // biome-ignore lint/suspicious/noExplicitAny: mock context for functional schemas
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const zodSchema =
-      typeof schema === 'function' ? schema({ image: () => z.string() } as any) : schema;
+      typeof schema === 'function'
+        ? // eslint-disable-next-line @typescript-eslint/no-explicit-any
+          schema({ image: () => z.string() } as any)
+        : schema;
 
     if (!zodSchema) {
       throw new Error('Work schema is not defined');
