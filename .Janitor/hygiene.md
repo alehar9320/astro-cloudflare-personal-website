@@ -8,6 +8,7 @@
 | 2025-03-24 | src/content/work/master-thesis.md     | Improved grammatical phrasing in the concluding paragraph                                | Validated   |
 | 2025-03-24 | src/content/work/ifs-design-system.md | Fixed "prestigeous" to "prestigious"                                                     | Validated   |
 | 2025-03-24 | context/author-linkedin.md            | Fixed various typos (Software Developer, We'll, You'll, initiator, masonry)              | Validated   |
+| 2025-03-24 | package.json, astro.config.mjs        | Resolved CI alignment issues (Audit/Type-check) via dependency & schema updates          | Validated   |
 
 ## Spelling Exceptions
 

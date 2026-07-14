@@ -29,7 +29,11 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    const zodSchema =
+      typeof schema === 'function' ? schema({ image: () => z.string() } as any) : schema;
+    /* eslint-enable @typescript-eslint/no-explicit-any */
+    const result = zodSchema!.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
@@ -49,7 +53,11 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
+    /* eslint-disable @typescript-eslint/no-explicit-any */
+    const zodSchema =
+      typeof schema === 'function' ? schema({ image: () => z.string() } as any) : schema;
+    /* eslint-enable @typescript-eslint/no-explicit-any */
+    const result = zodSchema!.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.title).toBe(sampleWork.title);
