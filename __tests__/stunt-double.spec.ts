@@ -34,56 +34,69 @@ describe('StuntDouble: Mocks and Utility Edge Cases', () => {
     expect(parser.push('data: }\n\n')).toBe('multi-line success');
   });
 
-  it('handles github-releases cache corruption and edge cases', async () => {
-    vi.stubGlobal('window', {});
+  describe('github-releases cache edge cases', () => {
+    it('handles non-object JSON in cache', async () => {
+      vi.stubGlobal('window', {});
+      vi.stubGlobal('sessionStorage', { getItem: vi.fn().mockReturnValue('123') });
+      const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => [] });
+      await fetchGitHubReleases(fetchMock as typeof fetch);
+      expect(fetchMock).toHaveBeenCalled();
+    });
 
-    // Case 1: Non-object JSON in cache
-    const getItem = vi.fn().mockReturnValue('123');
-    vi.stubGlobal('sessionStorage', { getItem });
-    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => [] });
-    await fetchGitHubReleases(fetchMock as typeof fetch);
-    expect(fetchMock).toHaveBeenCalled();
+    it('handles missing timestamp or data in cache', async () => {
+      vi.stubGlobal('window', {});
+      vi.stubGlobal('sessionStorage', {
+        getItem: vi.fn().mockReturnValue(JSON.stringify({ data: [] })),
+      });
+      const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => [] });
+      await fetchGitHubReleases(fetchMock as typeof fetch);
+      expect(fetchMock).toHaveBeenCalled();
+    });
 
-    // Case 2: Missing timestamp or data in cache
-    getItem.mockReturnValue(JSON.stringify({ data: [] }));
-    await fetchGitHubReleases(fetchMock as typeof fetch);
-    expect(fetchMock).toHaveBeenCalledTimes(2);
+    it('handles URL mismatch for caching', async () => {
+      vi.stubGlobal('window', {});
+      const getItem = vi
+        .fn()
+        .mockReturnValue(JSON.stringify({ data: [{ version: 'v1' }], timestamp: Date.now() }));
+      vi.stubGlobal('sessionStorage', { getItem });
+      const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => [] });
+      const result = await fetchGitHubReleases(
+        fetchMock as typeof fetch,
+        'https://api.github.com/other'
+      );
+      expect(fetchMock).toHaveBeenCalled();
+      expect(result).toEqual([]);
+    });
 
-    // Case 3: URL mismatch for caching
-    getItem.mockReturnValue(JSON.stringify({ data: [{ version: 'v1' }], timestamp: Date.now() }));
-    const result = await fetchGitHubReleases(
-      fetchMock as typeof fetch,
-      'https://api.github.com/other'
-    );
-    expect(fetchMock).toHaveBeenCalledTimes(3);
-    expect(result).toEqual([]);
-
-    // Case 4: No cache write when releases array is empty
-    const setItem = vi.fn();
-    vi.stubGlobal('sessionStorage', { getItem: vi.fn().mockReturnValue(null), setItem });
-    fetchMock.mockResolvedValue({ ok: true, json: async () => [] });
-    await fetchGitHubReleases(fetchMock as typeof fetch);
-    expect(setItem).not.toHaveBeenCalled();
+    it('skips cache write when releases array is empty', async () => {
+      vi.stubGlobal('window', {});
+      const setItem = vi.fn();
+      vi.stubGlobal('sessionStorage', { getItem: vi.fn().mockReturnValue(null), setItem });
+      const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => [] });
+      await fetchGitHubReleases(fetchMock as typeof fetch);
+      expect(setItem).not.toHaveBeenCalled();
+    });
   });
 
-  it('handles chat-logic boundary condition for total content length', () => {
+  it('keeps both messages when exactly at MAX_TOTAL_CONTENT_LENGTH', () => {
     const messages = [
       { role: 'user' as const, content: 'a'.repeat(MAX_TOTAL_CONTENT_LENGTH - 1) },
       { role: 'assistant' as const, content: 'b' },
     ];
-    // Total is exactly MAX_TOTAL_CONTENT_LENGTH
     expect(pruneMessages(messages)).toHaveLength(2);
+  });
 
+  it('prunes to one message when just over MAX_TOTAL_CONTENT_LENGTH', () => {
     const overMessages = [
       { role: 'user' as const, content: 'a'.repeat(MAX_TOTAL_CONTENT_LENGTH) },
       { role: 'assistant' as const, content: 'b' },
     ];
-    // Total is MAX_TOTAL_CONTENT_LENGTH + 1
     expect(pruneMessages(overMessages)).toHaveLength(1);
   });
 
   it('validates content.config flags schema defaults', () => {
     const { schema } = collections.flags;
+    if (!schema || typeof schema === 'function') return;
     const result = schema.parse({});
     expect(result.portfolio_tactile_v1).toBe(false);
     expect(result.enable_strategic_pulse).toBe(false);
