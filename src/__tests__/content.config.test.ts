@@ -29,7 +29,10 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
+    // @ts-expect-error - Astro schema can be a function or a Zod object
+    const schemaObj = typeof schema === 'function' ? schema({ image: () => z.string() }) : schema;
+    if (!schemaObj) throw new Error('Schema is undefined');
+    const result = schemaObj.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
@@ -49,7 +52,10 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
+    // @ts-expect-error - Astro schema can be a function or a Zod object
+    const schemaObj = typeof schema === 'function' ? schema({ image: () => z.string() }) : schema;
+    if (!schemaObj) throw new Error('Schema is undefined');
+    const result = schemaObj.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.title).toBe(sampleWork.title);
