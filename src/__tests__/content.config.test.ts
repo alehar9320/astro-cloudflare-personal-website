@@ -30,10 +30,14 @@ describe('content.config', () => {
   it('validates flags fixture against schema', async () => {
     let schema = collections.flags.schema;
     if (typeof schema === 'function') {
-      /** @ts-expect-error - Casting functional schema to obtain Zod object for testing per technical standard */
+      // @ts-expect-error - Call functional schema to obtain Zod object for testing per technical standard
       schema = schema({ image: () => z.string() });
     }
-    /** @ts-expect-error - Schema might be functional or Zod object; standardizing to object for safeParse */
+
+    if (!schema || typeof schema === 'function' || !('safeParse' in schema)) {
+      throw new Error('Failed to obtain a valid Zod schema for flags');
+    }
+
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -47,7 +51,7 @@ describe('content.config', () => {
   it('validates work schema with sample data', () => {
     let schema = collections.work.schema;
     if (typeof schema === 'function') {
-      /** @ts-expect-error - Casting functional schema to obtain Zod object for testing per technical standard */
+      // @ts-expect-error - Call functional schema to obtain Zod object for testing per technical standard
       schema = schema({ image: () => z.string() });
     }
     const sampleWork = {
@@ -58,7 +62,11 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    /** @ts-expect-error - Schema might be functional or Zod object; standardizing to object for safeParse */
+
+    if (!schema || typeof schema === 'function' || !('safeParse' in schema)) {
+      throw new Error('Failed to obtain a valid Zod schema for work');
+    }
+
     const result = schema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {

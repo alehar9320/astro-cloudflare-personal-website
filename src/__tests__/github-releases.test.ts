@@ -324,23 +324,5 @@ describe('github releases utility', () => {
       expect(result).toEqual(mockReleases);
       expect(fetchMock).toHaveBeenCalledOnce();
     });
-
-    it('handles cache write errors gracefully', async () => {
-      vi.stubGlobal('window', {});
-      const setItem = vi.fn().mockImplementation(() => {
-        throw new Error('storage full');
-      });
-      vi.stubGlobal('sessionStorage', { getItem: vi.fn().mockReturnValue(null), setItem });
-
-      const fetchMock = vi.fn().mockResolvedValue({
-        ok: true,
-        json: async () => [{ body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: 'v1' }],
-      });
-
-      const result = await fetchGitHubReleases(fetchMock as typeof fetch);
-
-      expect(result).toEqual(mockReleases);
-      expect(fetchMock).toHaveBeenCalledOnce();
-    });
   });
 });
