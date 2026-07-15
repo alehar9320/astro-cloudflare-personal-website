@@ -30,15 +30,24 @@ export const ChatRequestSchema = z.object({
  * Implements a sliding window algorithm that prioritizes the most recent messages.
  *
  * @param messages - The history of chat messages.
+ * @param enableUserFirstPruning - If true, ensures history starts with a user message.
  * @returns A pruned array of messages that satisfies all constraints.
  */
-export function pruneMessages(messages: ChatMessage[]): ChatMessage[] {
+export function pruneMessages(
+  messages: ChatMessage[],
+  enableUserFirstPruning = false
+): ChatMessage[] {
   const pruned = messages.slice(-MAX_MESSAGES);
   let totalLength = pruned.reduce((acc, msg) => acc + msg.content.length, 0);
 
   while (pruned.length > 1 && totalLength > MAX_TOTAL_CONTENT_LENGTH) {
     // biome-ignore lint/style/noNonNullAssertion: loop guard ensures shift() returns an element
     totalLength -= pruned.shift()!.content.length;
+  }
+
+  // Ensure history starts with 'user' role for model grounding, unless only one remains
+  while (enableUserFirstPruning && pruned.length > 1 && pruned[0].role !== 'user') {
+    pruned.shift();
   }
 
   return pruned;

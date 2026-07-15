@@ -95,11 +95,39 @@ describe('chat logic utilities', () => {
       const veryLongContent = 'a'.repeat(MAX_TOTAL_CONTENT_LENGTH + 1);
       const messages: ChatMessage[] = [
         { role: 'user', content: veryLongContent },
-        { role: 'assistant', content: 'short' },
+        { role: 'user', content: 'short' },
       ];
       const pruned = pruneMessages(messages);
       expect(pruned).toHaveLength(1);
       expect(pruned[0].content).toBe('short');
+    });
+
+    it('ensures the history starts with a user message if flag is enabled', () => {
+      const messages: ChatMessage[] = [
+        { role: 'assistant', content: 'I am an assistant' },
+        { role: 'user', content: 'Hello' },
+        { role: 'assistant', content: 'Hi!' },
+      ];
+      const pruned = pruneMessages(messages, true);
+      expect(pruned[0].role).toBe('user');
+      expect(pruned).toHaveLength(2);
+    });
+
+    it('does NOT force user-first message if flag is disabled', () => {
+      const messages: ChatMessage[] = [
+        { role: 'assistant', content: 'I am an assistant' },
+        { role: 'user', content: 'Hello' },
+      ];
+      const pruned = pruneMessages(messages, false);
+      expect(pruned[0].role).toBe('assistant');
+      expect(pruned).toHaveLength(2);
+    });
+
+    it('leaves a single assistant message if it is the only one left', () => {
+      const messages: ChatMessage[] = [{ role: 'assistant', content: 'I am an assistant' }];
+      const pruned = pruneMessages(messages);
+      expect(pruned).toHaveLength(1);
+      expect(pruned[0].role).toBe('assistant');
     });
   });
 });

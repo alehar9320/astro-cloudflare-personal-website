@@ -28,7 +28,12 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
+    let schema = collections.flags.schema;
+    if (typeof schema === 'function') {
+      /** @ts-expect-error - Casting functional schema to obtain Zod object for testing per technical standard */
+      schema = schema({ image: () => z.string() });
+    }
+    /** @ts-expect-error - Schema might be functional or Zod object; standardizing to object for safeParse */
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -40,7 +45,11 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    let schema = collections.work.schema;
+    if (typeof schema === 'function') {
+      /** @ts-expect-error - Casting functional schema to obtain Zod object for testing per technical standard */
+      schema = schema({ image: () => z.string() });
+    }
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -49,6 +58,7 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
+    /** @ts-expect-error - Schema might be functional or Zod object; standardizing to object for safeParse */
     const result = schema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
