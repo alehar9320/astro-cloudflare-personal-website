@@ -42,19 +42,28 @@ export const POST: APIRoute = async ({ request, locals }) => {
   const rateLimitKey = `chat-limit:${ip}`;
 
   if (store) {
-    const rawCount = await store.get(rateLimitKey);
-    // biome-ignore lint/style/noNonNullAssertion: rate limit check is inside store guard
-    let currentCount = parseInt(rawCount || '0');
-    if (Number.isNaN(currentCount)) {
-      currentCount = 0;
+    let currentCount = 0;
+    try {
+      const rawCount = await store.get(rateLimitKey);
+      currentCount = parseInt(rawCount || '0');
+      if (Number.isNaN(currentCount)) {
+        currentCount = 0;
+      }
+    } catch (error) {
+      console.error({ event: 'chat_api_rate_limit_read_error', error: String(error) });
     }
 
     if (currentCount >= 20) {
       // 20 requests per hour limit
       return jsonError('Rate limit exceeded. Try again in an hour.', 429);
     }
-    // Increment counter with 1 hour expiration
-    await store.put(rateLimitKey, (currentCount + 1).toString(), { expirationTtl: 3600 });
+
+    try {
+      // Increment counter with 1 hour expiration
+      await store.put(rateLimitKey, (currentCount + 1).toString(), { expirationTtl: 3600 });
+    } catch (error) {
+      console.error({ event: 'chat_api_rate_limit_write_error', error: String(error) });
+    }
   }
 
   let body: unknown;
