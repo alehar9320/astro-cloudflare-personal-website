@@ -427,6 +427,64 @@ describe('chat API', () => {
     expect(put).toHaveBeenCalledWith(expect.stringContaining('chat-limit'), '1', expect.anything());
   });
 
+  it('logs chat_api_rate_limit_read_error and proceeds when KV get fails', async () => {
+    const ai = createAi();
+    const get = vi.fn().mockRejectedValue(new Error('KV get failed'));
+    const put = vi.fn();
+    const store = { get, put } as unknown as KVNamespace;
+    const env = { AI: ai, CHAT_STORE: store };
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const response = await POST(
+      createContext(
+        createRequest(
+          { messages: [{ role: 'user', content: 'Hello' }] },
+          { 'cf-connecting-ip': '203.0.113.5' }
+        ),
+        env
+      )
+    );
+
+    expect(response.status).toBe(200);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'chat_api_rate_limit_read_error',
+        error: expect.stringContaining('KV get failed'),
+      })
+    );
+    // Should still attempt to put (with count 1) and run AI
+    expect(put).toHaveBeenCalledWith('chat-limit:203.0.113.5', '1', expect.anything());
+    expect(ai.run).toHaveBeenCalled();
+  });
+
+  it('logs chat_api_rate_limit_write_error and proceeds when KV put fails', async () => {
+    const ai = createAi();
+    const get = vi.fn().mockResolvedValue('5');
+    const put = vi.fn().mockRejectedValue(new Error('KV put failed'));
+    const store = { get, put } as unknown as KVNamespace;
+    const env = { AI: ai, CHAT_STORE: store };
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const response = await POST(
+      createContext(
+        createRequest(
+          { messages: [{ role: 'user', content: 'Hello' }] },
+          { 'cf-connecting-ip': '203.0.113.6' }
+        ),
+        env
+      )
+    );
+
+    expect(response.status).toBe(200);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'chat_api_rate_limit_write_error',
+        error: expect.stringContaining('KV put failed'),
+      })
+    );
+    expect(ai.run).toHaveBeenCalled();
+  });
+
   it('returns a generic 500 error when AI execution fails', async () => {
     const ai = {
       run: vi.fn().mockRejectedValue(new Error('AI unavailable')),
