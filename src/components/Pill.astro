@@ -1,4 +1,9 @@
-<div class="pill"><slot /></div>
+---
+import { getEntry } from 'astro:content';
+const flagsEntry = await getEntry('flags', 'config');
+---
+
+<div class:list={['pill', { shimmer: flagsEntry?.data.enable_pill_shimmer_v1 }]}><slot /></div>
 
 <style>
   .pill {
@@ -23,5 +28,15 @@
     background-size: 250% 100%;
     background-position: 0% 50%;
     box-shadow: var(--shadow-sm);
+    transition:
+      transform var(--theme-transition),
+      background-position var(--theme-transition),
+      box-shadow var(--theme-transition);
+  }
+
+  .pill.shimmer:hover {
+    transform: translateY(-2px);
+    background-position: 100% 50%;
+    box-shadow: var(--shadow-md);
   }
 </style>

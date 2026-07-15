@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-07-15 - Pill Shimmer & Lift | Signal: Competitive | Lean Implementation: Added subtle translateY(-2px) and gradient shift on hover to the Pill component.
+
+- Insight: Competitive signal from high-end design systems (Linear, Vercel) shows that subtle tactile feedback on interactive elements improves perceived quality.
+- User Target: Surprise, Joy
+- Abort Triggers: None (verified via build pipeline).
+- User Reaction: Pending synthetic feedback.
