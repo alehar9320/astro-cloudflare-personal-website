@@ -27,11 +27,26 @@ describe('content.config', () => {
     expect(collections.work).toHaveProperty('schema');
   });
 
+  const imageMock = z.object({
+    src: z.string(),
+    width: z.number(),
+    height: z.number(),
+    format: z.union([
+      z.literal('png'),
+      z.literal('jpg'),
+      z.literal('jpeg'),
+      z.literal('tiff'),
+      z.literal('webp'),
+      z.literal('gif'),
+      z.literal('svg'),
+    ]),
+  });
+
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
     if (!schema) throw new Error('Schema is undefined');
-    const actualSchema =
-      typeof schema === 'function' ? schema({ image: () => z.any() as any }) : schema;
+    // @ts-expect-error - image helper returns a mock schema that is slightly type-disjoint
+    const actualSchema = typeof schema === 'function' ? schema({ image: () => imageMock }) : schema;
     const result = actualSchema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -45,8 +60,8 @@ describe('content.config', () => {
   it('validates work schema with sample data', () => {
     const { schema } = collections.work;
     if (!schema) throw new Error('Schema is undefined');
-    const actualSchema =
-      typeof schema === 'function' ? schema({ image: () => z.any() as any }) : schema;
+    // @ts-expect-error - image helper returns a mock schema that is slightly type-disjoint
+    const actualSchema = typeof schema === 'function' ? schema({ image: () => imageMock }) : schema;
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
