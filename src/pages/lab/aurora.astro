@@ -1,0 +1,754 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Icon from '../../components/Icon.astro';
+---
+
+<BaseLayout
+  title="Interactive Aurora Borealis | Laboratory"
+  description="Experience an immersive, high-performance HTML5 Canvas-based Aurora Borealis wave simulator featuring dynamic cursor magnetic refraction."
+>
+  <main id="main-content" class="wrapper stack gap-8" style="margin-top: 2rem; min-height: 85vh;">
+    <Hero
+      title="Aurora Borealis Laboratory"
+      tagline="Immersive, mathematical simulation of magnetosphere solar storms."
+      align="start"
+    />
+
+    <!-- Lab Container: Displays canvas and glassmorphic control panel side-by-side or stacked -->
+    <div class="lab-container">
+      <div class="canvas-wrapper">
+        <canvas
+          id="aurora-canvas"
+          aria-label="An interactive canvas simulating the Aurora Borealis. Controls are below to change speed, intensity, and waves."
+        ></canvas>
+
+        <!-- Status Indicator badge overlay -->
+        <div class="status-overlay" id="interactive-status">
+          <span class="pulse-dot"></span>
+          <span class="status-text">Magnetosphere Idle</span>
+        </div>
+      </div>
+
+      <div class="control-panel">
+        <header class="panel-header">
+          <Icon icon="strategy" color="var(--accent-light)" size="1.5rem" />
+          <h2>Simulation Controls</h2>
+        </header>
+
+        <p class="panel-desc">
+          Adjust the physical parameters of the solar particle simulation. Move your cursor or tap
+          over the canvas to distort the magnetic field.
+        </p>
+
+        <div class="control-group">
+          <div class="control-label">
+            <label for="wave-count">Aurora Ribbons</label>
+            <span id="wave-count-val">3</span>
+          </div>
+          <input
+            type="range"
+            id="wave-count"
+            min="1"
+            max="6"
+            value="3"
+            step="1"
+            aria-valuemin="1"
+            aria-valuemax="6"
+            aria-valuenow="3"
+          />
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <label for="sim-speed">Solar Wind Speed</label>
+            <span id="sim-speed-val">1.0x</span>
+          </div>
+          <input
+            type="range"
+            id="sim-speed"
+            min="0.2"
+            max="3"
+            value="1.0"
+            step="0.1"
+            aria-valuemin="0.2"
+            aria-valuemax="3"
+            aria-valuenow="1.0"
+          />
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <label for="wave-height">Wave Amplitude</label>
+            <span id="wave-height-val">120px</span>
+          </div>
+          <input
+            type="range"
+            id="wave-height"
+            min="40"
+            max="250"
+            value="120"
+            step="10"
+            aria-valuemin="40"
+            aria-valuemax="250"
+            aria-valuenow="120"
+          />
+        </div>
+
+        <div class="control-group">
+          <div class="control-label">
+            <label for="color-preset">Spectral Chemistry</label>
+          </div>
+          <select id="color-preset" aria-label="Select color palette preset">
+            <option value="classic">Classic Aurora (Green & Cyan)</option>
+            <option value="deep-marine">Deep Marine (Blue & Cyan)</option>
+            <option value="neon-sky">Neon Sky (Purple & Pink)</option>
+          </select>
+        </div>
+
+        <div class="actions-group">
+          <button id="toggle-animation" class="btn btn-primary" aria-live="polite">
+            <span id="btn-icon">⏸</span>
+            <span id="btn-text">Freeze Field</span>
+          </button>
+          <button id="reset-sim" class="btn btn-secondary"> 🔄 Reset </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Details/Documentation below the simulator fold -->
+    <section class="physics-details">
+      <h3>The Mathematics of the Northern Lights</h3>
+      <p>
+        This real-time visualization represents the collision of solar wind particles with Earth's
+        upper atmosphere. The wavy ribbons of light are modeled mathematically using <strong
+          >harmonic sine-wave superposition</strong
+        >:
+      </p>
+      <code> y(x, t) = &Sigma; A_i * sin(k_i * x &plusmn; &omega;_i * t) </code>
+      <p>
+        When you move your pointer over the field, a <strong>spring-mass vector force field</strong> simulates
+        magnetic drag, deflecting the light paths dynamically to model magnetospheric turbulence.
+      </p>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  interface Wave {
+    phase: number;
+    baseYOffset: number;
+    amplitude: number;
+    frequency: number;
+    speed: number;
+    curtainHeight: number;
+    hueStart: number;
+    hueEnd: number;
+  }
+
+  // Self-contained initialization inside client-side script
+  const initAurora = () => {
+    const canvas = document.getElementById('aurora-canvas') as HTMLCanvasElement | null;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    // DOM Elements
+    const waveCountSlider = document.getElementById('wave-count') as unknown as HTMLInputElement;
+    const waveCountVal = document.getElementById('wave-count-val');
+    const simSpeedSlider = document.getElementById('sim-speed') as unknown as HTMLInputElement;
+    const simSpeedVal = document.getElementById('sim-speed-val');
+    const waveHeightSlider = document.getElementById('wave-height') as unknown as HTMLInputElement;
+    const waveHeightVal = document.getElementById('wave-height-val');
+    const colorPresetSelect = document.getElementById(
+      'color-preset'
+    ) as unknown as HTMLSelectElement;
+    const toggleAnimBtn = document.getElementById(
+      'toggle-animation'
+    ) as unknown as HTMLButtonElement;
+    const resetSimBtn = document.getElementById('reset-sim') as unknown as HTMLButtonElement;
+    const interactiveStatus = document.getElementById('interactive-status');
+    const statusText = interactiveStatus?.querySelector('.status-text');
+
+    // State Variables
+    let width = 0;
+    let height = 0;
+    let animationFrameId: number;
+    let isRunning = true;
+    let time = 0;
+
+    // Pointer Tracking
+    let mouseX: number | null = null;
+    let mouseY: number | null = null;
+    let targetMouseX: number | null = null;
+    let targetMouseY: number | null = null;
+
+    // Performance adaptation
+    let particleStep = 6; // Horizontal step resolution. Higher = faster, lower = smoother.
+    const isMobile = window.matchMedia('(max-width: 48em)').matches;
+    if (isMobile) {
+      particleStep = 12; // Double step resolution on mobile for high-performance 60fps
+    }
+
+    // Accessibility check
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      isRunning = false;
+      updateToggleButtonUI();
+    }
+
+    // Active wave settings
+    let waves: Wave[] = [];
+
+    // Presets
+    const PALETTES = {
+      classic: { hStart: 120, hEnd: 190 }, // Emerald green to cyan
+      'deep-marine': { hStart: 190, hEnd: 240 }, // Cyan to marine blue
+      'neon-sky': { hStart: 270, hEnd: 320 }, // Purple to hot pink
+    };
+
+    // Initialize/Resize Canvas Dimensions
+    const resize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      width = canvas.parentElement.clientWidth;
+      height = canvas.parentElement.clientHeight || 450;
+      canvas.width = width * window.devicePixelRatio;
+      canvas.height = height * window.devicePixelRatio;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      ctx.scale(window.devicePixelRatio, window.devicePixelRatio);
+    };
+
+    // Generate Wave Parameters
+    const generateWaves = () => {
+      const count = parseInt(waveCountSlider?.value || '3', 10);
+      const ampMultiplier = parseFloat(waveHeightSlider?.value || '120');
+      const paletteName = (colorPresetSelect?.value || 'classic') as keyof typeof PALETTES;
+      const palette = PALETTES[paletteName] || PALETTES.classic;
+
+      waves = [];
+      for (let i = 0; i < count; i++) {
+        // Stagger variables to create distinct harmonics
+        waves.push({
+          phase: Math.random() * Math.PI * 2,
+          baseYOffset: height * 0.35 + i * (height * 0.08),
+          amplitude: ampMultiplier * (0.6 + Math.random() * 0.4),
+          frequency: 0.0015 + i * 0.0008,
+          speed: 0.001 + i * 0.0005,
+          curtainHeight: 180 + i * 40,
+          hueStart: palette.hStart + (Math.random() * 20 - 10),
+          hueEnd: palette.hEnd + (Math.random() * 20 - 10),
+        });
+      }
+    };
+
+    // Update Slider Value Displays
+    const updateDisplayValues = () => {
+      if (waveCountVal && waveCountSlider) waveCountVal.textContent = waveCountSlider.value;
+      if (simSpeedVal && simSpeedSlider) simSpeedVal.textContent = `${simSpeedSlider.value}x`;
+      if (waveHeightVal && waveHeightSlider)
+        waveHeightVal.textContent = `${waveHeightSlider.value}px`;
+    };
+
+    // Reset Simulation
+    const resetSimulation = () => {
+      if (waveCountSlider) waveCountSlider.value = '3';
+      if (simSpeedSlider) simSpeedSlider.value = '1.0';
+      if (waveHeightSlider) waveHeightSlider.value = '120';
+      if (colorPresetSelect) colorPresetSelect.value = 'classic';
+
+      updateDisplayValues();
+      generateWaves();
+    };
+
+    // Toggle Play/Pause
+    function updateToggleButtonUI() {
+      const iconSpan = document.getElementById('btn-icon');
+      const textSpan = document.getElementById('btn-text');
+      if (isRunning) {
+        if (iconSpan) iconSpan.textContent = '⏸';
+        if (textSpan) textSpan.textContent = 'Freeze Field';
+        toggleAnimBtn?.setAttribute('aria-label', 'Pause simulation');
+      } else {
+        if (iconSpan) iconSpan.textContent = '▶';
+        if (textSpan) textSpan.textContent = 'Flow Field';
+        toggleAnimBtn?.setAttribute('aria-label', 'Resume simulation');
+      }
+    }
+
+    const togglePlay = () => {
+      isRunning = !isRunning;
+      updateToggleButtonUI();
+      if (isRunning) {
+        draw();
+      }
+    };
+
+    // Core Drawing Routine
+    const draw = () => {
+      if (!ctx || !canvas) return;
+
+      // Clean canvas with transparency
+      ctx.clearRect(0, 0, width, height);
+
+      // Increment wave dynamics based on speed
+      const speedMultiplier = parseFloat(simSpeedSlider?.value || '1.0');
+      if (isRunning) {
+        time += 1.5 * speedMultiplier;
+      }
+
+      // Smooth pointer tracking interpolation (Lerp)
+      if (targetMouseX !== null && targetMouseY !== null) {
+        if (mouseX === null || mouseY === null) {
+          mouseX = targetMouseX;
+          mouseY = targetMouseY;
+        } else {
+          mouseX += (targetMouseX - mouseX) * 0.12;
+          mouseY += (targetMouseY - mouseY) * 0.12;
+        }
+      } else {
+        mouseX = null;
+        mouseY = null;
+      }
+
+      // Draw each wave ribbon using vertical curtain slices for volumetric glow
+      waves.forEach((wave) => {
+        ctx.save();
+        ctx.globalCompositeOperation = 'screen';
+
+        // Draw vertical linear gradient curtains across horizontal slices
+        for (let x = 0; x < width; x += particleStep) {
+          // Mathematical wave function superposition
+          const baseOffset =
+            Math.sin(x * wave.frequency + wave.phase + time * wave.speed) * wave.amplitude;
+          const noiseComponent =
+            Math.cos(x * (wave.frequency * 2.5) - time * wave.speed * 0.7) *
+            (wave.amplitude * 0.35);
+
+          let y = wave.baseYOffset + baseOffset + noiseComponent;
+
+          // Magnetic drag cursor interaction
+          if (mouseX !== null && mouseY !== null) {
+            const dx = x - mouseX;
+            const dy = y - mouseY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const influenceRadius = 180;
+
+            if (dist < influenceRadius) {
+              const pull = Math.pow(1 - dist / influenceRadius, 2.5) * 55;
+              // Push waves away from cursor in vertical/horizontal axis
+              y += (dy / (dist || 1)) * pull;
+            }
+          }
+
+          // Create localized vertical gradient for the curtain slice
+          const grad = ctx.createLinearGradient(x, y, x, y + wave.curtainHeight);
+          grad.addColorStop(0, `hsla(${wave.hueStart}, 90%, 55%, 0)`);
+          grad.addColorStop(0.15, `hsla(${wave.hueStart}, 95%, 60%, 0.35)`);
+          grad.addColorStop(0.45, `hsla(${wave.hueEnd}, 90%, 50%, 0.2)`);
+          grad.addColorStop(1, `hsla(${wave.hueEnd}, 100%, 40%, 0)`);
+
+          ctx.fillStyle = grad;
+          // Render thin vertical segment
+          ctx.fillRect(x, y, particleStep - 0.5, wave.curtainHeight);
+        }
+
+        ctx.restore();
+      });
+
+      if (isRunning) {
+        animationFrameId = requestAnimationFrame(draw);
+      }
+    };
+
+    // Setup event listeners
+    const handleResize = () => {
+      resize();
+      generateWaves();
+      if (!isRunning) draw(); // Redraw static frame
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      targetMouseX = e.clientX - rect.left;
+      targetMouseY = e.clientY - rect.top;
+
+      if (statusText && interactiveStatus) {
+        statusText.textContent = 'Magnetosphere Distorted';
+        interactiveStatus.classList.add('distorted');
+      }
+    };
+
+    const handlePointerLeave = () => {
+      targetMouseX = null;
+      targetMouseY = null;
+
+      if (statusText && interactiveStatus) {
+        statusText.textContent = 'Magnetosphere Idle';
+        interactiveStatus.classList.remove('distorted');
+      }
+    };
+
+    // Event listener registration
+    window.addEventListener('resize', handleResize);
+    canvas.addEventListener('pointermove', handlePointerMove);
+    canvas.addEventListener('pointerleave', handlePointerLeave);
+
+    // Panel controller hooks
+    waveCountSlider?.addEventListener('input', () => {
+      updateDisplayValues();
+      generateWaves();
+      if (!isRunning) draw();
+    });
+
+    simSpeedSlider?.addEventListener('input', updateDisplayValues);
+
+    waveHeightSlider?.addEventListener('input', () => {
+      updateDisplayValues();
+      generateWaves();
+      if (!isRunning) draw();
+    });
+
+    colorPresetSelect?.addEventListener('change', () => {
+      generateWaves();
+      if (!isRunning) draw();
+    });
+
+    toggleAnimBtn?.addEventListener('click', togglePlay);
+    resetSimBtn?.addEventListener('click', () => {
+      resetSimulation();
+      if (!isRunning) draw();
+    });
+
+    // Boot up
+    handleResize();
+    draw();
+
+    // Astro swap lifecycle hooks (garbage collection & teardown)
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', handleResize);
+        canvas.removeEventListener('pointermove', handlePointerMove);
+        canvas.removeEventListener('pointerleave', handlePointerLeave);
+      },
+      { once: true }
+    );
+  };
+
+  // Run initializer on standard load & Astro page swap cycles
+  initAurora();
+  document.addEventListener('astro:after-swap', initAurora);
+</script>
+
+<style>
+  /* Lab Layout and Glassmorphism System */
+  .lab-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+    align-items: start;
+    width: 100%;
+  }
+
+  @media (min-width: 60em) {
+    .lab-container {
+      grid-template-columns: 1fr 340px;
+    }
+  }
+
+  /* Canvas Visual Frame */
+  .canvas-wrapper {
+    position: relative;
+    width: 100%;
+    height: 450px;
+    background: radial-gradient(circle at 50% 20%, #0c1221 0%, #03060c 100%);
+    border: 1px solid var(--gray-800);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow:
+      var(--shadow-lg),
+      inset 0 0 40px rgba(0, 0, 0, 0.6);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+    touch-action: none;
+  }
+
+  /* Status Indicator Overlay */
+  .status-overlay {
+    position: absolute;
+    top: 1.25rem;
+    left: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    padding: 0.5rem 1rem;
+    background: rgba(9, 11, 17, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 999rem;
+    backdrop-filter: blur(8px);
+    pointer-events: none;
+    transition:
+      border-color 0.3s ease,
+      background 0.3s ease;
+  }
+
+  .status-overlay.distorted {
+    border-color: var(--accent-light);
+    background: rgba(0, 102, 204, 0.25);
+  }
+
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    background-color: var(--status-idle);
+    border-radius: 50%;
+    box-shadow: 0 0 10px var(--status-idle);
+  }
+
+  .status-overlay.distorted .pulse-dot {
+    background-color: var(--accent-light);
+    box-shadow: 0 0 10px var(--accent-light);
+    animation: alert-pulse 1s infinite alternate;
+  }
+
+  @keyframes alert-pulse {
+    0% {
+      transform: scale(1);
+      opacity: 0.7;
+    }
+    100% {
+      transform: scale(1.3);
+      opacity: 1;
+    }
+  }
+
+  .status-text {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--gray-100);
+    letter-spacing: 0.02em;
+  }
+
+  /* Control Panel Glassmorphism */
+  .control-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 2rem;
+    background: rgba(14, 21, 37, 0.4);
+    border: 1px solid var(--gray-800);
+    border-radius: 1.5rem;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .panel-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    padding-bottom: 0.75rem;
+  }
+
+  .panel-header h2 {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--gray-0);
+  }
+
+  .panel-desc {
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    line-height: 1.5;
+  }
+
+  /* Input and Slider Design */
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .control-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--gray-100);
+  }
+
+  .control-label span {
+    color: var(--accent-dark);
+    font-family: monospace;
+    font-weight: 600;
+  }
+
+  input[type='range'] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    background: var(--gray-800);
+    border-radius: 999rem;
+    outline: none;
+    transition: background 0.3s ease;
+  }
+
+  input[type='range']::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: var(--accent-light);
+    border: 2px solid var(--gray-999);
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+    transition:
+      transform 0.15s ease,
+      background 0.15s ease;
+  }
+
+  input[type='range']::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+    background: var(--accent-regular);
+  }
+
+  input[type='range']:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+  }
+
+  /* Dropdown Select Styling */
+  select {
+    width: 100%;
+    padding: 0.625rem 1rem;
+    background: rgba(9, 11, 17, 0.6);
+    border: 1px solid var(--gray-800);
+    border-radius: 0.75rem;
+    color: var(--gray-100);
+    font-family: inherit;
+    font-size: var(--text-sm);
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.3s ease;
+  }
+
+  select:focus-visible {
+    border-color: var(--accent-light);
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 2px;
+  }
+
+  /* Actions UI Components */
+  .actions-group {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+    margin-top: 0.5rem;
+  }
+
+  .btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1rem;
+    border: 1px solid transparent;
+    border-radius: 0.75rem;
+    font-family: inherit;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      transform 0.15s ease,
+      background 0.15s ease,
+      border-color 0.15s ease;
+  }
+
+  .btn:active {
+    transform: scale(0.97);
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--accent-regular), var(--accent-dark));
+    color: var(--gray-999);
+    box-shadow: 0 4px 12px rgba(0, 102, 204, 0.3);
+  }
+
+  .btn-primary:hover {
+    background: linear-gradient(135deg, var(--accent-light), var(--accent-regular));
+  }
+
+  .btn-secondary {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: var(--gray-800);
+    color: var(--gray-100);
+  }
+
+  .btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: var(--gray-600);
+  }
+
+  .btn:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 3px;
+  }
+
+  /* Physics Details Section */
+  .physics-details {
+    padding: 2.5rem;
+    background: rgba(14, 21, 37, 0.25);
+    border: 1px solid var(--gray-800);
+    border-radius: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .physics-details h3 {
+    font-size: var(--text-xl);
+    color: var(--gray-0);
+    margin-bottom: 1rem;
+  }
+
+  .physics-details p {
+    font-size: var(--text-md);
+    color: var(--gray-300);
+    line-height: 1.6;
+    margin-bottom: 1rem;
+  }
+
+  code {
+    display: block;
+    padding: 1.25rem;
+    background: rgba(9, 11, 17, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 0.75rem;
+    font-family: 'Fira Code', monospace;
+    font-size: var(--text-sm);
+    color: var(--accent-light);
+    text-align: center;
+    margin: 1.5rem 0;
+    overflow-x: auto;
+  }
+
+  /* High contrast theme integration support */
+  @media (forced-colors: active) {
+    .control-panel,
+    .physics-details {
+      border: 1px solid CanvasText;
+    }
+    input[type='range'] {
+      background: CanvasText;
+    }
+  }
+</style>
