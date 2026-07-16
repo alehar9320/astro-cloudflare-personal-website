@@ -2,10 +2,16 @@
 
 | Date       | Aligned Schemas                                                                                     | Altered Mock Files                                                         | Validation Compliance Rating            |
 | :--------- | :-------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------- | :-------------------------------------- |
-| 2026-06-03 | `flags` collection (added `portfolio_tactile_v1`, `enable_strategic_pulse`, `portfolio_shimmer_v1`) | `src/__tests__/github-releases.test.ts` (updated tag to `2026.06.03.1841`) | 100% (All tests and Astro check passed) |
+| 2026-06-12 | `flags` and `work` collections (safe schema resolution in tests)                                    | `src/__tests__/content.config.test.ts`                                     | 100% (Astro Check and Vitest passed)    |
 | 2026-06-11 | `flags` and `work` collections (contract validation)                                                | `src/__tests__/github-releases.test.ts`, `src/data/version.json`           | 100% (Full test suite passed)           |
+| 2026-06-03 | `flags` collection (added `portfolio_tactile_v1`, `enable_strategic_pulse`, `portfolio_shimmer_v1`) | `src/__tests__/github-releases.test.ts` (updated tag to `2026.06.03.1841`) | 100% (All tests and Astro check passed) |
 
 ## Summary of Changes
+
+### 2026-06-12
+
+- **Schema Resolution:** Refactored `src/__tests__/content.config.test.ts` to cleanly resolve Astro schemas (both function and object schemas) with mock context (`{ image: () => z.string() }`), fully aligning with Zod/Astro type specifications.
+- **Diagnostics Elimination:** Eliminated Astro type check errors (`ts(2339)` and `ts(18048)`) under `npm run astro check`, and resolved unused `@ts-expect-error` directives to ensure type safety compliance.
 
 ### 2026-06-11
 
