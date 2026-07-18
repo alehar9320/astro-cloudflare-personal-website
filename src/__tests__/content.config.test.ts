@@ -29,13 +29,23 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
-    expect(result.success).toBe(true);
+    const resolvedSchema =
+      typeof schema === 'function'
+        ? // @ts-expect-error - image helper mock returns string for simplified testing
+          schema({ image: () => z.string() })
+        : schema;
 
-    if (result.success) {
-      // Use toMatchObject to ensure all fixture properties are correctly validated
-      // while allowing for Zod-injected default values.
-      expect(result.data).toMatchObject(flagsFixture);
+    if (resolvedSchema && 'safeParse' in resolvedSchema) {
+      const result = resolvedSchema.safeParse(flagsFixture);
+      expect(result.success).toBe(true);
+
+      if (result.success) {
+        // Use toMatchObject to ensure all fixture properties are correctly validated
+        // while allowing for Zod-injected default values.
+        expect(result.data).toMatchObject(flagsFixture);
+      }
+    } else {
+      throw new Error('Flags collection schema is not valid or does not support safeParse');
     }
   });
 
@@ -49,11 +59,21 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.title).toBe(sampleWork.title);
-      expect(result.data.publishDate).toBeInstanceOf(Date);
+    const resolvedSchema =
+      typeof schema === 'function'
+        ? // @ts-expect-error - image helper mock returns string for simplified testing
+          schema({ image: () => z.string() })
+        : schema;
+
+    if (resolvedSchema && 'safeParse' in resolvedSchema) {
+      const result = resolvedSchema.safeParse(sampleWork);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.title).toBe(sampleWork.title);
+        expect(result.data.publishDate).toBeInstanceOf(Date);
+      }
+    } else {
+      throw new Error('Work collection schema is not valid or does not support safeParse');
     }
   });
 });

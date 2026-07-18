@@ -60,6 +60,19 @@ const { href, target, rel } = Astro.props;
     box-shadow: var(--shadow-sm);
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    a {
+      transition: none;
+    }
+    a:hover,
+    a:focus-visible {
+      transform: none;
+    }
+    a:active {
+      transform: none;
+    }
+  }
+
   /* Overlay for standard static hover effect no longer needed, using animated gradient */
   a::after {
     content: '';
