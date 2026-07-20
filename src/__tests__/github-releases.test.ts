@@ -268,6 +268,27 @@ describe('github releases utility', () => {
       expect(fetchMock).not.toHaveBeenCalled();
     });
 
+    it('ignores cached data if it is not an array', async () => {
+      vi.stubGlobal('window', {});
+      const getItem = vi.fn().mockReturnValue(
+        JSON.stringify({
+          data: 'not-an-array',
+          timestamp: Date.now() - 1000,
+        })
+      );
+      vi.stubGlobal('sessionStorage', { getItem });
+
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [{ body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: 'v1' }],
+      });
+
+      const result = await fetchGitHubReleases(fetchMock as typeof fetch);
+
+      expect(result).toEqual(mockReleases);
+      expect(fetchMock).toHaveBeenCalledOnce();
+    });
+
     it('fetches and saves to cache if cache is expired', async () => {
       vi.stubGlobal('window', {});
       const getItem = vi.fn().mockReturnValue(

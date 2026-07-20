@@ -28,7 +28,13 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
+    let schema = collections.flags.schema;
+    expect(schema).toBeDefined();
+    if (!schema) return;
+    if (typeof schema === 'function') {
+      // @ts-expect-error Mocking SchemaContext image helper for test schema resolution
+      schema = schema({ image: () => z.string() });
+    }
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -40,7 +46,13 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    let schema = collections.work.schema;
+    expect(schema).toBeDefined();
+    if (!schema) return;
+    if (typeof schema === 'function') {
+      // @ts-expect-error Mocking SchemaContext image helper for test schema resolution
+      schema = schema({ image: () => z.string() });
+    }
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
