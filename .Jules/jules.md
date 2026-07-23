@@ -9,3 +9,9 @@
 - [Insight 1: Shimmer micro-interactions provide high-quality visual feedback without increasing JS bundle size.]
 - [Insight 2: Using `translateX` for the shimmer sweep is more performant than animating `background-position` as it avoids layout repaints.]
 - [Delta: 18 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-02 - Content Schema Type Safety | Signal: Technical | Lean Implementation: Mocked Context for Functional Astro Schemas
+
+- [Insight 1: Astro schema validation tests fail types checks during `astro check` when schemas are declared as functions instead of pure Zod objects.]
+- [Insight 2: By passing a minimal mock context to the schema function and utilizing targeted `@ts-expect-error` comments, we maintain strong test-level validation without resorting to broad `any` casts.]
+- [Delta: 14 lines. Guardrails: All passed autonomously.]
