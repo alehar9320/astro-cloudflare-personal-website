@@ -43,4 +43,5 @@
 - Transitioned hardcoded Sentry configuration parameters (`org` and `project` in `astro.config.mjs`) to environment variables with fallback values.
 - Documented `SENTRY_ORG` and `SENTRY_PROJECT` in `.dev.vars.example`.
 - Fixed functional Astro schema type mismatches in the test environment to resolve type checker errors under `npm run astro check`.
+- Standardized package overrides to avoid nested structure parser bugs during `npm audit`.
 - Verified 100% build, test, and type checker compliance.
