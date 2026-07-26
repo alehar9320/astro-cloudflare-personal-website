@@ -30,3 +30,17 @@
 - Verified that all example configuration files use generic placeholders.
 - Expanded `.dev.vars.example` to include all environment variables used across the codebase (PostHog, GitHub, Codecov).
 - Verified build and test integrity after template updates.
+
+## 2026-07-26 - Sentry Variable Transition & Workspace Alignment (GripTight)
+
+| Verified Template   | Corrected Keys                 | Validation State   |
+| :------------------ | :----------------------------- | :----------------- |
+| `astro.config.mjs`  | `SENTRY_ORG`, `SENTRY_PROJECT` | Verified           |
+| `.dev.vars.example` | `SENTRY_ORG`, `SENTRY_PROJECT` | Verified (Generic) |
+
+**Notes:**
+
+- Transitioned hardcoded Sentry configuration parameters (`org` and `project` in `astro.config.mjs`) to environment variables with fallback values.
+- Documented `SENTRY_ORG` and `SENTRY_PROJECT` in `.dev.vars.example`.
+- Fixed functional Astro schema type mismatches in the test environment to resolve type checker errors under `npm run astro check`.
+- Verified 100% build, test, and type checker compliance.

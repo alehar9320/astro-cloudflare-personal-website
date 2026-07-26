@@ -29,7 +29,15 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
+    if (!schema) {
+      throw new Error('Flags schema is undefined');
+    }
+    const resolvedSchema =
+      typeof schema === 'function'
+        ? // @ts-expect-error - schema might be a function returning a Zod schema or a Zod schema itself
+          schema({ image: () => z.string() })
+        : schema;
+    const result = resolvedSchema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
@@ -41,6 +49,14 @@ describe('content.config', () => {
 
   it('validates work schema with sample data', () => {
     const { schema } = collections.work;
+    if (!schema) {
+      throw new Error('Work schema is undefined');
+    }
+    const resolvedSchema =
+      typeof schema === 'function'
+        ? // @ts-expect-error - schema might be a function returning a Zod schema or a Zod schema itself
+          schema({ image: () => z.string() })
+        : schema;
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -49,7 +65,7 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
+    const result = resolvedSchema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.title).toBe(sampleWork.title);
