@@ -27,8 +27,33 @@ describe('content.config', () => {
     expect(collections.work).toHaveProperty('schema');
   });
 
+  interface ZodSchemaWithSafeParse {
+    safeParse: (input: unknown) => { success: boolean; data: unknown };
+  }
+
+  function isSchemaWithSafeParse(schema: unknown): schema is ZodSchemaWithSafeParse {
+    return typeof schema === 'object' && schema !== null && 'safeParse' in schema;
+  }
+
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
+    const { schema: rawSchema } = collections.flags;
+    expect(rawSchema).toBeDefined();
+    if (!rawSchema) return;
+
+    const schema =
+      typeof rawSchema === 'function'
+        ? rawSchema({
+            image: () =>
+              z.string() as unknown as ReturnType<
+                Parameters<Extract<typeof rawSchema, (...args: never[]) => unknown>>[0]['image']
+              >,
+          })
+        : rawSchema;
+
+    if (!isSchemaWithSafeParse(schema)) {
+      throw new Error('Schema does not have safeParse method');
+    }
+
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -40,7 +65,24 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const { schema: rawSchema } = collections.work;
+    expect(rawSchema).toBeDefined();
+    if (!rawSchema) return;
+
+    const schema =
+      typeof rawSchema === 'function'
+        ? rawSchema({
+            image: () =>
+              z.string() as unknown as ReturnType<
+                Parameters<Extract<typeof rawSchema, (...args: never[]) => unknown>>[0]['image']
+              >,
+          })
+        : rawSchema;
+
+    if (!isSchemaWithSafeParse(schema)) {
+      throw new Error('Schema does not have safeParse method');
+    }
+
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -52,8 +94,9 @@ describe('content.config', () => {
     const result = schema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.title).toBe(sampleWork.title);
-      expect(result.data.publishDate).toBeInstanceOf(Date);
+      const data = result.data as Record<string, unknown>;
+      expect(data.title).toBe(sampleWork.title);
+      expect(data.publishDate).toBeInstanceOf(Date);
     }
   });
 });

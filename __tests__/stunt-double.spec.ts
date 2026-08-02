@@ -1,7 +1,8 @@
 import { describe, it, expect, vi } from 'vitest';
 import * as astroZod from '../src/__tests__/mocks/astro-zod';
 import * as cloudflareWorkers from '../src/__tests__/mocks/cloudflare-workers';
-import { createChatStreamParser } from '../src/utils/chat-stream';
+import { createChatStreamParser, extractAssistantTextFromSse } from '../src/utils/chat-stream';
+import { pruneMessages } from '../src/utils/chat-logic';
 import {
   formatReleaseDate,
   parseReleaseItem,
@@ -61,5 +62,43 @@ describe('StuntDouble: Mocks and Utility Edge Cases', () => {
       issues: expect.any(Array),
     });
     consoleSpy.mockRestore();
+  });
+
+  it('handles fetchGitHubReleases when sessionStorage contains invalid JSON or non-object cache', async () => {
+    vi.stubGlobal('window', {});
+    const getItemSpy = vi.fn().mockReturnValue('invalid JSON string{');
+    vi.stubGlobal('sessionStorage', { getItem: getItemSpy });
+
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [],
+    });
+
+    const result = await fetchGitHubReleases(fetchMock as typeof fetch);
+    expect(result).toEqual([]);
+    expect(getItemSpy).toHaveBeenCalledWith('github-releases-cache');
+
+    vi.unstubAllGlobals();
+  });
+
+  it('handles extractAssistantTextFromSse with multi-line/whitespace-padded attributes', () => {
+    const sse = 'data:    {\n' + 'data:       "response": "padded message"\n' + 'data:    }\n\n';
+    expect(extractAssistantTextFromSse(sse)).toBe('padded message');
+  });
+
+  it('handles pruneMessages with empty content or special unicode characters', () => {
+    const messages = [
+      { role: 'user' as const, content: '✨ Unicode Special Characters 🚀' },
+      { role: 'assistant' as const, content: '   ' }, // Should fail message content cannot be empty if parsed, but pruneMessages itself doesn't validate Zod
+    ];
+    const pruned = pruneMessages(messages);
+    expect(pruned).toEqual(messages);
+    expect(pruned[0].content).toContain('✨');
+  });
+
+  it('handles formatReleaseDate with extremely unusual inputs', () => {
+    expect(formatReleaseDate('9999-99-99T99:99:99Z')).toBe('Unknown date');
+    expect(formatReleaseDate('0000-00-00')).toBe('Unknown date');
+    expect(formatReleaseDate('completely invalid date string')).toBe('Unknown date');
   });
 });
