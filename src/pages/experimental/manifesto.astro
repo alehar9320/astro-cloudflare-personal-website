@@ -24,15 +24,62 @@ const principles = [
     i: 'terminal-window' as const,
   },
 ];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      '@id': 'https://harenstam.com/experimental/manifesto/#webpage',
+      url: 'https://harenstam.com/experimental/manifesto/',
+      name: 'Product Manifesto | Alexander Härenstam',
+      description:
+        'Core product management and leadership principles guiding high-impact execution and technical excellence.',
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://harenstam.com/',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Manifesto',
+            item: 'https://harenstam.com/experimental/manifesto/',
+          },
+        ],
+      },
+      publisher: {
+        '@type': 'Person',
+        '@id': 'https://harenstam.com/#person',
+        name: 'Alexander Härenstam',
+      },
+    },
+  ],
+};
 ---
 
-<BaseLayout title="Manifesto" description="Core product principles.">
+<BaseLayout
+  title="Product Manifesto | Alexander Härenstam"
+  description="Core product management and leadership principles guiding high-impact execution and technical excellence."
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <main class="wrapper stack gap-8" style="margin-top: 4rem;">
     <Hero
       title="Product Manifesto"
       tagline="Simple primitives for building better products."
       align="start"
     />
+    <div class="tldr-box">
+      <p>
+        <strong>TL;DR:</strong> My product management philosophy is built on three core pillars: being
+        <strong>impact-driven</strong>, maintaining <strong>strategic clarity</strong> under ambiguity,
+        and championing <strong>developer empowerment</strong> to scale technological innovation.
+      </p>
+    </div>
     <div class="grid">
       {
         principles.map((p) => (

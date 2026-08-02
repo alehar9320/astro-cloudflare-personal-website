@@ -8,11 +8,79 @@ const b = [
   ['The Lean Startup', 'Eric Ries'],
   ['Competing Against Luck', 'Clayton Christensen'],
 ];
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      '@id': 'https://harenstam.com/experimental/reading-list/#webpage',
+      url: 'https://harenstam.com/experimental/reading-list/',
+      name: 'Reading List | Alexander Härenstam',
+      description:
+        "Alexander Härenstam's curated reading list on product management, strategy, leadership, and high-impact execution.",
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://harenstam.com/',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Reading List',
+            item: 'https://harenstam.com/experimental/reading-list/',
+          },
+        ],
+      },
+      publisher: {
+        '@type': 'Person',
+        '@id': 'https://harenstam.com/#person',
+        name: 'Alexander Härenstam',
+      },
+    },
+    {
+      '@type': 'ItemList',
+      name: "Alexander Härenstam's Curated Reading List",
+      description:
+        'A curated selection of books influencing strategic product management, leadership, and operational excellence.',
+      numberOfItems: b.length,
+      itemListElement: b.map(([title, author], index) => ({
+        '@type': 'ListItem',
+        position: index + 1,
+        item: {
+          '@type': 'Book',
+          name: title,
+          author: {
+            '@type': 'Person',
+            name: author,
+          },
+        },
+      })),
+    },
+  ],
+};
 ---
 
-<BaseLayout title="Reading List">
+<BaseLayout
+  title="Reading List | Alexander Härenstam"
+  description="Alexander Härenstam's curated reading list on product management, strategy, leadership, and high-impact execution."
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <main id="main-content" role="main" class="wrapper stack gap-10">
     <h1>Reading List</h1>
+    <div class="tldr-box">
+      <p>
+        <strong>TL;DR:</strong> My curated reading list focuses on <strong
+          >high-output management</strong
+        >, <strong>lean product principles</strong>, and <strong
+          >customer-centric innovation frameworks</strong
+        >. These foundational concepts directly guide my strategy as a Product Leader at IFS.
+      </p>
+    </div>
     <div class="grid">
       {
         b.map(([t, a]) => (
@@ -27,6 +95,7 @@ const b = [
     </div>
   </main>
 </BaseLayout>
+
 <style>
   .grid {
     display: grid;
