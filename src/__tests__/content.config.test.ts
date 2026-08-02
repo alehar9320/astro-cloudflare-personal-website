@@ -27,8 +27,30 @@ describe('content.config', () => {
     expect(collections.work).toHaveProperty('schema');
   });
 
+  interface ZodSchemaWithSafeParse {
+    safeParse(data: unknown): { success: boolean; data?: unknown; error?: unknown };
+  }
+
+  function isSchemaWithSafeParse(schema: unknown): schema is ZodSchemaWithSafeParse {
+    return typeof schema === 'object' && schema !== null && 'safeParse' in schema;
+  }
+
+  function resolveSchema(schema: unknown): ZodSchemaWithSafeParse {
+    if (typeof schema === 'function') {
+      const mockContext = { image: () => z.string() };
+      const resolved = schema(mockContext);
+      if (isSchemaWithSafeParse(resolved)) {
+        return resolved;
+      }
+    }
+    if (isSchemaWithSafeParse(schema)) {
+      return schema;
+    }
+    throw new Error('Could not resolve schema to a Zod schema with safeParse');
+  }
+
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
+    const schema = resolveSchema(collections.flags.schema);
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -40,7 +62,7 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const schema = resolveSchema(collections.work.schema);
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',

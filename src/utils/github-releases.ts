@@ -87,7 +87,11 @@ export async function fetchGitHubReleases(
 
   // Defensive check to ensure we only fetch from the trusted GitHub API domain
   if (!url.startsWith('https://api.github.com/')) {
-    console.error({ event: 'github_releases_invalid_url', url });
+    console.error({
+      event: 'github_releases_invalid_url',
+      error: 'Invalid URL origin',
+      url,
+    });
     return [];
   }
 
@@ -103,6 +107,7 @@ export async function fetchGitHubReleases(
       // Intentionally avoiding logging headers that might contain sensitive information
       console.error({
         event: 'github_releases_request_failed',
+        error: `Request failed with status ${response.status}`,
         status: response.status,
         statusText: response.statusText,
       });
@@ -122,6 +127,7 @@ export async function fetchGitHubReleases(
       });
       console.error({
         event: 'github_releases_validation_failed',
+        error: 'Validation failed',
         issues: sanitizedIssues,
       });
       return [];

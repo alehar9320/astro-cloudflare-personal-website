@@ -78,7 +78,11 @@ export const POST: APIRoute = async ({ request, locals }) => {
       delete safeIssue.value;
       return safeIssue;
     });
-    console.warn({ event: 'chat_api_validation_failed', issues: sanitizedIssues });
+    console.warn({
+      event: 'chat_api_validation_failed',
+      error: 'Validation failed',
+      issues: sanitizedIssues,
+    });
 
     // Return the first validation error message for simplicity and security (don't leak schema details)
     return jsonError(result.error.issues[0].message, 400);

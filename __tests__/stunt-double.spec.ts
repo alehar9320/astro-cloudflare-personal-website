@@ -56,10 +56,12 @@ describe('StuntDouble: Mocks and Utility Edge Cases', () => {
 
     const result = await fetchGitHubReleases(fetchMock as typeof fetch);
     expect(result).toEqual([]);
-    expect(consoleSpy).toHaveBeenCalledWith({
-      event: 'github_releases_validation_failed',
-      issues: expect.any(Array),
-    });
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'github_releases_validation_failed',
+        issues: expect.any(Array),
+      })
+    );
     consoleSpy.mockRestore();
   });
 });
