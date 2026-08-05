@@ -29,7 +29,8 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
+    // @ts-expect-error - schema union type does not expose safeParse
+    const result = schema?.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
@@ -49,7 +50,8 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
+    // @ts-expect-error - schema union type does not expose safeParse
+    const result = schema?.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.title).toBe(sampleWork.title);

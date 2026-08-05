@@ -6,6 +6,7 @@ import ThemeToggle from './ThemeToggle.astro';
 
 const flagsEntry = await getEntry('flags', 'config');
 const isLogoWobbleEnabled = flagsEntry?.data.enable_logo_wobble_v1 ?? false;
+const isSocialPulseEnabled = flagsEntry?.data.enable_social_pulse_v1 ?? false;
 
 /** Main menu items */
 const textLinks: { label: string; href: string }[] = [
@@ -86,7 +87,7 @@ const isCurrentPage = (href: string) => {
   </noscript>
   <noscript>
     <div class="menu-footer">
-      <div class="socials">
+      <div class:list={['socials', { 'socials-pulse': isSocialPulseEnabled }]}>
         {
           iconLinks.map(({ href, icon, label }) => (
             <a href={href} class="social">
@@ -111,7 +112,7 @@ const isCurrentPage = (href: string) => {
       }
     </ul>
     <div class="menu-footer">
-      <div class="socials">
+      <div class:list={['socials', { 'socials-pulse': isSocialPulseEnabled }]}>
         {
           iconLinks.map(({ href, icon, label }) => (
             <a href={href} class="social">
@@ -487,6 +488,13 @@ const isCurrentPage = (href: string) => {
   @media (prefers-reduced-motion: no-preference) {
     .logo-wobble:hover :global(svg) {
       animation: wobble 0.5s ease-in-out;
+    }
+    .socials-pulse .social:hover :global(svg) {
+      transform: scale(1.18) rotate(8deg);
+      transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+    .socials-pulse .social :global(svg) {
+      transition: transform 0.2s ease-in-out;
     }
     @keyframes wobble {
       0%,
