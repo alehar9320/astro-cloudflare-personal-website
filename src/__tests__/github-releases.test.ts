@@ -250,6 +250,26 @@ describe('github releases utility', () => {
       },
     ];
 
+    it('guards against malformed non-array cached data', async () => {
+      vi.stubGlobal('window', {});
+      const getItem = vi.fn().mockReturnValue(
+        JSON.stringify({
+          data: { not: 'an-array' },
+          timestamp: Date.now() - 1000,
+        })
+      );
+      vi.stubGlobal('sessionStorage', { getItem, setItem: vi.fn() });
+
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [{ body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: 'v1' }],
+      });
+      const result = await fetchGitHubReleases(fetchMock as typeof fetch);
+
+      expect(result).toEqual(mockReleases);
+      expect(fetchMock).toHaveBeenCalledOnce();
+    });
+
     it('returns cached data if available and not expired', async () => {
       vi.stubGlobal('window', {});
       const getItem = vi.fn().mockReturnValue(
