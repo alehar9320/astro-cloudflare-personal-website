@@ -5,6 +5,19 @@ import { defineCollection } from 'astro:content';
 import { collections } from '../content.config';
 import flagsFixture from '../content/flags/config.json';
 
+interface ZodSchemaWithSafeParse {
+  safeParse: (data: unknown) => { success: boolean; data?: unknown; error?: unknown };
+}
+
+function isSchemaWithSafeParse(schema: unknown): schema is ZodSchemaWithSafeParse {
+  return (
+    schema !== null &&
+    typeof schema === 'object' &&
+    'safeParse' in schema &&
+    typeof (schema as Record<string, unknown>).safeParse === 'function'
+  );
+}
+
 describe('content.config', () => {
   it('exercises infrastructure mocks', () => {
     const schema = z.object({ test: z.string() });
@@ -29,6 +42,9 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
+    if (!schema || !isSchemaWithSafeParse(schema)) {
+      throw new Error('Schema is undefined or does not support safeParse');
+    }
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -41,6 +57,9 @@ describe('content.config', () => {
 
   it('validates work schema with sample data', () => {
     const { schema } = collections.work;
+    if (!schema || !isSchemaWithSafeParse(schema)) {
+      throw new Error('Schema is undefined or does not support safeParse');
+    }
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
