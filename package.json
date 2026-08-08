@@ -35,6 +35,8 @@
     "@astrojs/check": "^0.9.9",
     "@astrojs/compiler": "^2.13.1",
     "@codecov/vite-plugin": "^2.0.1",
+    "@emnapi/core": "^1.11.3",
+    "@emnapi/wasi-threads": "^1.2.3",
     "@types/node": "^22.12.0",
     "@typescript-eslint/parser": "^8.60.0",
     "@vitest/coverage-v8": "^4.1.7",
