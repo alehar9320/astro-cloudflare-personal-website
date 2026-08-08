@@ -1,11 +1,30 @@
 import { z } from 'zod';
 
+/**
+ * The maximum number of messages allowed in the conversation history window.
+ */
 export const MAX_MESSAGES = 10;
+
+/**
+ * The maximum character length permitted for a single chat message content.
+ */
 export const MAX_MESSAGE_CONTENT_LENGTH = 500;
+
+/**
+ * The maximum total character length of all message contents combined in a conversation window.
+ */
 export const MAX_TOTAL_CONTENT_LENGTH = 3000;
 
+/**
+ * Zod schema defining the acceptable roles for a participant in the chat.
+ * Supported roles are limited to 'user' and 'assistant'.
+ */
 export const ChatRoleSchema = z.enum(['user', 'assistant']);
 
+/**
+ * Zod schema validating a single chat message structure.
+ * Ensures the role is valid and the content meets character length constraints.
+ */
 export const ChatMessageSchema = z.object({
   role: ChatRoleSchema,
   content: z
@@ -18,8 +37,15 @@ export const ChatMessageSchema = z.object({
     ),
 });
 
+/**
+ * TypeScript type representation of a validated ChatMessage, inferred from ChatMessageSchema.
+ */
 export type ChatMessage = z.infer<typeof ChatMessageSchema>;
 
+/**
+ * Zod schema validating a chat request payload.
+ * Expects a non-empty list of chat messages.
+ */
 export const ChatRequestSchema = z.object({
   // Relaxed constraints: pruneMessages will handle the sliding window to fit model limits.
   messages: z.array(ChatMessageSchema).min(1, 'Expected at least one message'),

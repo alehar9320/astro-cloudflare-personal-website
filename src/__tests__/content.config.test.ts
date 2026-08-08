@@ -27,8 +27,19 @@ describe('content.config', () => {
     expect(collections.work).toHaveProperty('schema');
   });
 
+  interface ZodSchemaWithSafeParse {
+    safeParse: (data: unknown) => { success: boolean; data?: unknown; error?: unknown };
+  }
+
+  function isSchemaWithSafeParse(schema: unknown): schema is ZodSchemaWithSafeParse {
+    return typeof schema === 'object' && schema !== null && 'safeParse' in schema;
+  }
+
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
+    if (!schema || !isSchemaWithSafeParse(schema)) {
+      throw new Error('Schema is not defined or is not safe-parsable');
+    }
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -41,6 +52,9 @@ describe('content.config', () => {
 
   it('validates work schema with sample data', () => {
     const { schema } = collections.work;
+    if (!schema || !isSchemaWithSafeParse(schema)) {
+      throw new Error('Schema is not defined or is not safe-parsable');
+    }
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
