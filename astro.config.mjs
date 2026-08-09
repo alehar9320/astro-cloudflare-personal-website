@@ -17,13 +17,6 @@ const codecovPlugin = /** @type {import('vite').PluginOption} */ (
   })
 );
 
-// Under Astro v7/Vite v7, we prevent the Codecov plugin from running during SSR builds
-// to avoid Rollup input conflicts.
-if (codecovPlugin && typeof codecovPlugin === 'object' && !Array.isArray(codecovPlugin)) {
-  // @ts-expect-error - adding custom apply behavior for SSR gating
-  codecovPlugin.apply = (config, { isSsrBuild }) => !isSsrBuild;
-}
-
 // https://astro.build/config
 export default defineConfig({
   output: isRender ? 'server' : 'static',
