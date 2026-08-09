@@ -1,11 +1,5 @@
 # Palette 🎨 - UX & Accessibility Journal
 
-## 2026-05-20 - Static Theme Toggling and Unified Skip-to-Content Targeting
-
-**Learning:** When developing toggle buttons (like theme toggles), the accessible name must remain static (e.g., `aria-label="Dark mode"`) with states communicated strictly via `aria-pressed="true|false"`. Changing the label dynamically to the opposite action (e.g., "Switch to light theme" when active) conflates state and actions for screen readers, leading to confusing announcements like "Switch to light theme, pressed". Additionally, ensuring every page layout—including experimental pages—has a `<main id="main-content">` element maintains complete site-wide predictability for the keyboard "Skip to Content" utility.
-
-**Action:** Standardized the accessible name on the `ThemeToggle` component to "Dark mode" and delegated state announcements to the standard `aria-pressed` toggle. Added `id="main-content"` targeting to `<main>` in `src/pages/experimental/manifesto.astro` to secure site-wide skip-link coverage. Resolved type-checking errors on functional schemas in `src/__tests__/content.config.test.ts` with clean type-guarding and inline compiler suppressions.
-
 ## 2026-05-17 - Enhancing Content Selection and Standardizing Focus Spatiality
 
 **Learning:** Using `user-select: none` on informational badges (like `Pill`) creates unnecessary friction for users trying to copy text for reference. Additionally, consistent `outline-offset: 4px` across all interactive elements (including theme toggles and cards) reinforces a predictable spatial model for keyboard users. Adding `target="_blank"` with `rel="noopener noreferrer"` to external informational links (like the Astro framework link in the footer) ensures a non-disruptive navigation experience that preserves the user's session.

@@ -5,14 +5,6 @@ import { defineCollection } from 'astro:content';
 import { collections } from '../content.config';
 import flagsFixture from '../content/flags/config.json';
 
-interface ZodSchemaWithSafeParse {
-  safeParse: (data: unknown) => { success: boolean; data?: unknown; error?: unknown };
-}
-
-function isSchemaWithSafeParse(schema: unknown): schema is ZodSchemaWithSafeParse {
-  return typeof schema === 'object' && schema !== null && 'safeParse' in schema;
-}
-
 describe('content.config', () => {
   it('exercises infrastructure mocks', () => {
     const schema = z.object({ test: z.string() });
@@ -37,49 +29,31 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const mockContext = { image: () => z.string() };
-    // @ts-expect-error - image helper mock returns ZodString instead of full Astro image ZodObject
-    const resolvedSchema = typeof schema === 'function' ? schema(mockContext) : schema;
+    const result = schema.safeParse(flagsFixture);
+    expect(result.success).toBe(true);
 
-    expect(resolvedSchema).toBeDefined();
-    if (resolvedSchema && isSchemaWithSafeParse(resolvedSchema)) {
-      const result = resolvedSchema.safeParse(flagsFixture);
-      expect(result.success).toBe(true);
-
-      if (result.success) {
-        // Use toMatchObject to ensure all fixture properties are correctly validated
-        // while allowing for Zod-injected default values.
-        expect(result.data).toMatchObject(flagsFixture);
-      }
-    } else {
-      throw new Error('Schema is not a valid Zod schema with safeParse');
+    if (result.success) {
+      // Use toMatchObject to ensure all fixture properties are correctly validated
+      // while allowing for Zod-injected default values.
+      expect(result.data).toMatchObject(flagsFixture);
     }
   });
 
   it('validates work schema with sample data', () => {
     const { schema } = collections.work;
-    const mockContext = { image: () => z.string() };
-    // @ts-expect-error - image helper mock returns ZodString instead of full Astro image ZodObject
-    const resolvedSchema = typeof schema === 'function' ? schema(mockContext) : schema;
-
-    expect(resolvedSchema).toBeDefined();
-    if (resolvedSchema && isSchemaWithSafeParse(resolvedSchema)) {
-      const sampleWork = {
-        title: 'Sample Work',
-        description: 'A sample description',
-        publishDate: '2025-01-01',
-        tags: ['tag1', 'tag2'],
-        img: '/assets/sample.jpg',
-        img_alt: 'Sample alt text',
-      };
-      const result = resolvedSchema.safeParse(sampleWork);
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.title).toBe(sampleWork.title);
-        expect(result.data.publishDate).toBeInstanceOf(Date);
-      }
-    } else {
-      throw new Error('Schema is not a valid Zod schema with safeParse');
+    const sampleWork = {
+      title: 'Sample Work',
+      description: 'A sample description',
+      publishDate: '2025-01-01',
+      tags: ['tag1', 'tag2'],
+      img: '/assets/sample.jpg',
+      img_alt: 'Sample alt text',
+    };
+    const result = schema.safeParse(sampleWork);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.title).toBe(sampleWork.title);
+      expect(result.data.publishDate).toBeInstanceOf(Date);
     }
   });
 });
