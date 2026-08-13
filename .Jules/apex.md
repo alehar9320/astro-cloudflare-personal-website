@@ -3,3 +3,5 @@
 ## 2026-05-26 - Product Manifesto | Signal: Product Leadership "Guiding Principles" trend | Lean Implementation: Isolated experimental route, uses Hero/Icon primitives, ~45 lines delta.
 
 ## 2026-05-27 - Strategic Reading List | Signal: Portfolio "Bookshelf" trend | Lean Implementation: Isolated experimental route, static data array, uses Hero/Pill/Icon primitives, ~48 lines delta.
+
+## 2026-06-12 - DevEx Stack | Signal: Curated developer experience stack showcase | Lean Implementation: Isolated experimental route, static data array, uses Hero/Icon/Layout primitives, ~45 lines delta.

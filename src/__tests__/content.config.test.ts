@@ -5,6 +5,14 @@ import { defineCollection } from 'astro:content';
 import { collections } from '../content.config';
 import flagsFixture from '../content/flags/config.json';
 
+interface ZodSchemaWithSafeParse {
+  safeParse: (data: unknown) => { success: boolean; data?: unknown; error?: unknown };
+}
+
+function isSchemaWithSafeParse(schema: unknown): schema is ZodSchemaWithSafeParse {
+  return schema !== null && typeof schema === 'object' && 'safeParse' in schema;
+}
+
 describe('content.config', () => {
   it('exercises infrastructure mocks', () => {
     const schema = z.object({ test: z.string() });
@@ -28,7 +36,15 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
+    const rawSchema = collections.flags.schema;
+    const schema =
+      typeof rawSchema === 'function'
+        ? // @ts-expect-error - mock context for schema function
+          rawSchema({ image: () => z.string() })
+        : rawSchema;
+    if (!isSchemaWithSafeParse(schema)) {
+      throw new Error('Schema is not an object with safeParse');
+    }
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -40,7 +56,15 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const rawSchema = collections.work.schema;
+    const schema =
+      typeof rawSchema === 'function'
+        ? // @ts-expect-error - mock context for schema function
+          rawSchema({ image: () => z.string() })
+        : rawSchema;
+    if (!isSchemaWithSafeParse(schema)) {
+      throw new Error('Schema is not an object with safeParse');
+    }
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -52,8 +76,9 @@ describe('content.config', () => {
     const result = schema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
-      expect(result.data.title).toBe(sampleWork.title);
-      expect(result.data.publishDate).toBeInstanceOf(Date);
+      const data = result.data as { title: string; publishDate: Date };
+      expect(data.title).toBe(sampleWork.title);
+      expect(data.publishDate).toBeInstanceOf(Date);
     }
   });
 });

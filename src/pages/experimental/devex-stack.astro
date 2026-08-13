@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Icon from '../../components/Icon.astro';
+import { getEntry } from 'astro:content';
+
+const flags = await getEntry('flags', 'config');
+if (!flags?.data.enable_devex_stack) return Astro.redirect('/404/');
+
+const tools = [
+  { l: 'Telemetry', t: 'OpenTelemetry & Prometheus', i: 'rocket-launch' as const },
+  { l: 'CI/CD Platform', t: 'GitHub Actions & Cloudflare', i: 'terminal-window' as const },
+  { l: 'DevEx Portal', t: 'Backstage & Custom Dashboards', i: 'strategy' as const },
+];
+---
+
+<BaseLayout title="DevEx Stack" description="Curated Developer Experience stack.">
+  <main id="main-content" class="wrapper stack gap-10">
+    <Hero
+      title="DevEx Stack"
+      tagline="Curated tools and platforms for maximizing developer experience."
+      align="start"
+    />
+    <div class="grid">
+      {
+        tools.map((p) => (
+          <section class="card">
+            <Icon icon={p.i} color="var(--accent-regular)" size="2rem" gradient />
+            <h2>{p.l}</h2>
+            <p>{p.t}</p>
+          </section>
+        ))
+      }
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+  .card {
+    padding: 1.5rem;
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 0.75rem;
+  }
+  .card h2 {
+    font-size: var(--text-lg);
+    margin: 1rem 0 0.5rem;
+    color: var(--gray-0);
+  }
+  .card p {
+    color: var(--gray-300);
+  }
+</style>
