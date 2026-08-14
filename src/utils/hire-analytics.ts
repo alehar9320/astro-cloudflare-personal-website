@@ -1,38 +1,30 @@
-export type HireEventName =
-  | 'hire_cta_click'
-  | 'contact_page_view'
-  | 'cv_download'
-  | 'linkedin_click'
-  | 'chat_opened'
-  | 'chat_message_sent';
+import posthog from 'posthog-js';
 
-export type HireSurface = 'nav' | 'hero' | 'contact_cta' | 'contact_page' | 'fab';
+export const HIRE_EVENTS = [
+  'hire_cta_click',
+  'contact_page_view',
+  'cv_download',
+  'linkedin_click',
+  'chat_opened',
+  'chat_message_sent',
+] as const;
 
-declare global {
-  interface Window {
-    dataLayer?: Array<Record<string, string>>;
-    __hireAnalyticsInit?: boolean;
-  }
+export const HIRE_SURFACES = ['nav', 'hero', 'contact_cta', 'contact_page', 'fab'] as const;
+
+export type HireEvent = (typeof HIRE_EVENTS)[number];
+export type HireSurface = (typeof HIRE_SURFACES)[number];
+
+export function trackHireEvent(event: HireEvent, surface: HireSurface): void {
+  if (typeof posthog?.capture !== 'function') return;
+  posthog.capture(event, { surface });
 }
 
-export function trackHireEvent(event: HireEventName, surface: HireSurface) {
-  const payload = { event, surface };
-  window.dispatchEvent(new CustomEvent(event, { detail: { surface } }));
-  window.dataLayer?.push(payload);
-}
-
-export function initHireAnalytics() {
-  if (window.__hireAnalyticsInit) return;
-  window.__hireAnalyticsInit = true;
-
-  document.addEventListener('click', (e) => {
-    const el = (e.target as Element | null)?.closest?.('[data-hire-event]');
-    if (!el) return;
-    const event = el.getAttribute('data-hire-event') as HireEventName | null;
-    const surface = el.getAttribute('data-hire-surface') as HireSurface | null;
-    if (!event || !surface) return;
-    // Chat open/send are fired from Chat.astro so toggle-close is not counted.
-    if (event === 'chat_opened' || event === 'chat_message_sent') return;
-    trackHireEvent(event, surface);
-  });
+export function trackHireEventFromElement(el: Element | null): void {
+  if (!el) return;
+  const event = el.getAttribute('data-event');
+  const surface = el.getAttribute('data-surface');
+  if (!event || !surface) return;
+  if (!(HIRE_EVENTS as readonly string[]).includes(event)) return;
+  if (!(HIRE_SURFACES as readonly string[]).includes(surface)) return;
+  trackHireEvent(event as HireEvent, surface as HireSurface);
 }

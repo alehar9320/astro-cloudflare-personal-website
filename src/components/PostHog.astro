@@ -1,5 +1,6 @@
 <script>
   import posthog from 'posthog-js';
+  import { trackHireEventFromElement } from '../utils/hire-analytics';
 
   const posthogKey = import.meta.env.PUBLIC_POSTHOG_KEY;
   const posthogHost = import.meta.env.PUBLIC_POSTHOG_HOST ?? 'https://app.posthog.com';
@@ -10,4 +11,10 @@
       person_profiles: 'identified_only',
     });
   }
+
+  document.addEventListener('click', (event) => {
+    const target = event.target;
+    if (!(target instanceof Element)) return;
+    trackHireEventFromElement(target.closest('[data-event]'));
+  });
 </script>
