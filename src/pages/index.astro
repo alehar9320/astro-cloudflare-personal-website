@@ -108,14 +108,19 @@ const schema = {
             <Pill><Icon icon="terminal-window" size="1.33em" /> Developer Experience (DevEx)</Pill>
             <Pill><Icon icon="rocket-launch" size="1.33em" /> Applied Industrial AI</Pill>
           </div>
-          <div class="hero-actions">
-            <CallToAction
-              href="/contact/"
-              data-hire-event="hire_cta_click"
+          <div class="hero-cta">
+            <CallToAction href="/contact/" data-hire-event="hire_cta_click" data-hire-surface="hero">
+              Get in touch
+              <Icon icon="paper-plane-tilt" size="1.2em" />
+            </CallToAction>
+            <a
+              href="/alexander-harenstam-cv.pdf"
+              download
+              data-hire-event="cv_download"
               data-hire-surface="hero"
             >
-              Get in touch
-            </CallToAction>
+              Download CV
+            </a>
           </div>
         </Hero>
 
@@ -132,10 +137,11 @@ const schema = {
 
       <div class="tldr-box">
         <p>
-          <strong>TL;DR:</strong> Strategic Product Leader at <strong>IFS</strong> specializing in
-          <strong>Industrial AI</strong>, <strong>Developer Experience (DevEx)</strong>, and
-          <strong>Design Systems</strong>. I drive multi-million dollar ROI by aligning technical
-          excellence with high-impact product innovation.
+          <strong>TL;DR:</strong> Strategic Product Leader at <strong>IFS</strong> specializing in <strong
+            >Industrial AI</strong
+          >, <strong>Developer Experience (DevEx)</strong>, and <strong>Design Systems</strong>. I
+          drive multi-million dollar ROI by aligning technical excellence with high-impact product
+          innovation.
         </p>
       </div>
 
@@ -226,12 +232,13 @@ const schema = {
     display: none;
   }
 
-  .hero-actions {
-    margin-top: 0.75rem;
+  .hero-cta {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
+    align-items: center;
     justify-content: center;
+    gap: 1rem;
+    margin-top: 0.5rem;
   }
 
   .hero img {
@@ -256,7 +263,7 @@ const schema = {
       gap: 0.5rem;
     }
 
-    .hero-actions {
+    .hero-cta {
       justify-content: flex-start;
     }
 
@@ -358,9 +365,9 @@ const schema = {
     text-align: center;
     border: 1px solid var(--gray-800);
     border-radius: 1.5rem;
+    box-shadow: var(--shadow-sm);
     color: var(--gray-300);
     background: var(--gradient-subtle);
-    box-shadow: var(--shadow-sm);
     transition:
       transform var(--theme-transition),
       box-shadow var(--theme-transition),
