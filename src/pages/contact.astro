@@ -1,7 +1,6 @@
 ---
 import CallToAction from '../components/CallToAction.astro';
 import Hero from '../components/Hero.astro';
-import Icon from '../components/Icon.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const linkedinHref = 'https://www.linkedin.com/in/alehar/';
@@ -16,21 +15,8 @@ const linkedinHref = 'https://www.linkedin.com/in/alehar/';
       <p class="availability">
         Open to conversations about product leadership, DevEx, and Industrial AI.
       </p>
-      <p>
-        Email:
-        <a href="mailto:hello@harenstam.com">hello@harenstam.com</a>
-      </p>
       <div class="actions">
         <CallToAction
-          href="/alexander-harenstam-cv.pdf"
-          download
-          data-hire-event="cv_download"
-          data-hire-surface="contact_page"
-        >
-          Download CV
-          <Icon icon="arrow-right" size="1.2em" />
-        </CallToAction>
-        <a
           href={linkedinHref}
           target="_blank"
           rel="noopener noreferrer"
@@ -38,7 +24,7 @@ const linkedinHref = 'https://www.linkedin.com/in/alehar/';
           data-hire-surface="contact_page"
         >
           LinkedIn
-        </a>
+        </CallToAction>
       </div>
     </Hero>
   </main>
