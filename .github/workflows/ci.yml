@@ -47,7 +47,7 @@ jobs:
         run: npm run lint
 
       - name: Security Audit
-        run: npm audit --audit-level=high || true
+        run: npm audit
 
   # ─── Build & Test ─────────────────────────────────────────────────────────────
   # Runs in parallel with quality to keep total wall-clock time low.
