@@ -11,6 +11,7 @@
     "build": "astro build",
     "start": "node ./dist/server/entry.mjs",
     "check": "astro check",
+    "check:html": "node scripts/html-smoke.mjs",
     "preview": "astro preview",
     "astro": "astro",
     "generate-types": "wrangler types",
