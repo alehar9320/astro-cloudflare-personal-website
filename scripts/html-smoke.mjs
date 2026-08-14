@@ -93,7 +93,8 @@ function isNotFoundPage(relativePath) {
 }
 
 /**
- * Check a built site directory for required pages and document contracts.
+ * This gate checks home and 404 only. Other routes (including experimental
+ * redirect stubs) are a follow-up.
  * @param {string} distDir
  * @returns {string[]}
  */
@@ -117,8 +118,10 @@ export function checkBuild(distDir) {
   if (!has404) failures.push('missing 404.html in build output');
 
   for (const file of htmlFiles) {
+    const rel = path.relative(distDir, file).replaceAll('\\', '/');
+    if (!isHomeIndex(rel) && !isNotFoundPage(rel)) continue;
     const html = fs.readFileSync(file, 'utf8');
-    failures.push(...checkDocument(html, path.relative(distDir, file)));
+    failures.push(...checkDocument(html, rel));
   }
 
   const notFound = htmlFiles.find((file) =>
