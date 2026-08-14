@@ -8,10 +8,26 @@ interface Props {
   'data-hire-surface'?: string;
 }
 
-const { href, target, rel, download, ...rest } = Astro.props;
+const {
+  href,
+  target,
+  rel,
+  download,
+  'data-hire-event': dataHireEvent,
+  'data-hire-surface': dataHireSurface,
+} = Astro.props;
 ---
 
-<a href={href} target={target} rel={rel} download={download} {...rest}><slot /></a>
+<a
+  href={href}
+  target={target}
+  rel={rel}
+  download={download}
+  data-hire-event={dataHireEvent}
+  data-hire-surface={dataHireSurface}
+>
+  <slot />
+</a>
 
 <style>
   a {
