@@ -113,7 +113,7 @@ export function checkBuild(distDir) {
   if (!has404) failures.push('missing 404.html in build output');
 
   for (const file of htmlFiles) {
-    const html = fs.readdirSync ? fs.readFileSync(file, 'utf8') : '';
+    const html = fs.readFileSync(file, 'utf8');
     failures.push(...checkDocument(html, path.relative(distDir, file)));
   }
 
@@ -136,7 +136,7 @@ function isDirectRun() {
   return path.resolve(thisFile) === invoked;
 }
 
-If (isDirectRun()) {
+if (isDirectRun()) {
   const distDir = path.resolve(process.cwd(), process.argv[2] || 'dist');
   const failures = checkBuild(distDir);
 
