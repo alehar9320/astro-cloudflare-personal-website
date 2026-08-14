@@ -2,7 +2,7 @@
 
 ---
 
-<div id="chat-container" class="chat-container" data-hire-surface="fab">
+<div id="chat-container" class="chat-container">
   <button
     id="chat-toggle"
     class="chat-toggle"
@@ -10,8 +10,6 @@
     aria-expanded="false"
     aria-controls="chat-window"
     aria-describedby="status-tooltip"
-    data-hire-event="chat_opened"
-    data-hire-surface="fab"
   >
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -61,12 +59,7 @@
       </section>
     </div>
     <div id="typing-indicator" class="typing-indicator hidden">Alexander is typing...</div>
-    <form
-      id="chat-form"
-      class="chat-form"
-      data-hire-event="chat_message_sent"
-      data-hire-surface="fab"
-    >
+    <form id="chat-form" class="chat-form">
       <input
         type="text"
         id="chat-input"
@@ -452,12 +445,11 @@
     const content = chatInput.value.trim();
     if (!content) return;
 
-    trackHireEvent('chat_message_sent', 'fab');
-
     chatInput.value = '';
     appendMessage('user', content);
     messages.push({ role: 'user', content });
     saveMessages();
+    trackHireEvent('chat_message_sent', 'fab');
 
     typingIndicator?.classList.remove('hidden');
 
