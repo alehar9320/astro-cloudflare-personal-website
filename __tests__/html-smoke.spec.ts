@@ -88,10 +88,10 @@ describe('build output contracts', () => {
     expect(findHtmlFiles(dist)).toHaveLength(2);
   });
 
-  it('passes when the home page is nested under client/', () => {
+  it('passes when the home and 404 pages are nested under client/', () => {
     const dist = makeDist({
       'client/index.html': validHtml,
-      '404.html': valid404,
+      'client/404.html': valid404,
     });
     expect(checkBuild(dist)).toEqual([]);
   });

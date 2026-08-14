@@ -72,9 +72,8 @@ export function checkDocument(html, filePath = 'document.html') {
 }
 
 /**
- * Home page is index.html at the dist root, or client/index.html for
- * adapters that nest the client bundle. Nested routes like about/index.html
- * are not the home page.
+ * Cloudflare adapter nests static assets under client/. Nested routes like
+ * about/index.html are not the home page.
  * @param {string} relativePath
  */
 function isHomeIndex(relativePath) {
@@ -85,7 +84,12 @@ function isHomeIndex(relativePath) {
  * @param {string} relativePath
  */
 function isNotFoundPage(relativePath) {
-  return relativePath === '404.html' || relativePath === '404/index.html';
+  return (
+    relativePath === '404.html' ||
+    relativePath === '404/index.html' ||
+    relativePath === 'client/404.html' ||
+    relativePath === 'client/404/index.html'
+  );
 }
 
 /**
