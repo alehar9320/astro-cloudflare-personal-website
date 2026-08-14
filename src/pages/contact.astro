@@ -1,0 +1,51 @@
+---
+import CallToAction from '../components/CallToAction.astro';
+import Hero from '../components/Hero.astro';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const linkedinHref = 'https://www.linkedin.com/in/alehar/';
+---
+
+<BaseLayout
+  title="Get in touch | Alexander Härenstam"
+  description="Open to conversations about product leadership, DevEx, and Industrial AI."
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero title="Get in touch" align="start">
+      <p class="availability">
+        Open to conversations about product leadership, DevEx, and Industrial AI.
+      </p>
+      <div class="actions">
+        <CallToAction
+          href={linkedinHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-hire-event="linkedin_click"
+          data-hire-surface="contact_page"
+        >
+          LinkedIn
+        </CallToAction>
+      </div>
+    </Hero>
+  </main>
+</BaseLayout>
+
+<script>
+  import { trackHireEvent } from '../utils/hire-analytics';
+  trackHireEvent('contact_page_view', 'contact_page');
+</script>
+
+<style>
+  .availability {
+    color: var(--gray-200);
+    max-width: 46ch;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-top: 0.5rem;
+  }
+</style>
