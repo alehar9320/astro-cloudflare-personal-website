@@ -1,81 +1,33 @@
 ---
 import CallToAction from '../components/CallToAction.astro';
 import Hero from '../components/Hero.astro';
-import Icon from '../components/Icon.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const schema = {
-  '@context': 'https://schema.org',
-  '@graph': [
-    {
-      '@type': 'WebPage',
-      '@id': 'https://harenstam.com/contact/#webpage',
-      url: 'https://harenstam.com/contact/',
-      name: 'Get in touch | Alexander Härenstam',
-      description: 'Open to conversations about product leadership, DevEx, and Industrial AI.',
-      breadcrumb: {
-        '@type': 'BreadcrumbList',
-        itemListElement: [
-          {
-            '@type': 'ListItem',
-            position: 1,
-            name: 'Home',
-            item: 'https://harenstam.com/',
-          },
-          {
-            '@type': 'ListItem',
-            position: 2,
-            name: 'Contact',
-            item: 'https://harenstam.com/contact/',
-          },
-        ],
-      },
-    },
-  ],
-};
+const linkedinHref = 'https://www.linkedin.com/in/alehar/';
 ---
 
 <BaseLayout
   title="Get in touch | Alexander Härenstam"
   description="Open to conversations about product leadership, DevEx, and Industrial AI."
 >
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
-
-  <div class="stack gap-20">
-    <main id="main-content" class="wrapper stack gap-8">
-      <Hero
-        title="Get in touch"
-        tagline="Open to conversations about product leadership, DevEx, and Industrial AI."
-        align="start"
-      />
-      <div class="contact-details stack gap-8">
-        <p>
-          Email:
-          <a href="mailto:hello@harenstam.com">hello@harenstam.com</a>
-        </p>
-        <div class="contact-actions stack gap-4">
-          <CallToAction
-            href="/alexander-harenstam-cv.pdf"
-            download
-            data-event="cv_download"
-            data-surface="contact_page"
-          >
-            Download CV
-            <Icon icon="arrow-right" size="1.2em" />
-          </CallToAction>
-          <a
-            href="https://www.linkedin.com/in/alehar/"
-            target="_blank"
-            rel="noopener noreferrer"
-            data-event="linkedin_click"
-            data-surface="contact_page"
-          >
-            LinkedIn
-          </a>
-        </div>
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero title="Get in touch" align="start">
+      <p class="availability">
+        Open to conversations about product leadership, DevEx, and Industrial AI.
+      </p>
+      <div class="actions">
+        <CallToAction
+          href={linkedinHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-hire-event="linkedin_click"
+          data-hire-surface="contact_page"
+        >
+          LinkedIn
+        </CallToAction>
       </div>
-    </main>
-  </div>
+    </Hero>
+  </main>
 </BaseLayout>
 
 <script>
@@ -84,11 +36,16 @@ const schema = {
 </script>
 
 <style>
-  .contact-details {
-    max-width: 40ch;
+  .availability {
+    color: var(--gray-200);
+    max-width: 46ch;
   }
 
-  .contact-actions {
+  .actions {
+    display: flex;
+    flex-direction: column;
     align-items: flex-start;
+    gap: 1rem;
+    margin-top: 0.5rem;
   }
 </style>
