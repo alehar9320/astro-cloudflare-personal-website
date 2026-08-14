@@ -1,3 +1,4 @@
+/** @vitest-environment jsdom */
 import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
 import { initHireAnalytics, trackHireEvent } from './hire-analytics';
 
