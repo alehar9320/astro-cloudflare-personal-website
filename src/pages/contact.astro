@@ -21,65 +21,54 @@ const schema = {
       '@type': 'ContactPage',
       '@id': 'https://harenstam.com/contact/#webpage',
       url: 'https://harenstam.com/contact/',
-      name: 'Contact | Alexander Härenstam',
+      name: 'Get in touch | Alexander Härenstam',
       about: { '@id': 'https://harenstam.com/#person' },
-      description: 'Email Alexander Härenstam, check availability, and download his CV.',
+      description: hire.availability,
     },
   ],
 };
 ---
 
-<BaseLayout
-  title="Contact | Alexander Härenstam"
-  description="Email Alexander Härenstam, check availability, and download his CV."
->
+<BaseLayout title="Get in touch | Alexander Härenstam" description={hire.availability}>
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
 
   <div class="stack gap-20">
     <main id="main-content" class="wrapper contact">
-      <Hero
-        title="Let's work together"
-        tagline="Email, availability, and CV — the direct path to hire Alexander."
-        align="start"
-      />
-
-      <section class="hire-card" aria-label="Hire Alexander">
-        <p class="status">
-          <span class="status-dot" aria-hidden="true"></span>
-          <span class="status-label">{hire.status}</span>
-        </p>
+      <Hero title="Get in touch" align="start">
         <p class="availability">{hire.availability}</p>
+        <p class="mailto">
+          <a href={hireMailto}>{hire.email}</a>
+        </p>
         <div class="actions">
-          <CallToAction href={hireMailto}>
-            {hire.email}
-            <Icon icon="paper-plane-tilt" size="1.2em" />
-          </CallToAction>
-          <a class="cv-link" href={hire.cvHref}>
-            {hire.cvLabel}
+          <CallToAction
+            href={hire.cvHref}
+            download
+            data-event="cv_download"
+            data-surface="contact_page"
+          >
+            Download CV
             <Icon icon="download-simple" size="1.2em" />
+          </CallToAction>
+          <a
+            class="linkedin-link"
+            href={hire.linkedinHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-event="linkedin_click"
+            data-surface="contact_page"
+          >
+            LinkedIn
           </a>
         </div>
-      </section>
-
-      <section id="cv" class="cv-summary">
-        <h2>CV</h2>
-        <p>
-          Strategic Product Leader at IFS specializing in Industrial AI, Developer Experience, and
-          Design Systems. M.Sc. Management and Economics of Innovation and B.Sc. Software
-          Engineering, Chalmers University of Technology. Based in Stockholm.
-        </p>
-        <p>
-          <a href={hire.cvHref}>Open the full CV</a> — print or save as PDF from your browser.
-        </p>
-      </section>
-
-      <p class="chat-note">
-        Prefer to explore first? The AI chat in the corner is a brand demo, not the way to hire
-        Alexander.
-      </p>
+      </Hero>
     </main>
   </div>
 </BaseLayout>
+
+<script>
+  import { trackHireEvent } from '../utils/hire-analytics';
+  trackHireEvent('contact_page_view', 'contact_page');
+</script>
 
 <style>
   .contact {
@@ -88,91 +77,55 @@ const schema = {
     gap: 2.5rem;
   }
 
-  .hire-card {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 1.75rem;
-    border: 1px solid var(--gray-800);
-    border-radius: 1.5rem;
-    background: var(--gradient-subtle);
-    box-shadow: var(--shadow-sm);
-  }
-
-  .status {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin: 0;
-    font-family: var(--font-brand);
-    font-weight: 600;
-    color: var(--gray-0);
-  }
-
-  .status-dot {
-    width: 0.65rem;
-    height: 0.65rem;
-    border-radius: 50%;
-    background-color: var(--status-idle);
-    box-shadow: 0 0 6px var(--status-idle);
-  }
-
   .availability {
     margin: 0;
-    color: var(--gray-300);
+    color: var(--gray-200);
+    max-width: 46ch;
     font-size: var(--text-lg);
+  }
+
+  .mailto a {
+    color: var(--accent-dark);
+    text-decoration: 1px solid underline transparent;
+    text-underline-offset: 0.25em;
+    transition:
+      color var(--theme-transition),
+      text-decoration-color var(--theme-transition);
+  }
+
+  .mailto a:hover,
+  .mailto a:focus-visible {
+    color: var(--accent-text-over);
+    text-decoration-color: currentColor;
   }
 
   .actions {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.75rem;
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-top: 0.5rem;
   }
 
-  .cv-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.56em 1.5em;
-    border-radius: 999rem;
-    border: 1px solid var(--accent-regular);
-    color: var(--gray-0);
-    text-decoration: none;
-    font-family: var(--font-brand);
-    background: hsla(var(--gray-999-basis), 0.45);
+  .linkedin-link {
+    color: var(--gray-300);
+    font-size: var(--text-md);
+    text-decoration: 1px solid underline transparent;
+    text-underline-offset: 0.25em;
+    transition:
+      color var(--theme-transition),
+      text-decoration-color var(--theme-transition);
   }
 
-  .cv-link:hover,
-  .cv-link:focus-visible {
-    box-shadow: var(--shadow-md);
+  .linkedin-link:hover,
+  .linkedin-link:focus-visible {
+    color: var(--accent-text-over);
+    text-decoration-color: currentColor;
   }
 
-  .cv-link:focus-visible {
+  .mailto a:focus-visible,
+  .linkedin-link:focus-visible {
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
-  }
-
-  .cv-summary {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    color: var(--gray-200);
-  }
-
-  .cv-summary h2 {
-    font-size: var(--text-xl);
-    color: var(--gray-0);
-  }
-
-  .chat-note {
-    color: var(--gray-400);
-    font-size: var(--text-sm);
-  }
-
-  @media (min-width: 50em) {
-    .hire-card {
-      padding: 2.5rem;
-    }
   }
 </style>
