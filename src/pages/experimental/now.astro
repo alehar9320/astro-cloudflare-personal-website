@@ -3,11 +3,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Hero from '../../components/Hero.astro';
 import Pill from '../../components/Pill.astro';
 import Icon from '../../components/Icon.astro';
+import NotFoundContent from '../../components/NotFoundContent.astro';
 import type { iconPaths } from '../../components/IconPaths';
 import { getEntry } from 'astro:content';
 
 const flagsEntry = await getEntry('flags', 'config');
-if (!flagsEntry?.data.enable_strategic_pulse) return Astro.redirect('/404/');
+const enabled = Boolean(flagsEntry?.data.enable_strategic_pulse);
+if (!enabled) {
+  Astro.response.status = 404;
+}
 const focus: { l: string; i: keyof typeof iconPaths }[] = [
   { l: 'Industrial AI', i: 'rocket-launch' },
   { l: 'DevEx', i: 'terminal-window' },
@@ -15,24 +19,32 @@ const focus: { l: string; i: keyof typeof iconPaths }[] = [
 ];
 ---
 
-<BaseLayout title="Strategic Pulse" description="Current focus areas.">
-  <main id="main-content" class="wrapper stack gap-20">
-    <Hero title="Strategic Pulse" tagline="Current high-impact focus areas." align="start" />
-    <div
-      style="border: 1px solid var(--gray-800); border-radius: 1.5rem; padding: 2rem; background: var(--gradient-subtle); display: flex; flex-direction: column; gap: 1rem;"
-    >
-      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-        {
-          focus.map((f) => (
-            <Pill>
-              <Icon icon={f.i} size="1.33em" /> {f.l}
-            </Pill>
-          ))
-        }
-      </div>
-      <p style="color: var(--gray-300);">
-        <strong>Status:</strong> Driving enterprise AI and DevEx at IFS.
-      </p>
-    </div>
-  </main>
-</BaseLayout>
+{
+  enabled ? (
+    <BaseLayout title="Strategic Pulse" description="Current focus areas.">
+      <main id="main-content" class="wrapper stack gap-20">
+        <Hero title="Strategic Pulse" tagline="Current high-impact focus areas." align="start" />
+        <div
+          style="border: 1px solid var(--gray-800); border-radius: 1.5rem; padding: 2rem; background: var(--gradient-subtle); display: flex; flex-direction: column; gap: 1rem;"
+        >
+          <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
+            {
+              focus.map((f) => (
+                <Pill>
+                  <Icon icon={f.i} size="1.33em" /> {f.l}
+                </Pill>
+              ))
+            }
+          </div>
+          <p style="color: var(--gray-300);">
+            <strong>Status:</strong> Driving enterprise AI and DevEx at IFS.
+          </p>
+        </div>
+      </main>
+    </BaseLayout>
+  ) : (
+    <BaseLayout title="Not Found" description="404 Error — this page was not found">
+      <NotFoundContent />
+    </BaseLayout>
+  )
+}

@@ -1,8 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import NotFoundContent from '../../components/NotFoundContent.astro';
 import { getEntry } from 'astro:content';
 const f = await getEntry('flags', 'config');
-if (!f?.data.enable_reading_list) return Astro.redirect('/404/');
+const enabled = Boolean(f?.data.enable_reading_list);
+if (!enabled) {
+  Astro.response.status = 404;
+}
 const b = [
   ['High Output Management', 'Andrew Grove'],
   ['The Lean Startup', 'Eric Ries'],
@@ -10,23 +14,31 @@ const b = [
 ];
 ---
 
-<BaseLayout title="Reading List">
-  <main id="main-content" role="main" class="wrapper stack gap-10">
-    <h1>Reading List</h1>
-    <div class="grid">
-      {
-        b.map(([t, a]) => (
-          <div class="card">
-            <>
-              <strong>{t}</strong>
-              <p>{a}</p>
-            </>
-          </div>
-        ))
-      }
-    </div>
-  </main>
-</BaseLayout>
+{
+  enabled ? (
+    <BaseLayout title="Reading List" description="Books currently informing the work.">
+      <main id="main-content" role="main" class="wrapper stack gap-10">
+        <h1>Reading List</h1>
+        <div class="grid">
+          {
+            b.map(([t, a]) => (
+              <div class="card">
+                <>
+                  <strong>{t}</strong>
+                  <p>{a}</p>
+                </>
+              </div>
+            ))
+          }
+        </div>
+      </main>
+    </BaseLayout>
+  ) : (
+    <BaseLayout title="Not Found" description="404 Error — this page was not found">
+      <NotFoundContent />
+    </BaseLayout>
+  )
+}
 <style>
   .grid {
     display: grid;
