@@ -7,6 +7,8 @@ describe('iconPaths', () => {
     expect(iconPaths).toHaveProperty('list');
     expect(iconPaths).toHaveProperty('strategy');
     expect(iconPaths).toHaveProperty('rocket-launch');
+    expect(iconPaths).toHaveProperty('paper-plane-tilt');
+    expect(iconPaths).toHaveProperty('download-simple');
   });
 
   it('should have non-empty string values for each icon', () => {
