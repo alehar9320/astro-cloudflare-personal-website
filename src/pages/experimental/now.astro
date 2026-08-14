@@ -19,31 +19,34 @@ const focus: { l: string; i: keyof typeof iconPaths }[] = [
 ];
 ---
 
-{
-  enabled ? (
-    <BaseLayout title="Strategic Pulse" description="Current focus areas.">
+<BaseLayout
+  title={enabled ? 'Strategic Pulse' : 'Not Found'}
+  description={enabled ? 'Current focus areas.' : '404 Error — this page was not found'}
+>
+  {
+    enabled ? (
       <main id="main-content" class="wrapper stack gap-20">
         <Hero title="Strategic Pulse" tagline="Current high-impact focus areas." align="start" />
         <div class="pulse">
           <div class="pulse-pills">
-            {focus.map((f) => (
-              <Pill>
-                <Icon icon={f.i} size="1.33em" /> {f.l}
-              </Pill>
-            ))}
+            {
+              focus.map((f) => (
+                <Pill>
+                  <Icon icon={f.i} size="1.33em" /> {f.l}
+                </Pill>
+              ))
+            }
           </div>
           <p class="pulse-status">
             <strong>Status:</strong> Driving enterprise AI and DevEx at IFS.
           </p>
         </div>
       </main>
-    </BaseLayout>
-  ) : (
-    <BaseLayout title="Not Found" description="404 Error — this page was not found">
+    ) : (
       <NotFoundContent />
-    </BaseLayout>
-  )
-}
+    )
+  }
+</BaseLayout>
 
 <style>
   .pulse {

@@ -30,9 +30,12 @@ const principles = [
 ];
 ---
 
-{
-  enabled ? (
-    <BaseLayout title="Manifesto" description="Core product principles.">
+<BaseLayout
+  title={enabled ? 'Manifesto' : 'Not Found'}
+  description={enabled ? 'Core product principles.' : '404 Error — this page was not found'}
+>
+  {
+    enabled ? (
       <main class="wrapper stack gap-8" style="margin-top: 4rem;">
         <Hero
           title="Product Manifesto"
@@ -40,22 +43,22 @@ const principles = [
           align="start"
         />
         <div class="grid">
-          {principles.map((p) => (
-            <section class="card">
-              <Icon icon={p.i} color="var(--accent-regular)" size="2.5rem" gradient />
-              <h2>{p.t}</h2>
-              <p>{p.d}</p>
-            </section>
-          ))}
+          {
+            principles.map((p) => (
+              <section class="card">
+                <Icon icon={p.i} color="var(--accent-regular)" size="2.5rem" gradient />
+                <h2>{p.t}</h2>
+                <p>{p.d}</p>
+              </section>
+            ))
+          }
         </div>
       </main>
-    </BaseLayout>
-  ) : (
-    <BaseLayout title="Not Found" description="404 Error — this page was not found">
+    ) : (
       <NotFoundContent />
-    </BaseLayout>
-  )
-}
+    )
+  }
+</BaseLayout>
 
 <style>
   .grid {
