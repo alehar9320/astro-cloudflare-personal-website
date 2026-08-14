@@ -4,6 +4,7 @@
 
 import Chat from '../components/Chat.astro';
 import Footer from '../components/Footer.astro';
+import HirePath from '../components/HirePath.astro';
 // Component Imports
 import MainHead from '../components/MainHead.astro';
 import Nav from '../components/Nav.astro';
@@ -26,6 +27,7 @@ const { title, description } = Astro.props;
 
     <div class="stack backgrounds">
       <Nav />
+      <HirePath />
       <slot />
       <Footer />
     </div>
@@ -90,7 +92,7 @@ const { title, description } = Astro.props;
         :root.loaded.theme-dark {
           --bg-image-subtle-1: url('/assets/backgrounds/bg-subtle-1-dark-1440w.jpg');
           --bg-image-subtle-2: url('/assets/backgrounds/bg-subtle-2-dark-1440w.jpg');
-          --bg-image-footer: url('/assets/backgrounds/bg-footer-dark-1440w.jpg');
+          --bg-image-footer: url('/assets/backgrounds/bg-footer-dark-800w.jpg');
         }
       }
 
