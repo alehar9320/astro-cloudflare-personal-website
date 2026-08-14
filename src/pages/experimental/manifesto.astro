@@ -3,13 +3,9 @@ import { getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Hero from '../../components/Hero.astro';
 import Icon from '../../components/Icon.astro';
-import NotFoundContent from '../../components/NotFoundContent.astro';
 
 const flags = await getEntry('flags', 'index');
-const enabled = Boolean(flags?.data.enable_product_manifesto);
-if (!enabled) {
-  Astro.response.status = 404;
-}
+if (!flags?.data.enable_product_manifesto) return Astro.redirect('/404/');
 
 const principles = [
   {
@@ -30,34 +26,25 @@ const principles = [
 ];
 ---
 
-<BaseLayout
-  title={enabled ? 'Manifesto' : 'Not Found'}
-  description={enabled ? 'Core product principles.' : '404 Error — this page was not found'}
->
-  {
-    enabled ? (
-      <main class="wrapper stack gap-8" style="margin-top: 4rem;">
-        <Hero
-          title="Product Manifesto"
-          tagline="Simple primitives for building better products."
-          align="start"
-        />
-        <div class="grid">
-          {
-            principles.map((p) => (
-              <section class="card">
-                <Icon icon={p.i} color="var(--accent-regular)" size="2.5rem" gradient />
-                <h2>{p.t}</h2>
-                <p>{p.d}</p>
-              </section>
-            ))
-          }
-        </div>
-      </main>
-    ) : (
-      <NotFoundContent />
-    )
-  }
+<BaseLayout title="Manifesto" description="Core product principles.">
+  <main class="wrapper stack gap-8" style="margin-top: 4rem;">
+    <Hero
+      title="Product Manifesto"
+      tagline="Simple primitives for building better products."
+      align="start"
+    />
+    <div class="grid">
+      {
+        principles.map((p) => (
+          <section class="card">
+            <Icon icon={p.i} color="var(--accent-regular)" size="2.5rem" gradient />
+            <h2>{p.t}</h2>
+            <p>{p.d}</p>
+          </section>
+        ))
+      }
+    </div>
+  </main>
 </BaseLayout>
 
 <style>

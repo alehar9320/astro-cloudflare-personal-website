@@ -96,6 +96,15 @@ describe('build output contracts', () => {
     expect(checkBuild(dist)).toEqual([]);
   });
 
+  it('skips document contracts on experimental redirect stubs', () => {
+    const dist = makeDist({
+      'index.html': validHtml,
+      '404.html': valid404,
+      'client/experimental/manifesto/index.html': '<html></html>',
+    });
+    expect(checkBuild(dist)).toEqual([]);
+  });
+
   it('fails when the build directory is missing', () => {
     expect(checkBuild('/tmp/html-smoke-missing-dist')).toEqual([
       'build output not found: /tmp/html-smoke-missing-dist',
