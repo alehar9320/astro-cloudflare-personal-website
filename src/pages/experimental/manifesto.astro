@@ -40,15 +40,13 @@ const principles = [
           align="start"
         />
         <div class="grid">
-          {
-            principles.map((p) => (
-              <section class="card">
-                <Icon icon={p.i} color="var(--accent-regular)" size="2.5rem" gradient />
-                <h2>{p.t}</h2>
-                <p>{p.d}</p>
-              </section>
-            ))
-          }
+          {principles.map((p) => (
+            <section class="card">
+              <Icon icon={p.i} color="var(--accent-regular)" size="2.5rem" gradient />
+              <h2>{p.t}</h2>
+              <p>{p.d}</p>
+            </section>
+          ))}
         </div>
       </main>
     </BaseLayout>

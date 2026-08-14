@@ -1,7 +1,8 @@
 ---
+import { getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import NotFoundContent from '../../components/NotFoundContent.astro';
-import { getEntry } from 'astro:content';
+
 const f = await getEntry('flags', 'config');
 const enabled = Boolean(f?.data.enable_reading_list);
 if (!enabled) {
@@ -20,16 +21,12 @@ const b = [
       <main id="main-content" role="main" class="wrapper stack gap-10">
         <h1>Reading List</h1>
         <div class="grid">
-          {
-            b.map(([t, a]) => (
-              <div class="card">
-                <>
-                  <strong>{t}</strong>
-                  <p>{a}</p>
-                </>
-              </div>
-            ))
-          }
+          {b.map(([t, a]) => (
+            <div class="card">
+              <strong>{t}</strong>
+              <p>{a}</p>
+            </div>
+          ))}
         </div>
       </main>
     </BaseLayout>
@@ -39,6 +36,7 @@ const b = [
     </BaseLayout>
   )
 }
+
 <style>
   .grid {
     display: grid;

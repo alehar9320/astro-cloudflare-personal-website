@@ -1,11 +1,11 @@
 ---
+import { getEntry } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Hero from '../../components/Hero.astro';
 import Pill from '../../components/Pill.astro';
 import Icon from '../../components/Icon.astro';
 import NotFoundContent from '../../components/NotFoundContent.astro';
 import type { iconPaths } from '../../components/IconPaths';
-import { getEntry } from 'astro:content';
 
 const flagsEntry = await getEntry('flags', 'config');
 const enabled = Boolean(flagsEntry?.data.enable_strategic_pulse);
@@ -24,19 +24,15 @@ const focus: { l: string; i: keyof typeof iconPaths }[] = [
     <BaseLayout title="Strategic Pulse" description="Current focus areas.">
       <main id="main-content" class="wrapper stack gap-20">
         <Hero title="Strategic Pulse" tagline="Current high-impact focus areas." align="start" />
-        <div
-          style="border: 1px solid var(--gray-800); border-radius: 1.5rem; padding: 2rem; background: var(--gradient-subtle); display: flex; flex-direction: column; gap: 1rem;"
-        >
-          <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-            {
-              focus.map((f) => (
-                <Pill>
-                  <Icon icon={f.i} size="1.33em" /> {f.l}
-                </Pill>
-              ))
-            }
+        <div class="pulse">
+          <div class="pulse-pills">
+            {focus.map((f) => (
+              <Pill>
+                <Icon icon={f.i} size="1.33em" /> {f.l}
+              </Pill>
+            ))}
           </div>
-          <p style="color: var(--gray-300);">
+          <p class="pulse-status">
             <strong>Status:</strong> Driving enterprise AI and DevEx at IFS.
           </p>
         </div>
@@ -48,3 +44,23 @@ const focus: { l: string; i: keyof typeof iconPaths }[] = [
     </BaseLayout>
   )
 }
+
+<style>
+  .pulse {
+    border: 1px solid var(--gray-800);
+    border-radius: 1.5rem;
+    padding: 2rem;
+    background: var(--gradient-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  .pulse-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .pulse-status {
+    color: var(--gray-300);
+  }
+</style>
