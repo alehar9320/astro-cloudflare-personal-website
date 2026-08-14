@@ -19,7 +19,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  # ─── Quality ─────────────────────────────────────────────────────────────────
+  # ─── Quality ──────────────────────────────────────────────────────────
   # Fast checks that give early feedback without needing a full build.
   quality:
     name: Quality (Format & Lint)
@@ -49,7 +49,7 @@ jobs:
       - name: Security Audit
         run: npm audit
 
-  # ─── Build & Test ─────────────────────────────────────────────────────────────
+  # ─── Build & Test ─────────────────────────────────────────────────────────
   # Runs in parallel with quality to keep total wall-clock time low.
   build_and_test:
     name: Build & Test
@@ -89,7 +89,10 @@ jobs:
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
 
-  # ─── Release Metadata (main only) ────────────────────────────────────────────
+      - name: HTML smoke checks
+        run: npm run check:html
+
+  # ─── Release Metadata (main only) ──────────────────────────────────────────
   # Protected main forbids direct write-backs, so release metadata is published
   # as a GitHub release instead of a follow-up commit to the repository.
   release:
