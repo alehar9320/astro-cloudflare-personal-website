@@ -96,13 +96,21 @@ describe('build output contracts', () => {
     expect(checkBuild(dist)).toEqual([]);
   });
 
-  it('skips document contracts on experimental redirect stubs', () => {
+  it('fails document contracts on experimental HTML the same as any other page', () => {
     const dist = makeDist({
       'index.html': validHtml,
       '404.html': valid404,
       'client/experimental/manifesto/index.html': '<html></html>',
     });
-    expect(checkBuild(dist)).toEqual([]);
+    expect(checkBuild(dist)).toEqual(
+      expect.arrayContaining([
+        'client/experimental/manifesto/index.html: missing html lang attribute',
+        'client/experimental/manifesto/index.html: missing non-empty title',
+        'client/experimental/manifesto/index.html: missing charset meta',
+        'client/experimental/manifesto/index.html: missing viewport meta',
+        'client/experimental/manifesto/index.html: missing description meta',
+      ])
+    );
   });
 
   it('fails when the build directory is missing', () => {

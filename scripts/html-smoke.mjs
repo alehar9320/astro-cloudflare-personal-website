@@ -93,15 +93,6 @@ function isNotFoundPage(relativePath) {
 }
 
 /**
- * Flagged-off experimental routes emit static redirect stubs. Document
- * contracts for those pages are out of scope for this gate.
- * @param {string} relativePath
- */
-function isExperimentalPage(relativePath) {
-  return /(^|\/)experimental\//.test(relativePath);
-}
-
-/**
  * Check a built site directory for required pages and document contracts.
  * @param {string} distDir
  * @returns {string[]}
@@ -126,10 +117,8 @@ export function checkBuild(distDir) {
   if (!has404) failures.push('missing 404.html in build output');
 
   for (const file of htmlFiles) {
-    const rel = path.relative(distDir, file).replaceAll('\\', '/');
-    if (isExperimentalPage(rel)) continue;
     const html = fs.readFileSync(file, 'utf8');
-    failures.push(...checkDocument(html, rel));
+    failures.push(...checkDocument(html, path.relative(distDir, file)));
   }
 
   const notFound = htmlFiles.find((file) =>
