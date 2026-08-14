@@ -5,6 +5,16 @@ import { defineCollection } from 'astro:content';
 import { collections } from '../content.config';
 import flagsFixture from '../content/flags/config.json';
 
+interface ZodSchemaWithSafeParse {
+  safeParse: (data: unknown) => {
+    success: boolean;
+    data?: Record<string, unknown>;
+    error?: unknown;
+  };
+}
+const isSchemaWithSafeParse = (schema: unknown): schema is ZodSchemaWithSafeParse =>
+  typeof schema === 'object' && schema !== null && 'safeParse' in schema;
+
 describe('content.config', () => {
   it('exercises infrastructure mocks', () => {
     const schema = z.object({ test: z.string() });
@@ -29,12 +39,10 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
-    expect(result.success).toBe(true);
-
-    if (result.success) {
-      // Use toMatchObject to ensure all fixture properties are correctly validated
-      // while allowing for Zod-injected default values.
+    expect(isSchemaWithSafeParse(schema)).toBe(true);
+    if (isSchemaWithSafeParse(schema)) {
+      const result = schema.safeParse(flagsFixture);
+      expect(result.success).toBe(true);
       expect(result.data).toMatchObject(flagsFixture);
     }
   });
@@ -49,11 +57,14 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.title).toBe(sampleWork.title);
-      expect(result.data.publishDate).toBeInstanceOf(Date);
+    expect(isSchemaWithSafeParse(schema)).toBe(true);
+    if (isSchemaWithSafeParse(schema)) {
+      const result = schema.safeParse(sampleWork);
+      expect(result.success).toBe(true);
+      if (result.success && result.data) {
+        expect(result.data.title).toBe(sampleWork.title);
+        expect(result.data.publishDate).toBeInstanceOf(Date);
+      }
     }
   });
 });
