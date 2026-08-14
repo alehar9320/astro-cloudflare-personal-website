@@ -103,6 +103,15 @@ const schema = {
               rel="noopener noreferrer">IFS</a
             >.
           </p>
+          <div class="hero-actions">
+            <CallToAction
+              href="/contact/"
+              data-hire-event="hire_cta_click"
+              data-hire-surface="hero"
+            >
+              Get in touch
+            </CallToAction>
+          </div>
           <div class="roles">
             <Pill><Icon icon="strategy" size="1.33em" /> Technical Product Management</Pill>
             <Pill><Icon icon="terminal-window" size="1.33em" /> Developer Experience (DevEx)</Pill>
@@ -123,11 +132,10 @@ const schema = {
 
       <div class="tldr-box">
         <p>
-          <strong>TL;DR:</strong> Strategic Product Leader at <strong>IFS</strong> specializing in <strong
-            >Industrial AI</strong
-          >, <strong>Developer Experience (DevEx)</strong>, and <strong>Design Systems</strong>. I
-          drive multi-million dollar ROI by aligning technical excellence with high-impact product
-          innovation.
+          <strong>TL;DR:</strong> Strategic Product Leader at <strong>IFS</strong> specializing in
+          <strong>Industrial AI</strong>, <strong>Developer Experience (DevEx)</strong>, and
+          <strong>Design Systems</strong>. I drive multi-million dollar ROI by aligning technical
+          excellence with high-impact product innovation.
         </p>
       </div>
 
@@ -212,10 +220,19 @@ const schema = {
     flex-direction: column;
     align-items: center;
     gap: 2rem;
+    padding-bottom: 5.5rem;
   }
 
   .roles {
     display: none;
+  }
+
+  .hero-actions {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
   }
 
   .hero img {
@@ -232,12 +249,17 @@ const schema = {
       grid-template-columns: 6fr 4fr;
       padding-inline: 2.5rem;
       gap: 3.75rem;
+      padding-bottom: 0;
     }
 
     .roles {
       margin-top: 0.5rem;
       display: flex;
       gap: 0.5rem;
+    }
+
+    .hero-actions {
+      justify-content: flex-start;
     }
 
     .hero img {
