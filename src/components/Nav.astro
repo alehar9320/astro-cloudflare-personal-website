@@ -8,11 +8,12 @@ const flagsEntry = await getEntry('flags', 'config');
 const isLogoWobbleEnabled = flagsEntry?.data.enable_logo_wobble_v1 ?? false;
 
 /** Main menu items */
-const textLinks: { label: string; href: string }[] = [
+const textLinks: { label: string; href: string; hire?: boolean }[] = [
   { label: 'Home', href: '/' },
   { label: 'Strategic Portfolio', href: '/work/' },
   { label: 'Biography', href: '/biography/' },
   { label: 'About', href: '/about/' },
+  { label: 'Contact', href: '/contact/', hire: true },
 ];
 
 const iconLinks: {
@@ -74,9 +75,15 @@ const isCurrentPage = (href: string) => {
   <noscript>
     <ul class="nav-items">
       {
-        textLinks.map(({ label, href }) => (
+        textLinks.map(({ label, href, hire }) => (
           <li>
-            <a aria-current={isCurrentPage(href) ? 'page' : null} class="link" href={href}>
+            <a
+              aria-current={isCurrentPage(href) ? 'page' : null}
+              class="link"
+              href={href}
+              data-hire-event={hire ? 'hire_cta_click' : undefined}
+              data-hire-surface={hire ? 'nav' : undefined}
+            >
               {label}
             </a>
           </li>
@@ -101,9 +108,15 @@ const isCurrentPage = (href: string) => {
   <div id="menu-content" hidden>
     <ul class="nav-items">
       {
-        textLinks.map(({ label, href }) => (
+        textLinks.map(({ label, href, hire }) => (
           <li>
-            <a aria-current={isCurrentPage(href) ? 'page' : null} class="link" href={href}>
+            <a
+              aria-current={isCurrentPage(href) ? 'page' : null}
+              class="link"
+              href={href}
+              data-hire-event={hire ? 'hire_cta_click' : undefined}
+              data-hire-surface={hire ? 'nav' : undefined}
+            >
               {label}
             </a>
           </li>
