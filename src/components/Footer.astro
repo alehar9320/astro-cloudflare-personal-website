@@ -33,6 +33,24 @@ const currentYear = new Date().getFullYear();
       Human + AI Collaboration. Optimized for humans & agents. Content may have flaws; verify for
       accuracy.
     </p>
+    <p class="agentic-footnote">
+      <strong>Agentic Engineering Test Bed:</strong> This website is an active test bed for autonomous
+      agentic engineering workflows and AI-driven web development, leveraging tools like{' '}
+      <a href="https://www.cursor.com/" target="_blank" rel="noopener noreferrer">Cursor</a>,{' '}
+      <a href="https://antigravity.google/" target="_blank" rel="noopener noreferrer"
+        >Google Antigravity</a
+      >,{' '}
+      <a href="https://x.ai/" target="_blank" rel="noopener noreferrer">GrokBot</a>,{' '}
+      <a href="https://code.visualstudio.com/" target="_blank" rel="noopener noreferrer">VS Code</a
+      >,{' '}
+      <a href="https://github.com/features/copilot" target="_blank" rel="noopener noreferrer"
+        >GitHub Copilot</a
+      >,{' '}
+      <a href="https://opencode.ai/" target="_blank" rel="noopener noreferrer">OpenCode</a>, and{
+        ' '
+      }
+      <a href="https://openrouter.ai/" target="_blank" rel="noopener noreferrer">OpenRouter</a>.
+    </p>
   </div>
   <p class="socials">
     <a href="https://www.linkedin.com/in/alehar/"> LinkedIn</a>
@@ -142,6 +160,16 @@ const currentYear = new Date().getFullYear();
     line-height: 1.5;
   }
 
+  .agentic-footnote {
+    font-size: 0.75rem;
+    color: var(--gray-500);
+    line-height: 1.5;
+  }
+
+  .agentic-footnote strong {
+    color: var(--gray-300);
+  }
+
   /* Source icon link styling: keep visual weight minimal */
   .source-link {
     display: inline-flex;
@@ -206,6 +234,10 @@ const currentYear = new Date().getFullYear();
     }
 
     .ai-notice {
+      flex-basis: 100%;
+    }
+
+    .agentic-footnote {
       flex-basis: 100%;
     }
 
