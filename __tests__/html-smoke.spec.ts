@@ -88,6 +88,14 @@ describe('build output contracts', () => {
     expect(findHtmlFiles(dist)).toHaveLength(2);
   });
 
+  it('passes when the home page is nested under client/', () => {
+    const dist = makeDist({
+      'client/index.html': validHtml,
+      '404.html': valid404,
+    });
+    expect(checkBuild(dist)).toEqual([]);
+  });
+
   it('fails when the build directory is missing', () => {
     expect(checkBuild('/tmp/html-smoke-missing-dist')).toEqual([
       'build output not found: /tmp/html-smoke-missing-dist',

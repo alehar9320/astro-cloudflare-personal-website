@@ -72,6 +72,23 @@ export function checkDocument(html, filePath = 'document.html') {
 }
 
 /**
+ * Home page is index.html at the dist root, or client/index.html for
+ * adapters that nest the client bundle. Nested routes like about/index.html
+ * are not the home page.
+ * @param {string} relativePath
+ */
+function isHomeIndex(relativePath) {
+  return relativePath === 'index.html' || relativePath === 'client/index.html';
+}
+
+/**
+ * @param {string} relativePath
+ */
+function isNotFoundPage(relativePath) {
+  return relativePath === '404.html' || relativePath === '404/index.html';
+}
+
+/**
  * Check a built site directory for required pages and document contracts.
  * @param {string} distDir
  * @returns {string[]}
@@ -88,22 +105,20 @@ export function checkBuild(distDir) {
     return [`no HTML files found under ${distDir}`];
   }
 
-  const normalized = htmlFiles.map((file) => file.replaceAll('\\', '/'));
-  const hasIndex = normalized.some(
-    (file) => file.endsWith('/index.html') || file.endsWith('index.html')
-  );
-  const has404 = normalized.some((file) => /\/404\.html$|\/404\/index\.html$/i.test(file));
+  const relative = htmlFiles.map((file) => path.relative(distDir, file).replaceAll('\\', '/'));
+  const hasIndex = relative.some(isHomeIndex);
+  const has404 = relative.some(isNotFoundPage);
 
   if (!hasIndex) failures.push('missing index.html in build output');
   if (!has404) failures.push('missing 404.html in build output');
 
   for (const file of htmlFiles) {
-    const html = fs.readFileSync(file, 'utf8');
+    const html = fs.readdirSync ? fs.readFileSync(file, 'utf8') : '';
     failures.push(...checkDocument(html, path.relative(distDir, file)));
   }
 
   const notFound = htmlFiles.find((file) =>
-    /404\.html$|404\/index\.html$/i.test(file.replaceAll('\\', '/'))
+    isNotFoundPage(path.relative(distDir, file).replaceAll('\\', '/'))
   );
   if (notFound) {
     const html = fs.readFileSync(notFound, 'utf8');
@@ -121,7 +136,7 @@ function isDirectRun() {
   return path.resolve(thisFile) === invoked;
 }
 
-if (isDirectRun()) {
+If (isDirectRun()) {
   const distDir = path.resolve(process.cwd(), process.argv[2] || 'dist');
   const failures = checkBuild(distDir);
 
