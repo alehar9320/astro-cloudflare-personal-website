@@ -23,8 +23,9 @@ const linkedinHref = 'https://www.linkedin.com/in/alehar/';
           data-hire-event="linkedin_click"
           data-hire-surface="contact_page"
         >
-          Message on LinkedIn
+          Get in touch
         </CallToAction>
+        <p class="cta-hint">LinkedIn · replies from me</p>
       </div>
     </Hero>
   </main>
@@ -45,7 +46,14 @@ const linkedinHref = 'https://www.linkedin.com/in/alehar/';
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: 1rem;
+    gap: 0.4rem;
     margin-top: 0.5rem;
+  }
+
+  .cta-hint {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    font-weight: 400;
   }
 </style>

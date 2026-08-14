@@ -13,9 +13,10 @@ import Icon from './Icon.astro';
       data-hire-event="hire_cta_click"
       data-hire-surface="contact_cta"
     >
-      Message on LinkedIn
+      Get in touch
       <Icon icon="paper-plane-tilt" size="1.2em" />
     </CallToAction>
+    <p class="cta-hint">LinkedIn · replies from me</p>
   </div>
 </aside>
 
@@ -44,7 +45,14 @@ import Icon from './Icon.astro';
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
+    gap: 0.4rem;
+  }
+
+  .cta-hint {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    font-weight: 400;
   }
 
   @media (min-width: 50em) {
