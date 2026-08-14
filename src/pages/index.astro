@@ -108,6 +108,11 @@ const schema = {
             <Pill><Icon icon="terminal-window" size="1.33em" /> Developer Experience (DevEx)</Pill>
             <Pill><Icon icon="rocket-launch" size="1.33em" /> Applied Industrial AI</Pill>
           </div>
+          <div class="hero-actions">
+            <CallToAction href="/contact/" data-hire-event="hire_cta_click" data-hire-surface="hero">
+              Get in touch
+            </CallToAction>
+          </div>
         </Hero>
 
         <img
@@ -218,6 +223,14 @@ const schema = {
     display: none;
   }
 
+  .hero-actions {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+  }
+
   .hero img {
     aspect-ratio: 5 / 4;
     object-fit: cover;
@@ -238,6 +251,10 @@ const schema = {
       margin-top: 0.5rem;
       display: flex;
       gap: 0.5rem;
+    }
+
+    .hero-actions {
+      justify-content: flex-start;
     }
 
     .hero img {
