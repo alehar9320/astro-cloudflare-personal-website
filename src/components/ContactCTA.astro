@@ -5,14 +5,21 @@ import Icon from './Icon.astro';
 
 <aside>
   <h2>Ready to collaborate on high-impact initiatives?</h2>
-  <CallToAction
-    href="https://www.linkedin.com/in/alehar/"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    Connect on LinkedIn
-    <Icon icon="paper-plane-tilt" size="1.2em" />
-  </CallToAction>
+  <div class="cta-stack">
+    <CallToAction href="/contact/" data-hire-event="hire_cta_click" data-hire-surface="contact_cta">
+      Get in touch
+      <Icon icon="paper-plane-tilt" size="1.2em" />
+    </CallToAction>
+    <a
+      href="https://www.linkedin.com/in/alehar/"
+      target="_blank"
+      rel="noopener noreferrer"
+      data-hire-event="linkedin_click"
+      data-hire-surface="contact_cta"
+    >
+      LinkedIn
+    </a>
+  </div>
 </aside>
 
 <style>
@@ -36,6 +43,13 @@ import Icon from './Icon.astro';
     max-width: 15ch;
   }
 
+  .cta-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
   @media (min-width: 50em) {
     aside {
       padding: 7.5rem;
@@ -47,6 +61,10 @@ import Icon from './Icon.astro';
     h2 {
       font-size: var(--text-3xl);
       text-align: left;
+    }
+
+    .cta-stack {
+      align-items: flex-end;
     }
   }
 </style>
