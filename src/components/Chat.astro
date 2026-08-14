@@ -61,7 +61,12 @@
       </section>
     </div>
     <div id="typing-indicator" class="typing-indicator hidden">Alexander is typing...</div>
-    <form id="chat-form" class="chat-form" data-hire-event="chat_message_sent" data-hire-surface="fab">
+    <form
+      id="chat-form"
+      class="chat-form"
+      data-hire-event="chat_message_sent"
+      data-hire-surface="fab"
+    >
       <input
         type="text"
         id="chat-input"
@@ -353,7 +358,11 @@
   const statusTooltip = document.getElementById('status-tooltip');
   const statusAnnouncer = document.getElementById('status-announcer');
 
-  const statusLabels = { idle: 'Ask about the work', loading: 'Thinking...', error: 'Connection issue' };
+  const statusLabels = {
+    idle: 'Ask about the work',
+    loading: 'Thinking...',
+    error: 'Connection issue',
+  };
 
   function setStatus(state: 'idle' | 'loading' | 'error') {
     statusDots.forEach((el) => {
