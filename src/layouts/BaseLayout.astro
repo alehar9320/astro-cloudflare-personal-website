@@ -33,6 +33,8 @@ const { title, description } = Astro.props;
     <Chat />
 
     <script>
+      import { initHireAnalytics } from '../utils/hire-analytics';
+      initHireAnalytics();
       // Add “loaded” class once the document has completely loaded.
       addEventListener('load', () => document.documentElement.classList.add('loaded'));
     </script>
