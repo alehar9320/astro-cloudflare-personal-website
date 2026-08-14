@@ -1,0 +1,166 @@
+---
+import { hire, hireMailto } from '../data/hire';
+import Icon from './Icon.astro';
+
+const pathname = Astro.url.pathname.replace(/\/+$/, '') || '/';
+const isDedicatedHireSurface = pathname === '/contact' || pathname === '/cv';
+---
+
+{
+  !isDedicatedHireSurface && (
+    <section class="hire-path" aria-label="Hire Alexander">
+      <div class="wrapper hire-path-inner">
+        <p class="status">
+          <span class="status-dot" aria-hidden="true"></span>
+          <a class="status-label" href="/contact/">
+            {hire.status}
+          </a>
+          <span class="availability">{hire.availability}</span>
+        </p>
+        <p class="actions">
+          <a class="hire-email" href={hireMailto}>
+            <Icon icon="paper-plane-tilt" size="1.1em" />
+            {hire.email}
+          </a>
+          <a class="hire-cv" href={hire.cvHref}>
+            <Icon icon="download-simple" size="1.1em" />
+            {hire.cvLabel}
+          </a>
+        </p>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .hire-path {
+    margin-top: -1.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .hire-path-inner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding-block: 0.85rem;
+    padding-inline: 1.25rem;
+    border: 1px solid hsla(var(--gray-999-basis), 0.2);
+    border-radius: 999rem;
+    background: hsla(var(--gray-999-basis), 0.6);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    box-shadow: var(--shadow-md);
+  }
+
+  .status,
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem 0.75rem;
+    margin: 0;
+  }
+
+  .status-dot {
+    width: 0.55rem;
+    height: 0.55rem;
+    border-radius: 50%;
+    background-color: var(--status-idle);
+    box-shadow: 0 0 6px var(--status-idle);
+    flex-shrink: 0;
+  }
+
+  .status-label {
+    font-family: var(--font-brand);
+    font-weight: 600;
+    color: var(--gray-0);
+    text-decoration: none;
+  }
+
+  .status-label:hover,
+  .status-label:focus-visible {
+    color: var(--accent-regular);
+  }
+
+  .status-label:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+    border-radius: 0.25rem;
+  }
+
+  .availability {
+    color: var(--gray-300);
+    font-size: var(--text-sm);
+  }
+
+  .hire-email,
+  .hire-cv {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.9rem;
+    border-radius: 999rem;
+    text-decoration: none;
+    font-family: var(--font-brand);
+    font-size: var(--text-sm);
+    line-height: 1.2;
+    white-space: nowrap;
+    transition:
+      transform var(--theme-transition),
+      box-shadow var(--theme-transition),
+      background-color var(--theme-transition);
+  }
+
+  .hire-email {
+    color: var(--accent-text-over);
+    background-color: var(--accent-regular);
+    background-image: var(--gradient-accent-orange);
+    background-size: 300% 300%;
+    background-position: 0% 50%;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .hire-cv {
+    color: var(--gray-0);
+    border: 1px solid var(--accent-regular);
+    background: hsla(var(--gray-999-basis), 0.45);
+  }
+
+  .hire-email:hover,
+  .hire-email:focus-visible,
+  .hire-cv:hover,
+  .hire-cv:focus-visible {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .hire-email:focus-visible,
+  .hire-cv:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+  }
+
+  @media (min-width: 50em) {
+    .hire-path-inner {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+      padding-inline: 1.5rem;
+    }
+
+    .status {
+      justify-content: flex-start;
+    }
+
+    .actions {
+      justify-content: flex-end;
+    }
+  }
+
+  @media (max-width: 49.99em) {
+    .hire-path-inner {
+      border-radius: 1.25rem;
+    }
+  }
+</style>

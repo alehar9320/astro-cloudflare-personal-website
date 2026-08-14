@@ -1,0 +1,180 @@
+---
+import CallToAction from '../components/CallToAction.astro';
+import Hero from '../components/Hero.astro';
+import Icon from '../components/Icon.astro';
+import { hire, hireMailto } from '../data/hire';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'Person',
+      '@id': 'https://harenstam.com/#person',
+      name: 'Alexander Härenstam',
+      jobTitle: 'Strategic Product Leader',
+      email: hire.email,
+      url: 'https://harenstam.com/',
+      sameAs: [hire.linkedinHref, 'https://github.com/alehar9320'],
+    },
+    {
+      '@type': 'ContactPage',
+      '@id': 'https://harenstam.com/contact/#webpage',
+      url: 'https://harenstam.com/contact/',
+      name: 'Contact | Alexander Härenstam',
+      about: { '@id': 'https://harenstam.com/#person' },
+      description:
+        'Email Alexander Härenstam, check availability, and download his CV.',
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title="Contact | Alexander Härenstam"
+  description="Email Alexander Härenstam, check availability, and download his CV."
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+  <div class="stack gap-20">
+    <main id="main-content" class="wrapper contact">
+      <Hero
+        title="Let's work together"
+        tagline="The hire path is email, availability, and CV — not the chatbot."
+        align="start"
+      />
+
+      <section class="hire-card" aria-label="Hire Alexander">
+        <p class="status">
+          <span class="status-dot" aria-hidden="true"></span>
+          <span class="status-label">{hire.status}</span>
+        </p>
+        <p class="availability">{hire.availability}</p>
+        <div class="actions">
+          <CallToAction href={hireMailto}>
+            {hire.email}
+            <Icon icon="paper-plane-tilt" size="1.2em" />
+          </CallToAction>
+          <a class="cv-link" href={hire.cvHref}>
+            {hire.cvLabel}
+            <Icon icon="download-simple" size="1.2em" />
+          </a>
+        </div>
+      </section>
+
+      <section id="cv" class="cv-summary">
+        <h2>CV</h2>
+        <p>
+          Strategic Product Leader at IFS specializing in Industrial AI, Developer Experience, and
+          Design Systems. M.Sc. Management and Economics of Innovation and B.Sc. Software
+          Engineering, Chalmers University of Technology. Based in Stockholm.
+        </p>
+        <p>
+          <a href={hire.cvHref}>Open the full CV</a> or print it from your browser. Swap
+          <code>cvHref</code> in <code>src/data/hire.ts</code> when a PDF is ready.
+        </p>
+      </section>
+
+      <p class="chat-note">
+        Prefer to explore first? The AI chat in the corner is a brand demo, not the way to hire
+        Alexander.
+      </p>
+    </main>
+  </div>
+</BaseLayout>
+
+<style>
+  .contact {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+  }
+
+  .hire-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.75rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 1.5rem;
+    background: var(--gradient-subtle);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .status {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0;
+    font-family: var(--font-brand);
+    font-weight: 600;
+    color: var(--gray-0);
+  }
+
+  .status-dot {
+    width: 0.65rem;
+    height: 0.65rem;
+    border-radius: 50%;
+    background-color: var(--status-idle);
+    box-shadow: 0 0 6px var(--status-idle);
+  }
+
+  .availability {
+    margin: 0;
+    color: var(--gray-300);
+    font-size: var(--text-lg);
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    align-items: center;
+  }
+
+  .cv-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.56em 1.5em;
+    border-radius: 999rem;
+    border: 1px solid var(--accent-regular);
+    color: var(--gray-0);
+    text-decoration: none;
+    font-family: var(--font-brand);
+    background: hsla(var(--gray-999-basis), 0.45);
+  }
+
+  .cv-link:hover,
+  .cv-link:focus-visible {
+    box-shadow: var(--shadow-md);
+  }
+
+  .cv-link:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+  }
+
+  .cv-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    color: var(--gray-200);
+  }
+
+  .cv-summary h2 {
+    font-size: var(--text-xl);
+    color: var(--gray-0);
+  }
+
+  .chat-note {
+    color: var(--gray-400);
+    font-size: var(--text-sm);
+  }
+
+  @media (min-width: 50em) {
+    .hire-card {
+      padding: 2.5rem;
+    }
+  }
+</style>

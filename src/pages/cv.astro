@@ -1,0 +1,125 @@
+---
+import Hero from '../components/Hero.astro';
+import { hire, hireMailto } from '../data/hire';
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  url: 'https://harenstam.com/cv/',
+  name: 'CV | Alexander Härenstam',
+  about: {
+    '@type': 'Person',
+    name: 'Alexander Härenstam',
+    jobTitle: 'Strategic Product Leader',
+    email: hire.email,
+    url: 'https://harenstam.com/',
+  },
+};
+---
+
+<BaseLayout
+  title="CV | Alexander Härenstam"
+  description="Curriculum vitae for Alexander Härenstam, Strategic Product Leader at IFS."
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+
+  <main id="main-content" class="wrapper cv">
+    <Hero
+      title="Alexander Härenstam"
+      tagline="Strategic Product Leader · Industrial AI, Developer Experience, Design Systems"
+      align="start"
+    />
+
+    <p class="meta">
+      <span>{hire.status} · {hire.availability}</span>
+      <a href={hireMailto}>{hire.email}</a>
+      <span>Stockholm, Sweden</span>
+    </p>
+
+    <section>
+      <h2>Summary</h2>
+      <p>
+        Strategic Product Leader at IFS specializing in Industrial AI, Developer Experience (DevEx),
+        and Design Systems. Delivers multi-million dollar ROI by aligning technical excellence with
+        high-impact product innovation.
+      </p>
+    </section>
+
+    <section>
+      <h2>Experience</h2>
+      <p>
+        <strong>Product Manager, Developer Experience</strong> · IFS · Feb 2025–Present · Stockholm
+      </p>
+      <p>
+        Strategy for tools and platforms used by internal engineering teams, global partners, and
+        customers. Key pillar: AI coding copilots, a multi-million dollar initiative.
+      </p>
+      <p>
+        <strong>Product Manager, Product Experience (Design System)</strong> · IFS · Apr 2022–Feb
+        2025 · Gothenburg
+      </p>
+      <p>
+        Scaled the IFS Design System from 0 to 1, enabling teams to deliver new functionality 2×
+        faster with up to 30× ROI. Runner-up, Zeroheight Design System Awards. Spearheaded the User
+        Behavior Analytics platform for IFS Cloud.
+      </p>
+      <p>
+        <strong>Lead Software Designer</strong> · IFS · Sep 2021–Apr 2022
+      </p>
+    </section>
+
+    <section>
+      <h2>Education</h2>
+      <p>
+        <strong>M.Sc. Management and Economics of Innovation</strong>, Chalmers University of
+        Technology (2015–2017)
+      </p>
+      <p>
+        <strong>B.Sc. Software Engineering</strong>, Chalmers University of Technology (2012–2015)
+      </p>
+    </section>
+
+    <p class="print-hint">Print or save this page as PDF from your browser.</p>
+  </main>
+</BaseLayout>
+
+<style>
+  .cv {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    max-width: 54rem;
+    padding-bottom: 4rem;
+  }
+
+  .meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.25rem;
+    color: var(--gray-300);
+  }
+
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    color: var(--gray-200);
+  }
+
+  h2 {
+    font-size: var(--text-xl);
+    color: var(--gray-0);
+  }
+
+  .print-hint {
+    color: var(--gray-400);
+    font-size: var(--text-sm);
+  }
+
+  @media print {
+    .print-hint {
+      display: none;
+    }
+  }
+</style>
