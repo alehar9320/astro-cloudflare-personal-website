@@ -108,6 +108,20 @@ const schema = {
             <Pill><Icon icon="terminal-window" size="1.33em" /> Developer Experience (DevEx)</Pill>
             <Pill><Icon icon="rocket-launch" size="1.33em" /> Applied Industrial AI</Pill>
           </div>
+          <div class="hero-actions">
+            <CallToAction href="/contact/" data-event="hire_cta_click" data-surface="hero">
+              Get in touch
+            </CallToAction>
+            <a
+              class="hero-cv"
+              href="/alexander-harenstam-cv.pdf"
+              download
+              data-event="cv_download"
+              data-surface="hero"
+            >
+              Download CV
+            </a>
+          </div>
         </Hero>
 
         <img
@@ -218,6 +232,37 @@ const schema = {
     display: none;
   }
 
+  .hero-actions {
+    margin-top: 0.75rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .hero-cv {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5em 1.5em;
+    border-radius: 999rem;
+    border: 1px solid var(--accent-regular);
+    color: var(--gray-0);
+    text-decoration: none;
+    font-family: var(--font-brand);
+    background: hsla(var(--gray-999-basis), 0.45);
+  }
+
+  .hero-cv:hover,
+  .hero-cv:focus-visible {
+    box-shadow: var(--shadow-md);
+  }
+
+  .hero-cv:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+  }
+
   .hero img {
     aspect-ratio: 5 / 4;
     object-fit: cover;
@@ -238,6 +283,10 @@ const schema = {
       margin-top: 0.5rem;
       display: flex;
       gap: 0.5rem;
+    }
+
+    .hero-actions {
+      justify-content: flex-start;
     }
 
     .hero img {
