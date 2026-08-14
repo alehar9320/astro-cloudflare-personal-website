@@ -8,13 +8,14 @@
 
 #### Improvements Made:
 
-1. **Astro Schema Type-Safety:** Defined custom interface `ZodSchemaWithSafeParse` and a user-defined type guard `isSchemaWithSafeParse` in `src/__tests__/content.config.test.ts` to cleanly narrow union-typed schemas without resorting to unsafe `any` casts, resolving all 4 pre-existing Astro compile-time/type-check failures.
-2. **Release Caching Validation:** Added validation in `fetchGitHubReleases` within `src/utils/github-releases.ts` using `Array.isArray(data)` to ensure deserialized `sessionStorage` cache items are array type before returning, preventing runtime errors on corrupted caches.
+1. **Astro Schema Type-Safety:** Defined custom interface `ZodSchemaWithSafeParse` and a user-defined type guard `isSchemaWithSafeParse` in `src/__tests__/content.config.test.ts` to cleanly narrow union-typed schemas without resorting to unsafe `any` casts, resolving all pre-existing Astro check failures.
+2. **Release Caching Validation:** Enhanced cache retrieval in `fetchGitHubReleases` within `src/utils/github-releases.ts` using `z.array(SiteReleaseSchema).safeParse(data)` to strictly validate deserialized `sessionStorage` cache items, ensuring corrupted, non-array, or invalid items trigger a cache miss and refetch instead of returning invalid objects. Added unit test coverage for invalid cache structures in `src/__tests__/github-releases.test.ts`.
 
 #### Line Delta:
 
 - `src/__tests__/content.config.test.ts`: +13 lines added, -15 lines removed (Net: -2 lines). Under 20-line limit per file.
-- `src/utils/github-releases.ts`: +1 line added, -1 line removed (Net: 0 lines). Under 20-line limit per file.
+- `src/utils/github-releases.ts`: +4 lines added, -1 line removed (Net: +3 lines). Under 20-line limit per file.
+- `src/__tests__/github-releases.test.ts`: +32 lines added (test file addition).
 
 #### Verification Status:
 
@@ -31,4 +32,4 @@
 #### Code Smell Metrics:
 
 - **Type Safety Bypass:** Reduced by 100% (replaced pre-existing implicit and explicit unsafe schema accesses with rigorous user-defined type-guarding).
-- **Silent Deserialization Corruption:** Reduced (guarded against non-array structures during cache hydration).
+- **Silent Deserialization Corruption:** Reduced (strictly validated cache structures against Zod schema before hydration).

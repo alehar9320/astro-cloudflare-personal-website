@@ -74,8 +74,11 @@ export async function fetchGitHubReleases(
       const cached = sessionStorage.getItem(CACHE_KEY);
       if (cached) {
         const { data, timestamp } = JSON.parse(cached);
-        if (Date.now() - timestamp < CACHE_TTL && Array.isArray(data)) {
-          return data;
+        if (Date.now() - timestamp < CACHE_TTL) {
+          const parsed = z.array(SiteReleaseSchema).safeParse(data);
+          if (parsed.success) {
+            return parsed.data;
+          }
         }
       }
     } catch {
