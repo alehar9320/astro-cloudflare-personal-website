@@ -3,7 +3,6 @@ import CallToAction from '../components/CallToAction.astro';
 import Hero from '../components/Hero.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const email = 'hello@alehar.dev';
 const linkedinHref = 'https://www.linkedin.com/in/alehar/';
 ---
 
@@ -16,24 +15,8 @@ const linkedinHref = 'https://www.linkedin.com/in/alehar/';
       <p class="availability">
         Open to conversations about product leadership, DevEx, and Industrial AI.
       </p>
-      <p class="mailto">
-        <a
-          href={`mailto:${email}`}
-          data-hire-event="hire_cta_click"
-          data-hire-surface="contact_page">{email}</a
-        >
-      </p>
       <div class="actions">
         <CallToAction
-          href="/alexander-harenstam-cv.pdf"
-          download="alexander-harenstam-cv.pdf"
-          data-hire-event="cv_download"
-          data-hire-surface="contact_page"
-        >
-          Download CV
-        </CallToAction>
-        <a
-          class="linkedin"
           href={linkedinHref}
           target="_blank"
           rel="noopener noreferrer"
@@ -41,7 +24,7 @@ const linkedinHref = 'https://www.linkedin.com/in/alehar/';
           data-hire-surface="contact_page"
         >
           LinkedIn
-        </a>
+        </CallToAction>
       </div>
     </Hero>
   </main>
@@ -58,48 +41,11 @@ const linkedinHref = 'https://www.linkedin.com/in/alehar/';
     max-width: 46ch;
   }
 
-  .mailto a {
-    color: var(--accent-dark);
-    text-decoration: 1px solid underline transparent;
-    text-underline-offset: 0.25em;
-    transition:
-      color var(--theme-transition),
-      text-decoration-color var(--theme-transition);
-  }
-
-  .mailto a:hover,
-  .mailto a:focus-visible {
-    color: var(--accent-text-over);
-    text-decoration-color: currentColor;
-  }
-
   .actions {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     gap: 1rem;
     margin-top: 0.5rem;
-  }
-
-  .linkedin {
-    color: var(--gray-300);
-    font-size: var(--text-md);
-    text-decoration: 1px solid underline transparent;
-    text-underline-offset: 0.25em;
-    transition:
-      color var(--theme-transition),
-      text-decoration-color var(--theme-transition);
-  }
-
-  .linkedin:hover,
-  .linkedin:focus-visible {
-    color: var(--accent-text-over);
-    text-decoration-color: currentColor;
-  }
-
-  .mailto a:focus-visible,
-  .linkedin:focus-visible {
-    outline: 2px solid var(--accent-regular);
-    outline-offset: 4px;
   }
 </style>
