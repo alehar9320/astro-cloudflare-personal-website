@@ -10,7 +10,12 @@ interface ZodSchemaWithSafeParse {
 }
 
 function isSchemaWithSafeParse(schema: unknown): schema is ZodSchemaWithSafeParse {
-  return schema !== null && typeof schema === 'object' && 'safeParse' in schema;
+  return (
+    schema !== null &&
+    typeof schema === 'object' &&
+    'safeParse' in schema &&
+    typeof (schema as ZodSchemaWithSafeParse).safeParse === 'function'
+  );
 }
 
 describe('content.config', () => {
@@ -36,6 +41,9 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
+    expect(flagsFixture).toHaveProperty('enable_devex_stack');
+    expect(flagsFixture.enable_devex_stack).toBe(true);
+
     const rawSchema = collections.flags.schema;
     const schema =
       typeof rawSchema === 'function'

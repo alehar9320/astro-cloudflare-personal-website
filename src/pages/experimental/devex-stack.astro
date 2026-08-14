@@ -8,27 +8,42 @@ const flags = await getEntry('flags', 'config');
 if (!flags?.data.enable_devex_stack) return Astro.redirect('/404/');
 
 const tools = [
-  { l: 'Telemetry', t: 'OpenTelemetry & Prometheus', i: 'rocket-launch' as const },
-  { l: 'CI/CD Platform', t: 'GitHub Actions & Cloudflare', i: 'terminal-window' as const },
-  { l: 'DevEx Portal', t: 'Backstage & Custom Dashboards', i: 'strategy' as const },
+  {
+    name: 'Cursor',
+    why: 'AI-first code editing that accelerates iteration loops while preserving developer agency.',
+    url: 'https://cursor.com',
+    icon: 'pencil-line' as const,
+  },
+  {
+    name: 'GitHub Actions',
+    why: 'Automated CI/CD pipelines enforcing linting, testing, and security gates on every commit.',
+    url: 'https://github.com/features/actions',
+    icon: 'github-logo' as const,
+  },
+  {
+    name: 'Cloudflare Workers',
+    why: 'Serverless edge runtime providing instant global deployments with zero cold starts.',
+    url: 'https://workers.cloudflare.com',
+    icon: 'rocket-launch' as const,
+  },
 ];
 ---
 
-<BaseLayout title="DevEx Stack" description="Curated Developer Experience stack.">
+<BaseLayout title="DevEx Stack" description="Alexander's curated developer experience stack.">
   <main id="main-content" class="wrapper stack gap-10">
     <Hero
       title="DevEx Stack"
-      tagline="Curated tools and platforms for maximizing developer experience."
+      tagline="Curated tools and platforms powering modern engineering productivity."
       align="start"
     />
     <div class="grid">
       {
-        tools.map((p) => (
-          <section class="card">
-            <Icon icon={p.i} color="var(--accent-regular)" size="2rem" gradient />
-            <h2>{p.l}</h2>
-            <p>{p.t}</p>
-          </section>
+        tools.map((tool) => (
+          <a href={tool.url} target="_blank" rel="noopener noreferrer" class="card">
+            <Icon icon={tool.icon} color="var(--accent-regular)" size="2rem" gradient />
+            <h2>{tool.name}</h2>
+            <p>{tool.why}</p>
+          </a>
         ))
       }
     </div>
@@ -39,13 +54,20 @@ const tools = [
   .grid {
     display: grid;
     gap: 1.5rem;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
   }
   .card {
+    display: flex;
+    flex-direction: column;
     padding: 1.5rem;
     background: var(--gradient-subtle);
     border: 1px solid var(--gray-800);
     border-radius: 0.75rem;
+    text-decoration: none;
+    transition: border-color var(--theme-transition);
+  }
+  .card:hover {
+    border-color: var(--gray-600);
   }
   .card h2 {
     font-size: var(--text-lg);
@@ -54,5 +76,7 @@ const tools = [
   }
   .card p {
     color: var(--gray-300);
+    font-size: var(--text-sm);
+    line-height: 1.4;
   }
 </style>
