@@ -3,12 +3,11 @@ import { z } from 'zod';
 /**
  * Hire-path conversion objects.
  *
- * `email` and `cvHref` are intentionally centralized so they can be swapped
- * when Alexander provides final copy or a PDF. No other file should hardcode
- * these values.
+ * Placeholders: swap `email` when a final address is ready. CV lives at
+ * `/alexander-harenstam-cv.pdf` (placeholder PDF until a real file is supplied).
+ * Email, CV, and availability copy are shown on `/contact` only.
  */
 export const hireSchema = z.object({
-  status: z.literal('Available'),
   availability: z.string().min(1),
   email: z.string().email(),
   cvHref: z.string().min(1),
@@ -17,10 +16,9 @@ export const hireSchema = z.object({
 });
 
 export const hire = hireSchema.parse({
-  status: 'Available',
-  availability: 'Open to product leadership conversations',
+  availability: 'Open to conversations about product leadership, DevEx, and Industrial AI.',
   email: 'hello@harenstam.com',
-  cvHref: '/cv/',
+  cvHref: '/alexander-harenstam-cv.pdf',
   cvLabel: 'Download CV',
   linkedinHref: 'https://www.linkedin.com/in/alehar/',
 });
