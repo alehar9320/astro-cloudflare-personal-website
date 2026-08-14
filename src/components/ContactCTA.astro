@@ -5,14 +5,22 @@ import Icon from './Icon.astro';
 
 <aside>
   <h2>Ready to collaborate on high-impact initiatives?</h2>
-  <CallToAction
-    href="https://www.linkedin.com/in/alehar/"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    Connect on LinkedIn
-    <Icon icon="paper-plane-tilt" size="1.2em" />
-  </CallToAction>
+  <div class="cta-group">
+    <CallToAction href="/contact/" data-hire-event="hire_cta_click" data-hire-surface="contact_cta">
+      Get in touch
+      <Icon icon="paper-plane-tilt" size="1.2em" />
+    </CallToAction>
+    <a
+      class="linkedin-link"
+      href="https://www.linkedin.com/in/alehar/"
+      target="_blank"
+      rel="noopener noreferrer"
+      data-hire-event="linkedin_click"
+      data-hire-surface="contact_cta"
+    >
+      LinkedIn
+    </a>
+  </div>
 </aside>
 
 <style>
@@ -36,6 +44,33 @@ import Icon from './Icon.astro';
     max-width: 15ch;
   }
 
+  .cta-group {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .linkedin-link {
+    color: var(--gray-300);
+    text-decoration: 1px solid underline transparent;
+    text-underline-offset: 0.25em;
+    transition:
+      color var(--theme-transition),
+      text-decoration-color var(--theme-transition);
+  }
+
+  .linkedin-link:hover,
+  .linkedin-link:focus-visible {
+    color: var(--accent-text-over);
+    text-decoration-color: currentColor;
+  }
+
+  .linkedin-link:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+  }
+
   @media (min-width: 50em) {
     aside {
       padding: 7.5rem;
@@ -47,6 +82,10 @@ import Icon from './Icon.astro';
     h2 {
       font-size: var(--text-3xl);
       text-align: left;
+    }
+
+    .cta-group {
+      align-items: flex-end;
     }
   }
 </style>
