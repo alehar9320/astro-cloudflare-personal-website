@@ -25,6 +25,11 @@ const { title, description } = Astro.props;
     <a href="#main-content" class="sr-only focus-visible">Skip to content</a>
 
     <div class="stack backgrounds">
+      <div class="aurora-bg" aria-hidden="true">
+        <div class="aurora-glow glow-1"></div>
+        <div class="aurora-glow glow-2"></div>
+        <div class="aurora-glow glow-3"></div>
+      </div>
       <Nav />
       <slot />
       <Footer />
@@ -131,6 +136,142 @@ const { title, description } = Astro.props;
           background: none;
           background-blend-mode: none;
           --bg-gradient-size: none;
+        }
+      }
+
+      /* Northern Lights Aurora Background */
+      .aurora-bg {
+        position: absolute;
+        inset: 0;
+        overflow: hidden;
+        pointer-events: none;
+        z-index: -1;
+        opacity: 0.85;
+      }
+
+      .aurora-glow {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(80px);
+        will-change: transform;
+      }
+
+      .glow-1 {
+        top: -10vw;
+        left: -10vw;
+        width: 60vw;
+        height: 60vw;
+        max-width: 800px;
+        max-height: 800px;
+        background: radial-gradient(
+          circle,
+          rgba(0, 210, 255, 0.22) 0%,
+          rgba(0, 102, 204, 0.1) 60%,
+          transparent 100%
+        );
+        animation: aurora-move-1 22s ease-in-out infinite alternate;
+      }
+
+      .glow-2 {
+        top: 0vw;
+        right: -10vw;
+        width: 50vw;
+        height: 50vw;
+        max-width: 700px;
+        max-height: 700px;
+        background: radial-gradient(
+          circle,
+          rgba(0, 255, 180, 0.18) 0%,
+          rgba(0, 150, 255, 0.08) 60%,
+          transparent 100%
+        );
+        animation: aurora-move-2 28s ease-in-out infinite alternate;
+      }
+
+      .glow-3 {
+        top: 15vw;
+        left: 20vw;
+        width: 55vw;
+        height: 40vw;
+        max-width: 750px;
+        max-height: 550px;
+        background: radial-gradient(
+          circle,
+          rgba(112, 0, 255, 0.12) 0%,
+          rgba(0, 210, 255, 0.06) 60%,
+          transparent 100%
+        );
+        animation: aurora-move-3 25s ease-in-out infinite alternate;
+      }
+
+      :root.theme-dark .glow-1 {
+        background: radial-gradient(
+          circle,
+          rgba(0, 210, 255, 0.3) 0%,
+          rgba(0, 102, 204, 0.18) 60%,
+          transparent 100%
+        );
+      }
+
+      :root.theme-dark .glow-2 {
+        background: radial-gradient(
+          circle,
+          rgba(0, 255, 180, 0.22) 0%,
+          rgba(0, 180, 255, 0.12) 60%,
+          transparent 100%
+        );
+      }
+
+      :root.theme-dark .glow-3 {
+        background: radial-gradient(
+          circle,
+          rgba(120, 80, 255, 0.18) 0%,
+          rgba(0, 210, 255, 0.1) 60%,
+          transparent 100%
+        );
+      }
+
+      @keyframes aurora-move-1 {
+        0% {
+          transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+        }
+        50% {
+          transform: translate3d(8%, 12%, 0) scale(1.1) rotate(5deg);
+        }
+        100% {
+          transform: translate3d(-5%, 5%, 0) scale(0.95) rotate(-3deg);
+        }
+      }
+
+      @keyframes aurora-move-2 {
+        0% {
+          transform: translate3d(0, 0, 0) scale(1) rotate(0deg);
+        }
+        50% {
+          transform: translate3d(-10%, 8%, 0) scale(1.15) rotate(-6deg);
+        }
+        100% {
+          transform: translate3d(6%, -5%, 0) scale(0.9) rotate(4deg);
+        }
+      }
+
+      @keyframes aurora-move-3 {
+        0% {
+          transform: translate3d(0, 0, 0) scale(0.95);
+        }
+        50% {
+          transform: translate3d(5%, -10%, 0) scale(1.08);
+        }
+        100% {
+          transform: translate3d(-8%, 8%, 0) scale(1);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .glow-1,
+        .glow-2,
+        .glow-3 {
+          animation: none;
         }
       }
 
