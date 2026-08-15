@@ -51,7 +51,11 @@ export const DESIGN_SYSTEM_PROOF =
 
 export function groundedDesignSystemAnswer(lastUserMessage: string): string | null {
   const question = lastUserMessage.trim().toLowerCase();
-  if (question === DESIGN_SYSTEM_CHIP.toLowerCase()) {
+  if (
+    question === DESIGN_SYSTEM_CHIP.toLowerCase() ||
+    (question.includes('design system') &&
+      (question.includes('ifs') || question.includes('change') || question.includes('roi')))
+  ) {
     return DESIGN_SYSTEM_PROOF;
   }
   return null;
