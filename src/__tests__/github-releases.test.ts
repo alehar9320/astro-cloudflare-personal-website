@@ -301,22 +301,27 @@ describe('github releases utility', () => {
       },
     ];
 
-    it('returns cached data if available and not expired', async () => {
+    it('ignores sessionStorage and loads /api/releases so a new tag is not stuck behind a stale list', async () => {
       vi.stubGlobal('window', {});
       const getItem = vi.fn().mockReturnValue(
         JSON.stringify({
-          data: mockReleases,
+          data: [{ ...mockReleases[0], version: '2026.08.15.1720' }],
           timestamp: Date.now() - 1000,
         })
       );
       vi.stubGlobal('sessionStorage', { getItem });
 
-      const fetchMock = vi.fn();
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => mockReleases,
+      });
       const result = await fetchGitHubReleases(fetchMock as typeof fetch);
 
       expect(result).toEqual(mockReleases);
-      expect(getItem).toHaveBeenCalledWith('github-releases-cache');
-      expect(fetchMock).not.toHaveBeenCalled();
+      expect(fetchMock).toHaveBeenCalledWith(
+        '/api/releases',
+        expect.objectContaining({ headers: { Accept: 'application/json' } })
+      );
     });
 
     it('fetches and saves to cache if cache is expired', async () => {
@@ -338,7 +343,10 @@ describe('github releases utility', () => {
       const result = await fetchGitHubReleases(fetchMock as typeof fetch);
 
       expect(result).toEqual(mockReleases);
-      expect(setItem).toHaveBeenCalledWith('github-releases-cache', expect.any(String));
+      expect(fetchMock).toHaveBeenCalledWith(
+        '/api/releases',
+        expect.objectContaining({ headers: { Accept: 'application/json' } })
+      );
     });
 
     it('handles cache read errors gracefully', async () => {

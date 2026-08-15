@@ -27,9 +27,6 @@ const RELEASES_API_URL =
 const RELEASES_PAGE_URL =
   'https://github.com/alehar9320/astro-cloudflare-personal-website/releases';
 const REPO_URL = 'https://github.com/alehar9320/astro-cloudflare-personal-website';
-const CACHE_KEY = 'github-releases-cache';
-const CACHE_TTL = 3600 * 1000; // 1 hour
-
 function logReleaseValidationFailed(issues: z.ZodIssue[]): void {
   const sanitizedIssues = issues.map((issue) => {
     const safeIssue = { ...issue } as Record<string, unknown>;
@@ -83,19 +80,8 @@ export async function fetchGitHubReleases(
   url: string = RELEASES_API_URL
 ): Promise<SiteRelease[]> {
   if (typeof window !== 'undefined' && url === RELEASES_API_URL) {
-    try {
-      const cached = sessionStorage.getItem(CACHE_KEY);
-      if (cached) {
-        const { data, timestamp } = JSON.parse(cached);
-        const parsed = z.array(SiteReleaseSchema).safeParse(data);
-        if (Date.now() - timestamp < CACHE_TTL && parsed.success && parsed.data.length > 0) {
-          return parsed.data;
-        }
-      }
-    } catch {
-      /* ignore cache errors */
-    }
-
+    // Same-origin /api/releases is cheap. Skip sessionStorage so a new GitHub
+    // release is not hidden behind a 1-hour stale list (exec 1814 / list 1720).
     try {
       const response = await fetchImpl('/api/releases', {
         headers: { Accept: 'application/json' },
@@ -104,14 +90,6 @@ export async function fetchGitHubReleases(
         const json = await response.json();
         const parsed = z.array(SiteReleaseSchema).safeParse(json);
         if (parsed.success && parsed.data.length > 0) {
-          try {
-            sessionStorage.setItem(
-              CACHE_KEY,
-              JSON.stringify({ data: parsed.data, timestamp: Date.now() })
-            );
-          } catch {
-            /* ignore cache errors */
-          }
           return parsed.data;
         }
         if (!parsed.success) {
@@ -172,17 +150,6 @@ export async function fetchGitHubReleases(
       .filter((release) => !release.prerelease)
       .map(normalizeRelease)
       .filter((release): release is SiteRelease => release !== null);
-
-    if (typeof window !== 'undefined' && url === RELEASES_API_URL && releases.length > 0) {
-      try {
-        sessionStorage.setItem(
-          CACHE_KEY,
-          JSON.stringify({ data: releases, timestamp: Date.now() })
-        );
-      } catch {
-        /* ignore cache errors */
-      }
-    }
 
     return releases;
   } catch (error) {
