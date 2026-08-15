@@ -109,8 +109,13 @@ const { title, description } = Astro.props;
 
       .aurora {
         position: absolute;
-        inset: 0;
+        top: 0;
+        right: 0;
+        left: 0;
         z-index: 0;
+        height: 100vh;
+        height: 100svh;
+        height: 100dvh;
         pointer-events: none;
         overflow: hidden;
       }
@@ -128,7 +133,6 @@ const { title, description } = Astro.props;
         position: absolute;
         inset: -12%;
         pointer-events: none;
-        filter: blur(24px);
       }
 
       .aurora-wash-a {
