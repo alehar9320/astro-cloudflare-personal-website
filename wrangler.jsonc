@@ -20,6 +20,7 @@
     }
   ],
   "vars": {
-    "PUBLIC_POSTHOG_HOST": "https://eu.i.posthog.com"
+    "PUBLIC_POSTHOG_HOST": "https://eu.i.posthog.com",
+    "PUBLIC_POSTHOG_KEY": "phc_sMWrvgXAzhmDbkdmngsr3W7ZgJ4UdRTpzM2an8H2NUN7"
   }
 }
