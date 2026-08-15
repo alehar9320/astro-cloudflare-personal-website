@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 const files = [
   'src/pages/about.astro',
   'src/pages/biography.astro',
+  'src/pages/work.astro',
   'src/components/MainHead.astro',
   'public/llms.txt',
   'src/pages/api/chat.ts',
@@ -24,13 +25,21 @@ describe('identity copy', () => {
     }
   });
 
-  it('does not mint unverifiable About metrics', () => {
+  it('does not mint unverifiable metrics on About, Work, or the twin', () => {
     const about = sources.find((s) => s.path.endsWith('about.astro'))!.text;
-    expect(about).not.toContain('multi-million');
+    const work = sources.find((s) => s.path.endsWith('work.astro'))!.text;
+    const twin = sources.find((s) => s.path.endsWith('chat.ts'))!.text;
+    for (const { path, text } of sources) {
+      expect(text, path).not.toContain('multi-million');
+      expect(text, path).not.toContain('several millions');
+      expect(text, path).not.toContain('Strategic Product Management');
+    }
     expect(about).not.toContain('autonomous industrial AI');
-    expect(about).toContain('2x faster delivery');
-    expect(about).toContain('30x ROI');
-    expect(about).toContain('Zeroheight');
+    expect(about).not.toContain('30x ROI');
+    expect(about).toContain('/work/ifs-design-system/');
+    expect(work).toContain('Product Manager, Developer Experience');
+    expect(twin).toContain('2x faster delivery');
+    expect(twin).toContain('30x ROI');
   });
 
   it('grounds llms.txt with Chalmers education and recruiter keywords', () => {
