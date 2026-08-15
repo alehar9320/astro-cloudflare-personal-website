@@ -1,4 +1,5 @@
 // @ts-check
+import { readFileSync } from 'node:fs';
 import { defineConfig } from 'astro/config';
 import { codecovVitePlugin } from '@codecov/vite-plugin';
 
@@ -8,6 +9,22 @@ import sentry from '@sentry/astro';
 
 const isRender = process.env.RENDER === 'true';
 const isAstroCheck = process.argv.includes('check');
+
+// Vite inlines PUBLIC_* from process.env at build time. Cloudflare Workers
+// Builds does not inject wrangler.jsonc vars into that env, which is why
+// PostHog never initialized on prod (key missing → PostHog.astro no-ops).
+try {
+  const wranglerConfig = JSON.parse(
+    readFileSync(new URL('./wrangler.jsonc', import.meta.url), 'utf8')
+  );
+  for (const [key, value] of Object.entries(wranglerConfig.vars ?? {})) {
+    if (process.env[key] === undefined && value != null) {
+      process.env[key] = String(value);
+    }
+  }
+} catch {
+  // wrangler.jsonc is optional for `astro check` / local without the file.
+}
 
 const codecovPlugin = /** @type {import('vite').PluginOption} */ (
   codecovVitePlugin({
