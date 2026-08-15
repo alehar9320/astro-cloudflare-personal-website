@@ -25,16 +25,31 @@ function jsonError(error: string, status: number) {
   });
 }
 
+function readChatEnv(locals: unknown): ChatEnv {
+  try {
+    const env = (locals as { runtime?: { env?: ChatEnv } } | null)?.runtime?.env;
+    if (env && typeof env === 'object') return env;
+  } catch {
+    // Workers have no process.env without nodejs_compat.
+  }
+  return {};
+}
+
+const UNAVAILABLE = 'Chat is currently unavailable. Please try again later.';
+
 export const POST: APIRoute = async ({ request, locals }) => {
-  // Access bindings through locals.runtime.env or process.env (fallback for non-Cloudflare)
-  const bindings = ((locals as unknown as { runtime?: { env: ChatEnv } }).runtime?.env ||
-    process.env) as unknown as ChatEnv;
+  let bindings: ChatEnv;
+  try {
+    bindings = readChatEnv(locals);
+  } catch {
+    return jsonError(UNAVAILABLE, 503);
+  }
 
   const ai = bindings.AI;
   const store = bindings.CHAT_STORE;
 
   if (!ai) {
-    return jsonError('Chat is currently unavailable. Please try again later.', 503);
+    return jsonError(UNAVAILABLE, 503);
   }
 
   // Basic Security: Client IP-based rate limiting

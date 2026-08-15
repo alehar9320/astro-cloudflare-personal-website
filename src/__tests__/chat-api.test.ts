@@ -411,19 +411,24 @@ describe('chat API', () => {
     const originalEnv = process.env;
     process.env = { ...originalEnv, AI: ai as unknown as (typeof process.env)['AI'] };
 
-    const request = createRequest({ messages: [{ role: 'user', content: 'Hello' }] });
-    const context = {
-      request,
-      locals: {
-        runtime: {} as { env: ChatEnv },
-      },
-    } as unknown as ChatPostContext;
+    try {
+      const request = createRequest({ messages: [{ role: 'user', content: 'Hello' }] });
+      const context = {
+        request,
+        locals: {
+          runtime: {} as { env: ChatEnv },
+        },
+      } as unknown as ChatPostContext;
 
-    const response = await POST(context);
-    expect(response.status).toBe(200);
-    expect(ai.run).toHaveBeenCalled();
-
-    process.env = originalEnv;
+      const response = await POST(context);
+      expect(response.status).toBe(503);
+      await expect(readJson(response)).resolves.toEqual({
+        error: 'Chat is currently unavailable. Please try again later.',
+      });
+      expect(ai.run).not.toHaveBeenCalled();
+    } finally {
+      process.env = originalEnv;
+    }
   });
 
   it('handles rate limit count being an empty string', async () => {
@@ -488,19 +493,23 @@ describe('chat API', () => {
     expect(loggedError.error).toContain('AI unavailable');
   });
 
-  it('falls back to process.env when locals.runtime.env is missing', async () => {
+  it('does not fall back to process.env when locals.runtime.env is missing', async () => {
     const ai = createAi();
     const originalEnv = process.env;
     process.env = { ...originalEnv, AI: ai as unknown as (typeof process.env)['AI'] };
 
-    const request = createRequest({ messages: [{ role: 'user', content: 'Hello' }] });
-    const context = { request, locals: {} } as unknown as ChatPostContext;
+    try {
+      const request = createRequest({ messages: [{ role: 'user', content: 'Hello' }] });
+      const context = { request, locals: {} } as unknown as ChatPostContext;
 
-    const response = await POST(context);
-
-    expect(response.status).toBe(200);
-    expect(ai.run).toHaveBeenCalled();
-
-    process.env = originalEnv;
+      const response = await POST(context);
+      expect(response.status).toBe(503);
+      await expect(readJson(response)).resolves.toEqual({
+        error: 'Chat is currently unavailable. Please try again later.',
+      });
+      expect(ai.run).not.toHaveBeenCalled();
+    } finally {
+      process.env = originalEnv;
+    }
   });
 });
