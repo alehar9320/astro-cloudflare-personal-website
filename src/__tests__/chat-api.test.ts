@@ -89,12 +89,12 @@ describe('chat API', () => {
     const callArgs = ai.run.mock.calls[0];
     const systemMessage = callArgs[1].messages[0];
     expect(systemMessage.role).toBe('system');
-    expect(systemMessage.content).toContain("Alexander Härenstam's digital twin");
-    expect(systemMessage.content).toContain('Product Manager, Developer Experience at IFS');
-    expect(systemMessage.content).toContain('2x faster delivery');
-    expect(systemMessage.content).toContain('30x ROI');
-    expect(systemMessage.content).toContain('Zeroheight');
-    expect(systemMessage.content).toContain('https://www.linkedin.com/in/alehar/');
+    expect(systemMessage.content).toContain('Product Manager, Developer Experience');
+    expect(systemMessage.content).toContain('linkedin.com/in/alehar');
+    expect(systemMessage.content).not.toContain('Strategic Product Leader');
+    expect(systemMessage.content).not.toContain('Available');
+    expect(systemMessage.content).not.toContain('mailto');
+    expect(systemMessage.content).not.toContain('CV');
   });
 
   it('returns 503 when the AI binding is missing', async () => {
