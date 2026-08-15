@@ -6,7 +6,6 @@ export const RELEASE_SUMMARY_KEY_PREFIX = 'release-summary:';
 const BANNED_NAME = /\b(palette|oracle|scribe|sentinel|vantage|bolt|jules)\b/gi;
 const SHA_ONE = /\b[a-f0-9]{7,40}\b/i;
 const SHA_ALL = /\b[a-f0-9]{7,40}\b/gi;
-const ALLOWED_METRICS = new Set(['2x', '30x', 'roi']);
 
 export function releaseSummaryKey(tag: string): string {
   return `${RELEASE_SUMMARY_KEY_PREFIX}${tag}`;
@@ -53,7 +52,6 @@ export function isSafeReleaseSummary(summary: string, source: string): boolean {
   if (count < 2 || count > 4) return false;
   const sourceLower = source.toLowerCase();
   for (const token of metricTokens(text)) {
-    if (ALLOWED_METRICS.has(token)) continue;
     if (!sourceLower.includes(token)) return false;
   }
   return true;

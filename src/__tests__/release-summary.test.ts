@@ -49,13 +49,13 @@ describe('isSafeReleaseSummary', () => {
     expect(isSafeReleaseSummary(okSummary, source)).toBe(true);
   });
 
-  it('allows the IFS Design System 2x / 30x proof', () => {
+  it('rejects invented 2x / 30x that are not in the notes', () => {
     expect(
       isSafeReleaseSummary(
         'The IFS Design System delivered 2x faster delivery and 30x ROI. That is the numbered proof. Changelog is below.',
         source
       )
-    ).toBe(true);
+    ).toBe(false);
   });
 
   it('rejects invented metrics that are not 2x or 30x', () => {
@@ -220,7 +220,7 @@ describe('release summary API', () => {
     expect(put).toHaveBeenCalledWith('release-summary:2026.08.15.1714', notesFallback);
   });
 
-  it('keeps a 2x / 30x design-system proof from AI', async () => {
+  it('drops invented 2x / 30x and falls back to the notes', async () => {
     const get = vi.fn().mockResolvedValue(null);
     const put = vi.fn();
     const proof =
@@ -233,7 +233,7 @@ describe('release summary API', () => {
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({
       tag: latest.version,
-      summary: proof,
+      summary: notesFallback,
     });
   });
 
