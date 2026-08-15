@@ -15,7 +15,8 @@ describe('identity copy', () => {
 
   it('does not use Strategic Product Leader in about, biography, meta, llms.txt, or the twin prompt', () => {
     for (const { path, text } of sources) {
-      expect(text, path).not.toContain('Strategic Product Leader');
+      expect(text.toLowerCase(), path).not.toContain('strategic product leader');
+      expect(text.toLowerCase(), path).not.toContain('strategic product leadership');
     }
   });
 
@@ -38,6 +39,10 @@ describe('identity copy', () => {
     expect(about).not.toContain('30x ROI');
     expect(about).toContain('/work/ifs-design-system/');
     expect(work).toContain('Product Manager, Developer Experience');
+    const bio = sources.find((s) => s.path.endsWith('biography.astro'))!.text;
+    expect(bio).toContain(
+      'Explore the professional journey of Alexander Härenstam, Product Manager, Developer Experience at IFS.'
+    );
     expect(twin).toContain('2x faster delivery');
     expect(twin).toContain('30x ROI');
   });

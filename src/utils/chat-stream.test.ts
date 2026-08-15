@@ -8,9 +8,9 @@ function event(response: string) {
 
 describe('chat stream parser', () => {
   it('extracts readable text from a complete SSE transcript', () => {
-    const raw = `${event('As')}${event(' a')}${event(' strategic Product Leader')}${event(' at IFS')}${'data: [DONE]\n\n'}`;
+    const raw = `${event('As')}${event(' a')}${event(' Product Manager')}${event(' at IFS')}${'data: [DONE]\n\n'}`;
 
-    expect(extractAssistantTextFromSse(raw)).toBe('As a strategic Product Leader at IFS');
+    expect(extractAssistantTextFromSse(raw)).toBe('As a Product Manager at IFS');
   });
 
   it('buffers partial chunks until a full event arrives', () => {
