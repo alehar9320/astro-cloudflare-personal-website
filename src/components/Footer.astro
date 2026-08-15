@@ -29,8 +29,18 @@ const currentYear = new Date().getFullYear();
         Report an issue
       </a>
     </p>
-    <p class="colophon">Built and run with agentic engineering.</p>
-    <p class="visit-stats" data-visit-stats hidden></p>
+    <div class="colophon">
+      Built and run with agentic engineering.<span class="visit-stats" data-visit-stats hidden>
+        <span aria-hidden="true"> · </span>
+        <button
+          type="button"
+          class="visit-trigger"
+          data-visit-count
+          aria-expanded="false"
+          aria-controls="visit-glance-panel"
+          aria-haspopup="true"></button>
+      </span>
+    </div>
   </div>
   <p class="socials">
     <a href="https://www.linkedin.com/in/alehar/"> LinkedIn</a>
@@ -48,10 +58,20 @@ const currentYear = new Date().getFullYear();
     </a>
   </p>
 </footer>
+<div class="visit-panel" id="visit-glance-panel" hidden>
+  <span data-glance-all></span>
+  <span data-glance-7d></span>
+  <span data-glance-first></span>
+</div>
 
 <script>
   import { fetchGitHubReleases } from '../utils/github-releases';
-  import { formatPageviewCount, shouldShowVisitCount } from '../utils/visit-stats';
+  import {
+    formatPageviewCount,
+    formatVisitGlance,
+    shouldShowVisitCount,
+    type VisitGlance,
+  } from '../utils/visit-stats';
 
   const versionLink = document.querySelector('[data-latest-version]');
 
@@ -68,6 +88,19 @@ const currentYear = new Date().getFullYear();
 
   const visitStats = document.querySelector('[data-visit-stats]');
 
+  function isVisitGlance(data: unknown): data is VisitGlance {
+    if (!data || typeof data !== 'object') return false;
+    const row = data as VisitGlance;
+    return (
+      shouldShowVisitCount(row.pageviews) &&
+      typeof row.uniqueVisitors === 'number' &&
+      Number.isFinite(row.uniqueVisitors) &&
+      typeof row.firstSeen === 'string' &&
+      Number.isFinite(row.pageviews7d) &&
+      Number.isFinite(row.uniqueVisitors7d)
+    );
+  }
+
   if (visitStats instanceof HTMLElement) {
     fetch('/api/visits')
       .then(async (response) => {
@@ -80,15 +113,76 @@ const currentYear = new Date().getFullYear();
           return;
         }
 
-        const pageviews =
-          data && typeof data === 'object' && 'pageviews' in data
-            ? (data as { pageviews: unknown }).pageviews
-            : undefined;
+        if (!isVisitGlance(data)) return;
 
-        if (!shouldShowVisitCount(pageviews)) return;
+        const trigger = visitStats.querySelector('[data-visit-count]');
+        const panel = document.getElementById('visit-glance-panel');
+        const all = panel?.querySelector('[data-glance-all]');
+        const last7d = panel?.querySelector('[data-glance-7d]');
+        const first = panel?.querySelector('[data-glance-first]');
+        if (
+          !(trigger instanceof HTMLButtonElement) ||
+          !(panel instanceof HTMLElement) ||
+          !(all instanceof HTMLElement) ||
+          !(last7d instanceof HTMLElement) ||
+          !(first instanceof HTMLElement)
+        ) {
+          return;
+        }
 
-        visitStats.textContent = formatPageviewCount(pageviews);
+        const lines = formatVisitGlance(data);
+        trigger.textContent = formatPageviewCount(data.pageviews);
+        all.textContent = lines.all;
+        last7d.textContent = lines.last7d;
+        first.textContent = lines.firstSeen;
         visitStats.hidden = false;
+        document.body.append(panel);
+
+        const place = () => {
+          const box = trigger.getBoundingClientRect();
+          panel.style.position = 'fixed';
+          panel.style.left = `${Math.max(8, Math.min(box.left, window.innerWidth - 280))}px`;
+          panel.style.top = 'auto';
+          panel.style.right = 'auto';
+          panel.style.bottom = `${Math.max(8, window.innerHeight - box.top + 8)}px`;
+        };
+
+        const setOpen = (open: boolean) => {
+          panel.hidden = !open;
+          trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+          if (open) place();
+        };
+
+        trigger.addEventListener('click', (event) => {
+          event.preventDefault();
+          event.stopPropagation();
+          setOpen(panel.hidden);
+        });
+
+        if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
+          trigger.addEventListener('pointerenter', () => setOpen(true));
+          trigger.addEventListener('pointerleave', (event) => {
+            if (event.relatedTarget instanceof Node && panel.contains(event.relatedTarget)) return;
+            setOpen(false);
+          });
+          panel.addEventListener('pointerleave', () => setOpen(false));
+        }
+
+        document.addEventListener('keydown', (event) => {
+          if (event.key === 'Escape') setOpen(false);
+        });
+        document.addEventListener('click', (event) => {
+          if (
+            event.target instanceof Node &&
+            !trigger.contains(event.target) &&
+            !panel.contains(event.target)
+          ) {
+            setOpen(false);
+          }
+        });
+        window.addEventListener('resize', () => {
+          if (!panel.hidden) place();
+        });
       })
       .catch(() => {
         // Fail-open: keep the count hidden.
@@ -165,14 +259,66 @@ const currentYear = new Date().getFullYear();
   }
 
   .colophon {
+    position: relative;
+    overflow: visible;
     font-size: 0.75rem;
     color: var(--gray-600);
     line-height: 1.5;
   }
 
   .visit-stats {
+    display: inline;
+    color: inherit;
+    font-size: inherit;
+  }
+
+  .visit-trigger {
+    display: inline;
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
     color: var(--gray-400);
-    font-size: var(--text-sm);
+    cursor: pointer;
+    text-underline-offset: 0.25em;
+    text-decoration: 1px dotted underline transparent;
+  }
+
+  .visit-trigger:hover,
+  .visit-trigger:focus-visible {
+    text-decoration-color: currentColor;
+  }
+
+  .visit-trigger:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+    border-radius: 0.25rem;
+  }
+
+  .visit-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    position: fixed;
+    z-index: 40;
+    min-width: 14rem;
+    max-width: 18rem;
+    padding: 0.5rem 0.75rem;
+    text-align: left;
+    font-size: 0.75rem;
+    line-height: 1.45;
+    color: var(--gray-200);
+    background: var(--gray-900);
+    border: 1px solid var(--gray-700);
+    border-radius: 0.375rem;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .visit-panel[hidden] {
+    display: none !important;
   }
 
   /* Source icon link styling: keep visual weight minimal */
@@ -236,10 +382,6 @@ const currentYear = new Date().getFullYear();
       flex-direction: row;
       gap: 1rem;
       flex-wrap: wrap;
-    }
-
-    .colophon {
-      flex-basis: 100%;
     }
 
     .socials {
