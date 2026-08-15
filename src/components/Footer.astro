@@ -33,6 +33,7 @@ const currentYear = new Date().getFullYear();
       Human + AI Collaboration. Optimized for humans & agents. Content may have flaws; verify for
       accuracy.
     </p>
+    <p class="visit-stats" data-visit-stats hidden></p>
   </div>
   <p class="socials">
     <a href="https://www.linkedin.com/in/alehar/"> LinkedIn</a>
@@ -53,6 +54,7 @@ const currentYear = new Date().getFullYear();
 
 <script>
   import { fetchGitHubReleases } from '../utils/github-releases';
+  import { formatPageviewCount, shouldShowVisitCount } from '../utils/visit-stats';
 
   const versionLink = document.querySelector('[data-latest-version]');
 
@@ -65,6 +67,35 @@ const currentYear = new Date().getFullYear();
 
       versionLink.textContent = 'Latest Updates';
     });
+  }
+
+  const visitStats = document.querySelector('[data-visit-stats]');
+
+  if (visitStats instanceof HTMLElement) {
+    fetch('/api/visits')
+      .then(async (response) => {
+        if (response.status === 204 || !response.ok) return;
+
+        let data: unknown;
+        try {
+          data = await response.json();
+        } catch {
+          return;
+        }
+
+        const pageviews =
+          data && typeof data === 'object' && 'pageviews' in data
+            ? (data as { pageviews: unknown }).pageviews
+            : undefined;
+
+        if (!shouldShowVisitCount(pageviews)) return;
+
+        visitStats.textContent = formatPageviewCount(pageviews);
+        visitStats.hidden = false;
+      })
+      .catch(() => {
+        // Fail-open: keep the count hidden.
+      });
   }
 </script>
 
@@ -140,6 +171,11 @@ const currentYear = new Date().getFullYear();
     font-size: 0.75rem;
     color: var(--gray-600);
     line-height: 1.5;
+  }
+
+  .visit-stats {
+    color: var(--gray-400);
+    font-size: var(--text-sm);
   }
 
   /* Source icon link styling: keep visual weight minimal */
