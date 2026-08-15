@@ -1,17 +1,21 @@
 import { splitReleaseBody } from './github-releases';
 
 export const RELEASE_SUMMARY_MODEL = '@cf/meta/llama-3.1-8b-instruct-fast';
-export const RELEASE_SUMMARY_KEY_PREFIX = 'release-summary:v3:';
+export const RELEASE_SUMMARY_KEY_PREFIX = 'release-summary:v4:';
 
 const BANNED_NAME = /\b(palette|oracle|scribe|sentinel|vantage|bolt|jules)\b/gi;
 const SHA_ONE = /\b[a-f0-9]{7,40}\b/i;
 const SHA_ALL = /\b[a-f0-9]{7,40}\b/gi;
 const CONVENTIONAL = /\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/i;
-const SQUASH_TITLE_LEAK = /\bexec summary\b|\bof the latest github release\b/i;
+const ENGINEERING_LEAK =
+  /\bexec summary\b|\bof the latest github release\b|cloudflare:workers|\bnode stub\b|\bsessionstorage\b|\bdo not paint\b|\bexec box\b|\bon \/whats-new\b|\balias\b/i;
+const VISITOR_VERB =
+  /^(open|tap|see|read|view|show|visit|browse|get|use|download|contact|inline)\b/i;
 
 export function isVisitorFacingBullet(message: string): boolean {
   const text = message.trim();
-  return text.length > 0 && !SQUASH_TITLE_LEAK.test(text);
+  if (!text || ENGINEERING_LEAK.test(text)) return false;
+  return VISITOR_VERB.test(text);
 }
 
 export function releaseSummaryKey(tag: string): string {
@@ -69,7 +73,7 @@ export function isSafeReleaseSummary(summary: string, source: string): boolean {
     /\bcommit hash\b/i.test(text) ||
     /\B#\d+\b/.test(text) ||
     CONVENTIONAL.test(text) ||
-    SQUASH_TITLE_LEAK.test(text)
+    ENGINEERING_LEAK.test(text)
   ) {
     return false;
   }
