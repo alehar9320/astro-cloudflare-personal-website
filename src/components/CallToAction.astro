@@ -95,4 +95,16 @@ const {
       font-size: var(--text-xl);
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    a {
+      transition: none;
+    }
+
+    a:hover,
+    a:focus-visible,
+    a:active {
+      transform: none;
+    }
+  }
 </style>

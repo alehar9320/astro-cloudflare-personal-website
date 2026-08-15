@@ -1,22 +1,9 @@
 ---
-import { getCollection } from 'astro:content';
-// Component Imports
 import CallToAction from '../components/CallToAction.astro';
-// Page section components
-import ContactCTA from '../components/ContactCTA.astro';
-import Grid from '../components/Grid.astro';
 import Hero from '../components/Hero.astro';
-import Icon from '../components/Icon.astro';
-import Pill from '../components/Pill.astro';
-import PortfolioPreview from '../components/PortfolioPreview.astro';
-import Skills from '../components/Skills.astro';
-// Layout import — provides basic page elements: <head>, <nav>, <footer> etc.
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-// Content Fetching: List four most recent work projects
-const projects = (await getCollection('work'))
-  .sort((a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf())
-  .slice(0, 4);
+const linkedinHref = 'https://www.linkedin.com/in/alehar/';
 
 const schema = {
   '@context': 'https://schema.org',
@@ -25,9 +12,9 @@ const schema = {
       '@type': 'Person',
       '@id': 'https://harenstam.com/#person',
       name: 'Alexander Härenstam',
-      jobTitle: 'Strategic Product Leader',
+      jobTitle: 'Product Manager, Developer Experience',
       description:
-        'Strategic Product Leader specializing in Developer Experience (DevEx) and Industrial AI at IFS.',
+        'Product Manager, Developer Experience at IFS. Design systems, DevEx, and Industrial AI.',
       url: 'https://harenstam.com/',
       sameAs: [
         'https://www.linkedin.com/in/alehar/',
@@ -40,11 +27,10 @@ const schema = {
         url: 'https://www.ifs.com/',
       },
       knowsAbout: [
-        'Strategic Product Management',
         'Developer Experience (DevEx)',
-        'Industrial AI',
         'Design Systems',
-        'Digital Transformation',
+        'Industrial AI',
+        'Product Management',
       ],
       alumniOf: {
         '@type': 'CollegeOrUniversity',
@@ -57,19 +43,17 @@ const schema = {
       '@type': 'WebSite',
       '@id': 'https://harenstam.com/#website',
       url: 'https://harenstam.com/',
-      name: 'Alexander Härenstam | Strategic Product Leader',
+      name: 'Alexander Härenstam | Product Manager, Developer Experience',
       publisher: { '@id': 'https://harenstam.com/#person' },
-      description:
-        'Alexander Härenstam is a Strategic Product Leader driving high-impact innovation, Industrial AI, and Developer Experience (DevEx) at IFS.',
+      description: 'Product Manager, Developer Experience at IFS.',
     },
     {
       '@type': 'WebPage',
       '@id': 'https://harenstam.com/#webpage',
       url: 'https://harenstam.com/',
-      name: 'Alexander Härenstam | Strategic Product Leader',
+      name: 'Alexander Härenstam | Product Manager, Developer Experience',
       about: { '@id': 'https://harenstam.com/#person' },
-      description:
-        'Alexander Härenstam is a Strategic Product Leader driving high-impact innovation, Industrial AI, and Developer Experience (DevEx) at IFS.',
+      description: 'Product Manager, Developer Experience at IFS.',
       primaryImageOfPage: {
         '@type': 'ImageObject',
         url: 'https://harenstam.com/assets/portrait.png',
@@ -77,51 +61,31 @@ const schema = {
     },
   ],
 };
-
-// Full Astro Component Syntax:
-// https://docs.astro.build/basics/astro-components/
 ---
 
 <BaseLayout
-  title="Alexander Härenstam | Strategic Product Leader"
-  description="Strategic Product Leader driving high-impact innovation, Industrial AI, and Developer Experience (DevEx) at IFS."
+  title="Alexander Härenstam | Product Manager, Developer Experience"
+  description="Product Manager, Developer Experience at IFS."
 >
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
-  <div class="stack gap-20 lg:gap-48">
-    <div class="wrapper stack gap-8 lg:gap-20">
-      <header class="hero">
-        <Hero
-          title="Elevating Developer Experience & Product Strategy"
-          align="start"
-          variant="primary"
-        >
-          <p slot="tagline" class="tagline">
-            I am <strong>Alexander Härenstam</strong>, a Strategic Product Leader championing
-            enterprise-scale Industrial AI at <a
-              href="https://www.ifs.com/"
-              target="_blank"
-              rel="noopener noreferrer">IFS</a
-            >.
-          </p>
-          <div class="hero-actions">
-            <CallToAction
-              href="https://www.linkedin.com/in/alehar/"
-              target="_blank"
-              rel="noopener noreferrer"
-              data-hire-event="hire_cta_click"
-              data-hire-surface="hero"
-            >
-              Get in touch
-            </CallToAction>
-            <p class="cta-hint">LinkedIn · replies from me</p>
-          </div>
-          <div class="roles">
-            <Pill><Icon icon="strategy" size="1.33em" /> Technical Product Management</Pill>
-            <Pill><Icon icon="terminal-window" size="1.33em" /> Developer Experience (DevEx)</Pill>
-            <Pill><Icon icon="rocket-launch" size="1.33em" /> Applied Industrial AI</Pill>
-          </div>
-        </Hero>
+  <main id="main-content" class="wrapper stack gap-16 lg:gap-24">
+    <header class="hero">
+      <Hero title="Product Manager, Developer Experience at IFS" align="start">
+        <div class="hero-actions">
+          <CallToAction
+            href={linkedinHref}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-hire-event="hire_cta_click"
+            data-hire-surface="hero"
+          >
+            Get in touch
+          </CallToAction>
+          <p class="cta-hint">LinkedIn · replies from me</p>
+        </div>
+      </Hero>
 
+      <div class="portrait">
         <img
           alt="Alexander Härenstam smiling in a red plaid shirt and tortoise shell glasses"
           width="480"
@@ -131,90 +95,24 @@ const schema = {
           fetchpriority="high"
           decoding="async"
         />
-      </header>
-
-      <div class="tldr-box">
-        <p>
-          <strong>TL;DR:</strong> Strategic Product Leader at <strong>IFS</strong> specializing in
-          <strong>Industrial AI</strong>, <strong>Developer Experience (DevEx)</strong>, and
-          <strong>Design Systems</strong>. I drive multi-million dollar ROI by aligning technical
-          excellence with high-impact product innovation.
-        </p>
       </div>
+    </header>
 
-      <Skills />
-    </div>
-
-    <main id="main-content" class="wrapper stack gap-20 lg:gap-48">
-      <section class="section with-background with-cta">
-        <header class="section-header stack gap-2 lg:gap-4">
-          <h2>Strategic Impact & Outcomes</h2>
-          <p>
-            A record of transforming complex enterprise challenges into high-adoption solutions that
-            deliver measurable business value.
-          </p>
-        </header>
-
-        <div class="gallery">
-          <Grid variant="offset">
-            {
-              projects.map((project, index) => (
-                <li>
-                  <PortfolioPreview
-                    project={project}
-                    loading={index === 0 ? 'eager' : 'lazy'}
-                    fetchpriority={index === 0 ? 'high' : 'auto'}
-                  />
-                </li>
-              ))
-            }
-          </Grid>
-        </div>
-
-        <div class="cta">
-          <CallToAction href="/work">
-            View Strategic Portfolio
-            <Icon icon="arrow-right" size="1.2em" />
-          </CallToAction>
-        </div>
-      </section>
-
-      <section class="section with-background bg-variant">
-        <header class="section-header stack gap-2 lg:gap-4">
-          <h2>Amplifying Industry Impact</h2>
-          <p>
-            Driving the conversation through strategic leadership, academic collaboration, and
-            award-winning platform innovation.
-          </p>
-        </header>
-
-        <div class="gallery">
-          <Grid variant="small">
-            <li class="mention-card">
-              <a
-                href="https://blog.ifs.com/author/alexander-harenstam/"
-                target="_blank"
-                rel="noopener noreferrer">Strategic Insights on IFS Blog</a
-              >
-            </li>
-            <li class="mention-card">
-              <a href="https://www.chalmers.se/en/" target="_blank" rel="noopener noreferrer"
-                >Alumnus of Chalmers University</a
-              >
-            </li>
-            <li class="mention-card">
-              <a
-                href="https://zeroheight.com/events/design-system-awards/"
-                target="_blank"
-                rel="noopener noreferrer">Zeroheight Design Awards</a
-              >
-            </li>
-          </Grid>
-        </div>
-      </section>
-    </main>
-    <ContactCTA />
-  </div>
+    <section class="proof" aria-label="Proof">
+      <a class="proof-card" href="/work/ifs-design-system/">
+        <p class="proof-eyebrow">IFS Design System</p>
+        <p class="proof-outcome">Scaled from inception to IFS Cloud.</p>
+        <p class="proof-chips">
+          <span>2x faster delivery</span>
+          <span aria-hidden="true">·</span>
+          <span>30x ROI</span>
+          <span aria-hidden="true">·</span>
+          <span>Zeroheight runner-up</span>
+        </p>
+        <p class="proof-affordance">Read the case</p>
+      </a>
+    </section>
+  </main>
 </BaseLayout>
 
 <style>
@@ -224,10 +122,6 @@ const schema = {
     align-items: center;
     gap: 2rem;
     padding-bottom: 5.5rem;
-  }
-
-  .roles {
-    display: none;
   }
 
   .hero-actions {
@@ -247,12 +141,97 @@ const schema = {
     font-weight: 400;
   }
 
-  .hero img {
+  .portrait {
+    border-radius: 1.5rem;
+    box-shadow: var(--shadow-md);
+  }
+
+  .portrait img {
+    display: block;
+    width: 100%;
     aspect-ratio: 5 / 4;
     object-fit: cover;
     object-position: top;
     border-radius: 1.5rem;
-    box-shadow: var(--shadow-md);
+  }
+
+  .proof-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+  }
+
+  .proof-card:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+  }
+
+  .proof-eyebrow {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .proof-outcome {
+    margin: 0;
+    font-size: var(--text-xl);
+    color: var(--gray-0);
+  }
+
+  .proof-chips {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.5rem;
+    font-size: var(--text-sm);
+    color: var(--gray-200);
+  }
+
+  .proof-affordance {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .portrait {
+      transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease;
+    }
+
+    .portrait:hover,
+    .portrait:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .proof-card {
+      transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        border-color 0.3s ease;
+    }
+
+    .proof-card:hover,
+    .proof-card:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
   }
 
   @media (min-width: 50em) {
@@ -264,152 +243,22 @@ const schema = {
       padding-bottom: 0;
     }
 
-    .roles {
-      margin-top: 0.5rem;
-      display: flex;
-      gap: 0.5rem;
-    }
-
     .hero-actions {
       justify-content: flex-start;
       align-items: flex-start;
     }
 
-    .hero img {
+    .portrait {
+      border-radius: 4.5rem;
+    }
+
+    .portrait img {
       aspect-ratio: 3 / 4;
       border-radius: 4.5rem;
-      object-fit: cover;
-    }
-  }
-
-  /* ====================================================== */
-
-  .section {
-    display: grid;
-    gap: 2rem;
-  }
-
-  .with-background {
-    position: relative;
-  }
-
-  .with-background::before {
-    --hero-bg: var(--bg-image-subtle-2);
-
-    content: '';
-    position: absolute;
-    pointer-events: none;
-    left: 50%;
-    width: 100vw;
-    aspect-ratio: calc(2.25 / var(--bg-scale));
-    top: 0;
-    transform: translateY(-75%) translateX(-50%);
-    background:
-      url('/assets/backgrounds/noise.png') top center/220px repeat,
-      var(--hero-bg) center center / var(--bg-gradient-size) no-repeat,
-      var(--gray-999);
-    background-blend-mode: overlay, normal, normal, normal;
-    mix-blend-mode: var(--bg-blend-mode);
-    z-index: -1;
-  }
-
-  .with-background.bg-variant::before {
-    --hero-bg: var(--bg-image-subtle-1);
-  }
-
-  .section-header {
-    justify-self: center;
-    text-align: center;
-    max-width: 50ch;
-    font-size: var(--text-md);
-    color: var(--gray-300);
-  }
-
-  .section-header h2 {
-    font-size: var(--text-2xl);
-  }
-
-  @media (min-width: 50em) {
-    .section {
-      grid-template-columns: repeat(4, 1fr);
-      grid-template-areas: 'header header header header' 'gallery gallery gallery gallery';
-      gap: 5rem;
     }
 
-    .section.with-cta {
-      grid-template-areas: 'header header header cta' 'gallery gallery gallery gallery';
-    }
-
-    .section-header {
-      grid-area: header;
-      font-size: var(--text-lg);
-    }
-
-    .section-header h2 {
-      font-size: var(--text-4xl);
-    }
-
-    .with-cta .section-header {
-      justify-self: flex-start;
-      text-align: left;
-    }
-
-    .gallery {
-      grid-area: gallery;
-    }
-
-    .cta {
-      grid-area: cta;
-    }
-  }
-
-  /* ====================================================== */
-
-  .mention-card {
-    display: flex;
-    height: 7rem;
-    justify-content: center;
-    align-items: center;
-    text-align: center;
-    border: 1px solid var(--gray-800);
-    border-radius: 1.5rem;
-    color: var(--gray-300);
-    background: var(--gradient-subtle);
-    box-shadow: var(--shadow-sm);
-    transition:
-      transform var(--theme-transition),
-      box-shadow var(--theme-transition),
-      border-color var(--theme-transition);
-  }
-
-  .mention-card a {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    padding: 1rem;
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .mention-card:hover,
-  .mention-card:focus-within {
-    transform: translateY(-2px);
-    border-color: color-mix(in oklab, var(--accent-regular), var(--gray-800) 60%);
-    box-shadow: var(--shadow-md);
-  }
-
-  .mention-card a:focus-visible {
-    outline: 2px solid var(--accent-regular);
-    outline-offset: 4px;
-    border-radius: 1.25rem;
-  }
-
-  @media (min-width: 50em) {
-    .mention-card {
-      border-radius: 1.5rem;
-      height: 9.5rem;
+    .proof-card {
+      padding: 2.5rem;
     }
   }
 </style>
