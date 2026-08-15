@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { env } from 'cloudflare:workers';
 import { ChatRequestSchema, pruneMessages, type ChatMessage } from '../../utils/chat-logic';
 
 const jsonHeaders = {
@@ -25,22 +26,21 @@ function jsonError(error: string, status: number) {
   });
 }
 
-function readChatEnv(locals: unknown): ChatEnv {
+function readChatEnv(): ChatEnv {
   try {
-    const env = (locals as { runtime?: { env?: ChatEnv } } | null)?.runtime?.env;
-    if (env && typeof env === 'object') return env;
+    if (env && typeof env === 'object') return env as ChatEnv;
   } catch {
-    // Workers have no process.env without nodejs_compat.
+    // cloudflare:workers env is the only binding surface after adapter v13.
   }
   return {};
 }
 
 const UNAVAILABLE = 'Chat is currently unavailable. Please try again later.';
 
-export const POST: APIRoute = async ({ request, locals }) => {
+export const POST: APIRoute = async ({ request }) => {
   let bindings: ChatEnv;
   try {
-    bindings = readChatEnv(locals);
+    bindings = readChatEnv();
   } catch {
     return jsonError(UNAVAILABLE, 503);
   }

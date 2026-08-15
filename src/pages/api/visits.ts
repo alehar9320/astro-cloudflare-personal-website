@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { env } from 'cloudflare:workers';
 import { shouldShowVisitCount } from '../../utils/visit-stats';
 
 const securityHeaders = {
@@ -63,19 +64,18 @@ function parsePageviews(payload: unknown): number | null {
   return null;
 }
 
-function readVisitEnv(locals: unknown): VisitEnv {
+function readVisitEnv(): VisitEnv {
   try {
-    const env = (locals as { runtime?: { env?: VisitEnv } } | null)?.runtime?.env;
-    if (env && typeof env === 'object') return env;
+    if (env && typeof env === 'object') return env as VisitEnv;
   } catch {
-    // Workers have no process.env without nodejs_compat; missing runtime is fail-open.
+    // cloudflare:workers env is the only binding surface after adapter v13.
   }
   return {};
 }
 
-export const GET: APIRoute = async ({ locals }) => {
+export const GET: APIRoute = async () => {
   try {
-    const bindings = readVisitEnv(locals);
+    const bindings = readVisitEnv();
     const personalKey = bindings.POSTHOG_PERSONAL_API_KEY?.trim();
     if (!personalKey) {
       console.error({ event: 'visits_key_missing' });

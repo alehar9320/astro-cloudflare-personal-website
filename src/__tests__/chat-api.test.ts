@@ -1,5 +1,6 @@
-import { describe, expect, it, vi, type Mock } from 'vitest';
+import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 
+import { env as workerEnv } from 'cloudflare:workers';
 import { POST, type ChatEnv } from '../pages/api/chat';
 
 const endpoint = 'https://example.com/api/chat';
@@ -19,13 +20,13 @@ function createRequest(body: unknown, headers?: HeadersInit) {
 }
 
 function createContext(request: Request, runtimeEnv: unknown = {}) {
+  const bindings = workerEnv as ChatEnv;
+  delete bindings.AI;
+  delete bindings.CHAT_STORE;
+  Object.assign(bindings, runtimeEnv as ChatEnv);
   return {
     request,
-    locals: {
-      runtime: {
-        env: runtimeEnv as ChatEnv,
-      },
-    },
+    locals: {},
   } as unknown as ChatPostContext;
 }
 
@@ -45,6 +46,12 @@ function createAi(stream = new ReadableStream()): MockAi {
 }
 
 describe('chat API', () => {
+  beforeEach(() => {
+    const bindings = workerEnv as ChatEnv;
+    delete bindings.AI;
+    delete bindings.CHAT_STORE;
+  });
+
   it('sanitizes valid messages and forwards them with the local system prompt', async () => {
     const ai = createAi();
 
