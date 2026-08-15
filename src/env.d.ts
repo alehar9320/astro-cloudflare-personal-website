@@ -14,3 +14,8 @@ interface Env {
   };
   CHAT_STORE: KVNamespace;
 }
+
+declare module '*.txt?raw' {
+  const content: string;
+  export default content;
+}

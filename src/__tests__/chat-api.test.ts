@@ -98,10 +98,16 @@ describe('chat API', () => {
     expect(systemMessage.role).toBe('system');
     expect(systemMessage.content).toContain('Product Manager, Developer Experience');
     expect(systemMessage.content).toContain('linkedin.com/in/alehar');
+    expect(systemMessage.content).toContain('Greater Stockholm');
+    expect(systemMessage.content).toContain('Chalmers B.Sc. Software Engineering');
+    expect(systemMessage.content).toContain(
+      'Chalmers M.Sc. Management and Economics of Innovation'
+    );
+    expect(systemMessage.content).toContain('Hire path is LinkedIn only');
+    expect(systemMessage.content).toContain('AI coding copilots is current DevEx work');
     expect(systemMessage.content).not.toContain('Strategic Product Leader');
     expect(systemMessage.content).not.toContain('Available');
     expect(systemMessage.content).not.toContain('mailto');
-    expect(systemMessage.content).not.toContain('CV');
   });
 
   it('returns 503 when the AI binding is missing', async () => {
