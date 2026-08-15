@@ -11,26 +11,14 @@
     aria-controls="chat-window"
     aria-describedby="status-tooltip"
   >
-    <img
-      src="/assets/portrait.png"
-      alt=""
-      class="chat-toggle-portrait"
-      width="56"
-      height="56"
-    />
+    <img src="/assets/portrait.png" alt="" class="chat-toggle-portrait" width="56" height="56" />
     <span role="tooltip" id="status-tooltip" class="status-tooltip">Ask about the work</span>
   </button>
 
   <div id="chat-window" class="chat-window hidden">
     <div class="chat-header">
       <div class="chat-header-profile">
-        <img
-          src="/assets/portrait.png"
-          alt=""
-          class="chat-header-avatar"
-          width="36"
-          height="36"
-        />
+        <img src="/assets/portrait.png" alt="" class="chat-header-avatar" width="36" height="36" />
         <span class="chat-header-name">Ask Alexander</span>
       </div>
       <button id="chat-close" class="chat-close" aria-label="Close chat">
@@ -131,12 +119,6 @@
   .chat-toggle:focus-visible {
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    .status-dot.loading {
-      animation: none;
-    }
   }
 
   /* Tooltip */
@@ -382,7 +364,6 @@
   const typingIndicator = document.getElementById('typing-indicator');
   const chatSuggestions = document.getElementById('chat-suggestions');
 
-  const statusDots = document.querySelectorAll('.status-dot');
   const statusTooltip = document.getElementById('status-tooltip');
   const statusAnnouncer = document.getElementById('status-announcer');
 
@@ -393,10 +374,6 @@
   };
 
   function setStatus(state: 'idle' | 'loading' | 'error') {
-    statusDots.forEach((el) => {
-      el.classList.remove('idle', 'loading', 'error');
-      el.classList.add(state);
-    });
     if (statusTooltip) statusTooltip.textContent = statusLabels[state];
     if (statusAnnouncer) statusAnnouncer.textContent = statusLabels[state];
   }
