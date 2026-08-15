@@ -81,7 +81,7 @@ export function parseVisitGlance(payload: unknown): VisitGlance | null {
   return { pageviews, uniqueVisitors, firstSeen, pageviews7d, uniqueVisitors7d };
 }
 
-export function formatFirstSeen(iso: string): string {
+function formatFirstSeen(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '';
   return new Intl.DateTimeFormat('en-GB', {
