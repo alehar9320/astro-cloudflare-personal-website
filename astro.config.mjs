@@ -15,7 +15,7 @@ const isAstroCheck = process.argv.includes('check');
 // PostHog never initialized on prod (key missing → PostHog.astro no-ops).
 try {
   const wranglerConfig = JSON.parse(
-    readFileSync(new URL('./wrangler.jsonc', import.meta.url), 'utf8'),
+    readFileSync(new URL('./wrangler.jsonc', import.meta.url), 'utf8')
   );
   for (const [key, value] of Object.entries(wranglerConfig.vars ?? {})) {
     if (process.env[key] === undefined && value != null) {
