@@ -1,12 +1,12 @@
 import { splitReleaseBody } from './github-releases';
 
 export const RELEASE_SUMMARY_MODEL = '@cf/meta/llama-3.1-8b-instruct-fast';
-export const RELEASE_SUMMARY_KEY_PREFIX = 'release-summary:';
+export const RELEASE_SUMMARY_KEY_PREFIX = 'release-summary:v2:';
 
 const BANNED_NAME = /\b(palette|oracle|scribe|sentinel|vantage|bolt|jules)\b/gi;
 const SHA_ONE = /\b[a-f0-9]{7,40}\b/i;
 const SHA_ALL = /\b[a-f0-9]{7,40}\b/gi;
-const CONVENTIONAL = /^(feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/i;
+const CONVENTIONAL = /\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/i;
 
 export function releaseSummaryKey(tag: string): string {
   return `${RELEASE_SUMMARY_KEY_PREFIX}${tag}`;
@@ -44,7 +44,7 @@ export function stripExecBanned(text: string): string {
     .replace(SHA_ALL, '')
     .replace(/\(#\d+\)/g, '')
     .replace(/\bissue number\s+\d+\b/gi, '')
-    .replace(CONVENTIONAL, '')
+    .replace(/\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/gi, '')
     .replace(/\s+([.,;:])/g, '$1')
     .replace(/^[\s:;\-]+/, '')
     .replace(/\s{2,}/g, ' ')
@@ -56,7 +56,12 @@ export function isSafeReleaseSummary(summary: string, source: string): boolean {
   if (!text) return false;
   const count = sentenceCount(text);
   if (count < 2 || count > 4) return false;
-  if (SHA_ONE.test(text) || /\bissue number\b/i.test(text) || /\bcommit hash\b/i.test(text)) {
+  if (
+    SHA_ONE.test(text) ||
+    /\bissue number\b/i.test(text) ||
+    /\bcommit hash\b/i.test(text) ||
+    CONVENTIONAL.test(text)
+  ) {
     return false;
   }
   const sourceLower = source.toLowerCase();
@@ -71,7 +76,8 @@ export function prepareReleaseSummary(summary: string, source: string): string |
   if (
     SHA_ONE.test(original) ||
     /\bissue number\b/i.test(original) ||
-    /\bcommit hash\b/i.test(original)
+    /\bcommit hash\b/i.test(original) ||
+    CONVENTIONAL.test(original)
   ) {
     return null;
   }
