@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
-import { shouldShowVisitCount } from '../../utils/visit-stats';
+import { parseVisitGlance, shouldShowVisitCount } from '../../utils/visit-stats';
 
 const securityHeaders = {
   'X-Content-Type-Options': 'nosniff',
@@ -31,37 +31,17 @@ interface VisitEnv {
 const DEFAULT_PROJECT_ID = '171414';
 const DEFAULT_QUERY_HOST = 'https://eu.posthog.com';
 const QUERY_TIMEOUT_MS = 5000;
-const HOGQL =
-  "SELECT count() AS pageviews FROM events WHERE event = '$pageview' AND timestamp >= toDateTime('1970-01-01 00:00:00')";
+export const HOGQL = `SELECT
+  count() AS pageviews,
+  uniq(distinct_id) AS unique_visitors,
+  min(timestamp) AS first_seen,
+  countIf(timestamp >= now() - INTERVAL 7 DAY) AS pageviews_7d,
+  uniqIf(distinct_id, timestamp >= now() - INTERVAL 7 DAY) AS unique_visitors_7d
+FROM events
+WHERE event = '$pageview' AND timestamp >= toDateTime('1970-01-01 00:00:00')`;
 
 function empty204() {
   return new Response(null, { status: 204, headers: emptyHeaders });
-}
-
-function parsePageviews(payload: unknown): number | null {
-  if (!payload || typeof payload !== 'object') return null;
-  const results = (payload as { results?: unknown }).results;
-  if (!Array.isArray(results) || results.length === 0) return null;
-
-  const row = results[0];
-  let raw: unknown;
-
-  if (typeof row === 'number' || typeof row === 'string') {
-    raw = row;
-  } else if (Array.isArray(row)) {
-    raw = row[0];
-  } else if (row && typeof row === 'object' && 'pageviews' in row) {
-    raw = (row as { pageviews: unknown }).pageviews;
-  } else {
-    return null;
-  }
-
-  if (typeof raw === 'number') return raw;
-  if (typeof raw === 'string' && raw.trim() !== '') {
-    const n = Number(raw);
-    return Number.isFinite(n) ? n : null;
-  }
-  return null;
 }
 
 function readVisitEnv(): VisitEnv {
@@ -133,13 +113,13 @@ export const GET: APIRoute = async () => {
         return empty204();
       }
 
-      const count = parsePageviews(payload);
-      if (!shouldShowVisitCount(count)) {
+      const glance = parseVisitGlance(payload);
+      if (!glance || !shouldShowVisitCount(glance.pageviews)) {
         console.error({ event: 'visits_count_hidden' });
         return empty204();
       }
 
-      return new Response(JSON.stringify({ pageviews: count }), {
+      return new Response(JSON.stringify(glance), {
         status: 200,
         headers: jsonHeaders,
       });

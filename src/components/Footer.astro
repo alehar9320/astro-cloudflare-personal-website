@@ -29,8 +29,7 @@ const currentYear = new Date().getFullYear();
         Report an issue
       </a>
     </p>
-    <p class="colophon">Built and run with agentic engineering.</p>
-    <p class="visit-stats" data-visit-stats hidden></p>
+    <div class="colophon">Built and run with agentic engineering.</div>
   </div>
   <p class="socials">
     <a href="https://www.linkedin.com/in/alehar/"> LinkedIn</a>
@@ -51,7 +50,12 @@ const currentYear = new Date().getFullYear();
 
 <script>
   import { fetchGitHubReleases } from '../utils/github-releases';
-  import { formatPageviewCount, shouldShowVisitCount } from '../utils/visit-stats';
+  import {
+    formatFirstSeen,
+    formatPageviewCount,
+    shouldShowVisitCount,
+    type VisitGlance,
+  } from '../utils/visit-stats';
 
   const versionLink = document.querySelector('[data-latest-version]');
 
@@ -66,7 +70,20 @@ const currentYear = new Date().getFullYear();
     });
   }
 
-  const visitStats = document.querySelector('[data-visit-stats]');
+  const visitStats = document.querySelector('.colophon');
+
+  function isVisitGlance(data: unknown): data is VisitGlance {
+    if (!data || typeof data !== 'object') return false;
+    const row = data as VisitGlance;
+    return (
+      shouldShowVisitCount(row.pageviews) &&
+      typeof row.uniqueVisitors === 'number' &&
+      Number.isFinite(row.uniqueVisitors) &&
+      typeof row.firstSeen === 'string' &&
+      typeof row.pageviews7d === 'number' &&
+      typeof row.uniqueVisitors7d === 'number'
+    );
+  }
 
   if (visitStats instanceof HTMLElement) {
     fetch('/api/visits')
@@ -80,15 +97,40 @@ const currentYear = new Date().getFullYear();
           return;
         }
 
-        const pageviews =
-          data && typeof data === 'object' && 'pageviews' in data
-            ? (data as { pageviews: unknown }).pageviews
-            : undefined;
+        if (!isVisitGlance(data)) return;
 
-        if (!shouldShowVisitCount(pageviews)) return;
+        const firstSeen = formatFirstSeen(data.firstSeen);
+        const summary = document.createElement('summary');
+        summary.textContent = formatPageviewCount(data.pageviews);
 
-        visitStats.textContent = formatPageviewCount(pageviews);
-        visitStats.hidden = false;
+        const panel = document.createElement('div');
+        panel.className = 'visit-panel';
+
+        const addLine = (label: string, value: string) => {
+          const row = document.createElement('p');
+          row.append(document.createTextNode(`${label} `));
+          const strong = document.createElement('strong');
+          strong.textContent = value;
+          row.append(strong);
+          panel.append(row);
+        };
+
+        addLine('Pageviews', String(data.pageviews));
+        addLine('Unique visitors', String(data.uniqueVisitors));
+        if (firstSeen) addLine('First seen', firstSeen);
+        addLine('Last 7 days', `${data.pageviews7d} · ${data.uniqueVisitors7d}`);
+
+        const details = document.createElement('details');
+        details.className = 'visit-glance';
+        details.append(summary, panel);
+        details.addEventListener('pointerenter', () => {
+          details.open = true;
+        });
+        details.addEventListener('pointerleave', () => {
+          details.open = false;
+        });
+
+        visitStats.append(document.createTextNode(' · '), details);
       })
       .catch(() => {
         // Fail-open: keep the count hidden.
@@ -170,9 +212,49 @@ const currentYear = new Date().getFullYear();
     line-height: 1.5;
   }
 
-  .visit-stats {
+  .visit-glance {
+    display: inline;
+    position: relative;
+  }
+
+  .visit-glance summary {
+    display: inline;
+    cursor: pointer;
+    list-style: none;
     color: var(--gray-400);
-    font-size: var(--text-sm);
+  }
+
+  .visit-glance summary::-webkit-details-marker,
+  .visit-glance summary::marker {
+    display: none;
+    content: '';
+  }
+
+  .visit-panel {
+    position: absolute;
+    bottom: calc(100% + 0.4rem);
+    left: 50%;
+    transform: translateX(-50%);
+    min-width: 12rem;
+    padding: 0.6rem 0.75rem;
+    text-align: left;
+    background: var(--gray-900);
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow-sm);
+    color: var(--gray-200);
+    font-size: 0.75rem;
+    line-height: 1.45;
+    z-index: 2;
+  }
+
+  .visit-panel p {
+    margin: 0;
+  }
+
+  .visit-panel strong {
+    color: var(--gray-0);
+    font-weight: 600;
   }
 
   /* Source icon link styling: keep visual weight minimal */
@@ -236,10 +318,6 @@ const currentYear = new Date().getFullYear();
       flex-direction: row;
       gap: 1rem;
       flex-wrap: wrap;
-    }
-
-    .colophon {
-      flex-basis: 100%;
     }
 
     .socials {
