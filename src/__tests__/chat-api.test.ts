@@ -79,6 +79,19 @@ describe('chat API', () => {
         stream: true,
       })
     );
+
+    const firstCall = ai.run.mock.calls[0][1] as {
+      messages: Array<{ role: string; content: string }>;
+    };
+    const systemPrompt = firstCall.messages[0].content;
+    expect(systemPrompt).toContain('Product Manager');
+    expect(systemPrompt).toContain('Developer Experience');
+    expect(systemPrompt).toContain('2x');
+    expect(systemPrompt).toContain('30x');
+    expect(systemPrompt).toContain('Zeroheight');
+    expect(systemPrompt).toContain('linkedin.com/in/alehar');
+    expect(systemPrompt).not.toContain('Strategic Product Leader');
+    expect(systemPrompt).not.toContain('Available');
   });
 
   it('returns 503 when the AI binding is missing', async () => {
