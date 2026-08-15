@@ -152,11 +152,58 @@ const schema = {
   }
 
   .portrait {
+    position: relative;
+    isolation: isolate;
     border-radius: 1.5rem;
     box-shadow: var(--shadow-md);
   }
 
+  .portrait::before,
+  .portrait::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: inherit;
+    filter: blur(24px);
+    /* Phone: no upward overflow into Get in touch. */
+    inset: 8% -12% -12% -12%;
+  }
+
+  .portrait::before {
+    background: radial-gradient(
+      ellipse 70% 60% at 28% 22%,
+      var(--accent-light),
+      transparent 70%
+    );
+    opacity: 0.28;
+  }
+
+  .portrait::after {
+    background: radial-gradient(
+      ellipse 60% 70% at 78% 68%,
+      var(--accent-regular),
+      transparent 68%
+    );
+    opacity: 0.22;
+  }
+
+  :global(:root.theme-dark) .portrait::before,
+  :global(:root.theme-dark) .portrait::after {
+    mix-blend-mode: screen;
+  }
+
+  :global(:root.theme-dark) .portrait::before {
+    opacity: 0.55;
+  }
+
+  :global(:root.theme-dark) .portrait::after {
+    opacity: 0.45;
+  }
+
   .portrait img {
+    position: relative;
+    z-index: 1;
     display: block;
     width: 100%;
     aspect-ratio: 5 / 4;
@@ -218,6 +265,14 @@ const schema = {
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    .portrait::before {
+      animation: portrait-aurora-a 12s ease-in-out infinite alternate;
+    }
+
+    .portrait::after {
+      animation: portrait-aurora-b 20s ease-in-out infinite alternate;
+    }
+
     .portrait {
       transition:
         transform 0.3s ease,
@@ -244,6 +299,31 @@ const schema = {
     }
   }
 
+  @media (prefers-reduced-motion: reduce) {
+    .portrait::before,
+    .portrait::after {
+      animation: none;
+    }
+  }
+
+  @keyframes portrait-aurora-a {
+    from {
+      transform: translate3d(-10%, -8%, 0);
+    }
+    to {
+      transform: translate3d(16%, 12%, 0);
+    }
+  }
+
+  @keyframes portrait-aurora-b {
+    from {
+      transform: translate3d(8%, 0, 0);
+    }
+    to {
+      transform: translate3d(-14%, 10%, 0);
+    }
+  }
+
   @media (min-width: 50em) {
     .hero {
       display: grid;
@@ -260,6 +340,11 @@ const schema = {
 
     .portrait {
       border-radius: 4.5rem;
+    }
+
+    .portrait::before,
+    .portrait::after {
+      inset: -12%;
     }
 
     .portrait img {
