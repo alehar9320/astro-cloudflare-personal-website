@@ -42,6 +42,15 @@ describe('identity copy', () => {
     expect(twin).toContain('30x ROI');
   });
 
+  it('keeps spaces around TL;DR strong terms (Astro drops newline-only spaces)', () => {
+    const about = sources.find((s) => s.path.endsWith('about.astro'))!.text;
+    const work = sources.find((s) => s.path.endsWith('work.astro'))!.text;
+    const bio = sources.find((s) => s.path.endsWith('biography.astro'))!.text;
+    expect(about).toContain("{' '}with");
+    expect(about).toContain("{' '}<strong>AI coding copilots</strong>");
+    expect(work).toContain("{' '}<strong>IFS</strong>");
+    expect(bio).toContain("{' '}<strong>Innovation Management</strong>");
+  });
   it('grounds llms.txt with Chalmers education and recruiter keywords', () => {
     const llms = sources.find((s) => s.path.endsWith('llms.txt'))!.text;
     expect(llms).toContain('Chalmers B.Sc. Software Engineering');
