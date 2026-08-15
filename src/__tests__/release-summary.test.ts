@@ -92,6 +92,14 @@ describe('prepareReleaseSummary', () => {
       )
     ).toBe(null);
   });
+  it('drops #461-style issue numbers', () => {
+    expect(
+      prepareReleaseSummary(
+        'The glance opens on tap. See #461 for the patch. Changelog stays below.',
+        source
+      )
+    ).toBe(null);
+  });
 });
 
 describe('release summary helpers', () => {

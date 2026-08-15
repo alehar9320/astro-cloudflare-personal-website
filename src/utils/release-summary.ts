@@ -43,6 +43,7 @@ export function stripExecBanned(text: string): string {
     .replace(BANNED_NAME, '')
     .replace(SHA_ALL, '')
     .replace(/\(#\d+\)/g, '')
+    .replace(/#\d+/g, '')
     .replace(/\bissue number\s+\d+\b/gi, '')
     .replace(/\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/gi, '')
     .replace(/\s+([.,;:])/g, '$1')
@@ -60,6 +61,7 @@ export function isSafeReleaseSummary(summary: string, source: string): boolean {
     SHA_ONE.test(text) ||
     /\bissue number\b/i.test(text) ||
     /\bcommit hash\b/i.test(text) ||
+    /\B#\d+\b/.test(text) ||
     CONVENTIONAL.test(text)
   ) {
     return false;
@@ -77,6 +79,7 @@ export function prepareReleaseSummary(summary: string, source: string): string |
     SHA_ONE.test(original) ||
     /\bissue number\b/i.test(original) ||
     /\bcommit hash\b/i.test(original) ||
+    /\B#\d+\b/.test(original) ||
     CONVENTIONAL.test(original)
   ) {
     return null;
