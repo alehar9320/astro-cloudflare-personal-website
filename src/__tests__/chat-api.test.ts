@@ -81,6 +81,22 @@ describe('chat API', () => {
     );
   });
 
+  it('includes grounded system prompt directives in AI execution call', async () => {
+    const ai = createAi();
+
+    await postChat({ messages: [{ role: 'user', content: 'How do I get in touch?' }] }, ai);
+
+    const callArgs = ai.run.mock.calls[0];
+    const systemMessage = callArgs[1].messages[0];
+    expect(systemMessage.role).toBe('system');
+    expect(systemMessage.content).toContain("Alexander Härenstam's digital twin");
+    expect(systemMessage.content).toContain('Product Manager, Developer Experience at IFS');
+    expect(systemMessage.content).toContain('2x faster delivery');
+    expect(systemMessage.content).toContain('30x ROI');
+    expect(systemMessage.content).toContain('Zeroheight');
+    expect(systemMessage.content).toContain('https://www.linkedin.com/in/alehar/');
+  });
+
   it('returns 503 when the AI binding is missing', async () => {
     const response = await POST(
       createContext(createRequest({ messages: [{ role: 'user', content: 'Hello' }] }), {})
