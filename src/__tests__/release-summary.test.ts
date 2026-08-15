@@ -81,13 +81,13 @@ describe('prepareReleaseSummary', () => {
     ).toBe('shipped the glance. reviewed the overlay. Changelog stays below.');
   });
 
-  it('strips SHAs from an otherwise safe summary', () => {
+  it('drops SHA-y model text so the notes fallback can speak', () => {
     expect(
       prepareReleaseSummary(
         'The glance opens on tap. The fix landed in 66e3fe9. Changelog stays below.',
         source
       )
-    ).toBe('The glance opens on tap. The fix landed in. Changelog stays below.');
+    ).toBe(null);
   });
 });
 

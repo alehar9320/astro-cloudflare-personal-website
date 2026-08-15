@@ -4,7 +4,8 @@ export const RELEASE_SUMMARY_MODEL = '@cf/meta/llama-3.1-8b-instruct-fast';
 export const RELEASE_SUMMARY_KEY_PREFIX = 'release-summary:';
 
 const BANNED_NAME = /\b(palette|oracle|scribe|sentinel|vantage|bolt|jules)\b/gi;
-const SHA = /\b[a-f0-9]{7,40}\b/g;
+const SHA_ONE = /\b[a-f0-9]{7,40}\b/i;
+const SHA_ALL = /\b[a-f0-9]{7,40}\b/gi;
 const ALLOWED_METRICS = new Set(['2x', '30x', 'roi']);
 
 export function releaseSummaryKey(tag: string): string {
@@ -38,7 +39,7 @@ function metricTokens(text: string): string[] {
 export function stripExecBanned(text: string): string {
   return text
     .replace(BANNED_NAME, '')
-    .replace(SHA, '')
+    .replace(SHA_ALL, '')
     .replace(/\s+([.,;:])/g, '$1')
     .replace(/^[\s:;\-]+/, '')
     .replace(/\s{2,}/g, ' ')
@@ -59,7 +60,9 @@ export function isSafeReleaseSummary(summary: string, source: string): boolean {
 }
 
 export function prepareReleaseSummary(summary: string, source: string): string | null {
-  const text = stripExecBanned(summary);
+  const original = summary.trim();
+  if (SHA_ONE.test(original)) return null;
+  const text = stripExecBanned(original);
   return isSafeReleaseSummary(text, source) ? text : null;
 }
 
@@ -80,5 +83,5 @@ export function groundedReleaseSummary(tag: string, body: string, title = tag): 
   if (listed.length === 0) return null;
   const text = `The latest release is ${title}. It includes ${listed.join('; ')}. The full changelog is listed below.`;
   const source = `${tag}\n${title}\n${body}`;
-  return prepareReleaseSummary(text, source);
+  return isSafeReleaseSummary(text, source) ? text : null;
 }
