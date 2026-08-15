@@ -108,11 +108,13 @@ describe('release summary helpers', () => {
   });
 
   it('keeps the box when notes name Jules', () => {
-    const body = '- abcdef1 Jules: open visit glance on tap (#461)';
+    const body =
+      '- abcdef1 Stop auto-merge for Jules and agent-farm PRs (#447)\n- 66e3fe9 fix: open the visit glance on tap at 375 (#461)';
     const summary = groundedReleaseSummary('2026.08.15.1720', body, '2026.08.15.1720');
     expect(summary).toContain('The latest release is 2026.08.15.1720.');
-    expect(summary).toContain('open visit glance on tap');
+    expect(summary).toContain('open the visit glance on tap at 375');
     expect(summary).not.toMatch(/jules/i);
+    expect(summary).not.toMatch(/agent-farm/i);
     expect(summary).not.toMatch(/\babcdef1\b/);
   });
 

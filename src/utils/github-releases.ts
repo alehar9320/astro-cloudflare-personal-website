@@ -234,9 +234,16 @@ export function parseReleaseItem(line: string): ReleaseItem {
   };
 }
 
+const INTERNAL_CHANGELOG_ITEM = /\bjules\b|\bagent[- ]farm\b|\bjohan nits\b/i;
+
+export function isPublicChangelogItem(item: ReleaseItem): boolean {
+  return !INTERNAL_CHANGELOG_ITEM.test(item.message);
+}
+
 /**
  * Splits a release body into individual, formatted ReleaseItem objects.
  * Filters for lines starting with list markers (-, *, +).
+ * Drops Jules, agent-farm, and Johan-nits internals from the public list.
  * @param {string} body - The full Markdown body of a GitHub release.
  * @returns {ReleaseItem[]} An array of parsed release items.
  */
@@ -246,7 +253,8 @@ export function splitReleaseBody(body: string): ReleaseItem[] {
     .map((line) => line.trim())
     .filter((line) => /^[-*+]\s+/.test(line))
     .map((line) => line.replace(/^[-*+]\s+/, ''))
-    .map(parseReleaseItem);
+    .map(parseReleaseItem)
+    .filter(isPublicChangelogItem);
 }
 
 export { RELEASES_PAGE_URL };
