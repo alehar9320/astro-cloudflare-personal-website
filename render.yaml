@@ -9,3 +9,9 @@ services:
     envVars:
       - key: NODE_VERSION
         value: 22.12.0
+      # - key: SENTRY_AUTH_TOKEN
+      #   sync: false
+      # - key: GITHUB_TOKEN
+      #   sync: false
+      # - key: CODECOV_TOKEN
+      #   sync: false
