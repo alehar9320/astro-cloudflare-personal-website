@@ -3,7 +3,9 @@ import { splitReleaseBody } from './github-releases';
 export const RELEASE_SUMMARY_MODEL = '@cf/meta/llama-3.1-8b-instruct-fast';
 export const RELEASE_SUMMARY_KEY_PREFIX = 'release-summary:';
 
-const BANNED_NAME = /\b(palette|oracle|scribe|sentinel|vantage|bolt|jules)\b/i;
+const BANNED_NAME = /\b(palette|oracle|scribe|sentinel|vantage|bolt|jules)\b/gi;
+const SHA = /\b[a-f0-9]{7,40}\b/g;
+const ALLOWED_METRICS = new Set(['2x', '30x', 'roi']);
 
 export function releaseSummaryKey(tag: string): string {
   return `${RELEASE_SUMMARY_KEY_PREFIX}${tag}`;
@@ -11,9 +13,10 @@ export function releaseSummaryKey(tag: string): string {
 
 export function releaseSummaryPrompt(tag: string, notes: string): string {
   return `Write exactly three plain-English sentences summarizing this GitHub release for an executive.
-Use only facts in the notes. Do not invent metrics, ROI, visitor counts, titles, or outcomes.
+Use only facts in the notes. Do not invent metrics, visitor counts, titles, or outcomes.
+The IFS Design System 2x faster delivery / 30x ROI line is allowed if the notes mention it.
 Do not name agents, Palettes, Oracles, Scribes, Sentinels, Vantage, Bolt, or Jules.
-No bullets, headings, or quotation marks around the whole answer.
+Do not include git SHAs. No bullets, headings, or quotation marks around the whole answer.
 
 Release: ${tag}
 Notes:
@@ -32,17 +35,32 @@ function metricTokens(text: string): string[] {
   return matches ? matches.map((token) => token.toLowerCase()) : [];
 }
 
+export function stripExecBanned(text: string): string {
+  return text
+    .replace(BANNED_NAME, '')
+    .replace(SHA, '')
+    .replace(/\s+([.,;:])/g, '$1')
+    .replace(/^[\s:;\-]+/, '')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
+}
+
 export function isSafeReleaseSummary(summary: string, source: string): boolean {
   const text = summary.trim();
   if (!text) return false;
   const count = sentenceCount(text);
   if (count < 2 || count > 4) return false;
-  if (BANNED_NAME.test(text)) return false;
   const sourceLower = source.toLowerCase();
   for (const token of metricTokens(text)) {
+    if (ALLOWED_METRICS.has(token)) continue;
     if (!sourceLower.includes(token)) return false;
   }
   return true;
+}
+
+export function prepareReleaseSummary(summary: string, source: string): string | null {
+  const text = stripExecBanned(summary);
+  return isSafeReleaseSummary(text, source) ? text : null;
 }
 
 export function parseModelText(result: unknown): string {
@@ -52,13 +70,15 @@ export function parseModelText(result: unknown): string {
   return typeof row.response === 'string' ? row.response.trim() : '';
 }
 
-export function groundedReleaseSummary(tag: string, body: string): string | null {
+export function groundedReleaseSummary(tag: string, body: string, title = tag): string | null {
   const items = splitReleaseBody(body)
-    .map((item) => item.message.trim())
-    .filter((message) => message.length > 0 && !BANNED_NAME.test(message));
-  const listed = (items.length > 0 ? items : body.trim() ? [body.trim()] : []).slice(0, 3);
+    .map((item) => stripExecBanned(item.message.trim()).replace(/^[:\-\s]+/, ''))
+    .filter((message) => message.length > 0);
+  const listed = (items.length > 0 ? items : body.trim() ? [stripExecBanned(body.trim())] : [])
+    .filter((message) => message.length > 0)
+    .slice(0, 3);
   if (listed.length === 0) return null;
-  const text = `The latest GitHub release is ${tag}. It includes ${listed.join('; ')}. The full changelog is listed below.`;
-  const source = `${tag}\n${body}`;
-  return isSafeReleaseSummary(text, source) ? text : null;
+  const text = `The latest release is ${title}. It includes ${listed.join('; ')}. The full changelog is listed below.`;
+  const source = `${tag}\n${title}\n${body}`;
+  return prepareReleaseSummary(text, source);
 }

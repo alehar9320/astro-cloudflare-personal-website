@@ -3,8 +3,8 @@ import { env } from 'cloudflare:workers';
 import { fetchGitHubReleases } from '../../utils/github-releases';
 import {
   groundedReleaseSummary,
-  isSafeReleaseSummary,
   parseModelText,
+  prepareReleaseSummary,
   RELEASE_SUMMARY_MODEL,
   releaseSummaryKey,
   releaseSummaryPrompt,
@@ -63,8 +63,9 @@ export const GET: APIRoute = async () => {
 
     if (store) {
       const cached = await store.get(key);
-      if (cached && isSafeReleaseSummary(cached, source)) {
-        return new Response(JSON.stringify({ tag: latest.version, summary: cached }), {
+      const preparedCache = cached ? prepareReleaseSummary(cached, source) : null;
+      if (preparedCache) {
+        return new Response(JSON.stringify({ tag: latest.version, summary: preparedCache }), {
           headers: jsonHeaders,
         });
       }
@@ -85,8 +86,8 @@ export const GET: APIRoute = async () => {
           ],
           stream: false,
         });
-        const summary = parseModelText(result);
-        if (isSafeReleaseSummary(summary, source)) {
+        const summary = prepareReleaseSummary(parseModelText(result), source);
+        if (summary) {
           if (store) await store.put(key, summary);
           return json(summary);
         }
@@ -95,7 +96,7 @@ export const GET: APIRoute = async () => {
       }
     }
 
-    const fallback = groundedReleaseSummary(latest.version, latest.body);
+    const fallback = groundedReleaseSummary(latest.version, latest.body, latest.title);
     if (!fallback) return empty204();
     if (store) await store.put(key, fallback);
     return json(fallback);

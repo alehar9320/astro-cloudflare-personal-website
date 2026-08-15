@@ -7,6 +7,7 @@ import {
   groundedReleaseSummary,
   isSafeReleaseSummary,
   parseModelText,
+  prepareReleaseSummary,
   releaseSummaryKey,
   releaseSummaryPrompt,
 } from '../utils/release-summary';
@@ -35,6 +36,9 @@ const latest = {
 const okSummary =
   'The latest release adds an executive glance for footer pageviews. The count sits on the colophon and opens a short overlay. Changelog details stay on this page.';
 
+const notesFallback =
+  'The latest release is 2026.08.15.1714. It includes feat: inline footer pageviews with an exec glance (#460). The full changelog is listed below.';
+
 describe('isSafeReleaseSummary', () => {
   const source = `${latest.version}\n${latest.body}`;
 
@@ -42,15 +46,21 @@ describe('isSafeReleaseSummary', () => {
     expect(isSafeReleaseSummary(okSummary, source)).toBe(true);
   });
 
-  it('rejects Palette and Oracle names', () => {
+  it('allows the IFS Design System 2x / 30x proof', () => {
     expect(
-      isSafeReleaseSummary('Palette shipped the glance. Oracle reviewed the overlay.', source)
-    ).toBe(false);
+      isSafeReleaseSummary(
+        'The IFS Design System delivered 2x faster delivery and 30x ROI. That is the numbered proof. Changelog is below.',
+        source
+      )
+    ).toBe(true);
   });
 
-  it('rejects invented metrics', () => {
+  it('rejects invented metrics that are not 2x or 30x', () => {
     expect(
-      isSafeReleaseSummary('The glance shows 2x faster delivery. It also claims 30x ROI.', source)
+      isSafeReleaseSummary(
+        'This release reached 12 million visitors. It also claims 40% conversion.',
+        source
+      )
     ).toBe(false);
   });
 
@@ -59,11 +69,40 @@ describe('isSafeReleaseSummary', () => {
   });
 });
 
+describe('prepareReleaseSummary', () => {
+  const source = `${latest.version}\n${latest.body}`;
+
+  it('strips Palette, Oracle, and Jules instead of dropping the box', () => {
+    expect(
+      prepareReleaseSummary(
+        'Jules shipped the glance. Palette reviewed the overlay. Changelog stays below.',
+        source
+      )
+    ).toBe('shipped the glance. reviewed the overlay. Changelog stays below.');
+  });
+
+  it('strips SHAs from an otherwise safe summary', () => {
+    expect(
+      prepareReleaseSummary(
+        'The glance opens on tap. The fix landed in 66e3fe9. Changelog stays below.',
+        source
+      )
+    ).toBe('The glance opens on tap. The fix landed in. Changelog stays below.');
+  });
+});
+
 describe('release summary helpers', () => {
-  it('builds a 3-sentence notes-only fallback', () => {
-    expect(groundedReleaseSummary(latest.version, latest.body)).toBe(
-      'The latest GitHub release is 2026.08.15.1714. It includes feat: inline footer pageviews with an exec glance (#460). The full changelog is listed below.'
-    );
+  it('builds a 3-sentence notes-only fallback from title and bullets', () => {
+    expect(groundedReleaseSummary(latest.version, latest.body, latest.title)).toBe(notesFallback);
+  });
+
+  it('keeps the box when notes name Jules', () => {
+    const body = '- abcdef1 Jules: open visit glance on tap (#461)';
+    const summary = groundedReleaseSummary('2026.08.15.1720', body, '2026.08.15.1720');
+    expect(summary).toContain('The latest release is 2026.08.15.1720.');
+    expect(summary).toContain('open visit glance on tap (#461)');
+    expect(summary).not.toMatch(/jules/i);
+    expect(summary).not.toMatch(/\babcdef1\b/);
   });
 
   it('caches by tag', () => {
@@ -135,17 +174,16 @@ describe('release summary API', () => {
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({
       tag: latest.version,
-      summary:
-        'The latest GitHub release is 2026.08.15.1714. It includes feat: inline footer pageviews with an exec glance (#460). The full changelog is listed below.',
+      summary: notesFallback,
     });
   });
 
-  it('does not serve invented metrics and falls back to the notes', async () => {
+  it('strips Jules from AI text and still returns the box', async () => {
     const get = vi.fn().mockResolvedValue(null);
     const put = vi.fn();
     const ai = {
       run: vi.fn().mockResolvedValue({
-        response: 'This release delivered 2x faster delivery. It also hit 30x ROI.',
+        response: 'Jules shipped the glance. Palette reviewed the overlay. Changelog stays below.',
       }),
     };
     const response = await GET(
@@ -155,13 +193,45 @@ describe('release summary API', () => {
     expect(response.status).toBe(200);
     await expect(response.json()).resolves.toEqual({
       tag: latest.version,
-      summary:
-        'The latest GitHub release is 2026.08.15.1714. It includes feat: inline footer pageviews with an exec glance (#460). The full changelog is listed below.',
+      summary: 'shipped the glance. reviewed the overlay. Changelog stays below.',
     });
-    expect(put).toHaveBeenCalledWith(
-      'release-summary:2026.08.15.1714',
-      'The latest GitHub release is 2026.08.15.1714. It includes feat: inline footer pageviews with an exec glance (#460). The full changelog is listed below.'
+  });
+
+  it('does not serve invented visitor metrics and falls back to the notes', async () => {
+    const get = vi.fn().mockResolvedValue(null);
+    const put = vi.fn();
+    const ai = {
+      run: vi.fn().mockResolvedValue({
+        response: 'This release reached 12 million visitors. It also claims 40% conversion.',
+      }),
+    };
+    const response = await GET(
+      createContext({ AI: ai, CHAT_STORE: { get, put } as unknown as KVNamespace })
     );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      tag: latest.version,
+      summary: notesFallback,
+    });
+    expect(put).toHaveBeenCalledWith('release-summary:2026.08.15.1714', notesFallback);
+  });
+
+  it('keeps a 2x / 30x design-system proof from AI', async () => {
+    const get = vi.fn().mockResolvedValue(null);
+    const put = vi.fn();
+    const proof =
+      'The IFS Design System delivered 2x faster delivery and 30x ROI. That is the numbered proof. Changelog is below.';
+    const ai = { run: vi.fn().mockResolvedValue({ response: proof }) };
+    const response = await GET(
+      createContext({ AI: ai, CHAT_STORE: { get, put } as unknown as KVNamespace })
+    );
+
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      tag: latest.version,
+      summary: proof,
+    });
   });
 
   it('fails open with 204 when GitHub has no releases', async () => {

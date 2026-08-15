@@ -134,7 +134,11 @@ const schema = {
       }
 
       if (summaryContainer instanceof HTMLElement && !summaryContainer.hasChildNodes()) {
-        const fallback = groundedReleaseSummary(releases[0].version, releases[0].body);
+        const fallback = groundedReleaseSummary(
+          releases[0].version,
+          releases[0].body,
+          releases[0].title
+        );
         if (fallback) paintSummary(fallback);
       }
 
