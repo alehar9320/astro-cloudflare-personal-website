@@ -53,6 +53,7 @@
       </section>
     </div>
     <div id="typing-indicator" class="typing-indicator hidden">Alexander is typing...</div>
+    <p id="chat-remaining" class="chat-remaining" aria-live="polite" hidden></p>
     <form id="chat-form" class="chat-form">
       <input
         type="text"
@@ -315,9 +316,16 @@
     display: none;
   }
 
-  .chat-form {
-    padding: 1rem;
+  .chat-remaining {
+    margin: 0;
+    padding: 0.75rem 1rem 0;
+    font-size: 0.75rem;
+    color: var(--gray-400);
     border-top: 1px solid var(--gray-800);
+  }
+
+  .chat-form {
+    padding: 0.5rem 1rem 1rem;
     display: flex;
     gap: 0.5rem;
   }
@@ -363,6 +371,7 @@
   const chatMessages = document.getElementById('chat-messages');
   const typingIndicator = document.getElementById('typing-indicator');
   const chatSuggestions = document.getElementById('chat-suggestions');
+  const chatRemaining = document.getElementById('chat-remaining');
 
   const statusTooltip = document.getElementById('status-tooltip');
   const statusAnnouncer = document.getElementById('status-announcer');
@@ -371,11 +380,21 @@
     idle: 'Ask about the work',
     loading: 'Thinking...',
     error: 'Connection issue',
+    limited: 'Hourly limit reached',
   };
 
-  function setStatus(state: 'idle' | 'loading' | 'error') {
+  function setStatus(state: 'idle' | 'loading' | 'error' | 'limited') {
     if (statusTooltip) statusTooltip.textContent = statusLabels[state];
     if (statusAnnouncer) statusAnnouncer.textContent = statusLabels[state];
+  }
+
+  function applyRemaining(response: Response) {
+    const raw = response.headers.get('X-Chat-Hourly-Remaining');
+    if (raw === null || !chatRemaining) return;
+    const left = parseInt(raw, 10);
+    if (Number.isNaN(left)) return;
+    chatRemaining.hidden = false;
+    chatRemaining.textContent = `${Math.max(0, left)} of 20 questions left this hour`;
   }
 
   setStatus('idle');
@@ -509,6 +528,8 @@
         body: JSON.stringify({ messages }),
       });
 
+      applyRemaining(response);
+
       if (!response.ok) {
         let errorText = 'Chat is currently unavailable. Please try again later.';
         try {
@@ -527,7 +548,13 @@
         }
         typingIndicator?.classList.add('hidden');
         appendMessage('assistant', errorText);
-        setStatus('error');
+        if (response.status === 429) {
+          setStatus('limited');
+          if (statusTooltip) statusTooltip.textContent = errorText;
+          if (statusAnnouncer) statusAnnouncer.textContent = errorText;
+        } else {
+          setStatus('error');
+        }
         return;
       }
 

@@ -99,12 +99,13 @@ describe('chat API', () => {
     expect(systemMessage.role).toBe('system');
     expect(systemMessage.content).toContain('Product Manager, Developer Experience');
     expect(systemMessage.content).toContain('linkedin.com/in/alehar');
-    expect(systemMessage.content).toContain('Greater Stockholm');
+    expect(systemMessage.content).toContain('Hire path is LinkedIn only');
     expect(systemMessage.content).toContain('Chalmers B.Sc. Software Engineering');
     expect(systemMessage.content).toContain(
       'Chalmers M.Sc. Management and Economics of Innovation'
     );
-    expect(systemMessage.content).toContain('Hire path is LinkedIn only');
+    expect(systemMessage.content).toContain('Greater Stockholm');
+    expect(systemMessage.content).toContain('Eight years at IFS');
     expect(systemMessage.content).toContain('AI coding copilots is current DevEx work');
     expect(systemMessage.content).toContain('2x faster delivery');
     expect(systemMessage.content).toContain('30x ROI');
@@ -129,6 +130,23 @@ describe('chat API', () => {
     expect(body).toContain('30x ROI');
     expect(body).toContain('Zeroheight runner-up');
     expect(body).toContain(DESIGN_SYSTEM_PROOF);
+  });
+
+  it('returns the exact 2x/30x proof for any IFS design-system question', async () => {
+    const ai = createAi();
+    const response = await postChat(
+      { messages: [{ role: 'user', content: 'Tell me about the IFS design system' }] },
+      ai
+    );
+
+    expect(response.status).toBe(200);
+    expect(ai.run).not.toHaveBeenCalled();
+    const body = await response.text();
+    expect(body).toContain('2x');
+    expect(body).toContain('30x');
+    expect(body).toContain('2x faster delivery');
+    expect(body).toContain('30x ROI');
+    expect(body).toContain('Zeroheight runner-up');
   });
 
   it('returns 503 when the AI binding is missing', async () => {
@@ -293,12 +311,14 @@ describe('chat API', () => {
     await expect(readJson(response)).resolves.toEqual({
       error: 'Rate limit exceeded. Try again in an hour.',
     });
-    expect(get).toHaveBeenCalledWith('chat-limit:203.0.113.1');
+    expect(get).toHaveBeenCalledWith('chat-hourly:203.0.113.1');
     expect(put).not.toHaveBeenCalled();
     expect(ai.run).not.toHaveBeenCalled();
+    expect(response.headers.get('X-Chat-Hourly-Remaining')).toBe('0');
+    expect(response.headers.get('X-Chat-Hourly-Limit')).toBe('20');
   });
 
-  it('increments the rate limit counter before running AI', async () => {
+  it('increments hourly and daily counters only after a successful AI run', async () => {
     const ai = createAi();
     const get = vi.fn().mockResolvedValue('2');
     const put = vi.fn();
@@ -316,10 +336,20 @@ describe('chat API', () => {
     );
 
     expect(response.status).toBe(200);
-    expect(put).toHaveBeenCalledWith('chat-limit:203.0.113.2', '3', {
+    expect(ai.run.mock.calls.length).toBe(1);
+    expect(put).toHaveBeenCalledWith('chat-hourly:203.0.113.2', '3', {
       expirationTtl: 3600,
     });
-    expect(ai.run.mock.calls.length).toBe(1);
+    expect(put).toHaveBeenCalledWith(
+      expect.stringMatching(/^chat-daily:\d{4}-\d{2}-\d{2}$/),
+      '3',
+      expect.objectContaining({ expiration: expect.any(Number) })
+    );
+    expect(response.headers.get('X-Chat-Hourly-Limit')).toBe('20');
+    expect(response.headers.get('X-Chat-Hourly-Remaining')).toBe('17');
+    expect(response.headers.get('X-Chat-Daily-Limit')).toBe('500');
+    expect(response.headers.get('X-Chat-Daily-Remaining')).toBe('497');
+    expect(ai.run.mock.invocationCallOrder[0]).toBeLessThan(put.mock.invocationCallOrder[0]);
   });
 
   it('resets and starts the rate limit counter at one when a malformed count (NaN) exists', async () => {
@@ -340,7 +370,7 @@ describe('chat API', () => {
     );
 
     expect(response.status).toBe(200);
-    expect(put).toHaveBeenCalledWith('chat-limit:203.0.113.4', '1', {
+    expect(put).toHaveBeenCalledWith('chat-hourly:203.0.113.4', '1', {
       expirationTtl: 3600,
     });
     expect(ai.run.mock.calls.length).toBe(1);
@@ -364,7 +394,7 @@ describe('chat API', () => {
     );
 
     expect(response.status).toBe(200);
-    expect(put).toHaveBeenCalledWith('chat-limit:203.0.113.3', '1', {
+    expect(put).toHaveBeenCalledWith('chat-hourly:203.0.113.3', '1', {
       expirationTtl: 3600,
     });
     expect(ai.run.mock.calls.length).toBe(1);
@@ -437,7 +467,7 @@ describe('chat API', () => {
     );
 
     expect(response.status).toBe(200);
-    expect(get).toHaveBeenCalledWith('chat-limit:anonymous');
+    expect(get).toHaveBeenCalledWith('chat-hourly:anonymous');
   });
 
   it('handles locals.runtime being defined but env missing', async () => {
@@ -479,7 +509,11 @@ describe('chat API', () => {
     const response = await POST(context);
 
     expect(response.status).toBe(200);
-    expect(put).toHaveBeenCalledWith(expect.stringContaining('chat-limit'), '1', expect.anything());
+    expect(put).toHaveBeenCalledWith(
+      expect.stringContaining('chat-hourly'),
+      '1',
+      expect.anything()
+    );
   });
 
   it('returns a generic 500 error when AI execution fails', async () => {
@@ -545,5 +579,65 @@ describe('chat API', () => {
     } finally {
       process.env = originalEnv;
     }
+  });
+
+  it('does not increment on invalid JSON', async () => {
+    const ai = createAi();
+    const get = vi.fn();
+    const put = vi.fn();
+    const store = { get, put } as unknown as KVNamespace;
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const response = await POST(
+      createContext(createRequest('{invalid json'), { AI: ai, CHAT_STORE: store })
+    );
+
+    expect(response.status).toBe(400);
+    expect(put).not.toHaveBeenCalled();
+    expect(get).not.toHaveBeenCalled();
+    expect(ai.run).not.toHaveBeenCalled();
+  });
+
+  it('does not increment when AI execution fails', async () => {
+    const ai = { run: vi.fn().mockRejectedValue(new Error('AI unavailable')) };
+    const get = vi.fn().mockResolvedValue('4');
+    const put = vi.fn();
+    const store = { get, put } as unknown as KVNamespace;
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const response = await POST(
+      createContext(createRequest({ messages: [{ role: 'user', content: 'Hello' }] }), {
+        AI: ai,
+        CHAT_STORE: store,
+      })
+    );
+
+    expect(response.status).toBe(500);
+    expect(ai.run).toHaveBeenCalled();
+    expect(put).not.toHaveBeenCalled();
+  });
+
+  it('returns 429 and skips AI when the site-wide daily cap is reached', async () => {
+    const ai = createAi();
+    const get = vi.fn().mockImplementation(async (key: string) => {
+      if (key.startsWith('chat-daily:')) return '500';
+      return '1';
+    });
+    const put = vi.fn();
+    const store = { get, put } as unknown as KVNamespace;
+    const env = { AI: ai, CHAT_STORE: store };
+
+    const response = await POST(
+      createContext(createRequest({ messages: [{ role: 'user', content: 'Hello' }] }), env)
+    );
+
+    expect(response.status).toBe(429);
+    await expect(readJson(response)).resolves.toEqual({
+      error: 'Site-wide daily chat limit reached. Try again tomorrow.',
+    });
+    expect(put).not.toHaveBeenCalled();
+    expect(ai.run).not.toHaveBeenCalled();
+    expect(response.headers.get('X-Chat-Daily-Remaining')).toBe('0');
+    expect(response.headers.get('X-Chat-Hourly-Remaining')).toBe('19');
   });
 });
