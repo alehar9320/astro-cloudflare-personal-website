@@ -70,6 +70,15 @@ describe('isSafeReleaseSummary', () => {
   it('rejects a one-sentence answer', () => {
     expect(isSafeReleaseSummary('The release adds a footer glance.', source)).toBe(false);
   });
+
+  it('rejects squash-title leftover visitor copy', () => {
+    expect(
+      isSafeReleaseSummary(
+        'The latest release is 2026.08.15.1814. Visitors can now exec summary of the latest GitHub release on /whats-new. More is in the changelog on this page.',
+        source
+      )
+    ).toBe(false);
+  });
 });
 
 describe('prepareReleaseSummary', () => {
@@ -118,8 +127,18 @@ describe('release summary helpers', () => {
     expect(summary).not.toMatch(/\babcdef1\b/);
   });
 
+  it('does not paint a squash title as Visitors can now', () => {
+    const body = '- 0701dfc feat: exec summary of the latest GitHub release on /whats-new (#462)';
+    const summary = groundedReleaseSummary('2026.08.15.1814', body, '2026.08.15.1814');
+    expect(summary).toBe(
+      'The latest release is 2026.08.15.1814. See the changelog below for what shipped. Details stay on this page.'
+    );
+    expect(summary).not.toMatch(/visitors can now exec summary/i);
+    expect(summary).not.toMatch(/on \/whats-new/i);
+  });
+
   it('caches by tag', () => {
-    expect(releaseSummaryKey('2026.08.15.1714')).toBe('release-summary:v2:2026.08.15.1714');
+    expect(releaseSummaryKey('2026.08.15.1714')).toBe('release-summary:v3:2026.08.15.1714');
   });
 
   it('asks for 2-4 sentences and no invented metrics', () => {
@@ -157,7 +176,7 @@ describe('release summary API', () => {
       tag: latest.version,
       summary: okSummary,
     });
-    expect(get).toHaveBeenCalledWith('release-summary:v2:2026.08.15.1714');
+    expect(get).toHaveBeenCalledWith('release-summary:v3:2026.08.15.1714');
     expect(ai.run).not.toHaveBeenCalled();
     expect(put).not.toHaveBeenCalled();
   });
@@ -179,7 +198,7 @@ describe('release summary API', () => {
       '@cf/meta/llama-3.1-8b-instruct-fast',
       expect.objectContaining({ stream: false })
     );
-    expect(put).toHaveBeenCalledWith('release-summary:v2:2026.08.15.1714', okSummary);
+    expect(put).toHaveBeenCalledWith('release-summary:v3:2026.08.15.1714', okSummary);
   });
 
   it('uses a notes-only fallback when AI is missing', async () => {
@@ -227,7 +246,7 @@ describe('release summary API', () => {
       tag: latest.version,
       summary: notesFallback,
     });
-    expect(put).toHaveBeenCalledWith('release-summary:v2:2026.08.15.1714', notesFallback);
+    expect(put).toHaveBeenCalledWith('release-summary:v3:2026.08.15.1714', notesFallback);
   });
 
   it('drops invented 2x / 30x and falls back to the notes', async () => {
