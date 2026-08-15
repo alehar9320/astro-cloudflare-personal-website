@@ -1,6 +1,12 @@
 import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
-import { ChatRequestSchema, pruneMessages, type ChatMessage } from '../../utils/chat-logic';
+import {
+  ChatRequestSchema,
+  groundedDesignSystemAnswer,
+  pruneMessages,
+  sseTextStream,
+  type ChatMessage,
+} from '../../utils/chat-logic';
 import llmsTxt from '../../../public/llms.txt?raw';
 
 const jsonHeaders = {
@@ -101,6 +107,8 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const prunedMessages = pruneMessages(result.data.messages as ChatMessage[]);
+  const lastUser = [...prunedMessages].reverse().find((message) => message.role === 'user');
+  const canned = lastUser ? groundedDesignSystemAnswer(lastUser.content) : null;
 
   const systemPrompt = `You are Alexander Härenstam's digital twin. Speak in the first person as his twin.
 Current title: Product Manager, Developer Experience at IFS (Feb 2025-present, Greater Stockholm).
@@ -115,10 +123,12 @@ Keep answers brief (2-3 sentences). If asked something not in this prompt or the
 ${llmsTxt}`;
 
   try {
-    const stream = await ai.run('@cf/meta/llama-3.1-8b-instruct-fast', {
-      messages: [{ role: 'system', content: systemPrompt }, ...prunedMessages],
-      stream: true,
-    });
+    const stream = canned
+      ? sseTextStream(canned)
+      : await ai.run('@cf/meta/llama-3.1-8b-instruct-fast', {
+          messages: [{ role: 'system', content: systemPrompt }, ...prunedMessages],
+          stream: true,
+        });
 
     return new Response(stream, {
       headers: {

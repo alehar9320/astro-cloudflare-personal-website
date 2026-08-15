@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 
 import { env as workerEnv } from 'cloudflare:workers';
 import { POST, type ChatEnv } from '../pages/api/chat';
+import { DESIGN_SYSTEM_CHIP, DESIGN_SYSTEM_PROOF } from '../utils/chat-logic';
 
 const endpoint = 'https://example.com/api/chat';
 
@@ -112,6 +113,22 @@ describe('chat API', () => {
     expect(systemMessage.content).not.toContain('Strategic Product Leader');
     expect(systemMessage.content).not.toContain('Available');
     expect(systemMessage.content).not.toContain('mailto');
+  });
+
+  it('returns the exact 2x/30x proof for the design-system chip without calling the model', async () => {
+    const ai = createAi();
+    const response = await postChat(
+      { messages: [{ role: 'user', content: DESIGN_SYSTEM_CHIP }] },
+      ai
+    );
+
+    expect(response.status).toBe(200);
+    expect(ai.run).not.toHaveBeenCalled();
+    const body = await response.text();
+    expect(body).toContain('2x faster delivery');
+    expect(body).toContain('30x ROI');
+    expect(body).toContain('Zeroheight runner-up');
+    expect(body).toContain(DESIGN_SYSTEM_PROOF);
   });
 
   it('returns 503 when the AI binding is missing', async () => {

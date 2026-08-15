@@ -43,3 +43,26 @@ export function pruneMessages(messages: ChatMessage[]): ChatMessage[] {
 
   return pruned;
 }
+
+export const DESIGN_SYSTEM_CHIP = 'What did the IFS design system change?';
+
+export const DESIGN_SYSTEM_PROOF =
+  'The IFS Design System delivered 2x faster delivery and 30x ROI, and was a Zeroheight runner-up.';
+
+export function groundedDesignSystemAnswer(lastUserMessage: string): string | null {
+  const question = lastUserMessage.trim().toLowerCase();
+  if (question === DESIGN_SYSTEM_CHIP.toLowerCase()) {
+    return DESIGN_SYSTEM_PROOF;
+  }
+  return null;
+}
+
+export function sseTextStream(text: string): ReadableStream<Uint8Array> {
+  const body = `data: ${JSON.stringify({ response: text })}\n\ndata: [DONE]\n\n`;
+  return new ReadableStream({
+    start(controller) {
+      controller.enqueue(new TextEncoder().encode(body));
+      controller.close();
+    },
+  });
+}
