@@ -98,20 +98,20 @@
     width: 3.5rem;
     height: 3.5rem;
     border-radius: 50%;
-    background-color: var(--accent-regular);
-    color: white;
-    border: none;
+    background-color: hsla(var(--gray-999-basis), 0.55);
+    color: var(--gray-200);
+    border: 1px solid var(--gray-800);
     cursor: pointer;
-    box-shadow: var(--shadow-md);
+    box-shadow: var(--shadow-sm);
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: transform 0.2s ease;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
   }
 
   .chat-toggle:hover,
   .chat-toggle:focus-visible {
-    transform: scale(1.1);
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
   }
@@ -157,14 +157,9 @@
     }
   }
 
-  /* FAB dot positioning */
+  /* FAB must not read as "available to hire" */
   .chat-toggle .status-dot {
-    position: absolute;
-    bottom: 0;
-    right: 0;
-    width: 14px;
-    height: 14px;
-    border: 2.5px solid var(--accent-regular);
+    display: none;
   }
 
   /* Tooltip */
