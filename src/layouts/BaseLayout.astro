@@ -25,6 +25,10 @@ const { title, description } = Astro.props;
     <a href="#main-content" class="sr-only focus-visible">Skip to content</a>
 
     <div class="stack backgrounds">
+      <div class="aurora" aria-hidden="true">
+        <span class="aurora-wash aurora-wash-a"></span>
+        <span class="aurora-wash aurora-wash-b"></span>
+      </div>
       <Nav />
       <slot />
       <Footer />
@@ -103,6 +107,74 @@ const { title, description } = Astro.props;
         position: relative;
       }
 
+      .aurora {
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        pointer-events: none;
+        overflow: hidden;
+      }
+
+      .aurora-wash {
+        position: absolute;
+        inset: -20%;
+        pointer-events: none;
+      }
+
+      .aurora-wash-a {
+        background: radial-gradient(
+          ellipse 55% 45% at 28% 22%,
+          var(--accent-light),
+          transparent 70%
+        );
+        opacity: 0.14;
+      }
+
+      .aurora-wash-b {
+        background: radial-gradient(
+          ellipse 50% 55% at 78% 38%,
+          var(--accent-regular),
+          transparent 68%
+        );
+        opacity: 0.12;
+      }
+
+      :root.theme-dark .aurora-wash-a {
+        opacity: 0.34;
+      }
+
+      :root.theme-dark .aurora-wash-b {
+        opacity: 0.28;
+      }
+
+      @media (prefers-reduced-motion: no-preference) {
+        .aurora-wash-a {
+          animation: aurora-drift-a 45s ease-in-out infinite alternate;
+        }
+
+        .aurora-wash-b {
+          animation: aurora-drift-b 70s ease-in-out infinite alternate;
+        }
+      }
+
+      @keyframes aurora-drift-a {
+        from {
+          transform: translate3d(-3%, -2%, 0);
+        }
+        to {
+          transform: translate3d(8%, 6%, 0);
+        }
+      }
+
+      @keyframes aurora-drift-b {
+        from {
+          transform: translate3d(2%, 0, 0);
+        }
+        to {
+          transform: translate3d(-7%, 5%, 0);
+        }
+      }
+
       .backgrounds::before {
         content: '';
         position: absolute;
@@ -131,6 +203,10 @@ const { title, description } = Astro.props;
           background: none;
           background-blend-mode: none;
           --bg-gradient-size: none;
+        }
+
+        .aurora {
+          display: none;
         }
       }
 

@@ -68,7 +68,7 @@ const schema = {
   description="Product Manager, Developer Experience at IFS."
 >
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
-  <main id="main-content" class="wrapper stack gap-16 lg:gap-24">
+  <main id="main-content" class="wrapper stack first-screen">
     <header class="hero">
       <Hero title="Product Manager, Developer Experience at IFS" align="start">
         <div class="hero-actions">
@@ -116,12 +116,21 @@ const schema = {
 </BaseLayout>
 
 <style>
+  .first-screen {
+    min-height: 100vh;
+    min-height: 100svh;
+    min-height: 100dvh;
+    justify-content: center;
+    gap: 2rem;
+    padding-block: 1rem 2rem;
+    box-sizing: border-box;
+  }
+
   .hero {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 2rem;
-    padding-bottom: 5.5rem;
   }
 
   .hero-actions {
