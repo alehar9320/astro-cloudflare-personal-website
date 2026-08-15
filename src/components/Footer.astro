@@ -153,32 +153,48 @@ const currentYear = new Date().getFullYear();
           if (open) place();
         };
 
+        let openedByHover = false;
+
         trigger.addEventListener('click', (event) => {
           event.preventDefault();
           event.stopPropagation();
+          // DevTools 375 still reports hover:hover. pointerenter then click would
+          // toggle the panel shut. A tap should leave it open.
+          if (openedByHover && !panel.hidden) {
+            openedByHover = false;
+            return;
+          }
+          openedByHover = false;
           setOpen(panel.hidden);
         });
 
-        if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-          trigger.addEventListener('pointerenter', () => setOpen(true));
-          trigger.addEventListener('pointerleave', (event) => {
-            if (event.relatedTarget instanceof Node && panel.contains(event.relatedTarget)) return;
-            setOpen(false);
-          });
-          panel.addEventListener('pointerleave', () => setOpen(false));
-        }
+        trigger.addEventListener('pointerenter', (event) => {
+          if (event.pointerType !== 'mouse') return;
+          openedByHover = true;
+          setOpen(true);
+        });
+        trigger.addEventListener('pointerleave', (event) => {
+          if (event.pointerType !== 'mouse') return;
+          if (event.relatedTarget instanceof Node && panel.contains(event.relatedTarget)) return;
+          openedByHover = false;
+          setOpen(false);
+        });
+        panel.addEventListener('pointerleave', (event) => {
+          if (event.pointerType !== 'mouse') return;
+          openedByHover = false;
+          setOpen(false);
+        });
 
         document.addEventListener('keydown', (event) => {
           if (event.key === 'Escape') setOpen(false);
         });
-        document.addEventListener('click', (event) => {
-          if (
-            event.target instanceof Node &&
-            !trigger.contains(event.target) &&
-            !panel.contains(event.target)
-          ) {
-            setOpen(false);
-          }
+        document.addEventListener('pointerup', (event) => {
+          if (panel.hidden) return;
+          const target = event.target;
+          if (!(target instanceof Node)) return;
+          if (trigger.contains(target) || panel.contains(target)) return;
+          openedByHover = false;
+          setOpen(false);
         });
         window.addEventListener('resize', () => {
           if (!panel.hidden) place();
@@ -273,7 +289,7 @@ const currentYear = new Date().getFullYear();
   }
 
   .visit-trigger {
-    display: inline;
+    display: inline-block;
     appearance: none;
     -webkit-appearance: none;
     margin: 0;
@@ -283,6 +299,8 @@ const currentYear = new Date().getFullYear();
     font: inherit;
     color: var(--gray-400);
     cursor: pointer;
+    touch-action: manipulation;
+    white-space: nowrap;
     text-underline-offset: 0.25em;
     text-decoration: 1px dotted underline transparent;
   }
