@@ -51,6 +51,14 @@ describe('github releases utility', () => {
         version: '2026.06.11.0414',
       },
     ]);
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining('api.github.com'),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          'User-Agent': 'alehar9320-astro-cloudflare-personal-website',
+        }),
+      })
+    );
   });
 
   it('handles API validation failure', async () => {
@@ -169,7 +177,11 @@ describe('github releases utility', () => {
     expect(fetchMock).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({
-        headers: { Accept: expect.any(String), Authorization: 'token test-token' },
+        headers: expect.objectContaining({
+          Accept: expect.any(String),
+          Authorization: 'token test-token',
+          'User-Agent': 'alehar9320-astro-cloudflare-personal-website',
+        }),
       })
     );
     expect(consoleSpy).toHaveBeenCalledWith(

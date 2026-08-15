@@ -1,3 +1,5 @@
+import { splitReleaseBody } from './github-releases';
+
 export const RELEASE_SUMMARY_MODEL = '@cf/meta/llama-3.1-8b-instruct-fast';
 export const RELEASE_SUMMARY_KEY_PREFIX = 'release-summary:';
 
@@ -8,7 +10,7 @@ export function releaseSummaryKey(tag: string): string {
 }
 
 export function releaseSummaryPrompt(tag: string, notes: string): string {
-  return `Summarize this GitHub release in 2 to 4 plain-English sentences for an executive.
+  return `Write exactly three plain-English sentences summarizing this GitHub release for an executive.
 Use only facts in the notes. Do not invent metrics, ROI, visitor counts, titles, or outcomes.
 Do not name agents, Palettes, Oracles, Scribes, Sentinels, Vantage, Bolt, or Jules.
 No bullets, headings, or quotation marks around the whole answer.
@@ -44,7 +46,19 @@ export function isSafeReleaseSummary(summary: string, source: string): boolean {
 }
 
 export function parseModelText(result: unknown): string {
+  if (typeof result === 'string') return result.trim();
   if (!result || typeof result !== 'object') return '';
   const row = result as { response?: unknown };
   return typeof row.response === 'string' ? row.response.trim() : '';
+}
+
+export function groundedReleaseSummary(tag: string, body: string): string | null {
+  const items = splitReleaseBody(body)
+    .map((item) => item.message.trim())
+    .filter((message) => message.length > 0 && !BANNED_NAME.test(message));
+  const listed = (items.length > 0 ? items : body.trim() ? [body.trim()] : []).slice(0, 3);
+  if (listed.length === 0) return null;
+  const text = `The latest GitHub release is ${tag}. It includes ${listed.join('; ')}. The full changelog is listed below.`;
+  const source = `${tag}\n${body}`;
+  return isSafeReleaseSummary(text, source) ? text : null;
 }

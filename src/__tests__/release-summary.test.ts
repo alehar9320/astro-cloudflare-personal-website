@@ -4,6 +4,7 @@ import { env as workerEnv } from 'cloudflare:workers';
 import { GET, type ReleaseSummaryEnv } from '../pages/api/release-summary';
 import * as githubReleases from '../utils/github-releases';
 import {
+  groundedReleaseSummary,
   isSafeReleaseSummary,
   parseModelText,
   releaseSummaryKey,
@@ -59,13 +60,19 @@ describe('isSafeReleaseSummary', () => {
 });
 
 describe('release summary helpers', () => {
+  it('builds a 3-sentence notes-only fallback', () => {
+    expect(groundedReleaseSummary(latest.version, latest.body)).toBe(
+      'The latest GitHub release is 2026.08.15.1714. It includes feat: inline footer pageviews with an exec glance (#460). The full changelog is listed below.'
+    );
+  });
+
   it('caches by tag', () => {
     expect(releaseSummaryKey('2026.08.15.1714')).toBe('release-summary:2026.08.15.1714');
   });
 
   it('asks for 2-4 sentences and no invented metrics', () => {
     const prompt = releaseSummaryPrompt(latest.version, latest.body);
-    expect(prompt).toContain('2 to 4 plain-English sentences');
+    expect(prompt).toContain('exactly three plain-English sentences');
     expect(prompt).toContain('Do not invent metrics');
     expect(prompt).toContain('Palettes, Oracles');
     expect(prompt).toContain(latest.body);
@@ -123,12 +130,17 @@ describe('release summary API', () => {
     expect(put).toHaveBeenCalledWith('release-summary:2026.08.15.1714', okSummary);
   });
 
-  it('fails open with 204 when AI is missing', async () => {
+  it('uses a notes-only fallback when AI is missing', async () => {
     const response = await GET(createContext({}));
-    expect(response.status).toBe(204);
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      tag: latest.version,
+      summary:
+        'The latest GitHub release is 2026.08.15.1714. It includes feat: inline footer pageviews with an exec glance (#460). The full changelog is listed below.',
+    });
   });
 
-  it('fails open with 204 when the model invents metrics', async () => {
+  it('does not serve invented metrics and falls back to the notes', async () => {
     const get = vi.fn().mockResolvedValue(null);
     const put = vi.fn();
     const ai = {
@@ -140,8 +152,16 @@ describe('release summary API', () => {
       createContext({ AI: ai, CHAT_STORE: { get, put } as unknown as KVNamespace })
     );
 
-    expect(response.status).toBe(204);
-    expect(put).not.toHaveBeenCalled();
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      tag: latest.version,
+      summary:
+        'The latest GitHub release is 2026.08.15.1714. It includes feat: inline footer pageviews with an exec glance (#460). The full changelog is listed below.',
+    });
+    expect(put).toHaveBeenCalledWith(
+      'release-summary:2026.08.15.1714',
+      'The latest GitHub release is 2026.08.15.1714. It includes feat: inline footer pageviews with an exec glance (#460). The full changelog is listed below.'
+    );
   });
 
   it('fails open with 204 when GitHub has no releases', async () => {

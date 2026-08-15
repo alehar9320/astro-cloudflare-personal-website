@@ -83,7 +83,12 @@ export async function fetchGitHubReleases(
     }
   }
 
-  const githubToken = typeof process !== 'undefined' ? process.env.GITHUB_TOKEN : undefined;
+  let githubToken: string | undefined;
+  try {
+    githubToken = typeof process !== 'undefined' ? process.env.GITHUB_TOKEN : undefined;
+  } catch {
+    githubToken = undefined;
+  }
 
   // Defensive check to ensure we only fetch from the trusted GitHub API domain
   if (!url.startsWith('https://api.github.com/')) {
@@ -95,6 +100,8 @@ export async function fetchGitHubReleases(
     const response = await fetchImpl(url, {
       headers: {
         Accept: 'application/vnd.github+json',
+        'User-Agent': 'alehar9320-astro-cloudflare-personal-website',
+        'X-GitHub-Api-Version': '2022-11-28',
         ...(githubToken ? { Authorization: `token ${githubToken}` } : {}),
       },
     });

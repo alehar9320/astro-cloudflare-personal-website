@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
 import { fetchGitHubReleases } from '../../utils/github-releases';
 import {
+  groundedReleaseSummary,
   isSafeReleaseSummary,
   parseModelText,
   RELEASE_SUMMARY_MODEL,
@@ -69,29 +70,35 @@ export const GET: APIRoute = async () => {
       }
     }
 
+    const json = (summary: string) =>
+      new Response(JSON.stringify({ tag: latest.version, summary }), { headers: jsonHeaders });
+
     const ai = bindings.AI;
-    if (!ai) return empty204();
-
-    const result = await ai.run(RELEASE_SUMMARY_MODEL, {
-      messages: [
-        {
-          role: 'user',
-          content: releaseSummaryPrompt(latest.version, latest.body),
-        },
-      ],
-      stream: false,
-    });
-
-    const summary = parseModelText(result);
-    if (!isSafeReleaseSummary(summary, source)) return empty204();
-
-    if (store) {
-      await store.put(key, summary);
+    if (ai) {
+      try {
+        const result = await ai.run(RELEASE_SUMMARY_MODEL, {
+          messages: [
+            {
+              role: 'user',
+              content: releaseSummaryPrompt(latest.version, latest.body),
+            },
+          ],
+          stream: false,
+        });
+        const summary = parseModelText(result);
+        if (isSafeReleaseSummary(summary, source)) {
+          if (store) await store.put(key, summary);
+          return json(summary);
+        }
+      } catch (error: unknown) {
+        console.error({ event: 'release_summary_ai_error', error: String(error) });
+      }
     }
 
-    return new Response(JSON.stringify({ tag: latest.version, summary }), {
-      headers: jsonHeaders,
-    });
+    const fallback = groundedReleaseSummary(latest.version, latest.body);
+    if (!fallback) return empty204();
+    if (store) await store.put(key, fallback);
+    return json(fallback);
   } catch (error: unknown) {
     console.error({ event: 'release_summary_error', error: String(error) });
     return empty204();
