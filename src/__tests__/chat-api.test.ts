@@ -76,7 +76,7 @@ describe('chat API', () => {
       "default-src 'none'; frame-ancestors 'none';"
     );
     expect(ai.run).toHaveBeenCalledWith(
-      '@cf/meta/llama-3.1-8b-instruct',
+      '@cf/meta/llama-3.1-8b-instruct-fast',
       expect.objectContaining({
         messages: [
           expect.objectContaining({ role: 'system' }),
