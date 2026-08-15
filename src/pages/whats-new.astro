@@ -76,9 +76,23 @@ const schema = {
     formatReleaseDate,
     splitReleaseBody,
   } from '../utils/github-releases';
+  import { groundedReleaseSummary } from '../utils/release-summary';
 
   const releaseList = document.querySelector('[data-release-list]');
   const summaryContainer = document.querySelector('[data-release-summary]');
+
+  const paintSummary = (summary: string) => {
+    if (!(summaryContainer instanceof HTMLElement)) return;
+    const tldr = document.createElement('div');
+    tldr.className = 'tldr-box';
+    const p = document.createElement('p');
+    const strong = document.createElement('strong');
+    strong.textContent = 'Latest release';
+    p.appendChild(strong);
+    p.appendChild(document.createTextNode(` ${summary.trim()}`));
+    tldr.appendChild(p);
+    summaryContainer.replaceChildren(tldr);
+  };
 
   if (summaryContainer instanceof HTMLElement) {
     fetch('/api/release-summary')
@@ -93,19 +107,10 @@ const schema = {
         if (!data || typeof data !== 'object') return;
         const summary = (data as { summary?: unknown }).summary;
         if (typeof summary !== 'string' || !summary.trim()) return;
-
-        const tldr = document.createElement('div');
-        tldr.className = 'tldr-box';
-        const p = document.createElement('p');
-        const strong = document.createElement('strong');
-        strong.textContent = 'Latest release';
-        p.appendChild(strong);
-        p.appendChild(document.createTextNode(` ${summary.trim()}`));
-        tldr.appendChild(p);
-        summaryContainer.replaceChildren(tldr);
+        paintSummary(summary);
       })
       .catch(() => {
-        // Fail-open: changelog still renders.
+        // Fail-open: notes-only fallback still paints with the changelog.
       });
   }
 
@@ -126,6 +131,11 @@ const schema = {
 
         releaseList.replaceChildren(empty);
         return;
+      }
+
+      if (summaryContainer instanceof HTMLElement && !summaryContainer.hasChildNodes()) {
+        const fallback = groundedReleaseSummary(releases[0].version, releases[0].body);
+        if (fallback) paintSummary(fallback);
       }
 
       const fragment = document.createDocumentFragment();
