@@ -105,6 +105,10 @@ describe('chat API', () => {
     );
     expect(systemMessage.content).toContain('Hire path is LinkedIn only');
     expect(systemMessage.content).toContain('AI coding copilots is current DevEx work');
+    expect(systemMessage.content).toContain('2x faster delivery');
+    expect(systemMessage.content).toContain('30x ROI');
+    expect(systemMessage.content).toContain('Zeroheight runner-up');
+    expect(systemMessage.content).toContain('Write the digits 2 and 30');
     expect(systemMessage.content).not.toContain('Strategic Product Leader');
     expect(systemMessage.content).not.toContain('Available');
     expect(systemMessage.content).not.toContain('mailto');
