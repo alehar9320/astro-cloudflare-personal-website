@@ -110,9 +110,18 @@ const { title, description } = Astro.props;
       .aurora {
         position: absolute;
         inset: 0;
-        z-index: -1;
+        z-index: 0;
         pointer-events: none;
         overflow: hidden;
+      }
+
+      .backgrounds > :not(.aurora) {
+        position: relative;
+        z-index: 1;
+      }
+
+      :root.theme-dark .aurora {
+        mix-blend-mode: screen;
       }
 
       .aurora-wash {
@@ -150,11 +159,18 @@ const { title, description } = Astro.props;
 
       @media (prefers-reduced-motion: no-preference) {
         .aurora-wash-a {
-          animation: aurora-drift-a 45s ease-in-out infinite alternate;
+          animation: aurora-drift-a 12s ease-in-out infinite alternate;
         }
 
         .aurora-wash-b {
-          animation: aurora-drift-b 70s ease-in-out infinite alternate;
+          animation: aurora-drift-b 20s ease-in-out infinite alternate;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        .aurora-wash-a,
+        .aurora-wash-b {
+          animation: none;
         }
       }
 
