@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { env as workerEnv } from 'cloudflare:workers';
-import { GET, type ReleaseSummaryEnv } from '../pages/api/release-summary';
+import { GET, POST, type ReleaseSummaryEnv } from '../pages/api/release-summary';
 import * as githubReleases from '../utils/github-releases';
 import {
   groundedReleaseSummary,
@@ -14,13 +14,16 @@ import {
 
 type GetContext = Parameters<typeof GET>[0];
 
-function createContext(runtimeEnv: unknown = {}) {
+function createContext(
+  runtimeEnv: unknown = {},
+  request = new Request('https://example.com/api/release-summary')
+) {
   const bindings = workerEnv as ReleaseSummaryEnv;
   delete bindings.AI;
   delete bindings.CHAT_STORE;
   Object.assign(bindings, runtimeEnv as ReleaseSummaryEnv);
   return {
-    request: new Request('https://example.com/api/release-summary'),
+    request,
     locals: {},
   } as unknown as GetContext;
 }
@@ -234,11 +237,35 @@ describe('release summary API', () => {
     });
   });
 
-  it('fails open with 204 when GitHub has no releases', async () => {
+  it('uses the snapshot release when GitHub is empty', async () => {
     vi.spyOn(githubReleases, 'fetchGitHubReleases').mockResolvedValue([]);
-    const ai = { run: vi.fn() };
-    const response = await GET(createContext({ AI: ai }));
-    expect(response.status).toBe(204);
-    expect(ai.run).not.toHaveBeenCalled();
+    const response = await GET(createContext({}));
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      tag: '2026.08.15.1720',
+      summary:
+        'The latest release is 2026.08.15.1720. It includes fix: open the visit glance on tap at 375 (#461). The full changelog is listed below.',
+    });
+  });
+
+  it('summarizes a POSTed release without calling GitHub', async () => {
+    const fetchSpy = vi.spyOn(githubReleases, 'fetchGitHubReleases');
+    fetchSpy.mockClear();
+    const request = new Request('https://example.com/api/release-summary', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        tag: latest.version,
+        title: latest.title,
+        body: latest.body,
+      }),
+    });
+    const response = await POST(createContext({}, request));
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      tag: latest.version,
+      summary: notesFallback,
+    });
+    expect(fetchSpy).not.toHaveBeenCalled();
   });
 });

@@ -1,6 +1,7 @@
 import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
-import { fetchGitHubReleases } from '../../utils/github-releases';
+import { LATEST_RELEASE_SNAPSHOT } from '../../data/latest-release';
+import { fetchGitHubReleases, type SiteRelease } from '../../utils/github-releases';
 import {
   groundedReleaseSummary,
   parseModelText,
@@ -23,11 +24,6 @@ const jsonHeaders = {
   ...securityHeaders,
 } as const;
 
-const emptyHeaders = {
-  'Cache-Control': 'no-store',
-  ...securityHeaders,
-} as const;
-
 export const prerender = false;
 
 export interface ReleaseSummaryEnv {
@@ -35,10 +31,7 @@ export interface ReleaseSummaryEnv {
     run: (model: string, input: unknown) => Promise<unknown>;
   };
   CHAT_STORE?: KVNamespace;
-}
-
-function empty204() {
-  return new Response(null, { status: 204, headers: emptyHeaders });
+  GITHUB_TOKEN?: string;
 }
 
 function readEnv(): ReleaseSummaryEnv {
@@ -50,29 +43,89 @@ function readEnv(): ReleaseSummaryEnv {
   return {};
 }
 
-export const GET: APIRoute = async () => {
+function jsonBody(tag: string, summary: string) {
+  return new Response(JSON.stringify({ tag, summary }), { headers: jsonHeaders });
+}
+
+function postedRelease(data: unknown): SiteRelease | null {
+  if (!data || typeof data !== 'object') return null;
+  const row = data as {
+    tag?: unknown;
+    version?: unknown;
+    title?: unknown;
+    body?: unknown;
+    notes?: unknown;
+  };
+  const version =
+    typeof row.tag === 'string' ? row.tag : typeof row.version === 'string' ? row.version : '';
+  const body =
+    typeof row.body === 'string' ? row.body : typeof row.notes === 'string' ? row.notes : '';
+  const title = typeof row.title === 'string' && row.title.trim() ? row.title : version;
+  if (!version.trim()) return null;
+  return {
+    body,
+    publishedAt: null,
+    title,
+    url: LATEST_RELEASE_SNAPSHOT.url,
+    version: version.trim(),
+  };
+}
+
+async function summarize(request: Request) {
   try {
     const bindings = readEnv();
-    const releases = await fetchGitHubReleases();
-    const latest = releases[0];
-    if (!latest) return empty204();
+    let latest: SiteRelease | null = null;
+    let source = 'github';
 
-    const source = `${latest.version}\n${latest.body}`;
+    if (request.method === 'POST') {
+      try {
+        latest = postedRelease(await request.json());
+        if (latest) source = 'post';
+        else {
+          console.error({
+            event: 'release_summary_204',
+            reason: 'method',
+            method: 'POST',
+            detail: 'missing_tag',
+          });
+        }
+      } catch (error: unknown) {
+        console.error({
+          event: 'release_summary_204',
+          reason: 'method',
+          method: 'POST',
+          error: String(error),
+        });
+      }
+    }
+
+    if (!latest) {
+      const releases = await fetchGitHubReleases();
+      latest = releases[0] ?? null;
+      if (latest) source = 'github';
+    }
+
+    if (!latest) {
+      latest = LATEST_RELEASE_SNAPSHOT;
+      source = 'snapshot';
+      console.error({
+        event: 'release_summary_github_empty',
+        reason: 'tag_miss',
+        using: 'snapshot',
+      });
+    }
+
+    const notes = `${latest.version}\n${latest.body}`;
     const key = releaseSummaryKey(latest.version);
     const store = bindings.CHAT_STORE;
 
     if (store) {
       const cached = await store.get(key);
-      const preparedCache = cached ? prepareReleaseSummary(cached, source) : null;
+      const preparedCache = cached ? prepareReleaseSummary(cached, notes) : null;
       if (preparedCache) {
-        return new Response(JSON.stringify({ tag: latest.version, summary: preparedCache }), {
-          headers: jsonHeaders,
-        });
+        return jsonBody(latest.version, preparedCache);
       }
     }
-
-    const json = (summary: string) =>
-      new Response(JSON.stringify({ tag: latest.version, summary }), { headers: jsonHeaders });
 
     const ai = bindings.AI;
     if (ai) {
@@ -86,22 +139,40 @@ export const GET: APIRoute = async () => {
           ],
           stream: false,
         });
-        const summary = prepareReleaseSummary(parseModelText(result), source);
+        const summary = prepareReleaseSummary(parseModelText(result), notes);
         if (summary) {
           if (store) await store.put(key, summary);
-          return json(summary);
+          return jsonBody(latest.version, summary);
         }
+        console.error({
+          event: 'release_summary_sanitizer',
+          reason: 'sanitizer',
+          tag: latest.version,
+          source,
+        });
       } catch (error: unknown) {
-        console.error({ event: 'release_summary_ai_error', error: String(error) });
+        console.error({
+          event: 'release_summary_ai_error',
+          error: String(error),
+          tag: latest.version,
+        });
       }
     }
 
     const fallback = groundedReleaseSummary(latest.version, latest.body, latest.title);
-    if (!fallback) return empty204();
     if (store) await store.put(key, fallback);
-    return json(fallback);
+    return jsonBody(latest.version, fallback);
   } catch (error: unknown) {
-    console.error({ event: 'release_summary_error', error: String(error) });
-    return empty204();
+    console.error({ event: 'release_summary_204', reason: 'error', error: String(error) });
+    const fallback = groundedReleaseSummary(
+      LATEST_RELEASE_SNAPSHOT.version,
+      LATEST_RELEASE_SNAPSHOT.body,
+      LATEST_RELEASE_SNAPSHOT.title
+    );
+    return jsonBody(LATEST_RELEASE_SNAPSHOT.version, fallback);
   }
-};
+}
+
+export const GET: APIRoute = async ({ request }) => summarize(request);
+
+export const POST: APIRoute = async ({ request }) => summarize(request);

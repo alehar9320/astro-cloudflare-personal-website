@@ -73,15 +73,17 @@ export function parseModelText(result: unknown): string {
   return typeof row.response === 'string' ? row.response.trim() : '';
 }
 
-export function groundedReleaseSummary(tag: string, body: string, title = tag): string | null {
+export function groundedReleaseSummary(tag: string, body: string, title = tag): string {
   const items = splitReleaseBody(body)
     .map((item) => stripExecBanned(item.message.trim()).replace(/^[:\-\s]+/, ''))
     .filter((message) => message.length > 0);
   const listed = (items.length > 0 ? items : body.trim() ? [stripExecBanned(body.trim())] : [])
     .filter((message) => message.length > 0)
     .slice(0, 3);
-  if (listed.length === 0) return null;
-  const text = `The latest release is ${title}. It includes ${listed.join('; ')}. The full changelog is listed below.`;
   const source = `${tag}\n${title}\n${body}`;
-  return isSafeReleaseSummary(text, source) ? text : null;
+  if (listed.length > 0) {
+    const text = `The latest release is ${title}. It includes ${listed.join('; ')}. The full changelog is listed below.`;
+    if (isSafeReleaseSummary(text, source)) return text;
+  }
+  return `The latest release is ${title}. See the changelog below for what shipped. Details stay on this page.`;
 }
