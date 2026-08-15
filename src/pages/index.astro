@@ -152,45 +152,54 @@ const schema = {
   }
 
   .portrait {
+    --portrait-aurora:
+      0 0 20px 4px color-mix(in srgb, var(--accent-light) 55%, transparent),
+      0 0 48px 10px color-mix(in srgb, var(--accent-regular) 40%, transparent);
     position: relative;
-    isolation: isolate;
     border-radius: 1.5rem;
-    box-shadow: var(--shadow-md);
+    margin-inline: 1.25rem;
+    max-width: calc(100% - 2.5rem);
+    box-shadow: var(--portrait-aurora), var(--shadow-md);
+  }
+
+  :global(:root.theme-dark) .portrait {
+    --portrait-aurora:
+      0 0 22px 5px color-mix(in srgb, var(--accent-light) 70%, transparent),
+      0 0 56px 14px color-mix(in srgb, var(--accent-regular) 50%, transparent);
   }
 
   .portrait::before,
   .portrait::after {
     content: '';
     position: absolute;
-    z-index: -1;
+    z-index: 0;
     pointer-events: none;
     border-radius: inherit;
     filter: blur(24px);
-    /* Phone: no upward overflow into Get in touch. */
-    inset: 8% -12% -12% -12%;
+    /* Phone: stay in the side gutter; do not grow into Get in touch. */
+    inset: 12% -10% -16% -10%;
   }
 
   .portrait::before {
-    background: radial-gradient(ellipse 70% 60% at 28% 22%, var(--accent-light), transparent 70%);
-    opacity: 0.28;
+    background: radial-gradient(ellipse 45% 85% at 0% 50%, var(--accent-light), transparent 72%);
+    opacity: 0.4;
   }
 
   .portrait::after {
-    background: radial-gradient(ellipse 60% 70% at 78% 68%, var(--accent-regular), transparent 68%);
-    opacity: 0.22;
-  }
-
-  :global(:root.theme-dark) .portrait::before,
-  :global(:root.theme-dark) .portrait::after {
-    mix-blend-mode: screen;
+    background: radial-gradient(
+      ellipse 45% 85% at 100% 50%,
+      var(--accent-regular),
+      transparent 72%
+    );
+    opacity: 0.34;
   }
 
   :global(:root.theme-dark) .portrait::before {
-    opacity: 0.55;
+    opacity: 0.7;
   }
 
   :global(:root.theme-dark) .portrait::after {
-    opacity: 0.45;
+    opacity: 0.58;
   }
 
   .portrait img {
@@ -274,7 +283,7 @@ const schema = {
     .portrait:hover,
     .portrait:focus-visible {
       transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
+      box-shadow: var(--portrait-aurora), var(--shadow-md);
     }
 
     .proof-card {
@@ -331,12 +340,14 @@ const schema = {
     }
 
     .portrait {
+      margin-inline: 0;
+      max-width: none;
       border-radius: 4.5rem;
     }
 
     .portrait::before,
     .portrait::after {
-      inset: -12%;
+      inset: -16%;
     }
 
     .portrait img {
