@@ -32,19 +32,13 @@ const currentYear = new Date().getFullYear();
     <div class="colophon">
       Built and run with agentic engineering.<span class="visit-stats" data-visit-stats hidden>
         <span aria-hidden="true"> · </span>
-        <span class="visit-glance">
-          <button
-            type="button"
-            class="visit-trigger"
-            data-visit-count
-            aria-expanded="false"
-            aria-controls="visit-glance-panel"></button>
-          <span class="visit-panel" id="visit-glance-panel" hidden>
-            <span data-glance-all></span>
-            <span data-glance-7d></span>
-            <span data-glance-first></span>
-          </span>
-        </span>
+        <button
+          type="button"
+          class="visit-trigger"
+          data-visit-count
+          aria-expanded="false"
+          aria-controls="visit-glance-panel"
+          aria-haspopup="true"></button>
       </span>
     </div>
   </div>
@@ -64,6 +58,11 @@ const currentYear = new Date().getFullYear();
     </a>
   </p>
 </footer>
+<div class="visit-panel" id="visit-glance-panel" hidden>
+  <span data-glance-all></span>
+  <span data-glance-7d></span>
+  <span data-glance-first></span>
+</div>
 
 <script>
   import { fetchGitHubReleases } from '../utils/github-releases';
@@ -117,18 +116,16 @@ const currentYear = new Date().getFullYear();
         if (!isVisitGlance(data)) return;
 
         const trigger = visitStats.querySelector('[data-visit-count]');
-        const all = visitStats.querySelector('[data-glance-all]');
-        const last7d = visitStats.querySelector('[data-glance-7d]');
-        const first = visitStats.querySelector('[data-glance-first]');
-        const glance = visitStats.querySelector('.visit-glance');
-        const panel = visitStats.querySelector('.visit-panel');
+        const panel = document.getElementById('visit-glance-panel');
+        const all = panel?.querySelector('[data-glance-all]');
+        const last7d = panel?.querySelector('[data-glance-7d]');
+        const first = panel?.querySelector('[data-glance-first]');
         if (
           !(trigger instanceof HTMLButtonElement) ||
+          !(panel instanceof HTMLElement) ||
           !(all instanceof HTMLElement) ||
           !(last7d instanceof HTMLElement) ||
-          !(first instanceof HTMLElement) ||
-          !(glance instanceof HTMLElement) ||
-          !(panel instanceof HTMLElement)
+          !(first instanceof HTMLElement)
         ) {
           return;
         }
@@ -139,24 +136,52 @@ const currentYear = new Date().getFullYear();
         last7d.textContent = lines.last7d;
         first.textContent = lines.firstSeen;
         visitStats.hidden = false;
+        document.body.append(panel);
+
+        const place = () => {
+          const box = trigger.getBoundingClientRect();
+          panel.style.position = 'fixed';
+          panel.style.left = `${Math.max(8, Math.min(box.left, window.innerWidth - 280))}px`;
+          panel.style.top = 'auto';
+          panel.style.right = 'auto';
+          panel.style.bottom = `${Math.max(8, window.innerHeight - box.top + 8)}px`;
+        };
 
         const setOpen = (open: boolean) => {
           panel.hidden = !open;
           trigger.setAttribute('aria-expanded', open ? 'true' : 'false');
+          if (open) place();
         };
 
         trigger.addEventListener('click', (event) => {
           event.preventDefault();
+          event.stopPropagation();
           setOpen(panel.hidden);
         });
 
         if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-          glance.addEventListener('pointerenter', () => setOpen(true));
-          glance.addEventListener('pointerleave', () => setOpen(false));
+          trigger.addEventListener('pointerenter', () => setOpen(true));
+          trigger.addEventListener('pointerleave', (event) => {
+            if (event.relatedTarget instanceof Node && panel.contains(event.relatedTarget)) return;
+            setOpen(false);
+          });
+          panel.addEventListener('pointerleave', () => setOpen(false));
         }
 
         document.addEventListener('keydown', (event) => {
           if (event.key === 'Escape') setOpen(false);
+        });
+        document.addEventListener('click', (event) => {
+          if (
+            event.target instanceof Node &&
+            !trigger.contains(event.target) &&
+            !panel.contains(event.target)
+          ) {
+            setOpen(false);
+          }
+        });
+        window.addEventListener('resize', () => {
+          if (!panel.hidden) place();
         });
       })
       .catch(() => {
@@ -241,16 +266,16 @@ const currentYear = new Date().getFullYear();
     line-height: 1.5;
   }
 
-  .visit-stats,
-  .visit-glance {
+  .visit-stats {
     display: inline;
-    position: relative;
     color: inherit;
     font-size: inherit;
   }
 
   .visit-trigger {
     display: inline;
+    appearance: none;
+    -webkit-appearance: none;
     margin: 0;
     padding: 0;
     border: 0;
@@ -277,10 +302,8 @@ const currentYear = new Date().getFullYear();
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
-    position: absolute;
-    bottom: calc(100% + 0.5rem);
-    left: 0;
-    z-index: 4;
+    position: fixed;
+    z-index: 40;
     min-width: 14rem;
     max-width: 18rem;
     padding: 0.5rem 0.75rem;
@@ -295,7 +318,7 @@ const currentYear = new Date().getFullYear();
   }
 
   .visit-panel[hidden] {
-    display: none;
+    display: none !important;
   }
 
   /* Source icon link styling: keep visual weight minimal */
