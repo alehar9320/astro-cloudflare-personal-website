@@ -101,7 +101,7 @@ export function groundedReleaseSummary(tag: string, body: string, title = tag): 
     .slice(0, 3);
   const source = `${tag}\n${title}\n${body}`;
   if (listed.length > 0) {
-    const text = `The latest release is ${title}. Visitors can now ${listed.join('; ')}. The full changelog is listed below.`;
+    const text = `The latest release is ${title}. Visitors can now ${listed.join('; ')}. More is in the changelog on this page.`;
     if (isSafeReleaseSummary(text, source)) return text;
   }
   return `The latest release is ${title}. See the changelog below for what shipped. Details stay on this page.`;

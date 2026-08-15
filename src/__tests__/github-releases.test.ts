@@ -61,19 +61,24 @@ describe('github releases utility', () => {
     );
   });
 
-  it('omits Worker-only GitHub headers in the browser', async () => {
+  it('loads releases from the Worker in the browser', async () => {
     vi.stubGlobal('window', {});
+    const siteRelease = {
+      body: '- feat: ship',
+      publishedAt: null,
+      title: '2026.06.11.0414',
+      url: RELEASES_PAGE_URL,
+      version: '2026.06.11.0414',
+    };
     const fetchMock = vi.fn().mockResolvedValue({
       ok: true,
-      json: async () => [
-        { body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: '2026.06.11.0414' },
-      ],
+      json: async () => [siteRelease],
     });
-    await fetchGitHubReleases(fetchMock as typeof fetch);
-    const headers = fetchMock.mock.calls[0][1].headers as Record<string, string>;
-    expect(headers['User-Agent']).toBeUndefined();
-    expect(headers['X-GitHub-Api-Version']).toBeUndefined();
-    expect(headers.Accept).toBe('application/vnd.github+json');
+    await expect(fetchGitHubReleases(fetchMock as typeof fetch)).resolves.toEqual([siteRelease]);
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/releases',
+      expect.objectContaining({ headers: { Accept: 'application/json' } })
+    );
   });
 
   it('handles API validation failure', async () => {
@@ -308,7 +313,7 @@ describe('github releases utility', () => {
 
       const fetchMock = vi.fn().mockResolvedValue({
         ok: true,
-        json: async () => [{ body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: 'v1' }],
+        json: async () => mockReleases,
       });
 
       const result = await fetchGitHubReleases(fetchMock as typeof fetch);
@@ -326,7 +331,7 @@ describe('github releases utility', () => {
 
       const fetchMock = vi.fn().mockResolvedValue({
         ok: true,
-        json: async () => [{ body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: 'v1' }],
+        json: async () => mockReleases,
       });
 
       const result = await fetchGitHubReleases(fetchMock as typeof fetch);
@@ -344,7 +349,7 @@ describe('github releases utility', () => {
 
       const fetchMock = vi.fn().mockResolvedValue({
         ok: true,
-        json: async () => [{ body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: 'v1' }],
+        json: async () => mockReleases,
       });
 
       const result = await fetchGitHubReleases(fetchMock as typeof fetch);

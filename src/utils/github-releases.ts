@@ -74,13 +74,39 @@ export async function fetchGitHubReleases(
       const cached = sessionStorage.getItem(CACHE_KEY);
       if (cached) {
         const { data, timestamp } = JSON.parse(cached);
-        if (Date.now() - timestamp < CACHE_TTL) {
-          return data;
+        const parsed = z.array(SiteReleaseSchema).safeParse(data);
+        if (Date.now() - timestamp < CACHE_TTL && parsed.success && parsed.data.length > 0) {
+          return parsed.data;
         }
       }
     } catch {
       /* ignore cache errors */
     }
+
+    try {
+      const response = await fetchImpl('/api/releases', {
+        headers: { Accept: 'application/json' },
+      });
+      if (response.ok) {
+        const json = await response.json();
+        const parsed = z.array(SiteReleaseSchema).safeParse(json);
+        if (parsed.success && parsed.data.length > 0) {
+          try {
+            sessionStorage.setItem(
+              CACHE_KEY,
+              JSON.stringify({ data: parsed.data, timestamp: Date.now() })
+            );
+          } catch {
+            /* ignore cache errors */
+          }
+          return parsed.data;
+        }
+      }
+    } catch (error: unknown) {
+      console.error({ event: 'github_releases_proxy_error', error: String(error) });
+    }
+
+    return [];
   }
 
   let githubToken: string | undefined;

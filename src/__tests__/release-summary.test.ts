@@ -40,7 +40,7 @@ const okSummary =
   'The latest release adds an executive glance for footer pageviews. The count sits on the colophon and opens a short overlay. Changelog details stay on this page.';
 
 const notesFallback =
-  'The latest release is 2026.08.15.1714. Visitors can now inline footer pageviews with an exec glance. The full changelog is listed below.';
+  'The latest release is 2026.08.15.1714. Visitors can now inline footer pageviews with an exec glance. More is in the changelog on this page.';
 
 describe('isSafeReleaseSummary', () => {
   const source = `${latest.version}\n${latest.body}`;
@@ -244,7 +244,7 @@ describe('release summary API', () => {
     await expect(response.json()).resolves.toEqual({
       tag: '2026.08.15.1720',
       summary:
-        'The latest release is 2026.08.15.1720. Visitors can now open the visit glance on tap at 375. The full changelog is listed below.',
+        'The latest release is 2026.08.15.1720. Visitors can now open the visit glance on tap at 375. More is in the changelog on this page.',
     });
   });
 
