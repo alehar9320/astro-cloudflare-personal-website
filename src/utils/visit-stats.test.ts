@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { formatPageviewCount, parseVisitGlance, shouldShowVisitCount } from './visit-stats';
+import {
+  formatPageviewCount,
+  formatVisitGlance,
+  parseVisitGlance,
+  shouldShowVisitCount,
+} from './visit-stats';
 
 describe('shouldShowVisitCount', () => {
   it('hides 0', () => {
@@ -91,5 +96,30 @@ describe('parseVisitGlance', () => {
       pageviews7d: 0,
       uniqueVisitors7d: 0,
     });
+  });
+});
+
+describe('formatVisitGlance', () => {
+  const glance = {
+    pageviews: 242,
+    uniqueVisitors: 17,
+    firstSeen: '2026-05-03T18:34:08.880Z',
+    pageviews7d: 213,
+    uniqueVisitors7d: 15,
+  };
+
+  it('always includes first seen and last 7 days', () => {
+    const lines = formatVisitGlance(glance);
+    expect(lines.all).toContain('242 pageviews');
+    expect(lines.all).toContain('17 visitors');
+    expect(lines.last7d).toContain('last 7 days');
+    expect(lines.last7d).toContain('213 pageviews');
+    expect(lines.firstSeen).toMatch(/^First seen /);
+    expect(lines.firstSeen).toContain('2026');
+  });
+
+  it('does not invent 7d numbers when they are zero', () => {
+    const lines = formatVisitGlance({ ...glance, pageviews7d: 0, uniqueVisitors7d: 0 });
+    expect(lines.last7d).toBe('No visits in the last 7 days');
   });
 });

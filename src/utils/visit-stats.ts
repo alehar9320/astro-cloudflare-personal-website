@@ -91,3 +91,21 @@ export function formatFirstSeen(iso: string): string {
     year: 'numeric',
   }).format(d);
 }
+
+export function formatVisitGlance(glance: VisitGlance): {
+  all: string;
+  last7d: string;
+  firstSeen: string;
+} {
+  const visitors = (count: number) => `${count} visitor${count === 1 ? '' : 's'}`;
+  const seen = formatFirstSeen(glance.firstSeen) || glance.firstSeen;
+  const last7d =
+    glance.pageviews7d === 0 && glance.uniqueVisitors7d === 0
+      ? 'No visits in the last 7 days'
+      : `${formatPageviewCount(glance.pageviews7d)} · ${visitors(glance.uniqueVisitors7d)} in the last 7 days`;
+  return {
+    all: `${formatPageviewCount(glance.pageviews)} · ${visitors(glance.uniqueVisitors)}`,
+    last7d,
+    firstSeen: `First seen ${seen}`,
+  };
+}
