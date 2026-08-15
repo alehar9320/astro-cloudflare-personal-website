@@ -4,6 +4,7 @@ name: Enable Auto-Merge
 # dependabot-automerge.yml (including the major-version skip).
 # Trigger only on opened / ready_for_review / reopened so Mergify
 # synchronize events on the existing open-PR pile do not mass-merge.
+# Jules / agent-farm PRs need human review and must not auto-merge.
 on:
   pull_request:
     types: [opened, ready_for_review, reopened]
@@ -22,7 +23,25 @@ jobs:
       github.event.pull_request.head.repo.full_name == github.repository &&
       github.actor != 'dependabot[bot]'
     steps:
+      - name: Skip Jules and agent-farm PRs
+        id: gate
+        env:
+          PR_BODY: ${{ github.event.pull_request.body }}
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+          PR_LABELS: ${{ join(github.event.pull_request.labels.*.name, ',') }}
+          PR_USER: ${{ github.event.pull_request.user.login }}
+        run: |
+          blob=$(printf '%s\n%s\n%s\n%s\n%s' "$PR_BODY" "$PR_TITLE" "$PR_BRANCH" "$PR_LABELS" "$PR_USER" | tr '[:upper:]' '[:lower:]')
+          if printf '%s' "$blob" | grep -Eq 'jules\.google\.com|created automatically by jules|(^|,)jules(,|$)|^jules[-/]|github-copilot\[bot\]|copilot\[bot\]'; then
+            echo 'skip=true' >> "$GITHUB_OUTPUT"
+            echo 'Jules/agent-farm PR; leaving auto-merge off for human review'
+          else
+            echo 'skip=false' >> "$GITHUB_OUTPUT"
+          fi
+
       - name: Enable squash auto-merge
+        if: steps.gate.outputs.skip != 'true'
         run: gh pr merge --auto --squash "$PR_URL"
         env:
           PR_URL: ${{ github.event.pull_request.html_url }}
