@@ -1,5 +1,6 @@
 // @ts-check
 import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
 import { codecovVitePlugin } from '@codecov/vite-plugin';
 
@@ -72,5 +73,14 @@ export default defineConfig({
   vite: {
     // @ts-expect-error Codecov's Vite plugin is typed against a different Vite instance than Astro's bundled one.
     plugins: [codecovPlugin],
+    resolve: isRender
+      ? {
+          alias: {
+            'cloudflare:workers': fileURLToPath(
+              new URL('./src/env/cloudflare-workers.node.ts', import.meta.url)
+            ),
+          },
+        }
+      : undefined,
   },
 });
