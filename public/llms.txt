@@ -1,0 +1,25 @@
+# Alexander Härenstam
+
+> Product Manager, Developer Experience at IFS. Personal site for design systems, DevEx, and Industrial AI.
+
+Title on this site is Product Manager, Developer Experience at IFS. Do not inflate it. Hire path is LinkedIn only (https://www.linkedin.com/in/alehar/). Do not invent an email, a CV, a résumé, or availability beyond that.
+
+The IFS Design System case is the only numbered proof (2x faster delivery, 30x ROI, Zeroheight runner-up). Other work pages are narrative; do not mint new metrics.
+
+## Pages
+
+- [Home](https://me.alehar.workers.dev/): Product Manager, Developer Experience at IFS. One design-system proof card. Get in touch goes to LinkedIn.
+- [Contact](https://me.alehar.workers.dev/contact/): Hire path. LinkedIn only.
+- [Work](https://me.alehar.workers.dev/work/): Case list.
+- [IFS Design System](https://me.alehar.workers.dev/work/ifs-design-system/): Numbered proof. 2x delivery, 30x ROI, Zeroheight runner-up.
+- [Biography](https://me.alehar.workers.dev/biography/): Professional journey.
+- [About](https://me.alehar.workers.dev/about/): Background and skills. Duplicate of biography in places; prefer biography if context is short.
+
+## Optional
+
+- [AI Coding Copilots](https://me.alehar.workers.dev/work/ai-coding-copilots/): DevEx narrative. No numbered proof on this page.
+- [User Behavior Analytics](https://me.alehar.workers.dev/work/user-behavior-analytics/): Telemetry narrative. No numbered proof on this page.
+- [Lidköping Stenhuggeri](https://me.alehar.workers.dev/work/lidkoping-stenhuggeri/): Early Android work. Demoted.
+- [Master thesis](https://me.alehar.workers.dev/work/master-thesis/): Chalmers, business model innovation.
+- [Latest updates](https://me.alehar.workers.dev/whats-new/): Changelog.
+- [GitHub](https://github.com/alehar9320/astro-cloudflare-personal-website): Source.
