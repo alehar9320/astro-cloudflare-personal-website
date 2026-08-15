@@ -63,81 +63,94 @@ function parsePageviews(payload: unknown): number | null {
   return null;
 }
 
-export const GET: APIRoute = async ({ locals }) => {
-  const bindings = ((locals as unknown as { runtime?: { env: VisitEnv } }).runtime?.env ||
-    process.env) as unknown as VisitEnv;
-
-  const personalKey = bindings.POSTHOG_PERSONAL_API_KEY?.trim();
-  if (!personalKey) {
-    console.error({ event: 'visits_key_missing' });
-    return empty204();
-  }
-
-  const projectId = (bindings.POSTHOG_PROJECT_ID || DEFAULT_PROJECT_ID).trim();
-  if (!/^\d+$/.test(projectId)) {
-    console.error({ event: 'visits_invalid_project_id' });
-    return empty204();
-  }
-
-  let host: string;
+function readVisitEnv(locals: unknown): VisitEnv {
   try {
-    const parsed = new URL((bindings.POSTHOG_QUERY_HOST || DEFAULT_QUERY_HOST).trim());
-    if (parsed.protocol !== 'https:') {
+    const env = (locals as { runtime?: { env?: VisitEnv } } | null)?.runtime?.env;
+    if (env && typeof env === 'object') return env;
+  } catch {
+    // Workers have no process.env without nodejs_compat; missing runtime is fail-open.
+  }
+  return {};
+}
+
+export const GET: APIRoute = async ({ locals }) => {
+  try {
+    const bindings = readVisitEnv(locals);
+    const personalKey = bindings.POSTHOG_PERSONAL_API_KEY?.trim();
+    if (!personalKey) {
+      console.error({ event: 'visits_key_missing' });
+      return empty204();
+    }
+
+    const projectId = (bindings.POSTHOG_PROJECT_ID || DEFAULT_PROJECT_ID).trim();
+    if (!/^\d+$/.test(projectId)) {
+      console.error({ event: 'visits_invalid_project_id' });
+      return empty204();
+    }
+
+    let host: string;
+    try {
+      const parsed = new URL((bindings.POSTHOG_QUERY_HOST || DEFAULT_QUERY_HOST).trim());
+      if (parsed.protocol !== 'https:') {
+        console.error({ event: 'visits_invalid_host' });
+        return empty204();
+      }
+      host = parsed.origin;
+    } catch {
       console.error({ event: 'visits_invalid_host' });
       return empty204();
     }
-    host = parsed.origin;
-  } catch {
-    console.error({ event: 'visits_invalid_host' });
-    return empty204();
-  }
 
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), QUERY_TIMEOUT_MS);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), QUERY_TIMEOUT_MS);
 
-  try {
-    const response = await fetch(`${host}/api/projects/${projectId}/query/`, {
-      method: 'POST',
-      headers: {
-        Authorization: `Bearer ${personalKey}`,
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        query: {
-          kind: 'HogQLQuery',
-          query: HOGQL,
+    try {
+      const response = await fetch(`${host}/api/projects/${projectId}/query/`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${personalKey}`,
+          'content-type': 'application/json',
         },
-      }),
-      signal: controller.signal,
-    });
+        body: JSON.stringify({
+          query: {
+            kind: 'HogQLQuery',
+            query: HOGQL,
+          },
+        }),
+        signal: controller.signal,
+      });
 
-    if (!response.ok) {
+      if (!response.ok) {
+        console.error({ event: 'visits_query_failed' });
+        return empty204();
+      }
+
+      let payload: unknown;
+      try {
+        payload = await response.json();
+      } catch {
+        console.error({ event: 'visits_query_invalid' });
+        return empty204();
+      }
+
+      const count = parsePageviews(payload);
+      if (!shouldShowVisitCount(count)) {
+        console.error({ event: 'visits_count_hidden' });
+        return empty204();
+      }
+
+      return new Response(JSON.stringify({ pageviews: count }), {
+        status: 200,
+        headers: jsonHeaders,
+      });
+    } catch {
       console.error({ event: 'visits_query_failed' });
       return empty204();
+    } finally {
+      clearTimeout(timeout);
     }
-
-    let payload: unknown;
-    try {
-      payload = await response.json();
-    } catch {
-      console.error({ event: 'visits_query_invalid' });
-      return empty204();
-    }
-
-    const count = parsePageviews(payload);
-    if (!shouldShowVisitCount(count)) {
-      console.error({ event: 'visits_count_hidden' });
-      return empty204();
-    }
-
-    return new Response(JSON.stringify({ pageviews: count }), {
-      status: 200,
-      headers: jsonHeaders,
-    });
   } catch {
     console.error({ event: 'visits_query_failed' });
     return empty204();
-  } finally {
-    clearTimeout(timeout);
   }
 };
