@@ -30,6 +30,19 @@ const REPO_URL = 'https://github.com/alehar9320/astro-cloudflare-personal-websit
 const CACHE_KEY = 'github-releases-cache';
 const CACHE_TTL = 3600 * 1000; // 1 hour
 
+function logReleaseValidationFailed(issues: z.ZodIssue[]): void {
+  const sanitizedIssues = issues.map((issue) => {
+    const safeIssue = { ...issue } as Record<string, unknown>;
+    delete safeIssue.received;
+    delete safeIssue.value;
+    return safeIssue;
+  });
+  console.error({
+    event: 'github_releases_validation_failed',
+    issues: sanitizedIssues,
+  });
+}
+
 /**
  * Represents a single item within a release's changelog.
  */
@@ -74,16 +87,50 @@ export async function fetchGitHubReleases(
       const cached = sessionStorage.getItem(CACHE_KEY);
       if (cached) {
         const { data, timestamp } = JSON.parse(cached);
-        if (Date.now() - timestamp < CACHE_TTL) {
-          return data;
+        const parsed = z.array(SiteReleaseSchema).safeParse(data);
+        if (Date.now() - timestamp < CACHE_TTL && parsed.success && parsed.data.length > 0) {
+          return parsed.data;
         }
       }
     } catch {
       /* ignore cache errors */
     }
+
+    try {
+      const response = await fetchImpl('/api/releases', {
+        headers: { Accept: 'application/json' },
+      });
+      if (response.ok) {
+        const json = await response.json();
+        const parsed = z.array(SiteReleaseSchema).safeParse(json);
+        if (parsed.success && parsed.data.length > 0) {
+          try {
+            sessionStorage.setItem(
+              CACHE_KEY,
+              JSON.stringify({ data: parsed.data, timestamp: Date.now() })
+            );
+          } catch {
+            /* ignore cache errors */
+          }
+          return parsed.data;
+        }
+        if (!parsed.success) {
+          logReleaseValidationFailed(parsed.error.issues);
+        }
+      }
+    } catch (error: unknown) {
+      console.error({ event: 'github_releases_proxy_error', error: String(error) });
+    }
+
+    return [];
   }
 
-  const githubToken = typeof process !== 'undefined' ? process.env.GITHUB_TOKEN : undefined;
+  let githubToken: string | undefined;
+  try {
+    githubToken = typeof process !== 'undefined' ? process.env.GITHUB_TOKEN : undefined;
+  } catch {
+    githubToken = undefined;
+  }
 
   // Defensive check to ensure we only fetch from the trusted GitHub API domain
   if (!url.startsWith('https://api.github.com/')) {
@@ -92,12 +139,16 @@ export async function fetchGitHubReleases(
   }
 
   try {
-    const response = await fetchImpl(url, {
-      headers: {
-        Accept: 'application/vnd.github+json',
-        ...(githubToken ? { Authorization: `token ${githubToken}` } : {}),
-      },
-    });
+    const headers: Record<string, string> = {
+      Accept: 'application/vnd.github+json',
+      ...(githubToken ? { Authorization: `token ${githubToken}` } : {}),
+    };
+    if (typeof window === 'undefined') {
+      headers['User-Agent'] = 'alehar9320-astro-cloudflare-personal-website';
+      headers['X-GitHub-Api-Version'] = '2022-11-28';
+    }
+
+    const response = await fetchImpl(url, { headers });
 
     if (!response.ok) {
       // Intentionally avoiding logging headers that might contain sensitive information
@@ -113,17 +164,7 @@ export async function fetchGitHubReleases(
     const result = z.array(GitHubReleaseApiItemSchema).safeParse(json);
 
     if (!result.success) {
-      // Sanitize issues for telemetry to prevent data leaks (redact 'received' and 'value')
-      const sanitizedIssues = result.error.issues.map((issue) => {
-        const safeIssue = { ...issue } as Record<string, unknown>;
-        delete safeIssue.received;
-        delete safeIssue.value;
-        return safeIssue;
-      });
-      console.error({
-        event: 'github_releases_validation_failed',
-        issues: sanitizedIssues,
-      });
+      logReleaseValidationFailed(result.error.issues);
       return [];
     }
 
@@ -193,9 +234,16 @@ export function parseReleaseItem(line: string): ReleaseItem {
   };
 }
 
+const INTERNAL_CHANGELOG_ITEM = /\bjules\b|\bagent[- ]farm\b|\bjohan nits\b/i;
+
+export function isPublicChangelogItem(item: ReleaseItem): boolean {
+  return !INTERNAL_CHANGELOG_ITEM.test(item.message);
+}
+
 /**
  * Splits a release body into individual, formatted ReleaseItem objects.
  * Filters for lines starting with list markers (-, *, +).
+ * Drops Jules, agent-farm, and Johan-nits internals from the public list.
  * @param {string} body - The full Markdown body of a GitHub release.
  * @returns {ReleaseItem[]} An array of parsed release items.
  */
@@ -205,7 +253,8 @@ export function splitReleaseBody(body: string): ReleaseItem[] {
     .map((line) => line.trim())
     .filter((line) => /^[-*+]\s+/.test(line))
     .map((line) => line.replace(/^[-*+]\s+/, ''))
-    .map(parseReleaseItem);
+    .map(parseReleaseItem)
+    .filter(isPublicChangelogItem);
 }
 
 export { RELEASES_PAGE_URL };

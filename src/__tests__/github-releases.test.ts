@@ -51,6 +51,34 @@ describe('github releases utility', () => {
         version: '2026.06.11.0414',
       },
     ]);
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.stringContaining('api.github.com'),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          'User-Agent': 'alehar9320-astro-cloudflare-personal-website',
+        }),
+      })
+    );
+  });
+
+  it('loads releases from the Worker in the browser', async () => {
+    vi.stubGlobal('window', {});
+    const siteRelease = {
+      body: '- feat: ship',
+      publishedAt: null,
+      title: '2026.06.11.0414',
+      url: RELEASES_PAGE_URL,
+      version: '2026.06.11.0414',
+    };
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [siteRelease],
+    });
+    await expect(fetchGitHubReleases(fetchMock as typeof fetch)).resolves.toEqual([siteRelease]);
+    expect(fetchMock).toHaveBeenCalledWith(
+      '/api/releases',
+      expect.objectContaining({ headers: { Accept: 'application/json' } })
+    );
   });
 
   it('handles API validation failure', async () => {
@@ -114,6 +142,25 @@ describe('github releases utility', () => {
     expect(splitReleaseBody(body)).toEqual([{ message: 'List item' }]);
   });
 
+  it('drops Jules, agent-farm, and Johan nits internals and keeps product bullets', () => {
+    const body = `- d5d9afd Stop auto-merge for Jules and agent-farm PRs (#447)
+- 6e4bc7e fix: Johan nits after #439 — small-hero padding and aurora blur (#446)
+- 484393b feat: update digital twin panel header, suggested questions, and grounded system prompt (#444)
+- 128fa2e feat: first-screen 100dvh and CSS aurora wash (#439)
+- 7e65848 Wire PostHog public env into the production build (#435)
+- 7da1f6b perf: defer PostHog init until idle (#434)`;
+    const items = splitReleaseBody(body);
+    expect(items.map((item) => item.message)).toEqual([
+      'feat: update digital twin panel header, suggested questions, and grounded system prompt (#444)',
+      'feat: first-screen 100dvh and CSS aurora wash (#439)',
+      'Wire PostHog public env into the production build (#435)',
+      'perf: defer PostHog init until idle (#434)',
+    ]);
+    expect(items.map((item) => item.message).join('\n')).not.toMatch(
+      /jules|agent-farm|johan nits/i
+    );
+  });
+
   it('parses commit hashes from release items with various markers', () => {
     const body =
       '* 8acc628 ✍️ Scribe: Strategic Copy Optimization\n+ 1234567 fix: some issue\n- plain message';
@@ -169,7 +216,11 @@ describe('github releases utility', () => {
     expect(fetchMock).toHaveBeenCalledWith(
       expect.any(String),
       expect.objectContaining({
-        headers: { Accept: expect.any(String), Authorization: 'token test-token' },
+        headers: expect.objectContaining({
+          Accept: expect.any(String),
+          Authorization: 'token test-token',
+          'User-Agent': 'alehar9320-astro-cloudflare-personal-website',
+        }),
       })
     );
     expect(consoleSpy).toHaveBeenCalledWith(
@@ -281,7 +332,7 @@ describe('github releases utility', () => {
 
       const fetchMock = vi.fn().mockResolvedValue({
         ok: true,
-        json: async () => [{ body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: 'v1' }],
+        json: async () => mockReleases,
       });
 
       const result = await fetchGitHubReleases(fetchMock as typeof fetch);
@@ -299,7 +350,7 @@ describe('github releases utility', () => {
 
       const fetchMock = vi.fn().mockResolvedValue({
         ok: true,
-        json: async () => [{ body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: 'v1' }],
+        json: async () => mockReleases,
       });
 
       const result = await fetchGitHubReleases(fetchMock as typeof fetch);
@@ -317,7 +368,7 @@ describe('github releases utility', () => {
 
       const fetchMock = vi.fn().mockResolvedValue({
         ok: true,
-        json: async () => [{ body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: 'v1' }],
+        json: async () => mockReleases,
       });
 
       const result = await fetchGitHubReleases(fetchMock as typeof fetch);

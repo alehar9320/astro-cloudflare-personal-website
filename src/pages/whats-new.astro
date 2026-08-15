@@ -51,18 +51,7 @@ const schema = {
       />
 
       <div class="content">
-        <div data-release-summary>
-          <div class="tldr-box">
-            <p>
-              <strong>Topical Anchor:</strong> This page serves as the <strong
-                >Source of Truth</strong
-              >
-              for the latest technical refinements, portfolio updates, and professional milestones. It
-              is optimized for both human readers and <strong>AI agents</strong> to synthesize Alexander
-              Härenstam's real-time project impact.
-            </p>
-          </div>
-        </div>
+        <div data-release-summary></div>
         <div class="release-list" data-release-list>
           <p class="release-status">Fetching latest project updates...</p>
         </div>
@@ -81,80 +70,76 @@ const schema = {
 </BaseLayout>
 
 <script>
+  import { LATEST_RELEASE_SNAPSHOT } from '../data/latest-release';
   import {
     RELEASES_PAGE_URL,
     fetchGitHubReleases,
     formatReleaseDate,
     splitReleaseBody,
   } from '../utils/github-releases';
+  import { groundedReleaseSummary, prepareReleaseSummary } from '../utils/release-summary';
 
   const releaseList = document.querySelector('[data-release-list]');
+  const summaryContainer = document.querySelector('[data-release-summary]');
+
+  const paintSummary = (summary: string) => {
+    if (!(summaryContainer instanceof HTMLElement)) return;
+    const tldr = document.createElement('div');
+    tldr.className = 'tldr-box';
+    const p = document.createElement('p');
+    const strong = document.createElement('strong');
+    strong.textContent = 'Latest release';
+    p.appendChild(strong);
+    p.appendChild(document.createTextNode(` ${summary.trim()}`));
+    tldr.appendChild(p);
+    summaryContainer.replaceChildren(tldr);
+  };
+
+  if (summaryContainer instanceof HTMLElement) {
+    fetch('/api/release-summary')
+      .then(async (response) => {
+        if (response.status === 204 || !response.ok) return;
+        let data: unknown;
+        try {
+          data = await response.json();
+        } catch {
+          return;
+        }
+        if (!data || typeof data !== 'object') return;
+        const summary = (data as { summary?: unknown }).summary;
+        const tag = (data as { tag?: unknown }).tag;
+        if (typeof summary !== 'string' || !summary.trim()) return;
+        const source = `${typeof tag === 'string' ? tag : ''}\n${LATEST_RELEASE_SNAPSHOT.body}`;
+        const prepared = prepareReleaseSummary(summary, source);
+        if (prepared) paintSummary(prepared);
+      })
+      .catch(() => {
+        // Fail-open: notes-only fallback still paints with the changelog.
+      });
+  }
 
   if (releaseList instanceof HTMLDivElement) {
     fetchGitHubReleases().then((releases) => {
+      if (summaryContainer instanceof HTMLElement && !summaryContainer.hasChildNodes()) {
+        const latest = releases[0] ?? LATEST_RELEASE_SNAPSHOT;
+        paintSummary(groundedReleaseSummary(latest.version, latest.body, latest.title));
+      }
+
       if (releases.length === 0) {
         const empty = document.createElement('p');
         empty.className = 'release-status';
         empty.textContent = 'Project history is currently unavailable.';
-
         const link = document.createElement('a');
         link.href = RELEASES_PAGE_URL;
         link.textContent = 'View GitHub Releases';
-
         empty.appendChild(document.createTextNode(' '));
         empty.appendChild(link);
         empty.appendChild(document.createTextNode('.'));
-
         releaseList.replaceChildren(empty);
         return;
       }
 
       const fragment = document.createDocumentFragment();
-
-      // Generate summary from the first 3 most significant items across latest releases
-      const summaryItems = releases
-        .flatMap((r) => splitReleaseBody(r.body))
-        .filter((item) => {
-          const msg = item.message.toLowerCase();
-          // Prioritize features, fixes, and persona-driven updates
-          return (
-            msg.includes('feat') ||
-            msg.includes('fix') ||
-            msg.includes('scribe') ||
-            msg.includes('oracle') ||
-            msg.includes('sentinel') ||
-            msg.includes('palette') ||
-            msg.includes('vantage') ||
-            msg.includes('bolt')
-          );
-        })
-        .slice(0, 3)
-        .map((item) => item.message);
-
-      // Fallback to first 3 items if no prioritized items found
-      if (summaryItems.length === 0) {
-        summaryItems.push(
-          ...releases
-            .flatMap((r) => splitReleaseBody(r.body))
-            .slice(0, 3)
-            .map((item) => item.message)
-        );
-      }
-
-      if (summaryItems.length > 0) {
-        const summaryContainer = document.querySelector('[data-release-summary]');
-        if (summaryContainer) {
-          const tldr = document.createElement('div');
-          tldr.className = 'tldr-box';
-          const p = document.createElement('p');
-          const strong = document.createElement('strong');
-          strong.textContent = 'Recent Highlights:';
-          p.appendChild(strong);
-          p.appendChild(document.createTextNode(` ${summaryItems.join('; ')}.`));
-          tldr.appendChild(p);
-          summaryContainer.replaceChildren(tldr);
-        }
-      }
 
       releases.forEach((release) => {
         const article = document.createElement('article');
@@ -231,6 +216,10 @@ const schema = {
   .release-list {
     display: grid;
     gap: 1.5rem;
+  }
+
+  [data-release-summary]:not(:empty) {
+    margin-bottom: 1.5rem;
   }
 
   .release-card {
