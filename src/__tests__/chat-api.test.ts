@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 
 import { env as workerEnv } from 'cloudflare:workers';
 import { POST, type ChatEnv } from '../pages/api/chat';
+import { DESIGN_SYSTEM_CHIP, DESIGN_SYSTEM_PROOF } from '../utils/chat-logic';
 
 const endpoint = 'https://example.com/api/chat';
 
@@ -98,10 +99,36 @@ describe('chat API', () => {
     expect(systemMessage.role).toBe('system');
     expect(systemMessage.content).toContain('Product Manager, Developer Experience');
     expect(systemMessage.content).toContain('linkedin.com/in/alehar');
+    expect(systemMessage.content).toContain('Greater Stockholm');
+    expect(systemMessage.content).toContain('Chalmers B.Sc. Software Engineering');
+    expect(systemMessage.content).toContain(
+      'Chalmers M.Sc. Management and Economics of Innovation'
+    );
+    expect(systemMessage.content).toContain('Hire path is LinkedIn only');
+    expect(systemMessage.content).toContain('AI coding copilots is current DevEx work');
+    expect(systemMessage.content).toContain('2x faster delivery');
+    expect(systemMessage.content).toContain('30x ROI');
+    expect(systemMessage.content).toContain('Zeroheight runner-up');
+    expect(systemMessage.content).toContain('Write the digits 2 and 30');
     expect(systemMessage.content).not.toContain('Strategic Product Leader');
     expect(systemMessage.content).not.toContain('Available');
     expect(systemMessage.content).not.toContain('mailto');
-    expect(systemMessage.content).not.toContain('CV');
+  });
+
+  it('returns the exact 2x/30x proof for the design-system chip without calling the model', async () => {
+    const ai = createAi();
+    const response = await postChat(
+      { messages: [{ role: 'user', content: DESIGN_SYSTEM_CHIP }] },
+      ai
+    );
+
+    expect(response.status).toBe(200);
+    expect(ai.run).not.toHaveBeenCalled();
+    const body = await response.text();
+    expect(body).toContain('2x faster delivery');
+    expect(body).toContain('30x ROI');
+    expect(body).toContain('Zeroheight runner-up');
+    expect(body).toContain(DESIGN_SYSTEM_PROOF);
   });
 
   it('returns 503 when the AI binding is missing', async () => {
