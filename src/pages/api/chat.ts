@@ -109,7 +109,7 @@ If asked to hire or meet, reply in one sentence and point to https://www.linkedi
 Keep answers brief (2-3 sentences). If asked unpublished facts, say they are not on this site.`;
 
   try {
-    const stream = await ai.run('@cf/meta/llama-3.1-8b-instruct', {
+    const stream = await ai.run('@cf/meta/llama-3.1-8b-instruct-fast', {
       messages: [{ role: 'system', content: systemPrompt }, ...prunedMessages],
       stream: true,
     });
