@@ -30,7 +30,8 @@ interface VisitEnv {
 const DEFAULT_PROJECT_ID = '171414';
 const DEFAULT_QUERY_HOST = 'https://eu.posthog.com';
 const QUERY_TIMEOUT_MS = 5000;
-const HOGQL = "SELECT count() AS pageviews FROM events WHERE event = '$pageview'";
+const HOGQL =
+  "SELECT count() AS pageviews FROM events WHERE event = '$pageview' AND timestamp >= toDateTime('1970-01-01 00:00:00')";
 
 function empty204() {
   return new Response(null, { status: 204, headers: emptyHeaders });
