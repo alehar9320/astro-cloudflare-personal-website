@@ -120,8 +120,10 @@ const schema = {
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 2rem;
-    padding-bottom: 5.5rem;
+    padding-bottom: 2rem;
+    min-height: calc(100dvh - 7rem);
   }
 
   .hero-actions {
@@ -238,9 +240,11 @@ const schema = {
     .hero {
       display: grid;
       grid-template-columns: 6fr 4fr;
+      align-content: center;
       padding-inline: 2.5rem;
       gap: 3.75rem;
-      padding-bottom: 0;
+      padding-bottom: 2rem;
+      min-height: calc(100dvh - 9rem);
     }
 
     .hero-actions {
