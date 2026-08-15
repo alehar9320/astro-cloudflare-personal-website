@@ -59,7 +59,7 @@ export function isSafeReleaseSummary(summary: string, source: string): boolean {
 
 export function prepareReleaseSummary(summary: string, source: string): string | null {
   const original = summary.trim();
-  if (SHA_ONE.test(original)) return null;
+  if (SHA_ONE.test(original) || /\bissue number\b/i.test(original)) return null;
   const text = stripExecBanned(original);
   return isSafeReleaseSummary(text, source) ? text : null;
 }

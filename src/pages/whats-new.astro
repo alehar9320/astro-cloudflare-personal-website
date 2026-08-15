@@ -70,13 +70,13 @@ const schema = {
 </BaseLayout>
 
 <script>
+  import { LATEST_RELEASE_SNAPSHOT } from '../data/latest-release';
   import {
-    RELEASES_PAGE_URL,
     fetchGitHubReleases,
     formatReleaseDate,
     splitReleaseBody,
   } from '../utils/github-releases';
-  import { groundedReleaseSummary } from '../utils/release-summary';
+  import { groundedReleaseSummary, prepareReleaseSummary } from '../utils/release-summary';
 
   const releaseList = document.querySelector('[data-release-list]');
   const summaryContainer = document.querySelector('[data-release-summary]');
@@ -106,8 +106,11 @@ const schema = {
         }
         if (!data || typeof data !== 'object') return;
         const summary = (data as { summary?: unknown }).summary;
+        const tag = (data as { tag?: unknown }).tag;
         if (typeof summary !== 'string' || !summary.trim()) return;
-        paintSummary(summary);
+        const source = `${typeof tag === 'string' ? tag : ''}\n${LATEST_RELEASE_SNAPSHOT.body}`;
+        const prepared = prepareReleaseSummary(summary, source);
+        if (prepared) paintSummary(prepared);
       })
       .catch(() => {
         // Fail-open: notes-only fallback still paints with the changelog.
@@ -115,31 +118,13 @@ const schema = {
   }
 
   if (releaseList instanceof HTMLDivElement) {
-    fetchGitHubReleases().then((releases) => {
-      if (releases.length === 0) {
-        const empty = document.createElement('p');
-        empty.className = 'release-status';
-        empty.textContent = 'Project history is currently unavailable.';
-
-        const link = document.createElement('a');
-        link.href = RELEASES_PAGE_URL;
-        link.textContent = 'View GitHub Releases';
-
-        empty.appendChild(document.createTextNode(' '));
-        empty.appendChild(link);
-        empty.appendChild(document.createTextNode('.'));
-
-        releaseList.replaceChildren(empty);
-        return;
-      }
+    fetchGitHubReleases().then((fetched) => {
+      const releases = fetched.length > 0 ? fetched : [LATEST_RELEASE_SNAPSHOT];
 
       if (summaryContainer instanceof HTMLElement && !summaryContainer.hasChildNodes()) {
-        const fallback = groundedReleaseSummary(
-          releases[0].version,
-          releases[0].body,
-          releases[0].title
+        paintSummary(
+          groundedReleaseSummary(releases[0].version, releases[0].body, releases[0].title)
         );
-        if (fallback) paintSummary(fallback);
       }
 
       const fragment = document.createDocumentFragment();
