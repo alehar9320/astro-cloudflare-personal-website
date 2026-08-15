@@ -30,6 +30,19 @@ const REPO_URL = 'https://github.com/alehar9320/astro-cloudflare-personal-websit
 const CACHE_KEY = 'github-releases-cache';
 const CACHE_TTL = 3600 * 1000; // 1 hour
 
+function logReleaseValidationFailed(issues: z.ZodIssue[]): void {
+  const sanitizedIssues = issues.map((issue) => {
+    const safeIssue = { ...issue } as Record<string, unknown>;
+    delete safeIssue.received;
+    delete safeIssue.value;
+    return safeIssue;
+  });
+  console.error({
+    event: 'github_releases_validation_failed',
+    issues: sanitizedIssues,
+  });
+}
+
 /**
  * Represents a single item within a release's changelog.
  */
@@ -101,6 +114,9 @@ export async function fetchGitHubReleases(
           }
           return parsed.data;
         }
+        if (!parsed.success) {
+          logReleaseValidationFailed(parsed.error.issues);
+        }
       }
     } catch (error: unknown) {
       console.error({ event: 'github_releases_proxy_error', error: String(error) });
@@ -148,17 +164,7 @@ export async function fetchGitHubReleases(
     const result = z.array(GitHubReleaseApiItemSchema).safeParse(json);
 
     if (!result.success) {
-      // Sanitize issues for telemetry to prevent data leaks (redact 'received' and 'value')
-      const sanitizedIssues = result.error.issues.map((issue) => {
-        const safeIssue = { ...issue } as Record<string, unknown>;
-        delete safeIssue.received;
-        delete safeIssue.value;
-        return safeIssue;
-      });
-      console.error({
-        event: 'github_releases_validation_failed',
-        issues: sanitizedIssues,
-      });
+      logReleaseValidationFailed(result.error.issues);
       return [];
     }
 
