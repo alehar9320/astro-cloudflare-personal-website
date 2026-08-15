@@ -79,6 +79,15 @@ describe('isSafeReleaseSummary', () => {
       )
     ).toBe(false);
   });
+
+  it('rejects glued Render and squash-title PR subjects', () => {
+    expect(
+      isSafeReleaseSummary(
+        'The latest release is 2026.08.15.1826. Visitors can now alias cloudflare:workers to a Node stub on Render; do not paint squash titles in the /whats-new exec box. More is in the changelog on this page.',
+        source
+      )
+    ).toBe(false);
+  });
 });
 
 describe('prepareReleaseSummary', () => {
@@ -137,8 +146,20 @@ describe('release summary helpers', () => {
     expect(summary).not.toMatch(/on \/whats-new/i);
   });
 
+  it('does not glue later squash titles into Visitors can now', () => {
+    const body = `- 9d0a655 feat: alias cloudflare:workers to a Node stub on Render (#464)
+- ae23d9d feat: do not paint squash titles in the /whats-new exec box (#463)`;
+    const summary = groundedReleaseSummary('2026.08.15.1826', body, '2026.08.15.1826');
+    expect(summary).toBe(
+      'The latest release is 2026.08.15.1826. See the changelog below for what shipped. Details stay on this page.'
+    );
+    expect(summary).not.toMatch(/visitors can now/i);
+    expect(summary).not.toMatch(/cloudflare:workers/i);
+    expect(summary).not.toMatch(/node stub/i);
+  });
+
   it('caches by tag', () => {
-    expect(releaseSummaryKey('2026.08.15.1714')).toBe('release-summary:v3:2026.08.15.1714');
+    expect(releaseSummaryKey('2026.08.15.1714')).toBe('release-summary:v4:2026.08.15.1714');
   });
 
   it('asks for 2-4 sentences and no invented metrics', () => {
@@ -176,7 +197,7 @@ describe('release summary API', () => {
       tag: latest.version,
       summary: okSummary,
     });
-    expect(get).toHaveBeenCalledWith('release-summary:v3:2026.08.15.1714');
+    expect(get).toHaveBeenCalledWith('release-summary:v4:2026.08.15.1714');
     expect(ai.run).not.toHaveBeenCalled();
     expect(put).not.toHaveBeenCalled();
   });
@@ -198,7 +219,7 @@ describe('release summary API', () => {
       '@cf/meta/llama-3.1-8b-instruct-fast',
       expect.objectContaining({ stream: false })
     );
-    expect(put).toHaveBeenCalledWith('release-summary:v3:2026.08.15.1714', okSummary);
+    expect(put).toHaveBeenCalledWith('release-summary:v4:2026.08.15.1714', okSummary);
   });
 
   it('uses a notes-only fallback when AI is missing', async () => {
@@ -246,7 +267,7 @@ describe('release summary API', () => {
       tag: latest.version,
       summary: notesFallback,
     });
-    expect(put).toHaveBeenCalledWith('release-summary:v3:2026.08.15.1714', notesFallback);
+    expect(put).toHaveBeenCalledWith('release-summary:v4:2026.08.15.1714', notesFallback);
   });
 
   it('drops invented 2x / 30x and falls back to the notes', async () => {
