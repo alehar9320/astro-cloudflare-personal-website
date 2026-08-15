@@ -72,6 +72,7 @@ const schema = {
 <script>
   import { LATEST_RELEASE_SNAPSHOT } from '../data/latest-release';
   import {
+    RELEASES_PAGE_URL,
     fetchGitHubReleases,
     formatReleaseDate,
     splitReleaseBody,
@@ -118,13 +119,24 @@ const schema = {
   }
 
   if (releaseList instanceof HTMLDivElement) {
-    fetchGitHubReleases().then((fetched) => {
-      const releases = fetched.length > 0 ? fetched : [LATEST_RELEASE_SNAPSHOT];
-
+    fetchGitHubReleases().then((releases) => {
       if (summaryContainer instanceof HTMLElement && !summaryContainer.hasChildNodes()) {
-        paintSummary(
-          groundedReleaseSummary(releases[0].version, releases[0].body, releases[0].title)
-        );
+        const latest = releases[0] ?? LATEST_RELEASE_SNAPSHOT;
+        paintSummary(groundedReleaseSummary(latest.version, latest.body, latest.title));
+      }
+
+      if (releases.length === 0) {
+        const empty = document.createElement('p');
+        empty.className = 'release-status';
+        empty.textContent = 'Project history is currently unavailable.';
+        const link = document.createElement('a');
+        link.href = RELEASES_PAGE_URL;
+        link.textContent = 'View GitHub Releases';
+        empty.appendChild(document.createTextNode(' '));
+        empty.appendChild(link);
+        empty.appendChild(document.createTextNode('.'));
+        releaseList.replaceChildren(empty);
+        return;
       }
 
       const fragment = document.createDocumentFragment();

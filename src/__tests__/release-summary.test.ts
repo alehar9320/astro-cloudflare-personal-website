@@ -40,7 +40,7 @@ const okSummary =
   'The latest release adds an executive glance for footer pageviews. The count sits on the colophon and opens a short overlay. Changelog details stay on this page.';
 
 const notesFallback =
-  'The latest release is 2026.08.15.1714. It includes feat: inline footer pageviews with an exec glance (#460). The full changelog is listed below.';
+  'The latest release is 2026.08.15.1714. Visitors can now inline footer pageviews with an exec glance. The full changelog is listed below.';
 
 describe('isSafeReleaseSummary', () => {
   const source = `${latest.version}\n${latest.body}`;
@@ -103,7 +103,7 @@ describe('release summary helpers', () => {
     const body = '- abcdef1 Jules: open visit glance on tap (#461)';
     const summary = groundedReleaseSummary('2026.08.15.1720', body, '2026.08.15.1720');
     expect(summary).toContain('The latest release is 2026.08.15.1720.');
-    expect(summary).toContain('open visit glance on tap (#461)');
+    expect(summary).toContain('open visit glance on tap');
     expect(summary).not.toMatch(/jules/i);
     expect(summary).not.toMatch(/\babcdef1\b/);
   });
@@ -114,7 +114,7 @@ describe('release summary helpers', () => {
 
   it('asks for 2-4 sentences and no invented metrics', () => {
     const prompt = releaseSummaryPrompt(latest.version, latest.body);
-    expect(prompt).toContain('exactly three plain-English sentences');
+    expect(prompt).toContain('exactly three plain-English sentences for a hiring manager');
     expect(prompt).toContain('Do not invent metrics');
     expect(prompt).toContain('Palettes, Oracles');
     expect(prompt).toContain(latest.body);
@@ -244,7 +244,7 @@ describe('release summary API', () => {
     await expect(response.json()).resolves.toEqual({
       tag: '2026.08.15.1720',
       summary:
-        'The latest release is 2026.08.15.1720. It includes fix: open the visit glance on tap at 375 (#461). The full changelog is listed below.',
+        'The latest release is 2026.08.15.1720. Visitors can now open the visit glance on tap at 375. The full changelog is listed below.',
     });
   });
 

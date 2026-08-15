@@ -61,6 +61,21 @@ describe('github releases utility', () => {
     );
   });
 
+  it('omits Worker-only GitHub headers in the browser', async () => {
+    vi.stubGlobal('window', {});
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [
+        { body: '- feat: ship', html_url: RELEASES_PAGE_URL, tag_name: '2026.06.11.0414' },
+      ],
+    });
+    await fetchGitHubReleases(fetchMock as typeof fetch);
+    const headers = fetchMock.mock.calls[0][1].headers as Record<string, string>;
+    expect(headers['User-Agent']).toBeUndefined();
+    expect(headers['X-GitHub-Api-Version']).toBeUndefined();
+    expect(headers.Accept).toBe('application/vnd.github+json');
+  });
+
   it('handles API validation failure', async () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const fetchMock = vi.fn().mockResolvedValue({

@@ -97,14 +97,16 @@ export async function fetchGitHubReleases(
   }
 
   try {
-    const response = await fetchImpl(url, {
-      headers: {
-        Accept: 'application/vnd.github+json',
-        'User-Agent': 'alehar9320-astro-cloudflare-personal-website',
-        'X-GitHub-Api-Version': '2022-11-28',
-        ...(githubToken ? { Authorization: `token ${githubToken}` } : {}),
-      },
-    });
+    const headers: Record<string, string> = {
+      Accept: 'application/vnd.github+json',
+      ...(githubToken ? { Authorization: `token ${githubToken}` } : {}),
+    };
+    if (typeof window === 'undefined') {
+      headers['User-Agent'] = 'alehar9320-astro-cloudflare-personal-website';
+      headers['X-GitHub-Api-Version'] = '2022-11-28';
+    }
+
+    const response = await fetchImpl(url, { headers });
 
     if (!response.ok) {
       // Intentionally avoiding logging headers that might contain sensitive information
