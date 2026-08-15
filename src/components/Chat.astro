@@ -509,7 +509,27 @@
         body: JSON.stringify({ messages }),
       });
 
-      if (!response.ok) throw new Error('Failed to fetch');
+      if (!response.ok) {
+        let errorText = 'Chat is currently unavailable. Please try again later.';
+        try {
+          const data: unknown = await response.json();
+          if (
+            data &&
+            typeof data === 'object' &&
+            'error' in data &&
+            typeof (data as { error: unknown }).error === 'string' &&
+            (data as { error: string }).error.trim()
+          ) {
+            errorText = (data as { error: string }).error.trim();
+          }
+        } catch {
+          // empty 500/body: keep the honest unavailable line
+        }
+        typingIndicator?.classList.add('hidden');
+        appendMessage('assistant', errorText);
+        setStatus('error');
+        return;
+      }
 
       typingIndicator?.classList.add('hidden');
       const aiMessageDiv = appendMessage('assistant', '');
@@ -546,7 +566,7 @@
       const message = error instanceof Error ? error.message : String(error);
       console.error({ event: 'chat_client_error', error: message });
       typingIndicator?.classList.add('hidden');
-      appendMessage('assistant', 'Sorry, something went wrong. Please try again.');
+      appendMessage('assistant', 'Chat is currently unavailable. Please try again later.');
       setStatus('error');
     }
   });

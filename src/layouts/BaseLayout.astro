@@ -117,9 +117,9 @@ const { title, description } = Astro.props;
 
       .aurora-wash {
         position: absolute;
-        inset: -20%;
+        inset: -12%;
         pointer-events: none;
-        filter: blur(80px);
+        filter: blur(24px);
       }
 
       .aurora-wash-a {
@@ -128,7 +128,7 @@ const { title, description } = Astro.props;
           var(--accent-light),
           transparent 70%
         );
-        opacity: 0.14;
+        opacity: 0.28;
       }
 
       .aurora-wash-b {
@@ -137,15 +137,15 @@ const { title, description } = Astro.props;
           var(--accent-regular),
           transparent 68%
         );
-        opacity: 0.12;
+        opacity: 0.22;
       }
 
       :root.theme-dark .aurora-wash-a {
-        opacity: 0.34;
+        opacity: 0.55;
       }
 
       :root.theme-dark .aurora-wash-b {
-        opacity: 0.28;
+        opacity: 0.45;
       }
 
       @media (prefers-reduced-motion: no-preference) {
@@ -160,19 +160,19 @@ const { title, description } = Astro.props;
 
       @keyframes aurora-drift-a {
         from {
-          transform: translate3d(-3%, -2%, 0);
+          transform: translate3d(-10%, -8%, 0);
         }
         to {
-          transform: translate3d(8%, 6%, 0);
+          transform: translate3d(16%, 12%, 0);
         }
       }
 
       @keyframes aurora-drift-b {
         from {
-          transform: translate3d(2%, 0, 0);
+          transform: translate3d(8%, 0, 0);
         }
         to {
-          transform: translate3d(-7%, 5%, 0);
+          transform: translate3d(-14%, 10%, 0);
         }
       }
 
