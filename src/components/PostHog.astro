@@ -4,10 +4,18 @@
   const posthogKey = import.meta.env.PUBLIC_POSTHOG_KEY;
   const posthogHost = import.meta.env.PUBLIC_POSTHOG_HOST ?? 'https://app.posthog.com';
 
-  if (posthogKey) {
+  function initPostHog() {
+    if (!posthogKey) return;
     posthog.init(posthogKey, {
       api_host: posthogHost,
       person_profiles: 'identified_only',
     });
   }
+
+  const scheduleIdle =
+    typeof requestIdleCallback === 'function'
+      ? (cb: () => void) => requestIdleCallback(cb)
+      : (cb: () => void) => setTimeout(cb, 1);
+
+  scheduleIdle(initPostHog);
 </script>
