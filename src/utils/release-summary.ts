@@ -1,12 +1,18 @@
 import { splitReleaseBody } from './github-releases';
 
 export const RELEASE_SUMMARY_MODEL = '@cf/meta/llama-3.1-8b-instruct-fast';
-export const RELEASE_SUMMARY_KEY_PREFIX = 'release-summary:v2:';
+export const RELEASE_SUMMARY_KEY_PREFIX = 'release-summary:v3:';
 
 const BANNED_NAME = /\b(palette|oracle|scribe|sentinel|vantage|bolt|jules)\b/gi;
 const SHA_ONE = /\b[a-f0-9]{7,40}\b/i;
 const SHA_ALL = /\b[a-f0-9]{7,40}\b/gi;
 const CONVENTIONAL = /\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/i;
+const SQUASH_TITLE_LEAK = /\bexec summary\b|\bof the latest github release\b/i;
+
+export function isVisitorFacingBullet(message: string): boolean {
+  const text = message.trim();
+  return text.length > 0 && !SQUASH_TITLE_LEAK.test(text);
+}
 
 export function releaseSummaryKey(tag: string): string {
   return `${RELEASE_SUMMARY_KEY_PREFIX}${tag}`;
@@ -62,7 +68,8 @@ export function isSafeReleaseSummary(summary: string, source: string): boolean {
     /\bissue number\b/i.test(text) ||
     /\bcommit hash\b/i.test(text) ||
     /\B#\d+\b/.test(text) ||
-    CONVENTIONAL.test(text)
+    CONVENTIONAL.test(text) ||
+    SQUASH_TITLE_LEAK.test(text)
   ) {
     return false;
   }
@@ -98,9 +105,9 @@ export function parseModelText(result: unknown): string {
 export function groundedReleaseSummary(tag: string, body: string, title = tag): string {
   const items = splitReleaseBody(body)
     .map((item) => stripExecBanned(item.message.trim()))
-    .filter((message) => message.length > 0);
+    .filter(isVisitorFacingBullet);
   const listed = (items.length > 0 ? items : body.trim() ? [stripExecBanned(body.trim())] : [])
-    .filter((message) => message.length > 0)
+    .filter(isVisitorFacingBullet)
     .slice(0, 3);
   const source = `${tag}\n${title}\n${body}`;
   if (listed.length > 0) {
