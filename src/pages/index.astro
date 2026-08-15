@@ -152,11 +152,64 @@ const schema = {
   }
 
   .portrait {
+    --portrait-aurora:
+      0 0 20px 4px color-mix(in srgb, var(--accent-light) 55%, transparent),
+      0 0 48px 10px color-mix(in srgb, var(--accent-regular) 40%, transparent);
+    position: relative;
     border-radius: 1.5rem;
-    box-shadow: var(--shadow-md);
+    margin-inline: 1.25rem;
+    max-width: calc(100% - 2.5rem);
+    box-shadow: var(--portrait-aurora), var(--shadow-md);
+  }
+
+  :global(:root.theme-dark) .portrait {
+    --portrait-aurora:
+      0 0 22px 5px color-mix(in srgb, var(--accent-light) 70%, transparent),
+      0 0 56px 14px color-mix(in srgb, var(--accent-regular) 50%, transparent);
+  }
+
+  .portrait::before,
+  .portrait::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    border-radius: inherit;
+  }
+
+  .portrait::before {
+    z-index: 0;
+    filter: blur(24px);
+    /* Phone: stay in the side gutter; do not grow into Get in touch. */
+    inset: 12% -10% -16% -10%;
+    background:
+      radial-gradient(ellipse 45% 85% at 0% 50%, var(--accent-light), transparent 72%),
+      radial-gradient(ellipse 45% 85% at 100% 50%, var(--accent-regular), transparent 72%);
+    opacity: 0.45;
+  }
+
+  /* Rim sits ON the rounded edge so a 2px crop reads as a kiss, not a white slab. */
+  .portrait::after {
+    z-index: 2;
+    inset: 0;
+    background: none;
+    box-shadow:
+      inset 0 0 0 2px color-mix(in srgb, var(--accent-light) 80%, transparent),
+      inset 0 0 16px 6px color-mix(in srgb, var(--accent-regular) 50%, transparent);
+  }
+
+  :global(:root.theme-dark) .portrait::before {
+    opacity: 0.7;
+  }
+
+  :global(:root.theme-dark) .portrait::after {
+    box-shadow:
+      inset 0 0 0 2px color-mix(in srgb, var(--accent-light) 90%, transparent),
+      inset 0 0 18px 7px color-mix(in srgb, var(--accent-regular) 60%, transparent);
   }
 
   .portrait img {
+    position: relative;
+    z-index: 1;
     display: block;
     width: 100%;
     aspect-ratio: 5 / 4;
@@ -218,6 +271,10 @@ const schema = {
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    .portrait::before {
+      animation: portrait-aurora-a 12s ease-in-out infinite alternate;
+    }
+
     .portrait {
       transition:
         transform 0.3s ease,
@@ -227,7 +284,7 @@ const schema = {
     .portrait:hover,
     .portrait:focus-visible {
       transform: translateY(-2px);
-      box-shadow: var(--shadow-md);
+      box-shadow: var(--portrait-aurora), var(--shadow-md);
     }
 
     .proof-card {
@@ -241,6 +298,30 @@ const schema = {
     .proof-card:focus-visible {
       transform: translateY(-2px);
       box-shadow: var(--shadow-md);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .portrait::before {
+      animation: none;
+    }
+  }
+
+  @keyframes portrait-aurora-a {
+    from {
+      transform: translate3d(-10%, -8%, 0);
+    }
+    to {
+      transform: translate3d(16%, 12%, 0);
+    }
+  }
+
+  @keyframes portrait-aurora-b {
+    from {
+      transform: translate3d(8%, 0, 0);
+    }
+    to {
+      transform: translate3d(-14%, 10%, 0);
     }
   }
 
@@ -259,7 +340,13 @@ const schema = {
     }
 
     .portrait {
+      margin-inline: 0;
+      max-width: none;
       border-radius: 4.5rem;
+    }
+
+    .portrait::before {
+      inset: -16%;
     }
 
     .portrait img {
