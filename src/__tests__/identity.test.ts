@@ -113,6 +113,15 @@ describe('identity copy', () => {
     expect(footer).toContain('padding: 3rem 2rem var(--chat-fab-clearance)');
   });
 
+  it('keeps the docked chat FAB off the footer GitHub link at 1280', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(footer).toContain('padding: 2.5rem 5rem var(--chat-fab-clearance)');
+    expect(footer).toContain('padding-right: var(--chat-fab-clearance)');
+    expect(footer).toContain('https://github.com/alehar9320');
+    expect(footer).toContain('https://www.linkedin.com/in/alehar/');
+    expect(footer).not.toContain('mailto:');
+  });
+
   it('shows a Live / Not live signal on the chat header', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
     expect(chat).toContain('chat-live-label');
