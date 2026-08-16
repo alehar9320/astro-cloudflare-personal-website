@@ -10,7 +10,7 @@ tags:
 ---
 
 <div class="tldr-box">
-  <p><strong>TL;DR:</strong> Usage telemetry so <strong>IFS Cloud</strong> roadmap decisions rest on how people actually use the product.</p>
+  <p><strong>TL;DR:</strong> Usage telemetry so <strong>IFS Cloud</strong> roadmap decisions rest on how people actually use the product. I am <strong>Product Manager, Developer Experience</strong>.</p>
 </div>
 
-At IFS I worked on user behavior analytics for IFS Cloud: capturing usage so product teams can see what customers actually do.
+At IFS I worked on user behavior analytics for IFS Cloud: capturing usage so product teams can see what customers actually do. Roadmap decisions rest on that usage.
