@@ -95,6 +95,21 @@ describe('identity copy', () => {
     expect(nav).toContain("{ label: 'Work', href: '/work/' }");
   });
 
+  it('uses honest Earlier work labels, not Platform or copilots-as-product', () => {
+    const copilots = readFileSync('src/content/work/ai-coding-copilots.md', 'utf8');
+    const analytics = readFileSync('src/content/work/user-behavior-analytics.md', 'utf8');
+    const thesis = readFileSync('src/content/work/master-thesis.md', 'utf8');
+    const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
+    expect(copilots).toContain('title: Internal AI coding copilots');
+    expect(copilots).not.toContain('title: AI Coding Copilots');
+    expect(analytics).toContain('title: User behavior analytics');
+    expect(analytics).not.toContain('title: User Behavior Analytics Platform');
+    expect(thesis).toContain("title: Chalmers master's thesis");
+    expect(thesis).not.toContain('title: Business Model Innovation');
+    expect(lidkoping).toContain('title: Lidköping Stenhuggeri');
+    expect(lidkoping).not.toContain('title: Lidköping Stenhuggeri App');
+  });
+
   it('drops the /about/ duplicate in favor of /biography/', () => {
     const nav = readFileSync('src/components/Nav.astro', 'utf8');
     const astro = readFileSync('astro.config.mjs', 'utf8');

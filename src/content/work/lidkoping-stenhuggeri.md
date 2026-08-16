@@ -1,5 +1,5 @@
 ---
-title: Lidköping Stenhuggeri App
+title: Lidköping Stenhuggeri
 publishDate: 2013-09-01 00:00:00
 img: /assets/stock-4.jpg
 img_alt: Mobile app interface concept
