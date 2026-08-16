@@ -440,4 +440,14 @@ describe('identity copy', () => {
     expect(robots).not.toContain('harenstam.com');
     expect(robots).not.toContain('mailto:');
   });
+
+  it('ships an apple-touch-icon so iOS home-screen requests do not 404', () => {
+    const head = readFileSync('src/components/MainHead.astro', 'utf8');
+    expect(head).toContain('rel="apple-touch-icon"');
+    expect(head).toContain('/apple-touch-icon.png');
+    expect(existsSync('public/apple-touch-icon.png')).toBe(true);
+    expect(head).not.toContain('mailto:');
+    expect(head).not.toContain('harenstam.com');
+    expect(head).not.toContain('localhost');
+  });
 });
