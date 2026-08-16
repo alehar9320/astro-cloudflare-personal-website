@@ -475,7 +475,13 @@ describe('identity copy', () => {
     expect(notFound).toContain('LinkedIn · replies from me');
     expect(notFound).toContain('data-hire-event="hire_cta_click"');
     expect(notFound).toContain('data-hire-surface="404"');
-    expect(notFound).toContain('Lost in Orbit?');
+    expect(content).toContain('title="Page not found"');
+    expect(notFound).not.toContain('Lost in Orbit?');
+    expect(page).toContain('title="Page not found | Product Manager, Developer Experience at IFS"');
+    expect(page).toContain(
+      'ogTitle="Page not found | Product Manager, Developer Experience at IFS"'
+    );
+    expect(notFound).toContain('Product Manager, Developer Experience at IFS');
     expect(notFound).not.toContain('mailto:');
     expect(notFound).not.toContain('this is not on the site');
     expect(notFound).not.toContain("this isn't on the site yet");
