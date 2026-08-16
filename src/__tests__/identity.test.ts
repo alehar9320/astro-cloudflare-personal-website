@@ -431,4 +431,13 @@ describe('identity copy', () => {
     expect(sitemap).not.toContain('harenstam.com');
     expect(sitemap).not.toContain('mailto:');
   });
+
+  it('points robots.txt at the live sitemap so search can find it', () => {
+    expect(existsSync('public/robots.txt')).toBe(true);
+    const robots = readFileSync('public/robots.txt', 'utf8');
+    expect(robots).toContain('Sitemap: https://me.alehar.workers.dev/sitemap.xml');
+    expect(robots).not.toContain('localhost');
+    expect(robots).not.toContain('harenstam.com');
+    expect(robots).not.toContain('mailto:');
+  });
 });
