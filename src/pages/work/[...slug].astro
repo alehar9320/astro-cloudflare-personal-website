@@ -199,11 +199,13 @@ const schema = entry
     box-sizing: border-box;
   }
 
-  .earlier-case :global(:last-child) {
-    /* When the last paragraph sits at the bottom of the 375 viewport, keep glyphs above the FAB.
-       Clearance lives on that paragraph, not as page-end footer whitespace. */
-    box-sizing: border-box;
-    padding-bottom: calc(var(--chat-fab-clearance) + 2.5rem);
+  .earlier-case > :global(:last-child)::before {
+    /* When the last body paragraph sits at the bottom of the 375 viewport, wrap glyphs around the FAB.
+       Container stays full width. Not page-end padding. Not a stacked right inset. */
+    content: '';
+    float: right;
+    width: var(--chat-fab-clearance);
+    height: var(--chat-fab-clearance);
   }
 
   .earlier-case :global(.tldr-box) {
@@ -274,8 +276,11 @@ const schema = entry
       padding-right: 0;
     }
 
-    .earlier-case :global(:last-child) {
-      padding-bottom: 0;
+    .earlier-case > :global(:last-child)::before {
+      content: none;
+      float: none;
+      width: 0;
+      height: 0;
     }
 
     .earlier-case :global(.tldr-box) {
