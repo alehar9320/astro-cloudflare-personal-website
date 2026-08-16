@@ -156,6 +156,8 @@ describe('identity copy', () => {
     expect(head).toContain('property="og:url"');
     expect(head).toContain('name="twitter:url"');
     expect(head).toContain('content={shareUrl}');
+    expect(head).toContain('rel="canonical"');
+    expect(head).toContain('href={shareUrl}');
     expect(head).not.toContain('content={Astro.url}');
     expect(head).not.toContain('localhost');
     expect(head).not.toContain('harenstam.com');
