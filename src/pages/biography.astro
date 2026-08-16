@@ -32,8 +32,7 @@ const schema = {
       url: 'https://harenstam.com/biography/',
       name: 'Biography | Alexander Härenstam',
       about: { '@id': 'https://harenstam.com/#person' },
-      description:
-        'Explore the professional journey of Alexander Härenstam, Product Manager, Developer Experience at IFS.',
+      description: 'Product Manager, Developer Experience at IFS.',
       breadcrumb: {
         '@type': 'BreadcrumbList',
         itemListElement: [
@@ -58,7 +57,7 @@ const schema = {
 
 <BaseLayout
   title="Biography | Alexander Härenstam"
-  description="Explore the professional journey of Alexander Härenstam, Product Manager, Developer Experience at IFS."
+  description="Product Manager, Developer Experience at IFS."
 >
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
 
@@ -74,10 +73,7 @@ const schema = {
               <p class="when">Feb 2025 – present</p>
               <h3>Product Manager, Developer Experience</h3>
               <p class="where">IFS, Greater Stockholm</p>
-              <p>
-                Current work is Developer Experience, including AI coding copilots. No new numbered
-                metrics on that work.
-              </p>
+              <p>I work on Developer Experience at IFS, including internal AI coding copilots.</p>
             </li>
             <li>
               <p class="when">Eight years at IFS</p>
@@ -100,7 +96,7 @@ const schema = {
             </li>
           </ol>
           <p>
-            Get in touch on
+            Get in touch on{' '}
             <a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer"
               >LinkedIn</a
             >.
