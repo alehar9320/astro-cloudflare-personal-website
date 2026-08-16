@@ -311,6 +311,17 @@ describe('identity copy', () => {
     expect(astro).not.toContain("'/about/': '/biography/'");
     expect(nav).not.toContain("'About'");
   });
+  it('lets a work-case share read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(slug).toContain('${entry.data.title} | Product Manager, Developer Experience at IFS');
+    expect(slug).toContain('ogTitle={workOgTitle}');
+    expect(slug).toContain('Get in touch on LinkedIn.');
+    expect(slug).toContain("title={entry ? entry.data.title : 'Not Found'}");
+    expect(slug).toContain("'404 Error — this page was not found'");
+    expect(slug).not.toContain('mailto:');
+    expect(slug).not.toContain('harenstam.com');
+  });
+
   it('lets a Home share read Product Manager, Developer Experience at IFS', () => {
     const head = readFileSync('src/components/MainHead.astro', 'utf8');
     const home = readFileSync('src/pages/index.astro', 'utf8');

@@ -88,11 +88,21 @@ const schema = entry
       ],
     }
   : null;
+
+const workOgTitle = entry
+  ? `${entry.data.title} | Product Manager, Developer Experience at IFS`
+  : undefined;
+const workDescription = (() => {
+  if (!entry) return '404 Error — this page was not found';
+  const trimmed = entry.data.description.trim();
+  return /linkedin/i.test(trimmed) ? trimmed : `${trimmed} Get in touch on LinkedIn.`;
+})();
 ---
 
 <BaseLayout
   title={entry ? entry.data.title : 'Not Found'}
-  description={entry ? entry.data.description : '404 Error — this page was not found'}
+  ogTitle={workOgTitle}
+  description={workDescription}
 >
   {schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />}
   {
