@@ -108,6 +108,16 @@ describe('identity copy', () => {
     expect(thesis).not.toContain('title: Business Model Innovation');
     expect(lidkoping).toContain('title: Lidköping Stenhuggeri');
     expect(lidkoping).not.toContain('title: Lidköping Stenhuggeri App');
+    expect(copilots).toContain('Internal AI coding copilots for');
+    expect(copilots).toContain('not a customer product');
+    expect(copilots).not.toContain('multi-million');
+    expect(analytics).toContain('Usage telemetry so');
+    expect(analytics).toContain('not a standalone platform product');
+    expect(analytics).not.toContain('User Behavior Analytics Platform');
+    expect(analytics).not.toContain('Strategic Leadership');
+    expect(thesis).toContain("Chalmers</strong> master's thesis, 2017");
+    expect(lidkoping).toContain('Early Android work, 2013');
+    expect(lidkoping).not.toContain('management platform');
   });
 
   it('drops the /about/ duplicate in favor of /biography/', () => {
