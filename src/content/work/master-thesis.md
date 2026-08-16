@@ -1,10 +1,10 @@
 ---
-title: Business Model Innovation
+title: Chalmers master's thesis
 publishDate: 2017-06-01 00:00:00
 img: /assets/stock-1.jpg
 img_alt: Business structure concept
 description: |
-  A strategic roadmap for digital transformation—identifying how data-driven innovation unlocks scalable growth and competitive advantage.
+  Chalmers master's thesis, 2017.
 tags:
   - Research
   - Digitalization

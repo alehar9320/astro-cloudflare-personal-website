@@ -1,10 +1,10 @@
 ---
-title: User Behavior Analytics Platform
+title: User behavior analytics
 publishDate: 2023-01-01 00:00:00
 img: /assets/stock-3.jpg
 img_alt: Analytics graphs
 description: |
-  Spearheading a critical IFS Cloud capability that ensures roadmap decisions are grounded in telemetry, optimizing R&D resources and preventing over-engineering.
+  Usage telemetry for IFS Cloud roadmap decisions.
 tags:
   - Analytics
   - User Behavior
