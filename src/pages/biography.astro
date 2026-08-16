@@ -32,8 +32,7 @@ const schema = {
       url: 'https://harenstam.com/biography/',
       name: 'Biography | Alexander Härenstam',
       about: { '@id': 'https://harenstam.com/#person' },
-      description:
-        'Explore the professional journey of Alexander Härenstam, Product Manager, Developer Experience at IFS.',
+      description: 'Product Manager, Developer Experience at IFS.',
       breadcrumb: {
         '@type': 'BreadcrumbList',
         itemListElement: [
@@ -58,7 +57,7 @@ const schema = {
 
 <BaseLayout
   title="Biography | Alexander Härenstam"
-  description="Explore the professional journey of Alexander Härenstam, Product Manager, Developer Experience at IFS."
+  description="Product Manager, Developer Experience at IFS."
 >
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
 
