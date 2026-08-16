@@ -10,27 +10,44 @@ if (!flagsEntry?.data.enable_reading_list) return Astro.redirect('/404/');
 const linkedinHref = 'https://www.linkedin.com/in/alehar/';
 
 const books = [
-  ['High Output Management', 'Andrew Grove'],
-  ['The Lean Startup', 'Eric Ries'],
-  ['Competing Against Luck', 'Clayton Christensen'],
+  {
+    title: 'High Output Management',
+    author: 'Andrew Grove',
+    framing: 'Grove on how managers multiply the output of a team.',
+  },
+  {
+    title: 'The Lean Startup',
+    author: 'Eric Ries',
+    framing: 'Ries on testing product ideas with real users before scaling.',
+  },
+  {
+    title: 'Competing Against Luck',
+    author: 'Clayton Christensen',
+    framing:
+      'Christensen on jobs to be done — building for the outcome someone is hiring a product to do.',
+  },
 ];
 ---
 
 <BaseLayout
   title="Reading list | Product Manager, Developer Experience at IFS"
   ogTitle="Reading list | Product Manager, Developer Experience at IFS"
-  description="Product Manager, Developer Experience at IFS."
+  description="Product Manager, Developer Experience at IFS. Reading behind the work."
 >
   <main id="main-content" role="main" class="wrapper stack gap-10">
     <Hero title="Reading list" align="start">
-      <p class="lede">Product Manager, Developer Experience at IFS.</p>
+      <p class="lede">
+        Product Manager, Developer Experience at IFS. Reading behind the work: how managers multiply
+        a team's output, how product ideas get tested with real users, and jobs to be done.
+      </p>
     </Hero>
     <div class="grid">
       {
-        books.map(([title, author]) => (
+        books.map(({ title, author, framing }) => (
           <div class="card">
             <strong>{title}</strong>
-            <p>{author}</p>
+            <p class="author">{author}</p>
+            <p class="framing">{framing}</p>
           </div>
         ))
       }
@@ -60,7 +77,7 @@ const books = [
   .grid {
     display: grid;
     gap: 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
   }
 
   .card {
@@ -76,7 +93,12 @@ const books = [
   }
 
   .card p {
+    margin: 0.35rem 0 0;
     color: var(--gray-300);
+  }
+
+  .card .framing {
+    color: var(--gray-200);
   }
 
   .actions {

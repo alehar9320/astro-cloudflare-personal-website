@@ -540,6 +540,19 @@ describe('identity copy', () => {
     expect(page).toContain('Andrew Grove');
     expect(page).toContain('Eric Ries');
     expect(page).toContain('Clayton Christensen');
+    const lede =
+      page
+        .match(/class="lede"[^>]*>([\s\S]*?)<\/p>/)?.[1]
+        ?.replace(/\s+/g, ' ')
+        .trim() ?? '';
+    expect(lede).toContain('Product Manager, Developer Experience at IFS');
+    expect(lede).toContain('Reading behind the work');
+    expect(lede).not.toBe('Product Manager, Developer Experience at IFS.');
+    expect(page).toContain('Grove on how managers multiply the output of a team.');
+    expect(page).toContain('Ries on testing product ideas with real users before scaling.');
+    expect(page).toContain('Christensen on jobs to be done');
+    expect(page).toContain('building for the outcome someone is hiring a product to do');
+    expect((page.match(/title: '/g) || []).length).toBe(3);
     expect(page).not.toContain('mailto:');
     expect(page).not.toContain('this is not a complete list');
     expect(page).not.toContain('more coming');
