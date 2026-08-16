@@ -11,14 +11,15 @@ import Nav from '../components/Nav.astro';
 interface Props {
   title?: string | undefined;
   description?: string | undefined;
+  ogTitle?: string | undefined;
 }
 
-const { title, description } = Astro.props;
+const { title, description, ogTitle } = Astro.props;
 ---
 
 <html lang="en">
   <head>
-    <MainHead title={title} description={description} />
+    <MainHead title={title} description={description} ogTitle={ogTitle} />
   </head>
   <body>
     <!-- Skip to content link for accessibility -->
