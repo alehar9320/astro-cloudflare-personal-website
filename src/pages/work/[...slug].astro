@@ -194,27 +194,17 @@ const schema = entry
   }
 
   .earlier-case {
-    /* Phone: body at load and when copy sits at the bottom of the viewport. */
+    /* Phone: full-width readable copy. FAB clearance sits below the text, not a right column. */
     max-width: 100%;
     box-sizing: border-box;
     padding-bottom: var(--chat-fab-clearance);
-    padding-right: var(--chat-fab-clearance);
   }
 
   .earlier-case :global(.tldr-box),
-  .earlier-case :global(p),
-  .earlier-case :global(li) {
-    padding-right: var(--chat-fab-clearance);
-  }
-
-  .earlier-case :global(.tldr-box) {
-    padding-bottom: var(--chat-fab-clearance);
-  }
-
   .earlier-case :global(ul),
   .earlier-case :global(ol) {
+    /* When TL;DR or a list sits in the FAB vertical band at load, keep glyphs above it. */
     padding-bottom: var(--chat-fab-clearance);
-    padding-right: var(--chat-fab-clearance);
   }
 
   .content > :global(* + *) {
@@ -279,12 +269,9 @@ const schema = entry
 
     .earlier-case,
     .earlier-case :global(.tldr-box),
-    .earlier-case :global(p),
-    .earlier-case :global(li),
     .earlier-case :global(ul),
     .earlier-case :global(ol) {
       padding-bottom: 0;
-      padding-right: 0;
     }
 
     .back-link {

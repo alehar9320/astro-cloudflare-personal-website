@@ -125,8 +125,10 @@ describe('identity copy', () => {
     expect(slug).toContain('master-thesis');
     expect(slug).toContain('lidkoping-stenhuggeri');
     expect(slug).toContain('.earlier-case :global(.tldr-box)');
-    expect(slug).toContain('.earlier-case :global(p)');
     expect(slug).toContain('.earlier-case :global(ul)');
+    expect(slug).not.toContain('.earlier-case :global(p)');
+    expect(slug).not.toContain('.earlier-case :global(li)');
+    expect(slug).not.toMatch(/\.earlier-case\s*\{[^}]*padding-right:/s);
     expect(slug).not.toContain('mailto:');
     const copilots = readFileSync('src/content/work/ai-coding-copilots.md', 'utf8');
     const analytics = readFileSync('src/content/work/user-behavior-analytics.md', 'utf8');
