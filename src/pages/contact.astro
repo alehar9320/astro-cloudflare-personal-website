@@ -48,6 +48,9 @@ const linkedinHref = 'https://www.linkedin.com/in/alehar/';
     align-items: flex-start;
     gap: 0.4rem;
     margin-top: 0.5rem;
+    /* Phone: keep the LinkedIn hire CTA out of the fixed chat FAB band. */
+    padding-bottom: var(--chat-fab-clearance);
+    padding-right: var(--chat-fab-clearance);
   }
 
   .cta-hint {
@@ -55,5 +58,12 @@ const linkedinHref = 'https://www.linkedin.com/in/alehar/';
     font-size: var(--text-sm);
     color: var(--gray-300);
     font-weight: 400;
+  }
+
+  @media (min-width: 50em) {
+    .actions {
+      padding-bottom: 0;
+      padding-right: 0;
+    }
   }
 </style>

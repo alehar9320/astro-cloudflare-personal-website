@@ -83,6 +83,17 @@ describe('identity copy', () => {
     expect(bio).toContain('https://www.linkedin.com/in/alehar/');
   });
 
+  it('keeps the chat FAB off the LinkedIn hire CTA on /contact on a phone', () => {
+    const contact = readFileSync('src/pages/contact.astro', 'utf8');
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(contact).toContain('padding-bottom: var(--chat-fab-clearance)');
+    expect(contact).toContain('padding-right: var(--chat-fab-clearance)');
+    expect(contact).toContain('https://www.linkedin.com/in/alehar/');
+    expect(contact).toContain('Get in touch');
+    expect(contact).not.toContain('mailto:');
+    expect(footer).toContain('padding: 3rem 2rem var(--chat-fab-clearance)');
+  });
+
   it('keeps only the IFS Design System on the main /work card grid', () => {
     const work = sources.find((s) => s.path.endsWith('work.astro'))!.text;
     expect(work).toContain("'lidkoping-stenhuggeri'");
