@@ -19,8 +19,6 @@ const currentYear = new Date().getFullYear();
     </p>
     <p>&copy; {currentYear} Alexander Härenstam</p>
     <p>
-      <a href="/whats-new" class="version-link" data-latest-version>Latest Updates</a>
-      <span class="separator" aria-hidden="true">&bull;</span>
       <a
         href="https://github.com/alehar9320/astro-cloudflare-personal-website/issues"
         class="version-link"
@@ -64,26 +62,12 @@ const currentYear = new Date().getFullYear();
 </div>
 
 <script>
-  import { fetchGitHubReleases } from '../utils/github-releases';
   import {
     formatPageviewCount,
     formatVisitGlance,
     shouldShowVisitCount,
     type VisitGlance,
   } from '../utils/visit-stats';
-
-  const versionLink = document.querySelector('[data-latest-version]');
-
-  if (versionLink instanceof HTMLAnchorElement) {
-    fetchGitHubReleases().then((releases) => {
-      if (releases[0]) {
-        versionLink.textContent = `Latest Updates (v${releases[0].version})`;
-        return;
-      }
-
-      versionLink.textContent = 'Latest Updates';
-    });
-  }
 
   const visitStats = document.querySelector('[data-visit-stats]');
 
