@@ -8,12 +8,12 @@ const schema = {
   '@graph': [
     {
       '@type': 'Person',
-      '@id': 'https://harenstam.com/#person',
+      '@id': 'https://me.alehar.workers.dev/#person',
       name: 'Alexander Härenstam',
       jobTitle: 'Product Manager, Developer Experience',
       description:
         'Product Manager, Developer Experience at IFS. Design systems, DevEx, and Industrial AI.',
-      url: 'https://harenstam.com/',
+      url: 'https://me.alehar.workers.dev/',
       sameAs: ['https://www.linkedin.com/in/alehar/'],
       worksFor: {
         '@type': 'Organization',
@@ -28,10 +28,10 @@ const schema = {
     },
     {
       '@type': 'WebPage',
-      '@id': 'https://harenstam.com/biography/#webpage',
-      url: 'https://harenstam.com/biography/',
+      '@id': 'https://me.alehar.workers.dev/biography/#webpage',
+      url: 'https://me.alehar.workers.dev/biography/',
       name: 'Biography | Alexander Härenstam',
-      about: { '@id': 'https://harenstam.com/#person' },
+      about: { '@id': 'https://me.alehar.workers.dev/#person' },
       description: 'Product Manager, Developer Experience at IFS.',
       breadcrumb: {
         '@type': 'BreadcrumbList',
@@ -40,13 +40,13 @@ const schema = {
             '@type': 'ListItem',
             position: 1,
             name: 'Home',
-            item: 'https://harenstam.com/',
+            item: 'https://me.alehar.workers.dev/',
           },
           {
             '@type': 'ListItem',
             position: 2,
             name: 'Biography',
-            item: 'https://harenstam.com/biography/',
+            item: 'https://me.alehar.workers.dev/biography/',
           },
         ],
       },
