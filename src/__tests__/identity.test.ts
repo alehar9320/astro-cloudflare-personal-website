@@ -121,6 +121,22 @@ describe('identity copy', () => {
     expect(footer).not.toContain('mailto:');
   });
 
+  it('keeps the header terminal glyph and drops the competing footer rocket', () => {
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(nav).toContain('icon="terminal-window"');
+    expect(nav).not.toContain('rocket-launch');
+    expect(footer).not.toContain('rocket-launch');
+    expect(footer).not.toContain('icon="rocket');
+    expect(footer).not.toContain('M94.1 184.6');
+    expect(footer).not.toContain('favicon.svg');
+    expect(footer).not.toContain('terminal-window');
+    expect(footer).toContain('href="https://astro.build/"');
+    expect(footer).toContain('>Astro</a>');
+    expect(footer).toContain('https://www.linkedin.com/in/alehar/');
+    expect(footer).not.toContain('mailto:');
+  });
+
   it('shows a Live / Not live signal on the chat header', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
     expect(chat).toContain('chat-live-label');
