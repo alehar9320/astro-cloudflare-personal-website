@@ -120,9 +120,9 @@ const schema = {
     min-height: 100vh;
     min-height: 100svh;
     min-height: 100dvh;
-    justify-content: center;
-    gap: 2rem;
-    padding-block: 1rem 2rem;
+    justify-content: flex-start;
+    gap: 1.5rem;
+    padding-block: 1rem var(--chat-fab-clearance);
     box-sizing: border-box;
   }
 
@@ -130,8 +130,8 @@ const schema = {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 2rem;
-    padding-bottom: 5.5rem;
+    gap: 1.25rem;
+    padding-bottom: 0;
   }
 
   .hero-actions {
@@ -153,19 +153,20 @@ const schema = {
 
   .portrait {
     --portrait-aurora:
-      0 0 20px 4px color-mix(in srgb, var(--accent-light) 55%, transparent),
-      0 0 48px 10px color-mix(in srgb, var(--accent-regular) 40%, transparent);
+      0 0 12px 3px color-mix(in srgb, var(--accent-light) 55%, transparent),
+      0 0 24px 6px color-mix(in srgb, var(--accent-regular) 40%, transparent);
     position: relative;
     border-radius: 1.5rem;
     margin-inline: 1.25rem;
-    max-width: calc(100% - 2.5rem);
+    margin-bottom: var(--chat-fab-clearance);
+    max-width: min(10.5rem, calc(100% - 2.5rem));
     box-shadow: var(--portrait-aurora), var(--shadow-md);
   }
 
   :global(:root.theme-dark) .portrait {
     --portrait-aurora:
-      0 0 22px 5px color-mix(in srgb, var(--accent-light) 70%, transparent),
-      0 0 56px 14px color-mix(in srgb, var(--accent-regular) 50%, transparent);
+      0 0 14px 4px color-mix(in srgb, var(--accent-light) 70%, transparent),
+      0 0 28px 8px color-mix(in srgb, var(--accent-regular) 50%, transparent);
   }
 
   .portrait::before,
@@ -178,8 +179,8 @@ const schema = {
 
   .portrait::before {
     z-index: 0;
-    /* Phone: stay in the side gutter; do not grow into Get in touch. */
-    inset: 12% -10% -16% -10%;
+    /* Phone: stay in the side gutter; do not grow into Get in touch or the FAB. */
+    inset: 12% -10% 0 -10%;
     background:
       radial-gradient(ellipse 45% 85% at 0% 50%, var(--accent-light), transparent 72%),
       radial-gradient(ellipse 45% 85% at 100% 50%, var(--accent-regular), transparent 72%);
@@ -211,10 +212,12 @@ const schema = {
     z-index: 1;
     display: block;
     width: 100%;
+    max-height: calc(100svh - var(--chat-fab-clearance) - 24rem);
     aspect-ratio: 5 / 4;
     object-fit: cover;
     object-position: top;
     border-radius: 1.5rem;
+    margin-inline: auto;
   }
 
   .proof-card {
@@ -325,6 +328,10 @@ const schema = {
   }
 
   @media (min-width: 50em) {
+    .first-screen {
+      justify-content: center;
+    }
+
     .hero {
       display: grid;
       grid-template-columns: 6fr 4fr;
@@ -339,9 +346,19 @@ const schema = {
     }
 
     .portrait {
+      --portrait-aurora:
+        0 0 20px 4px color-mix(in srgb, var(--accent-light) 55%, transparent),
+        0 0 48px 10px color-mix(in srgb, var(--accent-regular) 40%, transparent);
       margin-inline: 0;
+      margin-bottom: 0;
       max-width: none;
       border-radius: 4.5rem;
+    }
+
+    :global(:root.theme-dark) .portrait {
+      --portrait-aurora:
+        0 0 22px 5px color-mix(in srgb, var(--accent-light) 70%, transparent),
+        0 0 56px 14px color-mix(in srgb, var(--accent-regular) 50%, transparent);
     }
 
     .portrait::before {
@@ -349,6 +366,8 @@ const schema = {
     }
 
     .portrait img {
+      width: 100%;
+      max-height: none;
       aspect-ratio: 3 / 4;
       border-radius: 4.5rem;
     }

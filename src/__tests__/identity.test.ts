@@ -52,6 +52,25 @@ describe('identity copy', () => {
     expect(work).toContain("{' '}<strong>IFS</strong>");
   });
 
+  it('keeps the chat FAB off Get in touch and the home portrait on a phone', () => {
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    const global = readFileSync('src/styles/global.css', 'utf8');
+    expect(global).toContain('--chat-fab-clearance');
+    expect(chat).toContain('bottom: var(--chat-fab-offset)');
+    expect(chat).toContain('width: var(--chat-fab-size)');
+    expect(home).toContain('padding-block: 1rem var(--chat-fab-clearance)');
+    expect(home).toContain('justify-content: flex-start');
+    expect(home).toContain('max-height: calc(100svh - var(--chat-fab-clearance) - 24rem)');
+    expect(home).toContain('max-width: min(10.5rem, calc(100% - 2.5rem))');
+    expect(home).toContain('margin-bottom: var(--chat-fab-clearance)');
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+    expect(home).toContain('Get in touch');
+    expect(cta).toContain('var(--chat-fab-clearance)');
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+  });
+
   it('keeps Lidköping off the main /work card grid', () => {
     const work = sources.find((s) => s.path.endsWith('work.astro'))!.text;
     expect(work).toContain("project.id !== 'lidkoping-stenhuggeri'");
