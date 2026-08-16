@@ -313,10 +313,34 @@
     backdrop-filter: blur(16px) saturate(180%);
   }
 
+  .chat-container.is-prominent {
+    top: 5.5rem;
+    right: var(--chat-fab-offset);
+    bottom: var(--chat-fab-offset);
+    left: auto;
+  }
+
   .chat-container.is-prominent .chat-window {
     bottom: 0;
-    width: min(28rem, calc(100vw - 2rem));
-    height: min(36rem, 70vh);
+    width: min(32rem, calc(50vw - 2rem));
+    height: calc(100dvh - 7rem);
+    max-height: calc(100dvh - 7rem);
+  }
+
+  @media (max-width: 49.99em) {
+    .chat-container.is-prominent {
+      top: auto;
+      bottom: var(--chat-fab-offset);
+      right: var(--chat-fab-offset);
+      left: var(--chat-fab-offset);
+    }
+
+    .chat-container.is-prominent .chat-window {
+      width: 100%;
+      height: min(22rem, 42dvh);
+      max-height: 42dvh;
+      bottom: 0;
+    }
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -707,6 +731,7 @@
   function dockChat() {
     chatContainer?.classList.remove('is-prominent');
     chatContainer?.classList.add('is-docked');
+    document.body.classList.remove('has-prominent-chat');
     setChatExpanded(false);
     sessionStorage.setItem(FOLD_DISMISSED_KEY, '1');
   }
@@ -721,9 +746,13 @@
   }
 
   function initConversationalFold() {
-    if (!isHomePath() || !chatContainer) return;
+    if (!isHomePath() || !chatContainer) {
+      document.body.classList.remove('has-prominent-chat');
+      return;
+    }
     if (sessionStorage.getItem(FOLD_DISMISSED_KEY) === '1') {
       chatContainer.classList.add('is-docked');
+      document.body.classList.remove('has-prominent-chat');
       return;
     }
     if (window.scrollY > 160) {
@@ -732,6 +761,7 @@
     }
     chatContainer.classList.add('is-prominent');
     setChatExpanded(true);
+    document.body.classList.add('has-prominent-chat');
     window.addEventListener(
       'scroll',
       () => {

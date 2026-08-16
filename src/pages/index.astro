@@ -235,4 +235,16 @@ const schema = {
       padding: 2.5rem;
     }
   }
+
+  @media (min-width: 50em) {
+    :global(body.has-prominent-chat) .first-screen {
+      padding-right: min(34rem, 48vw);
+    }
+  }
+
+  @media (max-width: 49.99em) {
+    :global(body.has-prominent-chat) .first-screen {
+      padding-bottom: calc(min(22rem, 42dvh) + var(--chat-fab-offset) + 1rem);
+    }
+  }
 </style>
