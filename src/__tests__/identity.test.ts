@@ -94,6 +94,16 @@ describe('identity copy', () => {
     expect(footer).toContain('padding: 3rem 2rem var(--chat-fab-clearance)');
   });
 
+  it('shows a Live / Not live signal on the chat header', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    expect(chat).toContain('chat-live-label');
+    expect(chat).toContain('class="status-dot"');
+    expect(chat).toContain("idle: 'Live'");
+    expect(chat).toContain("error: 'Not live'");
+    expect(chat).not.toContain("idle: 'Available'");
+    expect(chat).not.toContain('.chat-toggle .status-dot');
+  });
+
   it('keeps only the IFS Design System on the main /work card grid', () => {
     const work = sources.find((s) => s.path.endsWith('work.astro'))!.text;
     expect(work).toContain("'lidkoping-stenhuggeri'");
