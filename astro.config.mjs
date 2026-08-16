@@ -37,6 +37,10 @@ const codecovPlugin = /** @type {import('vite').PluginOption} */ (
 
 // https://astro.build/config
 export default defineConfig({
+  redirects: {
+    '/about': '/biography/',
+    '/about/': '/biography/',
+  },
   output: isRender ? 'server' : 'static',
   server: isRender
     ? {

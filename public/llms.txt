@@ -16,8 +16,7 @@ Recruiter keywords (not a fake title): Product Management, Developer Experience,
 - [Contact](https://me.alehar.workers.dev/contact/): Hire path. LinkedIn only.
 - [Work](https://me.alehar.workers.dev/work/): Case list.
 - [IFS Design System](https://me.alehar.workers.dev/work/ifs-design-system/): Numbered proof. 2x delivery, 30x ROI, Zeroheight runner-up.
-- [Biography](https://me.alehar.workers.dev/biography/): Professional journey.
-- [About](https://me.alehar.workers.dev/about/): Background and skills. Duplicate of biography in places; prefer biography if context is short.
+- [Biography](https://me.alehar.workers.dev/biography/): Experience timeline. Product Manager, Developer Experience at IFS. /about/ redirects here.
 
 ## Optional
 

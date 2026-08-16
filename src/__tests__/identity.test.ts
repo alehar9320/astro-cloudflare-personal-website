@@ -2,7 +2,6 @@ import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const files = [
-  'src/pages/about.astro',
   'src/pages/biography.astro',
   'src/pages/work.astro',
   'src/components/MainHead.astro',
@@ -26,20 +25,21 @@ describe('identity copy', () => {
     }
   });
 
-  it('does not mint unverifiable metrics on About, Work, or the twin', () => {
-    const about = sources.find((s) => s.path.endsWith('about.astro'))!.text;
+  it('does not mint unverifiable metrics on Biography, Work, or the twin', () => {
     const work = sources.find((s) => s.path.endsWith('work.astro'))!.text;
     const twin = sources.find((s) => s.path.endsWith('chat.ts'))!.text;
+    const bio = sources.find((s) => s.path.endsWith('biography.astro'))!.text;
     for (const { path, text } of sources) {
       expect(text, path).not.toContain('multi-million');
       expect(text, path).not.toContain('several millions');
       expect(text, path).not.toContain('Strategic Product Management');
     }
-    expect(about).not.toContain('autonomous industrial AI');
-    expect(about).not.toContain('30x ROI');
-    expect(about).toContain('/work/ifs-design-system/');
+    expect(bio).not.toContain('autonomous industrial AI');
+    expect(bio).not.toContain('mailto:');
+    expect(bio).toContain('/work/ifs-design-system/');
+    expect(bio).toContain('https://www.linkedin.com/in/alehar/');
+    expect(bio).toContain('class="timeline"');
     expect(work).toContain('Product Manager, Developer Experience');
-    const bio = sources.find((s) => s.path.endsWith('biography.astro'))!.text;
     expect(bio).toContain(
       'Explore the professional journey of Alexander Härenstam, Product Manager, Developer Experience at IFS.'
     );
@@ -48,13 +48,16 @@ describe('identity copy', () => {
   });
 
   it('keeps spaces around TL;DR strong terms (Astro drops newline-only spaces)', () => {
-    const about = sources.find((s) => s.path.endsWith('about.astro'))!.text;
     const work = sources.find((s) => s.path.endsWith('work.astro'))!.text;
-    const bio = sources.find((s) => s.path.endsWith('biography.astro'))!.text;
-    expect(about).toContain("{' '}with");
-    expect(about).toContain("{' '}<strong>AI coding copilots</strong>");
     expect(work).toContain("{' '}<strong>IFS</strong>");
-    expect(bio).toContain("{' '}<strong>Innovation Management</strong>");
+  });
+
+  it('drops the /about/ duplicate in favor of /biography/', () => {
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    const astro = readFileSync('astro.config.mjs', 'utf8');
+    expect(nav).not.toContain("href: '/about/'");
+    expect(nav).toContain("href: '/biography/'");
+    expect(astro).toContain("'/about': '/biography/'");
   });
   it('grounds llms.txt with Chalmers education and recruiter keywords', () => {
     const llms = sources.find((s) => s.path.endsWith('llms.txt'))!.text;
