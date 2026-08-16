@@ -71,6 +71,14 @@ describe('identity copy', () => {
     expect(home).toContain('margin-bottom: var(--chat-fab-clearance)');
     expect(home).toContain('https://www.linkedin.com/in/alehar/');
     expect(home).toContain('Get in touch');
+    expect(home).toContain('LinkedIn · replies from me');
+    expect(home).toContain('class="hero-copy"');
+    expect(home).toContain('proof-card');
+    expect(home).toContain('From the first version to IFS Cloud.');
+    expect(home).not.toContain('inception');
+    expect(home).not.toContain('mailto:');
+    expect((home.match(/<Hero/g) || []).length).toBe(1);
+    expect((home.match(/class="proof-card"/g) || []).length).toBe(1);
     expect(cta).toContain('var(--chat-fab-clearance)');
     expect(cta).toContain('https://www.linkedin.com/in/alehar/');
   });
