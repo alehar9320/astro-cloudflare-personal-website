@@ -476,6 +476,8 @@ describe('identity copy', () => {
     expect(notFound).toContain('data-hire-event="hire_cta_click"');
     expect(notFound).toContain('data-hire-surface="404"');
     expect(content).toContain('title="Page not found"');
+    expect(content).toContain('tagline="This page isn\'t here."');
+    expect(notFound).not.toContain("Let's get you back on track.");
     expect(notFound).not.toContain('Lost in Orbit?');
     expect(page).toContain('title="Page not found | Product Manager, Developer Experience at IFS"');
     expect(page).toContain(
