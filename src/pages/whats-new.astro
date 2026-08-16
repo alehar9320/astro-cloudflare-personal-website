@@ -10,7 +10,7 @@ const schema = {
       '@type': 'WebPage',
       '@id': 'https://me.alehar.workers.dev/whats-new/#webpage',
       url: 'https://me.alehar.workers.dev/whats-new/',
-      name: "What's New | Alexander Härenstam",
+      name: "What's New | Product Manager, Developer Experience at IFS",
       description: 'A public changelog of this site.',
       breadcrumb: {
         '@type': 'BreadcrumbList',
@@ -40,7 +40,8 @@ const schema = {
 ---
 
 <BaseLayout
-  title="What's New | Alexander Härenstam"
+  title="What's New | Product Manager, Developer Experience at IFS"
+  ogTitle="What's New | Product Manager, Developer Experience at IFS"
   description="A public changelog of this site. Product Manager, Developer Experience at IFS."
 >
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
@@ -76,6 +77,7 @@ const schema = {
     splitReleaseBody,
   } from '../utils/github-releases';
   import { groundedReleaseSummary, prepareReleaseSummary } from '../utils/release-summary';
+  import { toVisitorChangelogTitle } from '../utils/visitor-changelog';
 
   const releaseList = document.querySelector('[data-release-list]');
   const summaryContainer = document.querySelector('[data-release-summary]');
@@ -157,22 +159,7 @@ const schema = {
 
           bodyItems.forEach((item) => {
             const listItem = document.createElement('li');
-
-            if (item.hash && item.url) {
-              const code = document.createElement('code');
-              code.className = 'commit-hash';
-              const link = document.createElement('a');
-              link.href = item.url;
-              link.target = '_blank';
-              link.rel = 'noopener noreferrer';
-              link.textContent = item.hash;
-              code.appendChild(link);
-              listItem.appendChild(code);
-              listItem.appendChild(document.createTextNode(` ${item.message}`));
-            } else {
-              listItem.textContent = item.message;
-            }
-
+            listItem.textContent = toVisitorChangelogTitle(item.message);
             list.appendChild(listItem);
           });
 

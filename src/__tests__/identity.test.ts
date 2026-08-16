@@ -1,6 +1,8 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
+import { toVisitorChangelogTitle } from '../utils/visitor-changelog';
+
 const files = [
   'src/pages/biography.astro',
   'src/pages/work.astro',
@@ -531,7 +533,10 @@ describe('identity copy', () => {
     const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
     expect(page).not.toContain('A real-time log of project milestones');
     expect(page).toContain('A public changelog of this site.');
+    expect(page).toContain('title="What\'s New | Product Manager, Developer Experience at IFS"');
+    expect(page).toContain('ogTitle="What\'s New | Product Manager, Developer Experience at IFS"');
     expect(page).toContain('Product Manager, Developer Experience');
+    expect(page).toContain('toVisitorChangelogTitle');
     expect(page).toContain('ContactCTA');
     expect(page).not.toContain('mailto:');
     expect(page).not.toContain('this is not on the site');
@@ -541,5 +546,17 @@ describe('identity copy', () => {
     expect(cta).toContain('Get in touch');
     expect(cta).toContain('LinkedIn · replies from me');
     expect(cta).not.toContain('mailto:');
+    expect(
+      toVisitorChangelogTitle('41fe7ae feat: rewrite /experimental/now/ for visitors (#523)')
+    ).toBe('Now page rewritten for visitors');
+    expect(
+      toVisitorChangelogTitle('feat: rewrite /experimental/now/ for visitors (#523)')
+    ).not.toContain('feat: rewrite /experimental/now/');
+    expect(toVisitorChangelogTitle('feat: add a live RSS feed for the work (#520)')).toBe(
+      'RSS feed for the work'
+    );
+    expect(toVisitorChangelogTitle('fix: drop sitemap URLs that 404 (#521)')).toBe(
+      'Sitemap no longer lists pages that 404'
+    );
   });
 });
