@@ -17,20 +17,16 @@ IFS Cloud is IFS’s enterprise product platform. I was Product Manager for the 
 
 ## Problem
 
-Product teams needed a shared way to ship UI across Cloud. This site does not publish a detailed pre-system baseline. What it does record is the job the system was hired to do: faster feature delivery and a consistent experience across IFS Cloud.
+Product teams needed a shared way to ship UI across Cloud, for faster feature delivery and a consistent experience.
 
 ## Decisions and tradeoffs
 
 I treated the design system as a product: start from nothing, make it usable across Cloud, and keep it coherent enough to stand up in a public awards process.
 
-The specific tradeoffs (what we chose not to build, how we rolled it out, which source of truth we used) are not on this site. Until those are documented, they stay blank rather than invented after the fact.
-
 ## Metrics
 
-These are the only figures published on this site.
-
-- **2x faster** feature delivery
-- **30x ROI** on the initial investment
+- **Up to 2x faster** feature delivery
+- **Up to 30x ROI** on the initial investment
 - **Zeroheight Design System Awards** runner-up
 
 ## Outcome

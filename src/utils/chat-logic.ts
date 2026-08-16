@@ -47,7 +47,7 @@ export function pruneMessages(messages: ChatMessage[]): ChatMessage[] {
 export const DESIGN_SYSTEM_CHIP = 'What did the IFS design system change?';
 
 export const DESIGN_SYSTEM_PROOF =
-  'The IFS Design System delivered 2x faster delivery and 30x ROI, and was a Zeroheight runner-up.';
+  'The IFS Design System delivered up to 2x faster delivery and up to 30x ROI, and was a Zeroheight runner-up.';
 
 export function groundedDesignSystemAnswer(lastUserMessage: string): string | null {
   const question = lastUserMessage.trim().toLowerCase();
