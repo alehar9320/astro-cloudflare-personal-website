@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 const files = [
@@ -415,5 +415,20 @@ describe('identity copy', () => {
     expect(llms).toContain('Greater Stockholm');
     expect(llms).toContain('AI coding copilots');
     expect(llms).toContain('IFS Cloud');
+  });
+
+  it('ships a live sitemap at /sitemap.xml so search can find the pages', () => {
+    expect(existsSync('src/pages/sitemap.xml.ts')).toBe(true);
+    const sitemap = readFileSync('src/pages/sitemap.xml.ts', 'utf8');
+    expect(sitemap).toContain('https://me.alehar.workers.dev');
+    expect(sitemap).toContain("liveOrigin = 'https://me.alehar.workers.dev'");
+    expect(sitemap).toContain("'/'");
+    expect(sitemap).toContain("'/work/'");
+    expect(sitemap).toContain("'/biography/'");
+    expect(sitemap).toContain("'/contact/'");
+    expect(sitemap).toContain('ifs-design-system');
+    expect(sitemap).not.toContain('localhost');
+    expect(sitemap).not.toContain('harenstam.com');
+    expect(sitemap).not.toContain('mailto:');
   });
 });
