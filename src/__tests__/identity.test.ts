@@ -143,6 +143,18 @@ describe('identity copy', () => {
     expect(head).not.toContain('mailto:');
   });
 
+  it('points share URLs at the live site, not localhost', () => {
+    const head = readFileSync('src/components/MainHead.astro', 'utf8');
+    expect(head).toContain("liveOrigin = 'https://me.alehar.workers.dev'");
+    expect(head).toContain('new URL(Astro.url.pathname, liveOrigin)');
+    expect(head).toContain('property="og:url"');
+    expect(head).toContain('name="twitter:url"');
+    expect(head).toContain('content={shareUrl}');
+    expect(head).not.toContain('content={Astro.url}');
+    expect(head).not.toContain('localhost');
+    expect(head).not.toContain('harenstam.com');
+  });
+
   it('keeps the twin idle prompt as Ask about the work', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
     expect(chat).toContain('placeholder="Ask about the work"');
