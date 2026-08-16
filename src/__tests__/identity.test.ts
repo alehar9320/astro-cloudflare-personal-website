@@ -123,6 +123,15 @@ describe('identity copy', () => {
     expect(chat).not.toContain('.chat-toggle .status-dot');
   });
 
+  it('points LinkedIn share photos at the live portrait, not a 404', () => {
+    const head = readFileSync('src/components/MainHead.astro', 'utf8');
+    expect(head).toContain("shareImage = 'https://me.alehar.workers.dev/assets/portrait.png'");
+    expect(head).toContain('property="og:image"');
+    expect(head).toContain('content={shareImage}');
+    expect(head).not.toContain('https://harenstam.com/assets/portrait.png');
+    expect(head).not.toContain('mailto:');
+  });
+
   it('keeps the twin idle prompt as Ask about the work', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
     expect(chat).toContain('placeholder="Ask about the work"');
