@@ -190,11 +190,34 @@ describe('identity copy', () => {
     expect(footer).not.toContain('mailto:');
     expect(footer).toContain('Stockholm');
     expect(footer).toContain('Sweden');
-    expect(footer).toContain('href="https://astro.build/"');
+    expect(footer).not.toContain('href="https://astro.build/"');
     expect(footer).not.toContain('instagram.com');
     expect(footer).not.toContain('facebook.com');
     expect(nav).toContain('https://www.instagram.com/alle12393');
     expect(nav).toContain('https://www.facebook.com/alehar9320/');
+    expect(footer).not.toContain('Latest Updates');
+    expect(footer).not.toContain('Report an issue');
+    expect(footer).not.toContain('agentic engineering');
+    expect(footer).not.toContain('>Source</span>');
+    expect(footer).not.toContain('source-link');
+  });
+
+  it('drops with Astro from the footer and keeps LinkedIn hire', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    expect(footer).not.toContain('with Astro');
+    expect(footer).not.toContain('href="https://astro.build/"');
+    expect(footer).not.toContain('>Astro</a>');
+    expect(footer).toContain('https://www.linkedin.com/in/alehar/');
+    expect(footer).toContain('https://github.com/alehar9320');
+    expect(footer).not.toContain('mailto:');
+    expect(footer).toContain('Stockholm');
+    expect(footer).toContain('Sweden');
+    expect(footer).not.toContain('instagram.com');
+    expect(footer).not.toContain('facebook.com');
+    expect(nav).toContain('https://www.instagram.com/alle12393');
+    expect(nav).toContain('https://www.facebook.com/alehar9320/');
+    expect(footer).not.toContain('Designed & Developed');
     expect(footer).not.toContain('Latest Updates');
     expect(footer).not.toContain('Report an issue');
     expect(footer).not.toContain('agentic engineering');
@@ -212,8 +235,8 @@ describe('identity copy', () => {
     expect(footer).not.toContain('M94.1 184.6');
     expect(footer).not.toContain('favicon.svg');
     expect(footer).not.toContain('terminal-window');
-    expect(footer).toContain('href="https://astro.build/"');
-    expect(footer).toContain('>Astro</a>');
+    expect(footer).not.toContain('href="https://astro.build/"');
+    expect(footer).not.toContain('>Astro</a>');
     expect(footer).toContain('https://www.linkedin.com/in/alehar/');
     expect(footer).not.toContain('mailto:');
   });
