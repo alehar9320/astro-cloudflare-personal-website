@@ -329,7 +329,7 @@
 
   @media (max-width: 49.99em) {
     .chat-container.is-prominent {
-      top: auto;
+      top: var(--prominent-phone-top, 52dvh);
       bottom: var(--chat-fab-offset);
       right: var(--chat-fab-offset);
       left: var(--chat-fab-offset);
@@ -337,8 +337,8 @@
 
     .chat-container.is-prominent .chat-window {
       width: 100%;
-      height: min(22rem, 42dvh);
-      max-height: 42dvh;
+      height: 100%;
+      max-height: none;
       bottom: 0;
     }
   }
@@ -728,10 +728,30 @@
     return path === '/' || path === '' || path === '/index';
   }
 
+  function layoutProminentPhone() {
+    if (!chatContainer?.classList.contains('is-prominent')) {
+      chatContainer?.style.removeProperty('--prominent-phone-top');
+      return;
+    }
+    if (window.matchMedia('(min-width: 50em)').matches) {
+      chatContainer.style.removeProperty('--prominent-phone-top');
+      return;
+    }
+    const hire = document.querySelector('.cta-hint') || document.querySelector('.hero-actions');
+    if (!(hire instanceof HTMLElement)) return;
+    const gap = 12;
+    const minTwin = 10 * 16; // keep a usable twin
+    const bottomLimit = window.innerHeight - 8;
+    const belowHire = Math.ceil(hire.getBoundingClientRect().bottom + gap);
+    const top = Math.min(belowHire, bottomLimit - minTwin);
+    chatContainer.style.setProperty('--prominent-phone-top', `${Math.max(top, 0)}px`);
+  }
+
   function dockChat() {
     chatContainer?.classList.remove('is-prominent');
     chatContainer?.classList.add('is-docked');
     document.body.classList.remove('has-prominent-chat');
+    chatContainer?.style.removeProperty('--prominent-phone-top');
     setChatExpanded(false);
     sessionStorage.setItem(FOLD_DISMISSED_KEY, '1');
   }
@@ -762,6 +782,9 @@
     chatContainer.classList.add('is-prominent');
     setChatExpanded(true);
     document.body.classList.add('has-prominent-chat');
+    layoutProminentPhone();
+    requestAnimationFrame(layoutProminentPhone);
+    window.addEventListener('resize', layoutProminentPhone);
     window.addEventListener(
       'scroll',
       () => {
