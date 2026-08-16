@@ -4,17 +4,35 @@ publishDate: 2022-04-01 00:00:00
 img: /assets/stock-2.jpg
 img_alt: Design components
 description: |
-  Scaling a global design system from inception to enterprise-wide scale, enabling 2x faster delivery and generating a financial return of 30x the initial investment.
+  Product work to take the IFS Design System from inception to IFS Cloud.
 tags:
   - Design System
   - Product Experience
   - Scaling
 ---
 
-<div class="tldr-box">
-  <p><strong>TL;DR:</strong> Scaled the <strong>IFS Design System</strong> from inception to enterprise-wide scale, delivering <strong>2x faster</strong> feature delivery and a <strong>30x ROI</strong>. Recognized as a runner-up in the <strong>Zeroheight Design System Awards</strong>.</p>
-</div>
+## Context
 
-As Product Manager for the IFS Design System, I led the transformation of our product experience platform. My team and I moved the needle from inception to enterprise-wide scale, enabling product teams to deliver 2x faster and generating a 30x ROI. This high-impact work was recognized as a runner-up in the prestigeous Zeroheight Design System Awards.
+IFS Cloud is IFS’s enterprise product platform. I was Product Manager for the design system that now sits under that platform. The work started at inception: there was no Cloud-scale system to inherit.
 
-A proven track record of delivering quantifiable business value through platform innovation. The system now empowers thousands of developers and designers, ensuring a consistent, premium experience across the IFS Cloud ecosystem.
+## Problem
+
+Product teams needed a shared way to ship UI across Cloud. This site does not publish a detailed pre-system baseline. What it does record is the job the system was hired to do: faster feature delivery and a consistent experience across IFS Cloud.
+
+## Decisions and tradeoffs
+
+I treated the design system as a product: start from nothing, make it usable across Cloud, and keep it coherent enough to stand up in a public awards process.
+
+The specific tradeoffs (what we chose not to build, how we rolled it out, which source of truth we used) are not on this site. Until those are documented, they stay blank rather than invented after the fact.
+
+## Metrics
+
+These are the only figures published on this site.
+
+- **2x faster** feature delivery
+- **30x ROI** on the initial investment
+- **Zeroheight Design System Awards** runner-up
+
+## Outcome
+
+The system now runs at IFS Cloud scale. Developers and designers use it to ship a consistent experience across the Cloud ecosystem. This page is the proof behind the homepage card.
