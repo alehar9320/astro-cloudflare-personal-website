@@ -88,11 +88,19 @@ const schema = entry
       ],
     }
   : null;
+
+const shareTitle = entry
+  ? `${entry.data.title} | Product Manager, Developer Experience at IFS`
+  : undefined;
+const shareDescription = entry
+  ? `${entry.data.description.trim()} Get in touch on LinkedIn.`
+  : '404 Error — this page was not found';
 ---
 
 <BaseLayout
   title={entry ? entry.data.title : 'Not Found'}
-  description={entry ? entry.data.description : '404 Error — this page was not found'}
+  description={shareDescription}
+  ogTitle={shareTitle}
 >
   {schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />}
   {
