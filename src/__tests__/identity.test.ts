@@ -316,7 +316,11 @@ describe('identity copy', () => {
     const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
     expect(slug).toContain('Product Manager, Developer Experience at IFS');
     expect(slug).toContain('Get in touch on LinkedIn.');
+    expect(slug).toContain(
+      'Product Manager, Developer Experience at IFS. ${entry.data.description.trim()} Get in touch on LinkedIn.'
+    );
     expect(slug).toContain('ogTitle={shareTitle}');
+    expect(slug).toContain("title={shareTitle ?? 'Not Found'}");
     expect(slug).not.toContain('mailto:');
     expect(slug).not.toContain('harenstam.com');
   });
