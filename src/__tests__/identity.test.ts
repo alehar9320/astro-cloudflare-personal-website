@@ -163,6 +163,10 @@ describe('identity copy', () => {
     expect(analytics).not.toContain('User Behavior Analytics Platform');
     expect(analytics).not.toContain('Strategic Leadership');
     expect(thesis).toContain("Chalmers</strong> master's thesis, 2017");
+    expect(thesis).toContain('This is earlier work');
+    expect(thesis).toContain('/work/ifs-design-system/');
+    expect(thesis).not.toContain('Product Manager');
+    expect(thesis).not.toContain('mailto:');
     expect(lidkoping).toContain('Early Android work, 2013');
     expect(lidkoping).not.toContain('management platform');
     for (const page of [copilots, analytics, thesis, lidkoping]) {
