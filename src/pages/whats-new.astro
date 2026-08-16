@@ -77,7 +77,7 @@ const schema = {
     splitReleaseBody,
   } from '../utils/github-releases';
   import { groundedReleaseSummary, prepareReleaseSummary } from '../utils/release-summary';
-  import { toVisitorChangelogTitle } from '../utils/visitor-changelog';
+  import { toVisitorChangelogTitle, toVisitorRelease } from '../utils/visitor-changelog';
 
   const releaseList = document.querySelector('[data-release-list]');
   const summaryContainer = document.querySelector('[data-release-summary]');
@@ -119,7 +119,8 @@ const schema = {
   }
 
   if (releaseList instanceof HTMLDivElement) {
-    fetchGitHubReleases().then((releases) => {
+    fetchGitHubReleases().then((rawReleases) => {
+      const releases = rawReleases.map(toVisitorRelease);
       if (summaryContainer instanceof HTMLElement && !summaryContainer.hasChildNodes()) {
         const latest = releases[0] ?? LATEST_RELEASE_SNAPSHOT;
         paintSummary(groundedReleaseSummary(latest.version, latest.body, latest.title));

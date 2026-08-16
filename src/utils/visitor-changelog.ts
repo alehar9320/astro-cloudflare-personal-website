@@ -13,6 +13,11 @@ export type VisitorChangelogEntry = {
 /** Known shipped PRs on this site. Do not invent work that is not in the feed. */
 export const VISITOR_CHANGELOG: readonly VisitorChangelogEntry[] = [
   {
+    pr: 524,
+    subject: 'rewrite What’s New for visitors',
+    title: 'What’s New rewritten for visitors',
+  },
+  {
     pr: 523,
     subject: 'rewrite /experimental/now/ for visitors',
     title: 'Now page rewritten for visitors',
@@ -20,7 +25,7 @@ export const VISITOR_CHANGELOG: readonly VisitorChangelogEntry[] = [
   {
     pr: 522,
     subject: 'drop experimental pages from the sitemap',
-    title: 'Sitemap no longer lists experimental pages',
+    title: 'Experimental pages removed from the sitemap',
   },
   {
     pr: 521,
@@ -30,12 +35,12 @@ export const VISITOR_CHANGELOG: readonly VisitorChangelogEntry[] = [
   {
     pr: 520,
     subject: 'add a live RSS feed for the work',
-    title: 'RSS feed for the work',
+    title: 'RSS feed of the work',
   },
   {
     pr: 519,
     subject: 'offer LinkedIn hire on the not-found page',
-    title: 'LinkedIn hire on the not-found page',
+    title: 'Get in touch on LinkedIn from the not-found page',
   },
   {
     pr: 518,
@@ -45,22 +50,22 @@ export const VISITOR_CHANGELOG: readonly VisitorChangelogEntry[] = [
   {
     pr: 517,
     subject: 'add a working apple-touch-icon',
-    title: 'Apple touch icon for iOS',
+    title: 'Home-screen icon',
   },
   {
     pr: 516,
     subject: 'point robots.txt at the live sitemap',
-    title: 'robots.txt points at the live sitemap',
+    title: 'robots.txt points at the sitemap',
   },
   {
     pr: 515,
     subject: 'add a live sitemap for search',
-    title: 'Live sitemap for search',
+    title: 'Sitemap of the live site',
   },
   {
     pr: 514,
     subject: 'add live rel=canonical for search and shares',
-    title: 'Canonical URLs for search and shares',
+    title: 'Canonical URL for the live site',
   },
   {
     pr: 513,
@@ -192,8 +197,11 @@ function titleCaseFirst(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
+const INTERNAL_CHANGELOG_ITEM = /\bjules\b|\bagent[- ]farm\b|\bjohan nits\b/i;
+
 /**
  * Visitor sentence for a changelog item. Lookup known shipped PRs, else sanitize.
+ * Idempotent: already-visitor copy (no SHA / type / PR chrome) is returned as-is.
  */
 export function toVisitorChangelogTitle(raw: string): string {
   const trimmed = raw.trim();
@@ -209,6 +217,33 @@ export function toVisitorChangelogTitle(raw: string): string {
   const bySubject = BY_SUBJECT.get(subject.toLowerCase());
   if (bySubject) return bySubject;
 
+  if (subject === trimmed) return trimmed;
   if (!subject) return titleCaseFirst(trimmed.replace(SHA_PREFIX, '').trim());
   return titleCaseFirst(subject);
+}
+
+/**
+ * Rewrite a GitHub release body so list items are visitor copy, not SHA + feat + (#PR).
+ */
+export function toVisitorReleaseBody(body: string): string {
+  const items = body
+    .split('\n')
+    .map((line) => line.trim())
+    .filter((line) => /^[-*+]\s+/.test(line))
+    .map((line) => line.replace(/^[-*+]\s+/, ''))
+    .filter((message) => !INTERNAL_CHANGELOG_ITEM.test(message));
+
+  if (items.length === 0) {
+    const trimmed = body.trim();
+    return trimmed ? toVisitorChangelogTitle(trimmed) : '';
+  }
+
+  return items.map((message) => `- ${toVisitorChangelogTitle(message)}`).join('\n');
+}
+
+/**
+ * Keep dates, URLs, and versions. Replace changelog names with visitor sentences.
+ */
+export function toVisitorRelease<T extends { body: string }>(release: T): T {
+  return { ...release, body: toVisitorReleaseBody(release.body) };
 }

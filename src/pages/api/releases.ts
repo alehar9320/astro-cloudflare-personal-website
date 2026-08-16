@@ -1,5 +1,6 @@
 import type { APIRoute } from 'astro';
 import { fetchGitHubReleases } from '../../utils/github-releases';
+import { toVisitorChangelogTitle, toVisitorRelease } from '../../utils/visitor-changelog';
 
 const jsonHeaders = {
   'content-type': 'application/json',
@@ -14,7 +15,20 @@ export const prerender = false;
 
 export const GET: APIRoute = async () => {
   try {
-    const releases = await fetchGitHubReleases();
+    const releases = (await fetchGitHubReleases()).map((release) => {
+      const visitor = toVisitorRelease(release);
+      return {
+        ...visitor,
+        body: visitor.body
+          .split('\n')
+          .map((line) => {
+            const bullet = line.match(/^([-*+]\s+)(.*)$/);
+            if (!bullet) return toVisitorChangelogTitle(line);
+            return `${bullet[1]}${toVisitorChangelogTitle(bullet[2])}`;
+          })
+          .join('\n'),
+      };
+    });
     return new Response(JSON.stringify(releases), { headers: jsonHeaders });
   } catch (error: unknown) {
     console.error({ event: 'releases_api_error', error: String(error) });
