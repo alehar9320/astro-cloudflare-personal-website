@@ -216,6 +216,14 @@ describe('identity copy', () => {
     expect(work).not.toContain('Strategic Portfolio');
     expect(work).toContain('title="Work"');
     expect(work).toContain('The IFS Design System case, then earlier work.');
+    expect(work).toContain('class="proof-card"');
+    expect(work).toContain('From the first version to IFS Cloud.');
+    expect(work).toContain('Up to 2x faster delivery');
+    expect(work).toContain('Up to 30x ROI');
+    expect(work).toContain('Zeroheight runner-up');
+    expect(work).toContain('/work/ifs-design-system/');
+    expect(work).not.toContain('PortfolioPreview');
+    expect(work).not.toContain('mailto:');
   });
 
   it('drops the Strategic Portfolio consultant frame from nav', () => {
