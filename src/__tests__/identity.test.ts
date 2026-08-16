@@ -84,6 +84,15 @@ describe('identity copy', () => {
     expect(work).toContain('Usage telemetry for IFS Cloud roadmap decisions.');
     expect(work).toContain("Chalmers master's thesis, 2017.");
     expect(work).not.toContain('multi-million');
+    expect(work).not.toContain('Strategic Portfolio');
+    expect(work).toContain('title="Work"');
+    expect(work).toContain('The IFS Design System case, then earlier work.');
+  });
+
+  it('drops the Strategic Portfolio consultant frame from nav', () => {
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    expect(nav).not.toContain('Strategic Portfolio');
+    expect(nav).toContain("{ label: 'Work', href: '/work/' }");
   });
 
   it('drops the /about/ duplicate in favor of /biography/', () => {

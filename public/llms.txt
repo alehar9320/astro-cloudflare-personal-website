@@ -14,7 +14,7 @@ Recruiter keywords (not a fake title): Product Management, Developer Experience,
 
 - [Home](https://me.alehar.workers.dev/): Product Manager, Developer Experience at IFS. One design-system proof card. Get in touch goes to LinkedIn.
 - [Contact](https://me.alehar.workers.dev/contact/): Hire path. LinkedIn only.
-- [Work](https://me.alehar.workers.dev/work/): Case list. IFS Design System is the only equal-weight card. Copilots, analytics, thesis, and Lidköping are earlier work.
+- [Work](https://me.alehar.workers.dev/work/): Work. IFS Design System is the only card, then earlier work. Not titled Strategic Portfolio.
 - [IFS Design System](https://me.alehar.workers.dev/work/ifs-design-system/): Numbered proof. 2x delivery, 30x ROI, Zeroheight runner-up.
 - [Biography](https://me.alehar.workers.dev/biography/): Experience timeline. Product Manager, Developer Experience at IFS. /about/ redirects here.
 

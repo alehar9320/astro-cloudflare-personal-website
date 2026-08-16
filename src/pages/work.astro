@@ -31,9 +31,9 @@ const schema = {
       '@type': 'WebPage',
       '@id': 'https://harenstam.com/work/#webpage',
       url: 'https://harenstam.com/work/',
-      name: 'Strategic Portfolio | Alexander Härenstam',
+      name: 'Work | Alexander Härenstam',
       description:
-        "Explore Alexander Härenstam's strategic portfolio of high-impact initiatives, featuring Industrial AI, Developer Experience, and Digital Transformation.",
+        'Product Manager, Developer Experience at IFS. The IFS Design System case, then earlier work.',
       breadcrumb: {
         '@type': 'BreadcrumbList',
         itemListElement: [
@@ -46,7 +46,7 @@ const schema = {
           {
             '@type': 'ListItem',
             position: 2,
-            name: 'Strategic Portfolio',
+            name: 'Work',
             item: 'https://harenstam.com/work/',
           },
         ],
@@ -59,9 +59,9 @@ const schema = {
     },
     {
       '@type': 'ItemList',
-      name: 'Strategic Portfolio | Alexander Härenstam',
+      name: 'Work | Alexander Härenstam',
       description:
-        "Explore Alexander Härenstam's strategic portfolio of high-impact initiatives, featuring Industrial AI, Developer Experience, and Digital Transformation.",
+        'Product Manager, Developer Experience at IFS. The IFS Design System case, then earlier work.',
       numberOfItems: projects.length,
       itemListElement: projects.map((project, index) => ({
         '@type': 'ListItem',
@@ -76,17 +76,13 @@ const schema = {
 ---
 
 <BaseLayout
-  title="Strategic Portfolio | Alexander Härenstam"
-  description="Explore Alexander Härenstam's strategic product portfolio and recent initiatives."
+  title="Work | Alexander Härenstam"
+  description="Product Manager, Developer Experience at IFS. The IFS Design System case, then earlier work."
 >
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="stack gap-20">
     <main id="main-content" class="wrapper stack gap-8">
-      <Hero
-        title="Strategic Portfolio"
-        tagline="A curated selection of initiatives transforming complex enterprise challenges into scalable product solutions."
-        align="start"
-      />
+      <Hero title="Work" tagline="The IFS Design System case, then earlier work." align="start" />
       <div class="tldr-box">
         <p>
           <strong>TL;DR:</strong>
