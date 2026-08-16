@@ -24,6 +24,14 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
+const earlierCase =
+  !!entry &&
+  [
+    'ai-coding-copilots',
+    'user-behavior-analytics',
+    'master-thesis',
+    'lidkoping-stenhuggeri',
+  ].includes(entry.id);
 
 if (!entry) {
   Astro.response.status = 404;
@@ -118,7 +126,12 @@ const schema = entry
                   decoding="async"
                 />
               )}
-              <div class:list={['content', { 'ds-proof': entry.id === 'ifs-design-system' }]}>
+              <div
+                class:list={[
+                  'content',
+                  { 'ds-proof': entry.id === 'ifs-design-system', 'earlier-case': earlierCase },
+                ]}
+              >
                 {Content && <Content />}
               </div>
             </div>
@@ -162,7 +175,9 @@ const schema = entry
   }
 
   .content {
-    max-width: 65ch;
+    max-width: min(65ch, 100%);
+    width: 100%;
+    box-sizing: border-box;
     margin-inline: auto;
   }
 
@@ -176,6 +191,29 @@ const schema = entry
     /* Phone: when Metrics sits at the bottom of the viewport, not only page end. */
     padding-bottom: var(--chat-fab-clearance);
     padding-right: var(--chat-fab-clearance);
+  }
+
+  .earlier-case {
+    /* Phone: full-width copy. No right inset. */
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .earlier-case > :global(:last-child)::before {
+    /* When the last body paragraph sits at the bottom of the 375 viewport, wrap glyphs around the FAB.
+       Container stays full width. Not page-end padding. Not a stacked right inset. */
+    content: '';
+    float: right;
+    width: var(--chat-fab-clearance);
+    height: var(--chat-fab-clearance);
+  }
+
+  .earlier-case :global(.tldr-box) {
+    /* Phone load: stretch TL;DR so the next paragraph starts below the FAB band.
+       Glyphs stay full width. Empty padding occupies the FAB, not body copy. */
+    box-sizing: border-box;
+    min-height: calc(100svh - var(--chat-fab-clearance));
+    padding-bottom: var(--chat-fab-clearance);
   }
 
   .content > :global(* + *) {
@@ -236,6 +274,18 @@ const schema = entry
     .ds-proof :global(ul) {
       padding-bottom: 0;
       padding-right: 0;
+    }
+
+    .earlier-case > :global(:last-child)::before {
+      content: none;
+      float: none;
+      width: 0;
+      height: 0;
+    }
+
+    .earlier-case :global(.tldr-box) {
+      min-height: 0;
+      padding-bottom: 0;
     }
 
     .back-link {

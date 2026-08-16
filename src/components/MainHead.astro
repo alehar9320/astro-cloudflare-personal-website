@@ -5,12 +5,15 @@ import PostHog from './PostHog.astro';
 interface Props {
   title?: string | undefined;
   description?: string | undefined;
+  ogTitle?: string | undefined;
 }
 
 const {
   title = 'Alexander Härenstam | Product Manager, Developer Experience',
-  description = 'Product Manager, Developer Experience at IFS. Design systems, DevEx, and Industrial AI.',
+  description = 'Product Manager, Developer Experience at IFS.',
+  ogTitle,
 } = Astro.props;
+const shareTitle = ogTitle ?? title;
 ---
 
 <meta charset="UTF-8" />
@@ -23,13 +26,13 @@ const {
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
 <meta property="og:url" content={Astro.url} />
-<meta property="og:title" content={title} />
+<meta property="og:title" content={shareTitle} />
 <meta property="og:image" content="https://harenstam.com/assets/portrait.png" />
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:url" content={Astro.url} />
-<meta name="twitter:title" content={title} />
+<meta name="twitter:title" content={shareTitle} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content="https://harenstam.com/assets/portrait.png" />
 
