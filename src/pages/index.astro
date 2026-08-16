@@ -101,18 +101,6 @@ const schema = {
           </a>
         </section>
       </div>
-
-      <div class="portrait">
-        <img
-          alt="Alexander Härenstam smiling in a red plaid shirt and tortoise shell glasses"
-          width="480"
-          height="620"
-          src="/assets/portrait.png"
-          loading="eager"
-          fetchpriority="high"
-          decoding="async"
-        />
-      </div>
     </header>
   </main>
 </BaseLayout>
@@ -158,75 +146,6 @@ const schema = {
     font-size: var(--text-sm);
     color: var(--gray-300);
     font-weight: 400;
-  }
-
-  .portrait {
-    --portrait-aurora:
-      0 0 12px 3px color-mix(in srgb, var(--accent-light) 55%, transparent),
-      0 0 24px 6px color-mix(in srgb, var(--accent-regular) 40%, transparent);
-    position: relative;
-    border-radius: 1.5rem;
-    margin-inline: 1.25rem;
-    margin-bottom: var(--chat-fab-clearance);
-    max-width: min(10.5rem, calc(100% - 2.5rem));
-    box-shadow: var(--portrait-aurora), var(--shadow-md);
-  }
-
-  :global(:root.theme-dark) .portrait {
-    --portrait-aurora:
-      0 0 14px 4px color-mix(in srgb, var(--accent-light) 70%, transparent),
-      0 0 28px 8px color-mix(in srgb, var(--accent-regular) 50%, transparent);
-  }
-
-  .portrait::before,
-  .portrait::after {
-    content: '';
-    position: absolute;
-    pointer-events: none;
-    border-radius: inherit;
-  }
-
-  .portrait::before {
-    z-index: 0;
-    /* Phone: stay in the side gutter; do not grow into Get in touch or the FAB. */
-    inset: 12% -10% 0 -10%;
-    background:
-      radial-gradient(ellipse 45% 85% at 0% 50%, var(--accent-light), transparent 72%),
-      radial-gradient(ellipse 45% 85% at 100% 50%, var(--accent-regular), transparent 72%);
-    opacity: 0.45;
-  }
-
-  /* Rim sits ON the rounded edge so a 2px crop reads as a kiss, not a white slab. */
-  .portrait::after {
-    z-index: 2;
-    inset: 0;
-    background: none;
-    box-shadow:
-      inset 0 0 0 2px color-mix(in srgb, var(--accent-light) 80%, transparent),
-      inset 0 0 16px 6px color-mix(in srgb, var(--accent-regular) 50%, transparent);
-  }
-
-  :global(:root.theme-dark) .portrait::before {
-    opacity: 0.7;
-  }
-
-  :global(:root.theme-dark) .portrait::after {
-    box-shadow:
-      inset 0 0 0 2px color-mix(in srgb, var(--accent-light) 90%, transparent),
-      inset 0 0 18px 7px color-mix(in srgb, var(--accent-regular) 60%, transparent);
-  }
-
-  .portrait img {
-    position: relative;
-    z-index: 1;
-    display: block;
-    width: 100%;
-    max-height: calc(100svh - var(--chat-fab-clearance) - 24rem);
-    aspect-ratio: 5 / 4;
-    object-fit: cover;
-    object-position: top;
-    border-radius: 1.5rem;
-    margin-inline: auto;
   }
 
   .proof-card {
@@ -282,22 +201,6 @@ const schema = {
   }
 
   @media (prefers-reduced-motion: no-preference) {
-    .portrait::before {
-      animation: portrait-aurora-a 12s ease-in-out infinite alternate;
-    }
-
-    .portrait {
-      transition:
-        transform 0.3s ease,
-        box-shadow 0.3s ease;
-    }
-
-    .portrait:hover,
-    .portrait:focus-visible {
-      transform: translateY(-2px);
-      box-shadow: var(--portrait-aurora), var(--shadow-md);
-    }
-
     .proof-card {
       transition:
         transform 0.3s ease,
@@ -312,38 +215,12 @@ const schema = {
     }
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    .portrait::before {
-      animation: none;
-    }
-  }
-
-  @keyframes portrait-aurora-a {
-    from {
-      transform: translate3d(-10%, -8%, 0);
-    }
-    to {
-      transform: translate3d(16%, 12%, 0);
-    }
-  }
-
-  @keyframes portrait-aurora-b {
-    from {
-      transform: translate3d(8%, 0, 0);
-    }
-    to {
-      transform: translate3d(-14%, 10%, 0);
-    }
-  }
-
   @media (min-width: 50em) {
     .first-screen {
       justify-content: center;
     }
 
     .hero {
-      display: grid;
-      grid-template-columns: 6fr 4fr;
       padding-inline: 2.5rem;
       gap: 3.75rem;
       padding-bottom: 0;
@@ -352,33 +229,6 @@ const schema = {
     .hero-actions {
       justify-content: flex-start;
       align-items: flex-start;
-    }
-
-    .portrait {
-      --portrait-aurora:
-        0 0 20px 4px color-mix(in srgb, var(--accent-light) 55%, transparent),
-        0 0 48px 10px color-mix(in srgb, var(--accent-regular) 40%, transparent);
-      margin-inline: 0;
-      margin-bottom: 0;
-      max-width: none;
-      border-radius: 4.5rem;
-    }
-
-    :global(:root.theme-dark) .portrait {
-      --portrait-aurora:
-        0 0 22px 5px color-mix(in srgb, var(--accent-light) 70%, transparent),
-        0 0 56px 14px color-mix(in srgb, var(--accent-regular) 50%, transparent);
-    }
-
-    .portrait::before {
-      inset: -16%;
-    }
-
-    .portrait img {
-      width: 100%;
-      max-height: none;
-      aspect-ratio: 3 / 4;
-      border-radius: 4.5rem;
     }
 
     .proof-card {
