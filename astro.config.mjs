@@ -39,7 +39,6 @@ const codecovPlugin = /** @type {import('vite').PluginOption} */ (
 export default defineConfig({
   redirects: {
     '/about': '/biography/',
-    '/about/': '/biography/',
   },
   output: isRender ? 'server' : 'static',
   server: isRender
