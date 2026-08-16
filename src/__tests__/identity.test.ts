@@ -220,6 +220,16 @@ describe('identity copy', () => {
     expect(home).toContain('Get in touch');
     expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
     expect(home).not.toContain('mailto:');
+    expect(chat).toContain('has-prominent-chat');
+    expect(chat).toContain('min(32rem, calc(50vw - 2rem))');
+    expect(chat).toContain('--prominent-phone-top');
+    expect(chat).toContain('layoutProminentPhone');
+    expect(chat).toContain('cta-hint');
+    expect(home).toContain('Get in touch');
+    expect(home).toContain('LinkedIn · replies from me');
+    expect(home).toContain('body.has-prominent-chat');
+    expect(home).toContain('proof-card');
+    expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
   });
 
   it('keeps the chat FAB off the 2x/30x/Zeroheight proof on the design system case on a phone', () => {
