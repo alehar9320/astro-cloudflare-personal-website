@@ -125,6 +125,7 @@ describe('identity copy', () => {
     expect(slug).toContain('master-thesis');
     expect(slug).toContain('lidkoping-stenhuggeri');
     expect(slug).toContain('padding-bottom: calc(var(--chat-fab-clearance) + 2.5rem)');
+    expect(slug).toContain('.earlier-case :global(:last-child)');
     expect(slug).toContain('.earlier-case :global(.tldr-box)');
     expect(slug).toContain('min-height: calc(100svh - var(--chat-fab-clearance))');
     expect(slug).not.toContain('.earlier-case :global(p)');

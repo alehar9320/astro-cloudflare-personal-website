@@ -194,8 +194,14 @@ const schema = entry
   }
 
   .earlier-case {
-    /* Phone: full-width copy. Extra bottom clearance for page end. No right inset. */
+    /* Phone: full-width copy. No right inset. */
     max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  .earlier-case :global(:last-child) {
+    /* When the last paragraph sits at the bottom of the 375 viewport, keep glyphs above the FAB.
+       Clearance lives on that paragraph, not as page-end footer whitespace. */
     box-sizing: border-box;
     padding-bottom: calc(var(--chat-fab-clearance) + 2.5rem);
   }
@@ -268,7 +274,7 @@ const schema = entry
       padding-right: 0;
     }
 
-    .earlier-case {
+    .earlier-case :global(:last-child) {
       padding-bottom: 0;
     }
 
