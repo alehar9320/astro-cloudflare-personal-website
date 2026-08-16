@@ -14,6 +14,7 @@ const {
   ogTitle,
 } = Astro.props;
 const shareTitle = ogTitle ?? title;
+const shareImage = 'https://me.alehar.workers.dev/assets/portrait.png';
 ---
 
 <meta charset="UTF-8" />
@@ -27,14 +28,14 @@ const shareTitle = ogTitle ?? title;
 <meta property="og:type" content="website" />
 <meta property="og:url" content={Astro.url} />
 <meta property="og:title" content={shareTitle} />
-<meta property="og:image" content="https://harenstam.com/assets/portrait.png" />
+<meta property="og:image" content={shareImage} />
 
 <!-- Twitter -->
 <meta name="twitter:card" content="summary_large_image" />
 <meta name="twitter:url" content={Astro.url} />
 <meta name="twitter:title" content={shareTitle} />
 <meta name="twitter:description" content={description} />
-<meta name="twitter:image" content="https://harenstam.com/assets/portrait.png" />
+<meta name="twitter:image" content={shareImage} />
 
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="icon" href="/favicon.ico" />
