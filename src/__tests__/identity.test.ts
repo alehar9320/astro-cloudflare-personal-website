@@ -52,6 +52,13 @@ describe('identity copy', () => {
     expect(work).toContain("{' '}<strong>IFS</strong>");
   });
 
+  it('keeps Lidköping off the main /work card grid', () => {
+    const work = sources.find((s) => s.path.endsWith('work.astro'))!.text;
+    expect(work).toContain("project.id !== 'lidkoping-stenhuggeri'");
+    expect(work).toContain('Earlier work');
+    expect(work).toContain('Early Android work, 2013.');
+  });
+
   it('drops the /about/ duplicate in favor of /biography/', () => {
     const nav = readFileSync('src/components/Nav.astro', 'utf8');
     const astro = readFileSync('astro.config.mjs', 'utf8');
