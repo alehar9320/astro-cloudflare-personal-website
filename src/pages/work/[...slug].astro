@@ -175,7 +175,9 @@ const schema = entry
   }
 
   .content {
-    max-width: 65ch;
+    max-width: min(65ch, 100%);
+    width: 100%;
+    box-sizing: border-box;
     margin-inline: auto;
   }
 
@@ -192,14 +194,21 @@ const schema = entry
   }
 
   .earlier-case {
-    /* Phone: keep Earlier work body copy out of the fixed chat FAB band. */
+    /* Phone: body at load and when copy sits at the bottom of the viewport. */
+    max-width: 100%;
+    box-sizing: border-box;
     padding-bottom: var(--chat-fab-clearance);
     padding-right: var(--chat-fab-clearance);
   }
 
+  .earlier-case :global(.tldr-box),
   .earlier-case :global(p),
   .earlier-case :global(li) {
     padding-right: var(--chat-fab-clearance);
+  }
+
+  .earlier-case :global(.tldr-box) {
+    padding-bottom: var(--chat-fab-clearance);
   }
 
   .earlier-case :global(ul),
@@ -269,6 +278,7 @@ const schema = entry
     }
 
     .earlier-case,
+    .earlier-case :global(.tldr-box),
     .earlier-case :global(p),
     .earlier-case :global(li),
     .earlier-case :global(ul),

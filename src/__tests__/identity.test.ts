@@ -124,6 +124,7 @@ describe('identity copy', () => {
     expect(slug).toContain('user-behavior-analytics');
     expect(slug).toContain('master-thesis');
     expect(slug).toContain('lidkoping-stenhuggeri');
+    expect(slug).toContain('.earlier-case :global(.tldr-box)');
     expect(slug).toContain('.earlier-case :global(p)');
     expect(slug).toContain('.earlier-case :global(ul)');
     expect(slug).not.toContain('mailto:');
