@@ -441,6 +441,24 @@ describe('identity copy', () => {
     expect(robots).not.toContain('mailto:');
   });
 
+  it('ships a web app manifest so the live origin has a real manifest.webmanifest', () => {
+    const head = readFileSync('src/components/MainHead.astro', 'utf8');
+    expect(head).toContain('rel="manifest"');
+    expect(head).toContain('/manifest.webmanifest');
+    expect(existsSync('public/manifest.webmanifest')).toBe(true);
+    const manifest = readFileSync('public/manifest.webmanifest', 'utf8');
+    expect(manifest).toContain('https://me.alehar.workers.dev');
+    expect(manifest).toContain('Alexander Härenstam');
+    expect(manifest).toContain('Product Manager, Developer Experience');
+    expect(manifest).not.toContain('localhost');
+    expect(manifest).not.toContain('harenstam.com');
+    expect(manifest).not.toContain('mailto:');
+    expect(manifest).not.toContain('portrait.png');
+    expect(manifest).toContain('favicon.svg');
+    expect(manifest).toContain('icon-192.png');
+    expect(manifest).toContain('icon-512.png');
+  });
+
   it('ships an apple-touch-icon so iOS home-screen requests do not 404', () => {
     const head = readFileSync('src/components/MainHead.astro', 'utf8');
     expect(head).toContain('rel="apple-touch-icon"');
