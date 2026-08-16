@@ -218,6 +218,22 @@ describe('identity copy', () => {
     expect(nav).toContain("href: '/biography/'");
     expect(astro).toContain("'/about': '/biography/'");
   });
+  it('lets a Home share read Product Manager, Developer Experience at IFS', () => {
+    const head = readFileSync('src/components/MainHead.astro', 'utf8');
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    const layout = readFileSync('src/layouts/BaseLayout.astro', 'utf8');
+    expect(home).toContain('ogTitle="Product Manager, Developer Experience at IFS"');
+    expect(home).toContain('description="Product Manager, Developer Experience at IFS."');
+    expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+    expect(home).not.toContain('mailto:');
+    expect(layout).toContain('ogTitle={ogTitle}');
+    expect(head).toContain('content={shareTitle}');
+    expect(head).toContain('property="og:title"');
+    expect(head).not.toContain('Design systems, DevEx, and Industrial AI.');
+    expect(head).toContain("description = 'Product Manager, Developer Experience at IFS.'");
+  });
+
   it('grounds llms.txt with Chalmers education and recruiter keywords', () => {
     const llms = sources.find((s) => s.path.endsWith('llms.txt'))!.text;
     expect(llms).toContain('Chalmers B.Sc. Software Engineering');
