@@ -1,8 +1,6 @@
 ---
 title: Lidköping Stenhuggeri
 publishDate: 2013-09-01 00:00:00
-img: /assets/stock-4.jpg
-img_alt: Mobile app interface concept
 description: |
   Early Android work, 2013, for Lidköping Stenhuggeri.
 tags:

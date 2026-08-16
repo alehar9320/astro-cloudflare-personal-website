@@ -1,8 +1,6 @@
 ---
 title: User behavior analytics
 publishDate: 2023-01-01 00:00:00
-img: /assets/stock-3.jpg
-img_alt: Analytics graphs
 description: |
   Usage telemetry for IFS Cloud roadmap decisions.
 tags:

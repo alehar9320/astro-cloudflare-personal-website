@@ -1,8 +1,6 @@
 ---
 title: Chalmers master's thesis
 publishDate: 2017-06-01 00:00:00
-img: /assets/stock-1.jpg
-img_alt: Business structure concept
 description: |
   Chalmers master's thesis, 2017.
 tags:

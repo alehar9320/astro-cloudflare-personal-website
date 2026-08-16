@@ -1,8 +1,6 @@
 ---
 title: Internal AI coding copilots
 publishDate: 2025-02-01 00:00:00
-img: /assets/stock-1.jpg
-img_alt: Abstract technology presentation
 description: |
   Internal AI coding copilots for IFS engineering teams.
 tags:
