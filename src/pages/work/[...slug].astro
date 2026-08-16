@@ -194,11 +194,18 @@ const schema = entry
   }
 
   .earlier-case {
-    /* Phone: full-width copy. Clearance below the case so last glyphs sit above the FAB.
-       Do not pad TL;DR/lists: that shoves the next paragraph into the FAB at load. */
+    /* Phone: full-width copy. Extra bottom clearance for page end. No right inset. */
     max-width: 100%;
     box-sizing: border-box;
     padding-bottom: calc(var(--chat-fab-clearance) + 1.5rem);
+  }
+
+  .earlier-case :global(.tldr-box) {
+    /* Phone load: stretch TL;DR so the next paragraph starts below the FAB band.
+       Glyphs stay full width. Empty padding occupies the FAB, not body copy. */
+    box-sizing: border-box;
+    min-height: calc(100svh - var(--chat-fab-clearance));
+    padding-bottom: var(--chat-fab-clearance);
   }
 
   .content > :global(* + *) {
@@ -262,6 +269,11 @@ const schema = entry
     }
 
     .earlier-case {
+      padding-bottom: 0;
+    }
+
+    .earlier-case :global(.tldr-box) {
+      min-height: 0;
       padding-bottom: 0;
     }
 
