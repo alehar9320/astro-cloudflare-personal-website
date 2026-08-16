@@ -83,16 +83,16 @@
 <style>
   .chat-container {
     position: fixed;
-    bottom: 2rem;
-    right: 2rem;
+    bottom: var(--chat-fab-offset);
+    right: var(--chat-fab-offset);
     z-index: 1000;
     font-family: var(--font-body);
   }
 
   .chat-toggle {
     position: relative;
-    width: 3.5rem;
-    height: 3.5rem;
+    width: var(--chat-fab-size);
+    height: var(--chat-fab-size);
     padding: 0;
     border-radius: 50%;
     background-color: hsla(var(--gray-999-basis), 0.55);

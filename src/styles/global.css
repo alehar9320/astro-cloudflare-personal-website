@@ -87,6 +87,13 @@
 
   /* Transitions */
   --theme-transition: 0.2s ease-in-out;
+
+  /* Chat FAB. Hire CTAs and the home portrait must clear this band on phones. */
+  --chat-fab-size: 3.5rem;
+  --chat-fab-offset: 2rem;
+  --chat-fab-clearance: calc(
+    var(--chat-fab-size) + var(--chat-fab-offset) + env(safe-area-inset-bottom, 0px) + 0.75rem
+  );
 }
 
 :root.theme-dark {
@@ -142,6 +149,10 @@ html,
 body {
   min-height: 100%;
   overflow-x: hidden;
+}
+
+html {
+  scroll-padding-bottom: var(--chat-fab-clearance);
 }
 
 @media (prefers-reduced-motion: no-preference) {
