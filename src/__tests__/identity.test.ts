@@ -69,6 +69,10 @@ describe('identity copy', () => {
     expect(home).toContain('Get in touch');
     expect(cta).toContain('var(--chat-fab-clearance)');
     expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(cta).toContain('Get in touch');
+    expect(cta).not.toContain('mailto:');
+    expect(cta).toContain('LinkedIn · replies from me');
+    expect(cta).not.toContain('high-impact');
   });
 
   it('keeps the chat FAB off Earlier work and the biography timeline on a phone', () => {
@@ -91,6 +95,9 @@ describe('identity copy', () => {
     expect(contact).toContain('https://www.linkedin.com/in/alehar/');
     expect(contact).toContain('Get in touch');
     expect(contact).not.toContain('mailto:');
+    expect(contact).toContain('Product Manager, Developer Experience');
+    expect(contact).not.toContain('Open to conversations');
+    expect(contact).toContain('LinkedIn · replies from me');
     expect(footer).toContain('padding: 3rem 2rem var(--chat-fab-clearance)');
   });
 
