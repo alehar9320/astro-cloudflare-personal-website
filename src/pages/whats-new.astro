@@ -11,8 +11,7 @@ const schema = {
       '@id': 'https://me.alehar.workers.dev/whats-new/#webpage',
       url: 'https://me.alehar.workers.dev/whats-new/',
       name: "What's New | Alexander Härenstam",
-      description:
-        'A real-time log of project milestones, technical refinements, and portfolio updates.',
+      description: 'A public changelog of this site.',
       breadcrumb: {
         '@type': 'BreadcrumbList',
         itemListElement: [
@@ -40,20 +39,19 @@ const schema = {
 };
 ---
 
-<BaseLayout title="What's New | Alexander Härenstam" description="Changelog and recent updates">
+<BaseLayout
+  title="What's New | Alexander Härenstam"
+  description="A public changelog of this site. Product Manager, Developer Experience at IFS."
+>
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="stack gap-20">
     <main id="main-content" class="wrapper stack gap-8">
-      <Hero
-        title="What's New"
-        tagline="A real-time log of project milestones, technical refinements, and portfolio updates."
-        align="start"
-      />
+      <Hero title="What's New" tagline="A public changelog of this site." align="start" />
 
       <div class="content">
         <div data-release-summary></div>
         <div class="release-list" data-release-list>
-          <p class="release-status">Fetching latest project updates...</p>
+          <p class="release-status">Loading the latest site updates...</p>
         </div>
         <noscript>
           <p class="release-status">
@@ -128,7 +126,7 @@ const schema = {
       if (releases.length === 0) {
         const empty = document.createElement('p');
         empty.className = 'release-status';
-        empty.textContent = 'Project history is currently unavailable.';
+        empty.textContent = 'Site updates are currently unavailable.';
         const link = document.createElement('a');
         link.href = RELEASES_PAGE_URL;
         link.textContent = 'View GitHub Releases';

@@ -525,4 +525,21 @@ describe('identity copy', () => {
     expect(now).not.toContain('<strong>Status:</strong>');
     expect(now).not.toContain('high-impact');
   });
+
+  it('rewrites What’s New for visitors, not a project log', () => {
+    const page = readFileSync('src/pages/whats-new.astro', 'utf8');
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    expect(page).not.toContain('A real-time log of project milestones');
+    expect(page).toContain('A public changelog of this site.');
+    expect(page).toContain('Product Manager, Developer Experience');
+    expect(page).toContain('ContactCTA');
+    expect(page).not.toContain('mailto:');
+    expect(page).not.toContain('this is not on the site');
+    expect(page).not.toContain("this isn't on the site yet");
+    expect(page).not.toContain('stay blank rather than invented');
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(cta).toContain('Get in touch');
+    expect(cta).toContain('LinkedIn · replies from me');
+    expect(cta).not.toContain('mailto:');
+  });
 });
