@@ -4,24 +4,20 @@ publishDate: 2022-04-01 00:00:00
 img: /assets/stock-2.jpg
 img_alt: Design components
 description: |
-  Product work to take the IFS Design System from inception to IFS Cloud.
+  From the first version to IFS Cloud.
 tags:
   - Design System
   - Product Experience
   - Scaling
 ---
 
-## Context
+<div class="tldr-box">
+  <p><strong>TL;DR:</strong> The <strong>IFS Design System</strong>, from the first version to IFS Cloud. I am <strong>Product Manager, Developer Experience</strong>.</p>
+</div>
 
-IFS Cloud is IFS’s enterprise product platform. I was Product Manager for the design system that now sits under that platform. The work started at inception: there was no Cloud-scale system to inherit.
+As Product Manager, Developer Experience at IFS, I took the design system from the first version to IFS Cloud. IFS Cloud is IFS's enterprise product platform. There was no Cloud-scale system to inherit.
 
-## Problem
-
-Product teams needed a shared way to ship UI across Cloud, for faster feature delivery and a consistent experience.
-
-## Decisions and tradeoffs
-
-I treated the design system as a product: start from nothing, make it usable across Cloud, and keep it coherent enough to stand up in a public awards process.
+Product teams needed a shared way to ship UI across Cloud, so feature work could move faster and the experience stayed consistent.
 
 ## Metrics
 
@@ -29,6 +25,4 @@ I treated the design system as a product: start from nothing, make it usable acr
 - **Up to 30x ROI** on the initial investment
 - **Zeroheight Design System Awards** runner-up
 
-## Outcome
-
-The system now runs at IFS Cloud scale. Developers and designers use it to ship a consistent experience across the Cloud ecosystem. This page is the proof behind the homepage card.
+The system now runs at IFS Cloud scale. Developers and designers use it to ship a consistent experience across Cloud.
