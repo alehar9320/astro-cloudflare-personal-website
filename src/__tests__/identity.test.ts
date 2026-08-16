@@ -162,6 +162,9 @@ describe('identity copy', () => {
     expect(analytics).not.toContain('not a standalone platform product');
     expect(analytics).not.toContain('User Behavior Analytics Platform');
     expect(analytics).not.toContain('Strategic Leadership');
+    expect(analytics).toContain('Product Manager, Developer Experience');
+    expect(analytics).not.toContain('mailto:');
+    expect(analytics).not.toContain('No new numbered');
     expect(thesis).toContain("Chalmers</strong> master's thesis, 2017");
     expect(lidkoping).toContain('Early Android work, 2013');
     expect(lidkoping).not.toContain('management platform');
