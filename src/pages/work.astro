@@ -9,13 +9,19 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const projects = (await getCollection('work')).sort(
   (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
 );
-const demoted = new Set(['lidkoping-stenhuggeri', 'ai-coding-copilots', 'user-behavior-analytics']);
+const demoted = new Set([
+  'lidkoping-stenhuggeri',
+  'ai-coding-copilots',
+  'user-behavior-analytics',
+  'master-thesis',
+]);
 const featured = projects.filter((project) => !demoted.has(project.id));
 const earlier = projects.filter((project) => demoted.has(project.id));
 const earlierBlurb: Record<string, string> = {
   'lidkoping-stenhuggeri': 'Early Android work, 2013.',
   'ai-coding-copilots': 'Internal AI coding copilots for IFS engineering teams.',
   'user-behavior-analytics': 'Usage telemetry for IFS Cloud roadmap decisions.',
+  'master-thesis': "Chalmers master's thesis, 2017.",
 };
 
 const schema = {
