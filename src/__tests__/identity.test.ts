@@ -251,6 +251,10 @@ describe('identity copy', () => {
     expect(analytics).not.toContain('mailto:');
     expect(analytics).not.toContain('No new numbered');
     expect(thesis).toContain("Chalmers</strong> master's thesis, 2017");
+    expect(thesis).toContain('This is earlier work');
+    expect(thesis).toContain('/work/ifs-design-system/');
+    expect(thesis).not.toContain('Product Manager');
+    expect(thesis).not.toContain('mailto:');
     expect(lidkoping).toContain('Early Android work, 2013');
     expect(lidkoping).not.toContain('management platform');
     expect(lidkoping).toContain('This is earlier work');
