@@ -43,6 +43,10 @@ describe('identity copy', () => {
     expect(bio).toContain(
       'Explore the professional journey of Alexander Härenstam, Product Manager, Developer Experience at IFS.'
     );
+    expect(bio).not.toContain('No new numbered');
+    expect(bio).not.toContain('only numbered proof');
+    expect(bio.replace(/\s+/g, ' ')).toContain('up to 2x faster delivery');
+    expect(bio).toContain('up to 30x ROI');
     expect(twin).toContain('up to 2x faster delivery');
     expect(twin).toContain('up to 30x ROI');
   });
