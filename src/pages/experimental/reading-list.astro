@@ -1,49 +1,106 @@
 ---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getEntry } from 'astro:content';
-const f = await getEntry('flags', 'config');
-if (!f?.data.enable_reading_list) return Astro.redirect('/404/');
-const b = [
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_reading_list) return Astro.redirect('/404/');
+
+const linkedinHref = 'https://www.linkedin.com/in/alehar/';
+
+const books = [
   ['High Output Management', 'Andrew Grove'],
   ['The Lean Startup', 'Eric Ries'],
   ['Competing Against Luck', 'Clayton Christensen'],
 ];
 ---
 
-<BaseLayout title="Reading List">
+<BaseLayout
+  title="Reading list | Product Manager, Developer Experience at IFS"
+  ogTitle="Reading list | Product Manager, Developer Experience at IFS"
+  description="Product Manager, Developer Experience at IFS."
+>
   <main id="main-content" role="main" class="wrapper stack gap-10">
-    <h1>Reading List</h1>
+    <Hero title="Reading list" align="start">
+      <p class="lede">Product Manager, Developer Experience at IFS.</p>
+    </Hero>
     <div class="grid">
       {
-        b.map(([t, a]) => (
+        books.map(([title, author]) => (
           <div class="card">
-            <>
-              <strong>{t}</strong>
-              <p>{a}</p>
-            </>
+            <strong>{title}</strong>
+            <p>{author}</p>
           </div>
         ))
       }
     </div>
+    <div class="actions">
+      <CallToAction
+        href={linkedinHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-hire-event="hire_cta_click"
+        data-hire-surface="reading-list"
+      >
+        Get in touch
+      </CallToAction>
+      <p class="cta-hint">LinkedIn · replies from me</p>
+    </div>
   </main>
 </BaseLayout>
+
 <style>
+  .lede {
+    margin: 0;
+    color: var(--gray-200);
+    max-width: 46ch;
+  }
+
   .grid {
     display: grid;
     gap: 1rem;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
+
   .card {
     padding: 1rem;
     border: 1px solid var(--gray-800);
     border-radius: 0.5rem;
     background: var(--gradient-subtle);
   }
-  strong {
+
+  .card strong {
     display: block;
     color: var(--gray-0);
   }
-  p {
+
+  .card p {
     color: var(--gray-300);
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    /* Phone: keep the LinkedIn hire CTA out of the fixed chat FAB band. */
+    padding-bottom: var(--chat-fab-clearance);
+    padding-right: var(--chat-fab-clearance);
+  }
+
+  .cta-hint {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    font-weight: 400;
+  }
+
+  @media (min-width: 50em) {
+    .actions {
+      padding-bottom: 0;
+      padding-right: 0;
+    }
   }
 </style>

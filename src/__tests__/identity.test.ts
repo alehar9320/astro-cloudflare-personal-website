@@ -528,6 +528,26 @@ describe('identity copy', () => {
     expect(now).not.toContain('high-impact');
   });
 
+  it('rewrites /experimental/reading-list/ for visitors, not a bare book list', () => {
+    const page = readFileSync('src/pages/experimental/reading-list.astro', 'utf8');
+    expect(page).toContain('Product Manager, Developer Experience');
+    expect(page).toContain('https://www.linkedin.com/in/alehar/');
+    expect(page).toContain('Get in touch');
+    expect(page).toContain('LinkedIn · replies from me');
+    expect(page).toContain('High Output Management');
+    expect(page).toContain('The Lean Startup');
+    expect(page).toContain('Competing Against Luck');
+    expect(page).toContain('Andrew Grove');
+    expect(page).toContain('Eric Ries');
+    expect(page).toContain('Clayton Christensen');
+    expect(page).not.toContain('mailto:');
+    expect(page).not.toContain('this is not a complete list');
+    expect(page).not.toContain('more coming');
+    expect(page).not.toContain('stay blank rather than invented');
+    expect(page).not.toContain('this is not on the site');
+    expect(page).not.toContain("this isn't on the site yet");
+  });
+
   it('rewrites What’s New for visitors, not a project log', () => {
     const page = readFileSync('src/pages/whats-new.astro', 'utf8');
     const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
