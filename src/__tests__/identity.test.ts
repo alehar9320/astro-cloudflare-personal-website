@@ -118,6 +118,12 @@ describe('identity copy', () => {
     expect(thesis).toContain("Chalmers</strong> master's thesis, 2017");
     expect(lidkoping).toContain('Early Android work, 2013');
     expect(lidkoping).not.toContain('management platform');
+    for (const page of [copilots, analytics, thesis, lidkoping]) {
+      expect(page).not.toContain('stock-1.jpg');
+      expect(page).not.toContain('stock-3.jpg');
+      expect(page).not.toContain('stock-4.jpg');
+      expect(page).not.toMatch(/^img:/m);
+    }
   });
 
   it('drops the /about/ duplicate in favor of /biography/', () => {

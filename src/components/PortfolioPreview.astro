@@ -20,13 +20,17 @@ const isShimmerEnabled = flagsEntry?.data.portfolio_shimmer_v1 ?? false;
   href={`/work/${id}`}
 >
   <span class="title">{data.title}</span>
-  <img
-    src={data.img}
-    alt={data.img_alt || ''}
-    loading={loading}
-    fetchpriority={fetchpriority}
-    decoding="async"
-  />
+  {
+    data.img && (
+      <img
+        src={data.img}
+        alt={data.img_alt || ''}
+        loading={loading}
+        fetchpriority={fetchpriority}
+        decoding="async"
+      />
+    )
+  }
 </a>
 
 <style>

@@ -11,8 +11,8 @@ export const collections = {
       description: z.string(),
       publishDate: z.coerce.date(),
       tags: z.array(z.string()),
-      img: z.string(),
-      img_alt: z.string().min(1),
+      img: z.string().optional(),
+      img_alt: z.string().min(1).optional(),
     }),
   }),
   flags: defineCollection({
