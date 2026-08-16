@@ -13,4 +13,4 @@ tags:
   <p><strong>TL;DR:</strong> Usage telemetry so <strong>IFS Cloud</strong> roadmap decisions rest on how people actually use the product.</p>
 </div>
 
-At IFS I worked on user behavior analytics for IFS Cloud: capturing usage so product teams can see what customers actually do. It is telemetry, not a standalone platform product.
+At IFS I worked on user behavior analytics for IFS Cloud: capturing usage so product teams can see what customers actually do.
