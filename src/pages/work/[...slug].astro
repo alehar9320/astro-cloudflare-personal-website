@@ -46,8 +46,8 @@ const schema = entry
       '@graph': [
         {
           '@type': 'WebPage',
-          '@id': `https://harenstam.com/work/${entry.id}/#webpage`,
-          url: `https://harenstam.com/work/${entry.id}/`,
+          '@id': `https://me.alehar.workers.dev/work/${entry.id}/#webpage`,
+          url: `https://me.alehar.workers.dev/work/${entry.id}/`,
           name: `${entry.data.title} | Alexander Härenstam`,
           description: entry.data.description,
           breadcrumb: {
@@ -57,19 +57,19 @@ const schema = entry
                 '@type': 'ListItem',
                 position: 1,
                 name: 'Home',
-                item: 'https://harenstam.com/',
+                item: 'https://me.alehar.workers.dev/',
               },
               {
                 '@type': 'ListItem',
                 position: 2,
                 name: 'Work',
-                item: 'https://harenstam.com/work/',
+                item: 'https://me.alehar.workers.dev/work/',
               },
               {
                 '@type': 'ListItem',
                 position: 3,
                 name: entry.data.title,
-                item: `https://harenstam.com/work/${entry.id}/`,
+                item: `https://me.alehar.workers.dev/work/${entry.id}/`,
               },
             ],
           },
@@ -80,9 +80,9 @@ const schema = entry
           description: entry.data.description,
           datePublished: entry.data.publishDate.toISOString(),
           author: {
-            '@id': 'https://harenstam.com/#person',
+            '@id': 'https://me.alehar.workers.dev/#person',
           },
-          image: entry.data.img ? `https://harenstam.com${entry.data.img}` : undefined,
+          image: entry.data.img ? `https://me.alehar.workers.dev${entry.data.img}` : undefined,
           keywords: entry.data.tags.join(', '),
         },
       ],

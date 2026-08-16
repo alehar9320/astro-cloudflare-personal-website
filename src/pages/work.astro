@@ -34,8 +34,8 @@ const schema = {
   '@graph': [
     {
       '@type': 'WebPage',
-      '@id': 'https://harenstam.com/work/#webpage',
-      url: 'https://harenstam.com/work/',
+      '@id': 'https://me.alehar.workers.dev/work/#webpage',
+      url: 'https://me.alehar.workers.dev/work/',
       name: 'Work | Alexander Härenstam',
       description:
         'Product Manager, Developer Experience at IFS. The IFS Design System case, then earlier work.',
@@ -46,19 +46,19 @@ const schema = {
             '@type': 'ListItem',
             position: 1,
             name: 'Home',
-            item: 'https://harenstam.com/',
+            item: 'https://me.alehar.workers.dev/',
           },
           {
             '@type': 'ListItem',
             position: 2,
             name: 'Work',
-            item: 'https://harenstam.com/work/',
+            item: 'https://me.alehar.workers.dev/work/',
           },
         ],
       },
       publisher: {
         '@type': 'Person',
-        '@id': 'https://harenstam.com/#person',
+        '@id': 'https://me.alehar.workers.dev/#person',
         name: 'Alexander Härenstam',
       },
     },
@@ -72,7 +72,7 @@ const schema = {
         '@type': 'ListItem',
         position: index + 1,
         name: project.data.title,
-        url: `https://harenstam.com/work/${project.id}/`,
+        url: `https://me.alehar.workers.dev/work/${project.id}/`,
         description: project.data.description,
       })),
     },

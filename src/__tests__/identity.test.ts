@@ -123,6 +123,17 @@ describe('identity copy', () => {
     expect(chat).not.toContain('.chat-toggle .status-dot');
   });
 
+  it('points structured data at the live site, not harenstam.com', () => {
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    expect(home).toContain("'@id': 'https://me.alehar.workers.dev/#person'");
+    expect(home).toContain("url: 'https://me.alehar.workers.dev/'");
+    expect(home).toContain("url: 'https://me.alehar.workers.dev/assets/portrait.png'");
+    expect(home).not.toContain('https://harenstam.com/');
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+    expect(home).toContain('Product Manager, Developer Experience');
+    expect(home).not.toContain('mailto:');
+  });
+
   it('points LinkedIn share photos at the live portrait, not a 404', () => {
     const head = readFileSync('src/components/MainHead.astro', 'utf8');
     expect(head).toContain("shareImage = 'https://me.alehar.workers.dev/assets/portrait.png'");
