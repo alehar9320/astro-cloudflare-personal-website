@@ -478,6 +478,21 @@ describe('identity copy', () => {
     expect(notFound.toLowerCase()).not.toContain("we couldn't find");
   });
 
+  it('ships a live RSS feed at /rss.xml so visitors can follow new work', () => {
+    expect(existsSync('src/pages/rss.xml.ts')).toBe(true);
+    const rss = readFileSync('src/pages/rss.xml.ts', 'utf8');
+    expect(rss).toContain('https://me.alehar.workers.dev');
+    expect(rss).toContain('Product Manager, Developer Experience');
+    expect(rss).toContain('ifs-design-system');
+    expect(rss).not.toContain('localhost');
+    expect(rss).not.toContain('harenstam.com');
+    expect(rss).not.toContain('mailto:');
+    const head = readFileSync('src/components/MainHead.astro', 'utf8');
+    expect(head).toContain('rel="alternate"');
+    expect(head).toContain('type="application/rss+xml"');
+    expect(head).toContain('https://me.alehar.workers.dev/rss.xml');
+  });
+
   it('ships an apple-touch-icon so iOS home-screen requests do not 404', () => {
     const head = readFileSync('src/components/MainHead.astro', 'utf8');
     expect(head).toContain('rel="apple-touch-icon"');
