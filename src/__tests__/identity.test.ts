@@ -117,6 +117,31 @@ describe('identity copy', () => {
     expect(ds).toContain('**Zeroheight Design System Awards**');
   });
 
+  it('keeps the chat FAB off Earlier work case body copy on a phone', () => {
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(slug).toContain('earlier-case');
+    expect(slug).toContain('ai-coding-copilots');
+    expect(slug).toContain('user-behavior-analytics');
+    expect(slug).toContain('master-thesis');
+    expect(slug).toContain('lidkoping-stenhuggeri');
+    expect(slug).toContain('padding-bottom: calc(var(--chat-fab-clearance) + 1.5rem)');
+    expect(slug).toContain('.earlier-case :global(.tldr-box)');
+    expect(slug).toContain('min-height: calc(100svh - var(--chat-fab-clearance))');
+    expect(slug).not.toContain('.earlier-case :global(p)');
+    expect(slug).not.toContain('.earlier-case :global(li)');
+    expect(slug).not.toMatch(/\.earlier-case\s*\{[^}]*padding-right:/s);
+    expect(slug).not.toMatch(/\.earlier-case :global\(\.tldr-box\)\s*\{[^}]*padding-right:/s);
+    expect(slug).not.toContain('mailto:');
+    const copilots = readFileSync('src/content/work/ai-coding-copilots.md', 'utf8');
+    const analytics = readFileSync('src/content/work/user-behavior-analytics.md', 'utf8');
+    const thesis = readFileSync('src/content/work/master-thesis.md', 'utf8');
+    const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
+    expect(copilots).toContain('Internal AI coding copilots for');
+    expect(analytics).toContain('Usage telemetry so');
+    expect(thesis).toContain("Chalmers</strong> master's thesis, 2017");
+    expect(lidkoping).toContain('Early Android work, 2013');
+  });
+
   it('keeps only the IFS Design System on the main /work card grid', () => {
     const work = sources.find((s) => s.path.endsWith('work.astro'))!.text;
     expect(work).toContain("'lidkoping-stenhuggeri'");
