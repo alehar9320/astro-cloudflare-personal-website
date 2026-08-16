@@ -40,11 +40,11 @@ describe('identity copy', () => {
     expect(bio).toContain('https://www.linkedin.com/in/alehar/');
     expect(bio).toContain('class="timeline"');
     expect(work).toContain('Product Manager, Developer Experience');
-    expect(bio).toContain(
-      'Explore the professional journey of Alexander Härenstam, Product Manager, Developer Experience at IFS.'
-    );
+    expect(bio).toContain('Product Manager, Developer Experience at IFS.');
+    expect(bio).not.toContain('Explore the professional journey');
     expect(bio).not.toContain('No new numbered');
     expect(bio).not.toContain('only numbered proof');
+    expect(bio).toContain("Get in touch on{' '}");
     expect(bio.replace(/\s+/g, ' ')).toContain('up to 2x faster delivery');
     expect(bio).toContain('up to 30x ROI');
     expect(twin).toContain('up to 2x faster delivery');
@@ -251,6 +251,8 @@ describe('identity copy', () => {
     expect(nav).not.toContain("href: '/about/'");
     expect(nav).toContain("href: '/biography/'");
     expect(astro).toContain("'/about': '/biography/'");
+    expect(astro).toContain("'/about/': '/biography/'");
+    expect(nav).not.toContain("'About'");
   });
   it('lets a Home share read Product Manager, Developer Experience at IFS', () => {
     const head = readFileSync('src/components/MainHead.astro', 'utf8');
