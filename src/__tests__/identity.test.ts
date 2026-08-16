@@ -321,6 +321,16 @@ describe('identity copy', () => {
     expect(slug).not.toContain('harenstam.com');
   });
 
+  it('lets a work-case browser title read Product Manager, Developer Experience at IFS', () => {
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(slug).toContain("title={shareTitle ?? 'Not Found'}");
+    expect(slug).toContain('ogTitle={shareTitle}');
+    expect(slug).toContain('<Hero title={entry.data.title}');
+    expect(slug).not.toContain("title={entry ? entry.data.title : 'Not Found'}");
+    expect(slug).not.toContain('mailto:');
+    expect(slug).not.toContain('harenstam.com');
+  });
+
   it('lets a Home share read Product Manager, Developer Experience at IFS', () => {
     const head = readFileSync('src/components/MainHead.astro', 'utf8');
     const home = readFileSync('src/pages/index.astro', 'utf8');
