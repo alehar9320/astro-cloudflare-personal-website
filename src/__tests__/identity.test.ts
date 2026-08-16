@@ -43,6 +43,10 @@ describe('identity copy', () => {
     expect(bio).toContain(
       'Explore the professional journey of Alexander Härenstam, Product Manager, Developer Experience at IFS.'
     );
+    expect(bio).not.toContain('No new numbered');
+    expect(bio).not.toContain('only numbered proof');
+    expect(bio.replace(/\s+/g, ' ')).toContain('up to 2x faster delivery');
+    expect(bio).toContain('up to 30x ROI');
     expect(twin).toContain('up to 2x faster delivery');
     expect(twin).toContain('up to 30x ROI');
   });
@@ -67,8 +71,20 @@ describe('identity copy', () => {
     expect(home).toContain('margin-bottom: var(--chat-fab-clearance)');
     expect(home).toContain('https://www.linkedin.com/in/alehar/');
     expect(home).toContain('Get in touch');
+    expect(home).toContain('LinkedIn · replies from me');
+    expect(home).toContain('class="hero-copy"');
+    expect(home).toContain('proof-card');
+    expect(home).toContain('From the first version to IFS Cloud.');
+    expect(home).not.toContain('inception');
+    expect(home).not.toContain('mailto:');
+    expect((home.match(/<Hero/g) || []).length).toBe(1);
+    expect((home.match(/class="proof-card"/g) || []).length).toBe(1);
     expect(cta).toContain('var(--chat-fab-clearance)');
     expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(cta).toContain('Get in touch');
+    expect(cta).not.toContain('mailto:');
+    expect(cta).toContain('LinkedIn · replies from me');
+    expect(cta).not.toContain('high-impact');
   });
 
   it('keeps the chat FAB off Earlier work and the biography timeline on a phone', () => {
@@ -91,6 +107,9 @@ describe('identity copy', () => {
     expect(contact).toContain('https://www.linkedin.com/in/alehar/');
     expect(contact).toContain('Get in touch');
     expect(contact).not.toContain('mailto:');
+    expect(contact).toContain('Product Manager, Developer Experience');
+    expect(contact).not.toContain('Open to conversations');
+    expect(contact).toContain('LinkedIn · replies from me');
     expect(footer).toContain('padding: 3rem 2rem var(--chat-fab-clearance)');
   });
 
@@ -102,6 +121,18 @@ describe('identity copy', () => {
     expect(chat).toContain("error: 'Not live'");
     expect(chat).not.toContain("idle: 'Available'");
     expect(chat).not.toContain('.chat-toggle .status-dot');
+  });
+
+  it('lets a visitor clear the twin chat and keeps identity in the header, not the FAB', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    expect(chat).toContain('aria-label="Clear conversation"');
+    expect(chat).toContain('clearConversation');
+    expect(chat).toContain('chat-header-avatar');
+    expect(chat).toContain('Ask Alexander');
+    expect(chat).not.toContain('chat-toggle-portrait');
+    expect(chat).not.toContain('mailto:');
+    expect(chat).toContain("idle: 'Live'");
+    expect(chat).toContain("error: 'Not live'");
   });
 
   it('keeps the chat FAB off the 2x/30x/Zeroheight proof on the design system case on a phone', () => {
@@ -120,6 +151,32 @@ describe('identity copy', () => {
     expect(ds).not.toContain('Decisions and tradeoffs');
     expect(ds).not.toContain('inception');
     expect(ds).not.toContain('mailto:');
+  });
+
+  it('keeps the chat FAB off Earlier work case body copy on a phone', () => {
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(slug).toContain('earlier-case');
+    expect(slug).toContain('ai-coding-copilots');
+    expect(slug).toContain('user-behavior-analytics');
+    expect(slug).toContain('master-thesis');
+    expect(slug).toContain('lidkoping-stenhuggeri');
+    expect(slug).toContain('.earlier-case > :global(:last-child)::before');
+    expect(slug).toContain('float: right');
+    expect(slug).toContain('.earlier-case :global(.tldr-box)');
+    expect(slug).toContain('min-height: calc(100svh - var(--chat-fab-clearance))');
+    expect(slug).not.toContain('.earlier-case :global(p)');
+    expect(slug).not.toContain('.earlier-case :global(li)');
+    expect(slug).not.toMatch(/\.earlier-case\s*\{[^}]*padding-right:/s);
+    expect(slug).not.toMatch(/\.earlier-case :global\(\.tldr-box\)\s*\{[^}]*padding-right:/s);
+    expect(slug).not.toContain('mailto:');
+    const copilots = readFileSync('src/content/work/ai-coding-copilots.md', 'utf8');
+    const analytics = readFileSync('src/content/work/user-behavior-analytics.md', 'utf8');
+    const thesis = readFileSync('src/content/work/master-thesis.md', 'utf8');
+    const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
+    expect(copilots).toContain('Internal AI coding copilots for');
+    expect(analytics).toContain('Usage telemetry so');
+    expect(thesis).toContain("Chalmers</strong> master's thesis, 2017");
+    expect(lidkoping).toContain('Early Android work, 2013');
   });
 
   it('keeps only the IFS Design System on the main /work card grid', () => {
@@ -160,10 +217,11 @@ describe('identity copy', () => {
     expect(lidkoping).toContain('title: Lidköping Stenhuggeri');
     expect(lidkoping).not.toContain('title: Lidköping Stenhuggeri App');
     expect(copilots).toContain('Internal AI coding copilots for');
-    expect(copilots).toContain('not a customer product');
+    expect(copilots).not.toContain('not a customer product');
+    expect(copilots).not.toContain('customer product');
     expect(copilots).not.toContain('multi-million');
     expect(analytics).toContain('Usage telemetry so');
-    expect(analytics).toContain('not a standalone platform product');
+    expect(analytics).not.toContain('not a standalone platform product');
     expect(analytics).not.toContain('User Behavior Analytics Platform');
     expect(analytics).not.toContain('Strategic Leadership');
     expect(thesis).toContain("Chalmers</strong> master's thesis, 2017");
@@ -184,6 +242,22 @@ describe('identity copy', () => {
     expect(nav).toContain("href: '/biography/'");
     expect(astro).toContain("'/about': '/biography/'");
   });
+  it('lets a Home share read Product Manager, Developer Experience at IFS', () => {
+    const head = readFileSync('src/components/MainHead.astro', 'utf8');
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    const layout = readFileSync('src/layouts/BaseLayout.astro', 'utf8');
+    expect(home).toContain('ogTitle="Product Manager, Developer Experience at IFS"');
+    expect(home).toContain('description="Product Manager, Developer Experience at IFS."');
+    expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+    expect(home).not.toContain('mailto:');
+    expect(layout).toContain('ogTitle={ogTitle}');
+    expect(head).toContain('content={shareTitle}');
+    expect(head).toContain('property="og:title"');
+    expect(head).not.toContain('Design systems, DevEx, and Industrial AI.');
+    expect(head).toContain("description = 'Product Manager, Developer Experience at IFS.'");
+  });
+
   it('grounds llms.txt with Chalmers education and recruiter keywords', () => {
     const llms = sources.find((s) => s.path.endsWith('llms.txt'))!.text;
     expect(llms).toContain('Chalmers B.Sc. Software Engineering');
