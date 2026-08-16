@@ -123,6 +123,16 @@ describe('identity copy', () => {
     expect(chat).not.toContain('.chat-toggle .status-dot');
   });
 
+  it('keeps the twin idle prompt as Ask about the work', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    expect(chat).toContain('placeholder="Ask about the work"');
+    expect(chat).not.toContain('Ask me something');
+    expect(chat).not.toContain('chat-toggle-portrait');
+    expect(chat).not.toContain('mailto:');
+    expect(chat).toContain("idle: 'Live'");
+    expect(chat).toContain("error: 'Not live'");
+  });
+
   it('lets a visitor clear the twin chat and keeps identity in the header, not the FAB', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
     expect(chat).toContain('aria-label="Clear conversation"');
