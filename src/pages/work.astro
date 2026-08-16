@@ -1,9 +1,7 @@
 ---
 import { getCollection } from 'astro:content';
 import ContactCTA from '../components/ContactCTA.astro';
-import Grid from '../components/Grid.astro';
 import Hero from '../components/Hero.astro';
-import PortfolioPreview from '../components/PortfolioPreview.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const projects = (await getCollection('work')).sort(
@@ -91,19 +89,26 @@ const schema = {
           <strong>Developer Experience (DevEx)</strong>, and <strong>design systems</strong>.
         </p>
       </div>
-      <Grid variant="offset">
-        {
-          featured.map((project, index) => (
-            <li>
-              <PortfolioPreview
-                project={project}
-                loading={index === 0 ? 'eager' : 'lazy'}
-                fetchpriority={index === 0 ? 'high' : 'auto'}
-              />
-            </li>
+      {
+        featured
+          .filter((project) => project.id === 'ifs-design-system')
+          .map(() => (
+            <section class="proof" aria-label="IFS Design System">
+              <a class="proof-card" href="/work/ifs-design-system/">
+                <p class="proof-eyebrow">IFS Design System</p>
+                <p class="proof-outcome">From the first version to IFS Cloud.</p>
+                <p class="proof-chips">
+                  <span>Up to 2x faster delivery</span>
+                  <span aria-hidden="true">·</span>
+                  <span>Up to 30x ROI</span>
+                  <span aria-hidden="true">·</span>
+                  <span>Zeroheight runner-up</span>
+                </p>
+                <p class="proof-affordance">Read the case</p>
+              </a>
+            </section>
           ))
-        }
-      </Grid>
+      }
       <section class="earlier" aria-labelledby="earlier-work-heading">
         <h2 id="earlier-work-heading">Earlier work</h2>
         <ul>
@@ -123,6 +128,58 @@ const schema = {
 </BaseLayout>
 
 <style>
+  .proof-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+  }
+
+  .proof-card:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+  }
+
+  .proof-eyebrow {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .proof-outcome {
+    margin: 0;
+    font-size: var(--text-xl);
+    color: var(--gray-0);
+  }
+
+  .proof-chips {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.5rem;
+    font-size: var(--text-sm);
+    color: var(--gray-200);
+  }
+
+  .proof-affordance {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+  }
+
   .earlier {
     display: flex;
     flex-direction: column;
@@ -170,7 +227,26 @@ const schema = {
     font-size: var(--text-sm);
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    .proof-card {
+      transition:
+        transform 0.3s ease,
+        box-shadow 0.3s ease,
+        border-color 0.3s ease;
+    }
+
+    .proof-card:hover,
+    .proof-card:focus-visible {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+  }
+
   @media (min-width: 50em) {
+    .proof-card {
+      padding: 2.5rem;
+    }
+
     .earlier {
       padding-bottom: 0;
       padding-right: 0;
