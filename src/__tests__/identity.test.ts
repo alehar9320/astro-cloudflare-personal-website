@@ -229,6 +229,10 @@ describe('identity copy', () => {
     expect(copilots).toContain('Internal AI coding copilots for');
     expect(copilots).not.toContain('not a customer product');
     expect(copilots).not.toContain('customer product');
+    expect(copilots).toContain('Product Manager, Developer Experience');
+    expect(copilots).toContain('Greater Stockholm');
+    expect(copilots).not.toContain('mailto:');
+    expect(copilots).not.toContain('No new numbered');
     expect(copilots).not.toContain('multi-million');
     expect(analytics).toContain('Usage telemetry so');
     expect(analytics).not.toContain('not a standalone platform product');
