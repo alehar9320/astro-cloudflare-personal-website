@@ -139,7 +139,7 @@ describe('identity copy', () => {
     expect(footer).not.toContain('Latest Updates');
     expect(footer).toContain('https://www.linkedin.com/in/alehar/');
     expect(footer).not.toContain('mailto:');
-    expect(footer).toContain('https://github.com/alehar9320/astro-cloudflare-personal-website');
+    expect(footer).not.toContain('https://github.com/alehar9320/astro-cloudflare-personal-website');
     expect(footer).toContain('https://github.com/alehar9320');
   });
 
@@ -149,6 +149,20 @@ describe('identity copy', () => {
     expect(footer).not.toContain('Built and run with');
     expect(footer).not.toContain('Latest Updates');
     expect(footer).not.toContain('Report an issue');
+    expect(footer).toContain('https://www.linkedin.com/in/alehar/');
+    expect(footer).not.toContain('mailto:');
+  });
+
+  it('drops Source from the footer and keeps LinkedIn hire', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(footer).not.toContain('>Source</span>');
+    expect(footer).not.toContain('source-link');
+    expect(footer).not.toContain('View source code for this site');
+    expect(footer).not.toContain('https://github.com/alehar9320/astro-cloudflare-personal-website');
+    expect(footer).toContain('https://github.com/alehar9320');
+    expect(footer).not.toContain('Latest Updates');
+    expect(footer).not.toContain('Report an issue');
+    expect(footer).not.toContain('agentic engineering');
     expect(footer).toContain('https://www.linkedin.com/in/alehar/');
     expect(footer).not.toContain('mailto:');
   });
