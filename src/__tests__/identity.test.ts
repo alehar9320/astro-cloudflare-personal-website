@@ -111,6 +111,16 @@ describe('identity copy', () => {
     expect(contact).not.toContain('Open to conversations');
     expect(contact).toContain('LinkedIn · replies from me');
     expect(footer).toContain('padding: 3rem 2rem var(--chat-fab-clearance)');
+    expect(footer).toContain('padding-right: var(--chat-fab-clearance)');
+  });
+
+  it('keeps the docked chat FAB off footer body text at 375', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(footer).toContain('padding-right: var(--chat-fab-clearance)');
+    expect(footer).toContain('Stockholm');
+    expect(footer).toContain('Härenstam');
+    expect(footer).toContain('https://www.linkedin.com/in/alehar/');
+    expect(footer).not.toContain('mailto:');
   });
 
   it('shows a Live / Not live signal on the chat header', () => {
