@@ -1,6 +1,8 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
+import { toVisitorChangelogTitle, toVisitorRelease } from '../utils/visitor-changelog';
+
 const files = [
   'src/pages/biography.astro',
   'src/pages/work.astro',
@@ -524,5 +526,129 @@ describe('identity copy', () => {
     expect(now).not.toContain('only figures published here');
     expect(now).not.toContain('<strong>Status:</strong>');
     expect(now).not.toContain('high-impact');
+  });
+
+  it('rewrites What’s New for visitors, not a project log', () => {
+    const page = readFileSync('src/pages/whats-new.astro', 'utf8');
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    expect(page).not.toContain('A real-time log of project milestones');
+    expect(page).toContain('A public changelog of this site.');
+    expect(page).toContain('title="What\'s New | Product Manager, Developer Experience at IFS"');
+    expect(page).toContain('ogTitle="What\'s New | Product Manager, Developer Experience at IFS"');
+    expect(page).toContain('Product Manager, Developer Experience');
+    expect(page).toContain('toVisitorChangelogTitle');
+    expect(page).toContain('toVisitorRelease');
+    expect(page).toContain('ContactCTA');
+    expect(page).not.toContain('mailto:');
+    expect(page).not.toContain('this is not on the site');
+    expect(page).not.toContain("this isn't on the site yet");
+    expect(page).not.toContain('stay blank rather than invented');
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(cta).toContain('Get in touch');
+    expect(cta).toContain('LinkedIn · replies from me');
+    expect(cta).not.toContain('mailto:');
+    expect(
+      toVisitorChangelogTitle('41fe7ae feat: rewrite /experimental/now/ for visitors (#523)')
+    ).toBe('Now page rewritten for visitors');
+    expect(
+      toVisitorChangelogTitle('41fe7ae feat: rewrite /experimental/now/ for visitors (#523)')
+    ).not.toMatch(/41fe7ae|feat:|\(#523\)/);
+    expect(
+      toVisitorChangelogTitle('feat: rewrite /experimental/now/ for visitors (#523)')
+    ).not.toContain('feat: rewrite /experimental/now/');
+    expect(toVisitorChangelogTitle('feat: add a live RSS feed for the work (#520)')).toBe(
+      'RSS feed of the work'
+    );
+    expect(toVisitorChangelogTitle('fix: drop sitemap URLs that 404 (#521)')).toBe(
+      'Sitemap no longer lists pages that 404'
+    );
+
+    const api = readFileSync('src/pages/api/releases.ts', 'utf8');
+    expect(api).toContain('toVisitorChangelogTitle');
+    expect(api).toContain('toVisitorRelease');
+
+    const rawNow = '- 41fe7ae feat: rewrite /experimental/now/ for visitors (#523)';
+    const visitorNow = toVisitorRelease({
+      body: rawNow,
+      publishedAt: '2026-08-16T21:12:02Z',
+      title: '2026.08.16.2111',
+      url: 'https://github.com/alehar9320/astro-cloudflare-personal-website/releases/tag/2026.08.16.2111',
+      version: '2026.08.16.2111',
+    });
+    expect(visitorNow.body).toBe('- Now page rewritten for visitors');
+    expect(visitorNow.body).not.toMatch(/41fe7ae|feat:|\(#523\)/);
+    expect(visitorNow.publishedAt).toBe('2026-08-16T21:12:02Z');
+    expect(visitorNow.url).toContain('/releases/tag/2026.08.16.2111');
+
+    const liveNames: Array<[string, string]> = [
+      [
+        '41fe7ae feat: rewrite /experimental/now/ for visitors (#523)',
+        'Now page rewritten for visitors',
+      ],
+      [
+        '8491e97 fix: drop experimental pages from the sitemap (#522)',
+        'Experimental pages removed from the sitemap',
+      ],
+      ['62dd4d6 fix: drop sitemap URLs that 404 (#521)', 'Sitemap no longer lists pages that 404'],
+      ['515bbf9 feat: add a live RSS feed for the work (#520)', 'RSS feed of the work'],
+      [
+        '8302a2a feat: offer LinkedIn hire on the not-found page (#519)',
+        'Get in touch on LinkedIn from the not-found page',
+      ],
+      ['56c8462 feat: add a working web app manifest (#518)', 'Web app manifest'],
+      ['75e03a6 feat: add a working apple-touch-icon (#517)', 'Home-screen icon'],
+      [
+        'e9ee7d1 feat: point robots.txt at the live sitemap (#516)',
+        'robots.txt points at the sitemap',
+      ],
+      ['4b300bf feat: add a live sitemap for search (#515)', 'Sitemap of the live site'],
+      [
+        '7a10476 feat: add live rel=canonical for search and shares (#514)',
+        'Canonical URL for the live site',
+      ],
+      ['467ba57 feat: make the twin the Home first-view (#513)', 'Chat is the first view on Home'],
+      ['54d9a30 feat: put the Home headshot in the twin (#511)', 'Home headshot in the chat'],
+      [
+        '0bae8a2 fix: keep the docked chat FAB off footer GitHub at 1280 (#510)',
+        'Chat button no longer covers the footer GitHub link',
+      ],
+      [
+        'b3ff946 feat: conversational fold for the twin (#508)',
+        'Conversational layout for the chat',
+      ],
+      [
+        '80084aa feat: add PM/DevEx to work-case share description (#507)',
+        'Work-case shares include Product Manager, Developer Experience',
+      ],
+      [
+        'cd9c5a9 feat: work-case browser titles include PM/DevEx (#506)',
+        'Work-case browser titles include Product Manager, Developer Experience',
+      ],
+      [
+        'eacddb0 feat: work-case share preview includes PM/DevEx and LinkedIn (#505)',
+        'Work-case share preview includes Product Manager, Developer Experience and LinkedIn',
+      ],
+      [
+        'a2414f6 feat: point share URLs at the live site (#504)',
+        'Share URLs point at the live site',
+      ],
+      [
+        '54a4f7c feat: point structured data at the live site (#503)',
+        'Structured data points at the live site',
+      ],
+      [
+        '6b610e5 feat: put IFS Design System first and Lidköping last on /work (#496)',
+        'IFS Design System first on Work, Lidköping last',
+      ],
+    ];
+    expect(liveNames).toHaveLength(20);
+    for (const [raw, visitor] of liveNames) {
+      expect(toVisitorChangelogTitle(raw)).toBe(visitor);
+      expect(toVisitorChangelogTitle(raw)).not.toMatch(/^[a-f0-9]{7}\s/i);
+      expect(toVisitorChangelogTitle(raw)).not.toMatch(
+        /^(feat|fix|chore|docs|refactor|test|style|perf|build|ci):/i
+      );
+      expect(toVisitorChangelogTitle(raw)).not.toMatch(/\(#\d+\)/);
+    }
   });
 });
