@@ -116,6 +116,18 @@ describe('identity copy', () => {
     expect(chat).not.toContain('.chat-toggle .status-dot');
   });
 
+  it('lets a visitor clear the twin chat and keeps identity in the header, not the FAB', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    expect(chat).toContain('aria-label="Clear conversation"');
+    expect(chat).toContain('clearConversation');
+    expect(chat).toContain('chat-header-avatar');
+    expect(chat).toContain('Ask Alexander');
+    expect(chat).not.toContain('chat-toggle-portrait');
+    expect(chat).not.toContain('mailto:');
+    expect(chat).toContain("idle: 'Live'");
+    expect(chat).toContain("error: 'Not live'");
+  });
+
   it('keeps the chat FAB off the 2x/30x/Zeroheight proof on the design system case on a phone', () => {
     const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
     const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
