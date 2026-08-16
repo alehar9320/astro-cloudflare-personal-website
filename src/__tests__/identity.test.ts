@@ -156,6 +156,11 @@ describe('identity copy', () => {
     expect(ds).toContain('**Up to 2x faster**');
     expect(ds).toContain('**Up to 30x ROI**');
     expect(ds).toContain('**Zeroheight Design System Awards**');
+    expect(ds).toContain('Product Manager, Developer Experience');
+    expect(ds).not.toContain('This page is the proof');
+    expect(ds).not.toContain('Decisions and tradeoffs');
+    expect(ds).not.toContain('inception');
+    expect(ds).not.toContain('mailto:');
   });
 
   it('keeps the chat FAB off Earlier work case body copy on a phone', () => {
