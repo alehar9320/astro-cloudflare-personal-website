@@ -1,0 +1,120 @@
+---
+// Lightweight, math-driven Northern Lights background canvas component
+---
+
+<div class="aurora-canvas-container" aria-hidden="true">
+  <canvas id="aurora-canvas"></canvas>
+</div>
+
+<script>
+  function initAuroraCanvas() {
+    const canvas = document.getElementById('aurora-canvas') as HTMLCanvasElement | null;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d', { alpha: true });
+    if (!ctx) return;
+
+    let animationFrameId: number;
+    let width = 0;
+    let height = 0;
+    let time = 0;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const resize = () => {
+      const parent = canvas.parentElement;
+      if (!parent) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = parent.clientWidth;
+      height = parent.clientHeight;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      ctx.scale(dpr, dpr);
+    };
+
+    const drawWave = (
+      offsetY: number,
+      amplitude: number,
+      frequency: number,
+      speed: number,
+      color: string
+    ) => {
+      ctx.beginPath();
+      ctx.moveTo(0, height);
+
+      for (let x = 0; x <= width; x += 15) {
+        const y =
+          offsetY +
+          Math.sin(x * frequency + time * speed) * amplitude +
+          Math.cos(x * frequency * 0.5 + time * speed * 0.7) * (amplitude * 0.5);
+        ctx.lineTo(x, y);
+      }
+
+      ctx.lineTo(width, height);
+      ctx.closePath();
+
+      const gradient = ctx.createLinearGradient(0, offsetY - amplitude, 0, height);
+      gradient.addColorStop(0, color);
+      gradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+      ctx.fillStyle = gradient;
+      ctx.fill();
+    };
+
+    const render = () => {
+      ctx.clearRect(0, 0, width, height);
+
+      if (!prefersReducedMotion.matches) {
+        time += 0.008;
+      }
+
+      // Layer 1: Deep Cyan / Marine wave
+      drawWave(height * 0.2, 35, 0.003, 1.2, 'rgba(0, 210, 255, 0.12)');
+
+      // Layer 2: Subtle Blue / Emerald wave superposition
+      drawWave(height * 0.35, 45, 0.002, 0.8, 'rgba(0, 150, 255, 0.09)');
+
+      // Layer 3: High Northern Lights glow
+      drawWave(height * 0.15, 25, 0.004, 1.5, 'rgba(100, 245, 220, 0.08)');
+
+      if (!prefersReducedMotion.matches) {
+        animationFrameId = requestAnimationFrame(render);
+      }
+    };
+
+    window.addEventListener('resize', resize, { passive: true });
+    resize();
+    render();
+
+    const cleanup = () => {
+      if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+      window.removeEventListener('resize', resize);
+    };
+
+    document.addEventListener('astro:before-swap', cleanup, { once: true });
+  }
+
+  // Initialize on Astro page load and view transitions
+  document.addEventListener('astro:page-load', initAuroraCanvas);
+</script>
+
+<style>
+  .aurora-canvas-container {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    overflow: hidden;
+    z-index: 0;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    opacity: 0.85;
+  }
+</style>
