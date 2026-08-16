@@ -31,7 +31,7 @@
   <div id="chat-window" class="chat-window hidden">
     <div class="chat-header">
       <div class="chat-header-profile">
-        <img src="/assets/portrait.png" alt="" class="chat-header-avatar" width="36" height="36" />
+        <img src="/assets/portrait.png" alt="" class="chat-header-avatar" width="64" height="64" />
         <span class="chat-header-copy">
           <span class="chat-header-name">Ask Alexander</span>
           <span class="chat-live" id="chat-live">
@@ -62,6 +62,13 @@
     <div id="status-announcer" class="sr-only" aria-live="polite" role="status"></div>
     <div id="chat-messages" class="chat-messages" aria-live="polite">
       <section class="message assistant-message welcome-message" aria-label="About this chat">
+        <img
+          src="/assets/portrait.png"
+          alt=""
+          class="chat-welcome-portrait"
+          width="96"
+          height="96"
+        />
         <h2>Alexander's digital twin</h2>
         <p>
           Ask about the work, DevEx, Industrial AI, or background. I'm an AI with his context. I can
@@ -143,6 +150,10 @@
     outline-offset: 4px;
   }
 
+  .chat-container.is-prominent .chat-toggle {
+    display: none;
+  }
+
   /* Tooltip */
   .status-tooltip {
     position: absolute;
@@ -174,8 +185,8 @@
   }
 
   .chat-header-avatar {
-    width: 2.25rem;
-    height: 2.25rem;
+    width: 4rem;
+    height: 4rem;
     border-radius: 50%;
     object-fit: cover;
     object-position: top;
@@ -256,6 +267,14 @@
     display: none;
   }
 
+  .chat-followups {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+    max-width: 90%;
+    align-self: flex-start;
+  }
+
   .chat-suggestion {
     background: var(--gray-900);
     border: 1px solid var(--gray-700);
@@ -292,6 +311,21 @@
     flex-direction: column;
     overflow: hidden;
     backdrop-filter: blur(16px) saturate(180%);
+  }
+
+  .chat-container.is-prominent .chat-window {
+    bottom: 0;
+    width: min(28rem, calc(100vw - 2rem));
+    height: min(36rem, 70vh);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .chat-window {
+      transition:
+        width 0.25s ease,
+        height 0.25s ease,
+        bottom 0.25s ease;
+    }
   }
 
   .chat-window.hidden {
@@ -379,8 +413,8 @@
   }
 
   .message-avatar {
-    width: 24px;
-    height: 24px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
     object-fit: cover;
     object-position: top;
@@ -391,6 +425,17 @@
     max-width: 90%;
     flex-direction: column;
     gap: 0;
+  }
+
+  .chat-welcome-portrait {
+    width: 6rem;
+    height: 6rem;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: top;
+    flex-shrink: 0;
+    margin-bottom: 0.75rem;
+    border: 1px solid var(--gray-700);
   }
 
   .welcome-message h2 {
@@ -464,6 +509,7 @@
   import { createChatStreamParser, extractAssistantTextFromSse } from '../utils/chat-stream';
   import { trackHireEvent } from '../utils/hire-analytics';
 
+  const chatContainer = document.getElementById('chat-container');
   const chatToggle = document.getElementById('chat-toggle');
   const chatWindow = document.getElementById('chat-window');
   const chatClose = document.getElementById('chat-close');
@@ -479,6 +525,14 @@
   const statusAnnouncer = document.getElementById('status-announcer');
   const statusDot = document.querySelector('.status-dot');
   const liveLabel = document.getElementById('chat-live-label');
+
+  const FOLD_DISMISSED_KEY = 'chat-fold-dismissed';
+  const FOLLOW_UP_PROMPTS = [
+    'What did the IFS design system change?',
+    'How do you work as a PM?',
+    "What's the Industrial AI bet?",
+    'How do I get in touch on LinkedIn?',
+  ];
 
   const statusLabels = {
     idle: 'Live. Ask about the work',
@@ -520,6 +574,41 @@
     chatSuggestions?.classList.add('hidden');
   }
 
+  function removeFollowUps() {
+    chatMessages?.querySelectorAll('.chat-followups').forEach((el) => el.remove());
+  }
+
+  function bindChipSubmit(root: ParentNode) {
+    root.querySelectorAll('button').forEach((button) => {
+      button.addEventListener('click', () => {
+        if (!(chatForm instanceof HTMLFormElement) || !chatInput) return;
+        chatInput.value = button.textContent?.trim() ?? '';
+        chatForm.requestSubmit();
+      });
+    });
+  }
+
+  function showFollowUps() {
+    removeFollowUps();
+    if (!chatMessages) return;
+    const lastUser = [...messages].reverse().find((msg: Message) => msg.role === 'user');
+    const lastUserText = lastUser?.content?.trim() ?? '';
+    const prompts = FOLLOW_UP_PROMPTS.filter((prompt) => prompt !== lastUserText);
+    if (prompts.length === 0) return;
+    const row = document.createElement('div');
+    row.className = 'chat-followups';
+    for (const prompt of prompts) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'chat-suggestion chat-followup';
+      button.textContent = prompt;
+      row.appendChild(button);
+    }
+    bindChipSubmit(row);
+    chatMessages.appendChild(row);
+    chatMessages.scrollTo(0, chatMessages.scrollHeight);
+  }
+
   if (messages.length > 0) {
     hideSuggestions();
   }
@@ -532,6 +621,7 @@
     messages.splice(0, messages.length);
     sessionStorage.removeItem('chat-history');
     chatMessages?.querySelectorAll('.message:not(.welcome-message)').forEach((el) => el.remove());
+    removeFollowUps();
     chatSuggestions?.classList.remove('hidden');
     setStatus('idle');
     chatInput?.focus();
@@ -570,8 +660,8 @@
       avatar.className = 'message-avatar';
       avatar.src = '/assets/portrait.png';
       avatar.alt = '';
-      avatar.width = 24;
-      avatar.height = 24;
+      avatar.width = 40;
+      avatar.height = 40;
       const text = document.createElement('span');
       text.className = 'message-text';
       text.textContent = content;
@@ -592,6 +682,13 @@
     appendMessage(displayRole, msg.content);
   });
 
+  const hasAssistantHistory = messages.some(
+    (msg: Message) => msg.role === 'assistant' || msg.role === 'ai'
+  );
+  if (hasAssistantHistory) {
+    showFollowUps();
+  }
+
   const setChatExpanded = (expand: boolean) => {
     chatToggle?.setAttribute('aria-expanded', String(expand));
     chatWindow?.classList.toggle('hidden', !expand);
@@ -601,13 +698,53 @@
     }
   };
 
-  chatSuggestions?.querySelectorAll('.chat-suggestion').forEach((button) => {
-    button.addEventListener('click', () => {
-      if (!(chatForm instanceof HTMLFormElement) || !chatInput) return;
-      chatInput.value = button.textContent?.trim() ?? '';
-      chatForm.requestSubmit();
-    });
-  });
+  function isHomePath() {
+    const raw = location.pathname || '';
+    const path = raw.replace(/\/index\.html?$/, '').replace(/\/+$/, '') || '/';
+    return path === '/' || path === '' || path === '/index';
+  }
+
+  function dockChat() {
+    chatContainer?.classList.remove('is-prominent');
+    chatContainer?.classList.add('is-docked');
+    setChatExpanded(false);
+    sessionStorage.setItem(FOLD_DISMISSED_KEY, '1');
+  }
+
+  function dismissProminentChat() {
+    if (chatContainer?.classList.contains('is-prominent') || isHomePath()) {
+      dockChat();
+    } else {
+      setChatExpanded(false);
+    }
+    (chatToggle as HTMLElement)?.focus();
+  }
+
+  function initConversationalFold() {
+    if (!isHomePath() || !chatContainer) return;
+    if (sessionStorage.getItem(FOLD_DISMISSED_KEY) === '1') {
+      chatContainer.classList.add('is-docked');
+      return;
+    }
+    if (window.scrollY > 160) {
+      dockChat();
+      return;
+    }
+    chatContainer.classList.add('is-prominent');
+    setChatExpanded(true);
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!chatContainer.classList.contains('is-prominent')) return;
+        if (window.scrollY > 160) dockChat();
+      },
+      { passive: true }
+    );
+  }
+
+  initConversationalFold();
+
+  if (chatSuggestions) bindChipSubmit(chatSuggestions);
 
   chatToggle?.addEventListener('click', () => {
     const isExpanded = chatToggle.getAttribute('aria-expanded') === 'true';
@@ -618,8 +755,7 @@
   });
 
   chatClose?.addEventListener('click', () => {
-    setChatExpanded(false);
-    (chatToggle as HTMLElement)?.focus();
+    dismissProminentChat();
   });
 
   chatClear?.addEventListener('click', () => {
@@ -628,8 +764,7 @@
 
   document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && chatWindow && !chatWindow.classList.contains('hidden')) {
-      setChatExpanded(false);
-      (chatToggle as HTMLElement)?.focus();
+      dismissProminentChat();
     }
   });
 
@@ -639,6 +774,7 @@
     if (!content) return;
 
     hideSuggestions();
+    removeFollowUps();
     chatInput.value = '';
     appendMessage('user', content);
     messages.push({ role: 'user', content });
@@ -717,6 +853,7 @@
       messages.push({ role: 'assistant', content: aiContent });
       saveMessages();
       setStatus('idle');
+      showFollowUps();
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       console.error({ event: 'chat_client_error', error: message });

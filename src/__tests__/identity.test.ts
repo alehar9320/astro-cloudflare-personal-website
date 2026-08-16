@@ -177,6 +177,27 @@ describe('identity copy', () => {
     expect(chat).toContain("error: 'Not live'");
   });
 
+  it('makes the twin the first-view chat with a headshot, follow-ups, and a docked FAB', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    expect(chat).toContain('chat-welcome-portrait');
+    expect(chat).toContain('/assets/portrait.png');
+    expect(chat).toContain('class="chat-header-avatar" width="64" height="64"');
+    expect(chat).toContain('chat-followups');
+    expect(chat).toContain('showFollowUps');
+    expect(chat).toContain('is-prominent');
+    expect(chat).toContain('is-docked');
+    expect(chat).toContain('dockChat');
+    expect(chat).not.toContain('mailto:');
+    expect(chat).not.toContain('harenstam.com');
+    expect(chat).toContain('M7.9 20A9 9 0 1 0 4 16.1L2 22Z');
+    expect(chat).not.toContain('chat-toggle-portrait');
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+    expect(home).toContain('Get in touch');
+    expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
+    expect(home).not.toContain('mailto:');
+  });
+
   it('keeps the chat FAB off the 2x/30x/Zeroheight proof on the design system case on a phone', () => {
     const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
     const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
