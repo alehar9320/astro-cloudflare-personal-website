@@ -104,6 +104,18 @@ describe('identity copy', () => {
     expect(chat).not.toContain('.chat-toggle .status-dot');
   });
 
+  it('keeps the chat FAB off the 2x/30x/Zeroheight proof on the design system case on a phone', () => {
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
+    expect(slug).toContain('ifs-design-system');
+    expect(slug).toContain('ds-proof');
+    expect(slug).toContain('padding-bottom: var(--chat-fab-clearance)');
+    expect(slug).toContain('padding-right: var(--chat-fab-clearance)');
+    expect(ds).toContain('**2x faster**');
+    expect(ds).toContain('**30x ROI**');
+    expect(ds).toContain('**Zeroheight Design System Awards**');
+  });
+
   it('keeps only the IFS Design System on the main /work card grid', () => {
     const work = sources.find((s) => s.path.endsWith('work.astro'))!.text;
     expect(work).toContain("'lidkoping-stenhuggeri'");
