@@ -70,20 +70,36 @@ const schema = {
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <main id="main-content" class="wrapper stack first-screen">
     <header class="hero">
-      <Hero title="Product Manager, Developer Experience at IFS" align="start">
-        <div class="hero-actions">
-          <CallToAction
-            href={linkedinHref}
-            target="_blank"
-            rel="noopener noreferrer"
-            data-hire-event="hire_cta_click"
-            data-hire-surface="hero"
-          >
-            Get in touch
-          </CallToAction>
-          <p class="cta-hint">LinkedIn · replies from me</p>
-        </div>
-      </Hero>
+      <div class="hero-copy">
+        <Hero title="Product Manager, Developer Experience at IFS" align="start">
+          <div class="hero-actions">
+            <CallToAction
+              href={linkedinHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              data-hire-event="hire_cta_click"
+              data-hire-surface="hero"
+            >
+              Get in touch
+            </CallToAction>
+            <p class="cta-hint">LinkedIn · replies from me</p>
+          </div>
+        </Hero>
+        <section class="proof" aria-label="Proof">
+          <a class="proof-card" href="/work/ifs-design-system/">
+            <p class="proof-eyebrow">IFS Design System</p>
+            <p class="proof-outcome">From the first version to IFS Cloud.</p>
+            <p class="proof-chips">
+              <span>Up to 2x faster delivery</span>
+              <span aria-hidden="true">·</span>
+              <span>Up to 30x ROI</span>
+              <span aria-hidden="true">·</span>
+              <span>Zeroheight runner-up</span>
+            </p>
+            <p class="proof-affordance">Read the case</p>
+          </a>
+        </section>
+      </div>
 
       <div class="portrait">
         <img
@@ -97,21 +113,6 @@ const schema = {
         />
       </div>
     </header>
-
-    <section class="proof" aria-label="Proof">
-      <a class="proof-card" href="/work/ifs-design-system/">
-        <p class="proof-eyebrow">IFS Design System</p>
-        <p class="proof-outcome">Scaled from inception to IFS Cloud.</p>
-        <p class="proof-chips">
-          <span>Up to 2x faster delivery</span>
-          <span aria-hidden="true">·</span>
-          <span>Up to 30x ROI</span>
-          <span aria-hidden="true">·</span>
-          <span>Zeroheight runner-up</span>
-        </p>
-        <p class="proof-affordance">Read the case</p>
-      </a>
-    </section>
   </main>
 </BaseLayout>
 
@@ -132,6 +133,13 @@ const schema = {
     align-items: center;
     gap: 1.25rem;
     padding-bottom: 0;
+  }
+
+  .hero-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    width: 100%;
   }
 
   .hero-actions {
