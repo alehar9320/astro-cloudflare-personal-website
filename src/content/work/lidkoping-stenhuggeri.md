@@ -13,4 +13,4 @@ tags:
   <p><strong>TL;DR:</strong> Early Android work, 2013, for <strong>Lidköping Stenhuggeri</strong>.</p>
 </div>
 
-An Android app I built in 2013 for a masonry firm in Lidköping so they could track jobs on site instead of on paper.
+In 2013 I built an Android app for Lidköping Stenhuggeri so they could track jobs on site instead of on paper.

@@ -15,8 +15,8 @@ tags:
 
 Master's thesis at [Chalmers University of Technology](https://www.chalmers.se/en/) in 2017. It mapped what digitalization does to business models, studied one case, and compared that to the literature.
 
-1. Academically mapping out what it means to transform a business with the help of digitalization.
-2. Studying a specific business case where digitalization was part of changing the business model.
-3. Identifying the gap between what theory stipulates and the business case at hand.
+1. What digitalization does to a business model.
+2. A case where digitalization was part of changing the model.
+3. Where that case differed from the literature.
 
 Opportunities showed up as reach, scale, and data for decisions. Barriers were mostly organizational.
