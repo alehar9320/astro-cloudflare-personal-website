@@ -109,6 +109,7 @@ describe('identity copy', () => {
     const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
     expect(slug).toContain('ifs-design-system');
     expect(slug).toContain('ds-proof');
+    expect(slug).toContain('.ds-proof :global(ul)');
     expect(slug).toContain('padding-bottom: var(--chat-fab-clearance)');
     expect(slug).toContain('padding-right: var(--chat-fab-clearance)');
     expect(ds).toContain('**2x faster**');

@@ -172,6 +172,12 @@ const schema = entry
     padding-right: var(--chat-fab-clearance);
   }
 
+  .ds-proof :global(ul) {
+    /* Phone: when Metrics sits at the bottom of the viewport, not only page end. */
+    padding-bottom: var(--chat-fab-clearance);
+    padding-right: var(--chat-fab-clearance);
+  }
+
   .content > :global(* + *) {
     margin-top: 1rem;
   }
@@ -223,6 +229,11 @@ const schema = entry
 
   @media (min-width: 50em) {
     .ds-proof {
+      padding-bottom: 0;
+      padding-right: 0;
+    }
+
+    .ds-proof :global(ul) {
       padding-bottom: 0;
       padding-right: 0;
     }
