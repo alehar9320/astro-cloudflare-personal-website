@@ -153,20 +153,20 @@ const schema = {
 
   .portrait {
     --portrait-aurora:
-      0 0 20px 4px color-mix(in srgb, var(--accent-light) 55%, transparent),
-      0 0 48px 10px color-mix(in srgb, var(--accent-regular) 40%, transparent);
+      0 0 12px 3px color-mix(in srgb, var(--accent-light) 55%, transparent),
+      0 0 24px 6px color-mix(in srgb, var(--accent-regular) 40%, transparent);
     position: relative;
     border-radius: 1.5rem;
     margin-inline: 1.25rem;
-    margin-bottom: 0.5rem;
-    max-width: min(18rem, calc(100% - 2.5rem));
+    margin-bottom: var(--chat-fab-clearance);
+    max-width: min(10.5rem, calc(100% - 2.5rem));
     box-shadow: var(--portrait-aurora), var(--shadow-md);
   }
 
   :global(:root.theme-dark) .portrait {
     --portrait-aurora:
-      0 0 22px 5px color-mix(in srgb, var(--accent-light) 70%, transparent),
-      0 0 56px 14px color-mix(in srgb, var(--accent-regular) 50%, transparent);
+      0 0 14px 4px color-mix(in srgb, var(--accent-light) 70%, transparent),
+      0 0 28px 8px color-mix(in srgb, var(--accent-regular) 50%, transparent);
   }
 
   .portrait::before,
@@ -212,7 +212,7 @@ const schema = {
     z-index: 1;
     display: block;
     width: 100%;
-    max-height: calc(100svh - var(--chat-fab-clearance) - 20rem);
+    max-height: calc(100svh - var(--chat-fab-clearance) - 24rem);
     aspect-ratio: 5 / 4;
     object-fit: cover;
     object-position: top;
@@ -346,10 +346,19 @@ const schema = {
     }
 
     .portrait {
+      --portrait-aurora:
+        0 0 20px 4px color-mix(in srgb, var(--accent-light) 55%, transparent),
+        0 0 48px 10px color-mix(in srgb, var(--accent-regular) 40%, transparent);
       margin-inline: 0;
       margin-bottom: 0;
       max-width: none;
       border-radius: 4.5rem;
+    }
+
+    :global(:root.theme-dark) .portrait {
+      --portrait-aurora:
+        0 0 22px 5px color-mix(in srgb, var(--accent-light) 70%, transparent),
+        0 0 56px 14px color-mix(in srgb, var(--accent-regular) 50%, transparent);
     }
 
     .portrait::before {

@@ -62,7 +62,9 @@ describe('identity copy', () => {
     expect(chat).toContain('width: var(--chat-fab-size)');
     expect(home).toContain('padding-block: 1rem var(--chat-fab-clearance)');
     expect(home).toContain('justify-content: flex-start');
-    expect(home).toContain('max-height: calc(100svh - var(--chat-fab-clearance) - 20rem)');
+    expect(home).toContain('max-height: calc(100svh - var(--chat-fab-clearance) - 24rem)');
+    expect(home).toContain('max-width: min(10.5rem, calc(100% - 2.5rem))');
+    expect(home).toContain('margin-bottom: var(--chat-fab-clearance)');
     expect(home).toContain('https://www.linkedin.com/in/alehar/');
     expect(home).toContain('Get in touch');
     expect(cta).toContain('var(--chat-fab-clearance)');
