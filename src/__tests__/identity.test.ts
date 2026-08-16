@@ -148,7 +148,9 @@ describe('identity copy', () => {
     expect(work).toContain("'ai-coding-copilots'");
     expect(work).toContain("'user-behavior-analytics'");
     expect(work).toContain("'master-thesis'");
-    expect(work).toContain('!demoted.has(project.id)');
+    expect(work).toContain("featuredOrder = ['ifs-design-system']");
+    expect(work).toContain("'master-thesis',\n  'lidkoping-stenhuggeri'");
+    expect(work).toContain('const ordered = [...featured, ...earlier]');
     expect(work).toContain('Earlier work');
     expect(work).toContain('Early Android work, 2013.');
     expect(work).toContain('Internal AI coding copilots for IFS engineering teams.');

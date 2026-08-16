@@ -6,17 +6,24 @@ import Hero from '../components/Hero.astro';
 import PortfolioPreview from '../components/PortfolioPreview.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
-const projects = (await getCollection('work')).sort(
-  (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
-);
-const demoted = new Set([
-  'lidkoping-stenhuggeri',
+const projects = await getCollection('work');
+const byId = new Map(projects.map((project) => [project.id, project]));
+const featuredOrder = ['ifs-design-system'] as const;
+const earlierOrder = [
   'ai-coding-copilots',
   'user-behavior-analytics',
   'master-thesis',
-]);
-const featured = projects.filter((project) => !demoted.has(project.id));
-const earlier = projects.filter((project) => demoted.has(project.id));
+  'lidkoping-stenhuggeri',
+] as const;
+const featured = featuredOrder.flatMap((id) => {
+  const project = byId.get(id);
+  return project ? [project] : [];
+});
+const earlier = earlierOrder.flatMap((id) => {
+  const project = byId.get(id);
+  return project ? [project] : [];
+});
+const ordered = [...featured, ...earlier];
 const earlierBlurb: Record<string, string> = {
   'lidkoping-stenhuggeri': 'Early Android work, 2013.',
   'ai-coding-copilots': 'Internal AI coding copilots for IFS engineering teams.',
@@ -62,8 +69,8 @@ const schema = {
       name: 'Work | Alexander Härenstam',
       description:
         'Product Manager, Developer Experience at IFS. The IFS Design System case, then earlier work.',
-      numberOfItems: projects.length,
-      itemListElement: projects.map((project, index) => ({
+      numberOfItems: ordered.length,
+      itemListElement: ordered.map((project, index) => ({
         '@type': 'ListItem',
         position: index + 1,
         name: project.data.title,
