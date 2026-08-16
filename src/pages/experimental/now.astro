@@ -1,38 +1,72 @@
 ---
-import BaseLayout from '../../layouts/BaseLayout.astro';
+import CallToAction from '../../components/CallToAction.astro';
 import Hero from '../../components/Hero.astro';
-import Pill from '../../components/Pill.astro';
-import Icon from '../../components/Icon.astro';
-import type { iconPaths } from '../../components/IconPaths';
+import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getEntry } from 'astro:content';
 
 const flagsEntry = await getEntry('flags', 'config');
 if (!flagsEntry?.data.enable_strategic_pulse) return Astro.redirect('/404/');
-const focus: { l: string; i: keyof typeof iconPaths }[] = [
-  { l: 'Industrial AI', i: 'rocket-launch' },
-  { l: 'DevEx', i: 'terminal-window' },
-  { l: 'Strategic Planning', i: 'strategy' },
-];
+
+const linkedinHref = 'https://www.linkedin.com/in/alehar/';
 ---
 
-<BaseLayout title="Strategic Pulse" description="Current focus areas.">
-  <main id="main-content" class="wrapper stack gap-20">
-    <Hero title="Strategic Pulse" tagline="Current high-impact focus areas." align="start" />
-    <div
-      style="border: 1px solid var(--gray-800); border-radius: 1.5rem; padding: 2rem; background: var(--gradient-subtle); display: flex; flex-direction: column; gap: 1rem;"
-    >
-      <div style="display: flex; flex-wrap: wrap; gap: 0.5rem;">
-        {
-          focus.map((f) => (
-            <Pill>
-              <Icon icon={f.i} size="1.33em" /> {f.l}
-            </Pill>
-          ))
-        }
-      </div>
-      <p style="color: var(--gray-300);">
-        <strong>Status:</strong> Driving enterprise AI and DevEx at IFS.
+<BaseLayout
+  title="Product Manager, Developer Experience at IFS"
+  description="Product Manager, Developer Experience at IFS. Design systems, DevEx, and Industrial AI."
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero title="Product Manager, Developer Experience at IFS" align="start">
+      <p class="lede">Design systems, DevEx, and Industrial AI.</p>
+      <p class="proof">
+        The <a href="/work/ifs-design-system/">IFS Design System</a>: up to 2x faster delivery,{' '}
+        up to 30x ROI, Zeroheight runner-up.
       </p>
-    </div>
+      <div class="actions">
+        <CallToAction
+          href={linkedinHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-hire-event="hire_cta_click"
+          data-hire-surface="now"
+        >
+          Get in touch
+        </CallToAction>
+        <p class="cta-hint">LinkedIn · replies from me</p>
+      </div>
+    </Hero>
   </main>
 </BaseLayout>
+
+<style>
+  .lede,
+  .proof {
+    margin: 0;
+    color: var(--gray-200);
+    max-width: 46ch;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    /* Phone: keep the LinkedIn hire CTA out of the fixed chat FAB band. */
+    padding-bottom: var(--chat-fab-clearance);
+    padding-right: var(--chat-fab-clearance);
+  }
+
+  .cta-hint {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    font-weight: 400;
+  }
+
+  @media (min-width: 50em) {
+    .actions {
+      padding-bottom: 0;
+      padding-right: 0;
+    }
+  }
+</style>

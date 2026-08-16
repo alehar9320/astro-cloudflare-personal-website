@@ -505,4 +505,24 @@ describe('identity copy', () => {
     expect(head).not.toContain('harenstam.com');
     expect(head).not.toContain('localhost');
   });
+
+  it('rewrites /experimental/now/ for visitors, not a status note', () => {
+    const now = readFileSync('src/pages/experimental/now.astro', 'utf8');
+    expect(now).toContain('Product Manager, Developer Experience');
+    expect(now).toContain('https://www.linkedin.com/in/alehar/');
+    expect(now).toContain('Get in touch');
+    expect(now).toContain('LinkedIn · replies from me');
+    expect(now).toContain('Hero title="Product Manager, Developer Experience at IFS"');
+    expect(now.replace(/\s+/g, ' ')).toContain('up to 2x faster delivery');
+    expect(now).toContain('up to 30x ROI');
+    expect(now).not.toContain('Strategic Pulse');
+    expect(now).not.toContain('Driving enterprise AI');
+    expect(now).not.toContain('mailto:');
+    expect(now).not.toContain('this is not on the site');
+    expect(now).not.toContain("this isn't on the site yet");
+    expect(now).not.toContain('stay blank rather than invented');
+    expect(now).not.toContain('only figures published here');
+    expect(now).not.toContain('<strong>Status:</strong>');
+    expect(now).not.toContain('high-impact');
+  });
 });
