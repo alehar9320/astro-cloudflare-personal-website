@@ -2,7 +2,7 @@
 
 ---
 
-<div id="chat-container" class="chat-container">
+<div id="chat-container" class="chat-container is-docked">
   <button
     id="chat-toggle"
     class="chat-toggle"
@@ -25,6 +25,9 @@
     >
       <path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"></path>
     </svg>
+    <img src="/assets/portrait.png" alt="" class="chat-dock-avatar" width="40" height="40" />
+    <span class="chat-dock-label">Ask<span class="chat-dock-label-rest"> about the work</span></span
+    >
     <span role="tooltip" id="status-tooltip" class="status-tooltip">Ask about the work</span>
   </button>
 
@@ -152,6 +155,57 @@
 
   .chat-container.is-prominent .chat-toggle {
     display: none;
+  }
+
+  .chat-dock-avatar,
+  .chat-dock-label {
+    display: none;
+  }
+
+  .chat-container.is-docked .chat-toggle {
+    width: auto;
+    min-width: var(--chat-fab-size);
+    height: var(--chat-fab-size);
+    padding: 0 0.85rem 0 0.35rem;
+    border-radius: 999px;
+    gap: 0.5rem;
+    justify-content: flex-start;
+  }
+
+  .chat-container.is-docked .chat-toggle svg {
+    display: none;
+  }
+
+  .chat-container.is-docked .chat-dock-avatar {
+    display: block;
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 50%;
+    object-fit: cover;
+    object-position: top;
+    flex-shrink: 0;
+  }
+
+  .chat-container.is-docked .chat-dock-label {
+    display: block;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--gray-0);
+    white-space: nowrap;
+  }
+
+  .chat-container.is-docked .status-tooltip {
+    display: none;
+  }
+
+  .chat-container.is-docked:has(#chat-window:not(.hidden)) .chat-toggle {
+    display: none;
+  }
+
+  @media (max-width: 49.99em) {
+    .chat-dock-label-rest {
+      display: none;
+    }
   }
 
   /* Tooltip */
@@ -730,6 +784,7 @@
       dockChat();
       return;
     }
+    chatContainer.classList.remove('is-docked');
     chatContainer.classList.add('is-prominent');
     setChatExpanded(true);
     window.addEventListener(

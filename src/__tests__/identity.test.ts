@@ -112,8 +112,10 @@ describe('identity copy', () => {
 
   it('keeps the docked chat FAB off the footer GitHub link at 1280', () => {
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    const global = readFileSync('src/styles/global.css', 'utf8');
     expect(footer).toContain('padding: 2.5rem 5rem var(--chat-fab-clearance)');
-    expect(footer).toContain('padding-right: var(--chat-fab-clearance)');
+    expect(footer).toContain('padding-right: var(--chat-dock-clearance)');
+    expect(global).toContain('--chat-dock-clearance');
     expect(footer).toContain('https://github.com/alehar9320');
     expect(footer).toContain('https://www.linkedin.com/in/alehar/');
     expect(footer).not.toContain('mailto:');
@@ -216,6 +218,10 @@ describe('identity copy', () => {
     expect(chat).not.toContain('harenstam.com');
     expect(chat).toContain('M7.9 20A9 9 0 1 0 4 16.1L2 22Z');
     expect(chat).not.toContain('chat-toggle-portrait');
+    expect(chat).toContain('chat-dock-avatar');
+    expect(chat).toContain('chat-dock-label');
+    expect(chat).toContain('chat-dock-label-rest');
+    expect(chat).toContain('Ask<span class="chat-dock-label-rest"> about the work</span>');
     expect(home).toContain('https://www.linkedin.com/in/alehar/');
     expect(home).toContain('Get in touch');
     expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');

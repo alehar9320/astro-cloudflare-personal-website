@@ -94,6 +94,8 @@
   --chat-fab-clearance: calc(
     var(--chat-fab-size) + var(--chat-fab-offset) + env(safe-area-inset-bottom, 0px) + 0.75rem
   );
+  /* Desktop docked launcher width (labeled Ask about the work), not a custom domain / not a second FAB portrait. */
+  --chat-dock-clearance: calc(13.5rem + var(--chat-fab-offset) + 0.75rem);
 }
 
 :root.theme-dark {
