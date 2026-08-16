@@ -167,6 +167,20 @@ describe('identity copy', () => {
     expect(footer).not.toContain('mailto:');
   });
 
+  it('drops Instagram and Facebook from the footer and keeps LinkedIn hire', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(footer).not.toContain('instagram.com');
+    expect(footer).not.toContain('facebook.com');
+    expect(footer).toContain('https://www.linkedin.com/in/alehar/');
+    expect(footer).toContain('https://github.com/alehar9320');
+    expect(footer).not.toContain('mailto:');
+    expect(footer).not.toContain('Latest Updates');
+    expect(footer).not.toContain('Report an issue');
+    expect(footer).not.toContain('agentic engineering');
+    expect(footer).not.toContain('>Source</span>');
+    expect(footer).not.toContain('source-link');
+  });
+
   it('keeps the header terminal glyph and drops the competing footer rocket', () => {
     const nav = readFileSync('src/components/Nav.astro', 'utf8');
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
