@@ -427,6 +427,7 @@ describe('identity copy', () => {
     expect(sitemap).toContain("'/biography/'");
     expect(sitemap).toContain("'/contact/'");
     expect(sitemap).toContain('ifs-design-system');
+    expect(sitemap).not.toContain('/experimental/manifesto');
     expect(sitemap).not.toContain('localhost');
     expect(sitemap).not.toContain('harenstam.com');
     expect(sitemap).not.toContain('mailto:');

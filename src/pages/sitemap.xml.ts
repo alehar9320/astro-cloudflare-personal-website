@@ -11,7 +11,6 @@ const staticPaths = [
   '/biography/',
   '/contact/',
   '/whats-new',
-  '/experimental/manifesto/',
   '/experimental/now/',
   '/experimental/reading-list/',
 ];
