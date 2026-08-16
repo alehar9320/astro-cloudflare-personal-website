@@ -138,6 +138,9 @@ const schema = {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    /* Phone: keep the experience timeline out of the fixed chat FAB band. */
+    padding-bottom: var(--chat-fab-clearance);
+    padding-right: var(--chat-fab-clearance);
   }
 
   .timeline {
@@ -177,6 +180,11 @@ const schema = {
   }
 
   @media (min-width: 50em) {
+    .content {
+      padding-bottom: 0;
+      padding-right: 0;
+    }
+
     .about {
       display: grid;
       grid-template-columns: 1fr 60% 1fr;

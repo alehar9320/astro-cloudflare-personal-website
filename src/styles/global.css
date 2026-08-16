@@ -88,7 +88,7 @@
   /* Transitions */
   --theme-transition: 0.2s ease-in-out;
 
-  /* Chat FAB. Hire CTAs and the home portrait must clear this band on phones. */
+  /* Chat FAB. Hire CTAs, home portrait, /work Earlier work, and /biography timeline must clear this band on phones. */
   --chat-fab-size: 3.5rem;
   --chat-fab-offset: 2rem;
   --chat-fab-clearance: calc(

@@ -129,6 +129,9 @@ const schema = {
     flex-direction: column;
     gap: 0.75rem;
     color: var(--gray-300);
+    /* Phone: keep the list out of the fixed chat FAB band. */
+    padding-bottom: var(--chat-fab-clearance);
+    padding-right: var(--chat-fab-clearance);
   }
 
   .earlier h2 {
@@ -166,5 +169,12 @@ const schema = {
   .earlier p {
     margin: 0;
     font-size: var(--text-sm);
+  }
+
+  @media (min-width: 50em) {
+    .earlier {
+      padding-bottom: 0;
+      padding-right: 0;
+    }
   }
 </style>

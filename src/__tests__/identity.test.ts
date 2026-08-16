@@ -71,6 +71,18 @@ describe('identity copy', () => {
     expect(cta).toContain('https://www.linkedin.com/in/alehar/');
   });
 
+  it('keeps the chat FAB off Earlier work and the biography timeline on a phone', () => {
+    const work = readFileSync('src/pages/work.astro', 'utf8');
+    const bio = readFileSync('src/pages/biography.astro', 'utf8');
+    expect(work).toContain('padding-bottom: var(--chat-fab-clearance)');
+    expect(work).toContain('padding-right: var(--chat-fab-clearance)');
+    expect(work).toContain('Earlier work');
+    expect(bio).toContain('padding-bottom: var(--chat-fab-clearance)');
+    expect(bio).toContain('padding-right: var(--chat-fab-clearance)');
+    expect(bio).toContain('class="timeline"');
+    expect(bio).toContain('https://www.linkedin.com/in/alehar/');
+  });
+
   it('keeps only the IFS Design System on the main /work card grid', () => {
     const work = sources.find((s) => s.path.endsWith('work.astro'))!.text;
     expect(work).toContain("'lidkoping-stenhuggeri'");
