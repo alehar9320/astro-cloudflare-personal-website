@@ -459,6 +459,25 @@ describe('identity copy', () => {
     expect(manifest).toContain('icon-512.png');
   });
 
+  it('offers LinkedIn hire on the not-found page next to Return to Homepage', () => {
+    const page = readFileSync('src/pages/404.astro', 'utf8');
+    const content = readFileSync('src/components/NotFoundContent.astro', 'utf8');
+    const notFound = `${page}\n${content}`;
+    expect(page).toContain('NotFoundContent');
+    expect(notFound).toContain('https://www.linkedin.com/in/alehar/');
+    expect(notFound).toContain('Get in touch');
+    expect(notFound).toContain('Return to Homepage');
+    expect(notFound).toContain('LinkedIn · replies from me');
+    expect(notFound).toContain('data-hire-event="hire_cta_click"');
+    expect(notFound).toContain('data-hire-surface="404"');
+    expect(notFound).toContain('Lost in Orbit?');
+    expect(notFound).not.toContain('mailto:');
+    expect(notFound).not.toContain('this is not on the site');
+    expect(notFound).not.toContain("this isn't on the site yet");
+    expect(notFound.toLowerCase()).not.toContain('this page is missing');
+    expect(notFound.toLowerCase()).not.toContain("we couldn't find");
+  });
+
   it('ships an apple-touch-icon so iOS home-screen requests do not 404', () => {
     const head = readFileSync('src/components/MainHead.astro', 'utf8');
     expect(head).toContain('rel="apple-touch-icon"');

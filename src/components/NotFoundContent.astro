@@ -2,6 +2,8 @@
 import Hero from './Hero.astro';
 import CallToAction from './CallToAction.astro';
 import Icon from './Icon.astro';
+
+const linkedinHref = 'https://www.linkedin.com/in/alehar/';
 ---
 
 <div class="stack gap-20">
@@ -15,6 +17,18 @@ import Icon from './Icon.astro';
         Return to Homepage
         <Icon icon="arrow-right" size="1.2em" />
       </CallToAction>
+      <div class="hire-cta">
+        <CallToAction
+          href={linkedinHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-hire-event="hire_cta_click"
+          data-hire-surface="404"
+        >
+          Get in touch
+        </CallToAction>
+        <p class="cta-hint">LinkedIn · replies from me</p>
+      </div>
     </div>
   </main>
 </div>
@@ -22,7 +36,24 @@ import Icon from './Icon.astro';
 <style>
   .cta-container {
     display: flex;
+    flex-wrap: wrap;
     justify-content: center;
+    align-items: center;
+    gap: 1.5rem 2rem;
     margin-top: 2rem;
+  }
+
+  .hire-cta {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.4rem;
+  }
+
+  .cta-hint {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    font-weight: 400;
   }
 </style>
