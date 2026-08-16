@@ -9,6 +9,8 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const projects = (await getCollection('work')).sort(
   (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
 );
+const featured = projects.filter((project) => project.id !== 'lidkoping-stenhuggeri');
+const earlier = projects.filter((project) => project.id === 'lidkoping-stenhuggeri');
 
 const schema = {
   '@context': 'https://schema.org',
@@ -84,7 +86,7 @@ const schema = {
       </div>
       <Grid variant="offset">
         {
-          projects.map((project, index) => (
+          featured.map((project, index) => (
             <li>
               <PortfolioPreview
                 project={project}
@@ -95,7 +97,67 @@ const schema = {
           ))
         }
       </Grid>
+      <section class="earlier" aria-labelledby="earlier-work-heading">
+        <h2 id="earlier-work-heading">Earlier work</h2>
+        <ul>
+          {
+            earlier.map((project) => (
+              <li>
+                <a href={`/work/${project.id}/`}>{project.data.title}</a>
+                <p>Early Android work, 2013.</p>
+              </li>
+            ))
+          }
+        </ul>
+      </section>
     </main>
     <ContactCTA />
   </div>
 </BaseLayout>
+
+<style>
+  .earlier {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    color: var(--gray-300);
+  }
+
+  .earlier h2 {
+    margin: 0;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--gray-400);
+  }
+
+  .earlier ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .earlier li {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .earlier a {
+    color: var(--gray-200);
+    text-decoration: 1px solid underline transparent;
+    text-underline-offset: 0.25em;
+  }
+
+  .earlier a:hover,
+  .earlier a:focus-visible {
+    text-decoration-color: currentColor;
+  }
+
+  .earlier p {
+    margin: 0;
+    font-size: var(--text-sm);
+  }
+</style>
+
