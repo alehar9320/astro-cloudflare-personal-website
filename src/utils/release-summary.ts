@@ -26,7 +26,7 @@ export function releaseSummaryPrompt(tag: string, notes: string): string {
   return `Write exactly three plain-English sentences for a hiring manager about this GitHub release.
 Say what a visitor can now see or do. Use only facts in the notes.
 Do not invent metrics, visitor counts, titles, or outcomes.
-The IFS Design System 2x faster delivery / 30x ROI line is allowed if the notes mention it.
+The IFS Design System up to 2x faster delivery / up to 30x ROI line is allowed if the notes mention it.
 Do not name agents, Palettes, Oracles, Scribes, Sentinels, Vantage, Bolt, or Jules.
 Do not include git SHAs, issue numbers, or feat/fix prefixes.
 No bullets, headings, or quotation marks around the whole answer.

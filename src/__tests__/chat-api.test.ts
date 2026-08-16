@@ -107,8 +107,8 @@ describe('chat API', () => {
     expect(systemMessage.content).toContain('Greater Stockholm');
     expect(systemMessage.content).toContain('Eight years at IFS');
     expect(systemMessage.content).toContain('AI coding copilots is current DevEx work');
-    expect(systemMessage.content).toContain('2x faster delivery');
-    expect(systemMessage.content).toContain('30x ROI');
+    expect(systemMessage.content).toContain('up to 2x faster delivery');
+    expect(systemMessage.content).toContain('up to 30x ROI');
     expect(systemMessage.content).toContain('Zeroheight runner-up');
     expect(systemMessage.content).toContain('Write the digits 2 and 30');
     expect(systemMessage.content).not.toContain('Strategic Product Leader');
@@ -126,8 +126,8 @@ describe('chat API', () => {
     expect(response.status).toBe(200);
     expect(ai.run).not.toHaveBeenCalled();
     const body = await response.text();
-    expect(body).toContain('2x faster delivery');
-    expect(body).toContain('30x ROI');
+    expect(body).toContain('up to 2x faster delivery');
+    expect(body).toContain('up to 30x ROI');
     expect(body).toContain('Zeroheight runner-up');
     expect(body).toContain(DESIGN_SYSTEM_PROOF);
   });
@@ -144,8 +144,8 @@ describe('chat API', () => {
     const body = await response.text();
     expect(body).toContain('2x');
     expect(body).toContain('30x');
-    expect(body).toContain('2x faster delivery');
-    expect(body).toContain('30x ROI');
+    expect(body).toContain('up to 2x faster delivery');
+    expect(body).toContain('up to 30x ROI');
     expect(body).toContain('Zeroheight runner-up');
   });
 

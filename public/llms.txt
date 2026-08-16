@@ -6,7 +6,7 @@ Title on this site is Product Manager, Developer Experience at IFS. Do not infla
 
 Education: Chalmers B.Sc. Software Engineering (2012–2015); Chalmers M.Sc. Management and Economics of Innovation (2015–2017). Eight years at IFS.
 
-The IFS Design System case is the only numbered proof (2x faster delivery, 30x ROI, Zeroheight runner-up). AI coding copilots is current DevEx work with no numbered proof. Other work pages are narrative; do not mint new metrics.
+The IFS Design System case: up to 2x faster delivery, up to 30x ROI, Zeroheight runner-up. Other work pages are narrative; do not mint new metrics.
 
 Recruiter keywords (not a fake title): Product Management, Developer Experience, DevEx, AI coding copilots, design systems, Industrial AI, IFS Cloud, platform, product strategy.
 
@@ -15,13 +15,13 @@ Recruiter keywords (not a fake title): Product Management, Developer Experience,
 - [Home](https://me.alehar.workers.dev/): Product Manager, Developer Experience at IFS. One design-system proof card. Get in touch goes to LinkedIn.
 - [Contact](https://me.alehar.workers.dev/contact/): Hire path. LinkedIn only.
 - [Work](https://me.alehar.workers.dev/work/): Work. IFS Design System is the only card, then earlier work. Not titled Strategic Portfolio.
-- [IFS Design System](https://me.alehar.workers.dev/work/ifs-design-system/): Numbered proof. 2x delivery, 30x ROI, Zeroheight runner-up.
+- [IFS Design System](https://me.alehar.workers.dev/work/ifs-design-system/): Numbered proof. up to 2x delivery, up to 30x ROI, Zeroheight runner-up.
 - [Biography](https://me.alehar.workers.dev/biography/): Experience timeline. Product Manager, Developer Experience at IFS. /about/ redirects here.
 
 ## Optional
 
-- [Internal AI coding copilots](https://me.alehar.workers.dev/work/ai-coding-copilots/): DevEx narrative. No numbered proof on this page.
-- [User behavior analytics](https://me.alehar.workers.dev/work/user-behavior-analytics/): Telemetry narrative. No numbered proof on this page.
+- [Internal AI coding copilots](https://me.alehar.workers.dev/work/ai-coding-copilots/): DevEx narrative.
+- [User behavior analytics](https://me.alehar.workers.dev/work/user-behavior-analytics/): Telemetry narrative.
 - [Lidköping Stenhuggeri](https://me.alehar.workers.dev/work/lidkoping-stenhuggeri/): Early Android work. Demoted.
 - [Chalmers master's thesis](https://me.alehar.workers.dev/work/master-thesis/): Chalmers, 2017. Earlier work, not an equal card.
 - [Latest updates](https://me.alehar.workers.dev/whats-new/): Changelog.

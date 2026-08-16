@@ -43,8 +43,8 @@ describe('identity copy', () => {
     expect(bio).toContain(
       'Explore the professional journey of Alexander Härenstam, Product Manager, Developer Experience at IFS.'
     );
-    expect(twin).toContain('2x faster delivery');
-    expect(twin).toContain('30x ROI');
+    expect(twin).toContain('up to 2x faster delivery');
+    expect(twin).toContain('up to 30x ROI');
   });
 
   it('keeps spaces around TL;DR strong terms (Astro drops newline-only spaces)', () => {
@@ -112,8 +112,8 @@ describe('identity copy', () => {
     expect(slug).toContain('.ds-proof :global(ul)');
     expect(slug).toContain('padding-bottom: var(--chat-fab-clearance)');
     expect(slug).toContain('padding-right: var(--chat-fab-clearance)');
-    expect(ds).toContain('**2x faster**');
-    expect(ds).toContain('**30x ROI**');
+    expect(ds).toContain('**Up to 2x faster**');
+    expect(ds).toContain('**Up to 30x ROI**');
     expect(ds).toContain('**Zeroheight Design System Awards**');
   });
 
