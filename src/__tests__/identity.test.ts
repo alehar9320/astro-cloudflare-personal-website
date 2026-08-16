@@ -121,6 +121,17 @@ describe('identity copy', () => {
     expect(footer).not.toContain('mailto:');
   });
 
+  it('drops Latest Updates from the footer and keeps What’s New', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(footer).not.toContain('Latest Updates');
+    expect(footer).not.toContain('/whats-new');
+    expect(footer).toContain('https://www.linkedin.com/in/alehar/');
+    expect(footer).not.toContain('mailto:');
+    expect(existsSync('src/pages/whats-new.astro')).toBe(true);
+    const page = readFileSync('src/pages/whats-new.astro', 'utf8');
+    expect(page).toContain('A public changelog of this site.');
+  });
+
   it('keeps the header terminal glyph and drops the competing footer rocket', () => {
     const nav = readFileSync('src/components/Nav.astro', 'utf8');
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
