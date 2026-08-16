@@ -251,7 +251,7 @@ describe('identity copy', () => {
     expect(nav).not.toContain("href: '/about/'");
     expect(nav).toContain("href: '/biography/'");
     expect(astro).toContain("'/about': '/biography/'");
-    expect(astro).toContain("'/about/': '/biography/'");
+    expect(astro).not.toContain("'/about/': '/biography/'");
     expect(nav).not.toContain("'About'");
   });
   it('lets a Home share read Product Manager, Developer Experience at IFS', () => {
