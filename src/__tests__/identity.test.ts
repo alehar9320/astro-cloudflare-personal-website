@@ -528,6 +528,39 @@ describe('identity copy', () => {
     expect(now).not.toContain('high-impact');
   });
 
+  it('rewrites /experimental/reading-list/ for visitors, not a bare book list', () => {
+    const page = readFileSync('src/pages/experimental/reading-list.astro', 'utf8');
+    expect(page).toContain('Product Manager, Developer Experience');
+    expect(page).toContain('https://www.linkedin.com/in/alehar/');
+    expect(page).toContain('Get in touch');
+    expect(page).toContain('LinkedIn · replies from me');
+    expect(page).toContain('High Output Management');
+    expect(page).toContain('The Lean Startup');
+    expect(page).toContain('Competing Against Luck');
+    expect(page).toContain('Andrew Grove');
+    expect(page).toContain('Eric Ries');
+    expect(page).toContain('Clayton Christensen');
+    const lede =
+      page
+        .match(/class="lede"[^>]*>([\s\S]*?)<\/p>/)?.[1]
+        ?.replace(/\s+/g, ' ')
+        .trim() ?? '';
+    expect(lede).toContain('Product Manager, Developer Experience at IFS');
+    expect(lede).toContain('Reading behind the work');
+    expect(lede).not.toBe('Product Manager, Developer Experience at IFS.');
+    expect(page).toContain('Grove on how managers multiply the output of a team.');
+    expect(page).toContain('Ries on testing product ideas with real users before scaling.');
+    expect(page).toContain('Christensen on jobs to be done');
+    expect(page).toContain('building for the outcome someone is hiring a product to do');
+    expect((page.match(/title: '/g) || []).length).toBe(3);
+    expect(page).not.toContain('mailto:');
+    expect(page).not.toContain('this is not a complete list');
+    expect(page).not.toContain('more coming');
+    expect(page).not.toContain('stay blank rather than invented');
+    expect(page).not.toContain('this is not on the site');
+    expect(page).not.toContain("this isn't on the site yet");
+  });
+
   it('rewrites What’s New for visitors, not a project log', () => {
     const page = readFileSync('src/pages/whats-new.astro', 'utf8');
     const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
