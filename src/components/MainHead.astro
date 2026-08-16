@@ -29,6 +29,7 @@ const shareUrl = new URL(Astro.url.pathname, liveOrigin).href;
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
 <meta property="og:url" content={shareUrl} />
+<link rel="canonical" href={shareUrl} />
 <meta property="og:title" content={shareTitle} />
 <meta property="og:image" content={shareImage} />
 
