@@ -13,4 +13,4 @@ tags:
   <p><strong>TL;DR:</strong> Early Android work, 2013, for <strong>Lidköping Stenhuggeri</strong>.</p>
 </div>
 
-In 2013 I built an Android app for Lidköping Stenhuggeri so they could track jobs on site instead of on paper.
+This is earlier work. In 2013 I built an Android app for Lidköping Stenhuggeri so they could track jobs on site instead of on paper. The featured case is the [IFS Design System](/work/ifs-design-system/).
