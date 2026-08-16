@@ -19,7 +19,13 @@
     <div class="chat-header">
       <div class="chat-header-profile">
         <img src="/assets/portrait.png" alt="" class="chat-header-avatar" width="36" height="36" />
-        <span class="chat-header-name">Ask Alexander</span>
+        <span class="chat-header-copy">
+          <span class="chat-header-name">Ask Alexander</span>
+          <span class="chat-live" id="chat-live">
+            <span class="status-dot" aria-hidden="true"></span>
+            <span class="chat-live-label" id="chat-live-label">Live</span>
+          </span>
+        </span>
       </div>
       <button id="chat-close" class="chat-close" aria-label="Close chat">
         <svg
@@ -161,11 +167,67 @@
     border: 1px solid var(--gray-700);
   }
 
+  .chat-header-copy {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
   .chat-header-name {
     font-size: 0.875rem;
     font-weight: 600;
     color: var(--gray-0);
     line-height: 1.2;
+  }
+
+  .chat-live {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.7rem;
+    font-weight: 500;
+    color: var(--gray-300);
+    line-height: 1;
+  }
+
+  .status-dot {
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 50%;
+    flex-shrink: 0;
+    background-color: var(--status-idle);
+    box-shadow: 0 0 6px var(--status-idle);
+    transition:
+      background-color 0.3s ease,
+      box-shadow 0.3s ease;
+  }
+
+  .status-dot.loading {
+    background-color: var(--status-loading);
+    box-shadow: 0 0 6px var(--status-loading);
+    animation: status-pulse 1.2s ease-in-out infinite;
+  }
+
+  .status-dot.error {
+    background-color: var(--status-error);
+    box-shadow: 0 0 6px var(--status-error);
+  }
+
+  @keyframes status-pulse {
+    0%,
+    100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.4;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .status-dot.loading {
+      animation: none;
+    }
   }
 
   .chat-suggestions {
@@ -375,17 +437,30 @@
 
   const statusTooltip = document.getElementById('status-tooltip');
   const statusAnnouncer = document.getElementById('status-announcer');
+  const statusDot = document.querySelector('.status-dot');
+  const liveLabel = document.getElementById('chat-live-label');
 
   const statusLabels = {
-    idle: 'Ask about the work',
-    loading: 'Thinking...',
-    error: 'Connection issue',
-    limited: 'Hourly limit reached',
+    idle: 'Live. Ask about the work',
+    loading: 'Live. Thinking...',
+    error: 'Not live',
+    limited: 'Live. Hourly limit reached',
+  };
+  const liveLabels = {
+    idle: 'Live',
+    loading: 'Live',
+    error: 'Not live',
+    limited: 'Live',
   };
 
   function setStatus(state: 'idle' | 'loading' | 'error' | 'limited') {
     if (statusTooltip) statusTooltip.textContent = statusLabels[state];
     if (statusAnnouncer) statusAnnouncer.textContent = statusLabels[state];
+    if (liveLabel) liveLabel.textContent = liveLabels[state];
+    if (statusDot) {
+      statusDot.classList.remove('idle', 'loading', 'error', 'limited');
+      statusDot.classList.add(state);
+    }
   }
 
   function applyRemaining(response: Response) {
