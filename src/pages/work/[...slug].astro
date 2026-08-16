@@ -24,6 +24,14 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
+const earlierCase =
+  !!entry &&
+  [
+    'ai-coding-copilots',
+    'user-behavior-analytics',
+    'master-thesis',
+    'lidkoping-stenhuggeri',
+  ].includes(entry.id);
 
 if (!entry) {
   Astro.response.status = 404;
@@ -118,7 +126,12 @@ const schema = entry
                   decoding="async"
                 />
               )}
-              <div class:list={['content', { 'ds-proof': entry.id === 'ifs-design-system' }]}>
+              <div
+                class:list={[
+                  'content',
+                  { 'ds-proof': entry.id === 'ifs-design-system', 'earlier-case': earlierCase },
+                ]}
+              >
                 {Content && <Content />}
               </div>
             </div>
@@ -174,6 +187,23 @@ const schema = entry
 
   .ds-proof :global(ul) {
     /* Phone: when Metrics sits at the bottom of the viewport, not only page end. */
+    padding-bottom: var(--chat-fab-clearance);
+    padding-right: var(--chat-fab-clearance);
+  }
+
+  .earlier-case {
+    /* Phone: keep Earlier work body copy out of the fixed chat FAB band. */
+    padding-bottom: var(--chat-fab-clearance);
+    padding-right: var(--chat-fab-clearance);
+  }
+
+  .earlier-case :global(p),
+  .earlier-case :global(li) {
+    padding-right: var(--chat-fab-clearance);
+  }
+
+  .earlier-case :global(ul),
+  .earlier-case :global(ol) {
     padding-bottom: var(--chat-fab-clearance);
     padding-right: var(--chat-fab-clearance);
   }
@@ -234,6 +264,15 @@ const schema = entry
     }
 
     .ds-proof :global(ul) {
+      padding-bottom: 0;
+      padding-right: 0;
+    }
+
+    .earlier-case,
+    .earlier-case :global(p),
+    .earlier-case :global(li),
+    .earlier-case :global(ul),
+    .earlier-case :global(ol) {
       padding-bottom: 0;
       padding-right: 0;
     }
