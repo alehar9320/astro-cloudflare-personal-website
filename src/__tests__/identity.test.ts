@@ -71,11 +71,17 @@ describe('identity copy', () => {
     expect(cta).toContain('https://www.linkedin.com/in/alehar/');
   });
 
-  it('keeps Lidköping off the main /work card grid', () => {
+  it('keeps Lidköping, copilots, and analytics off the main /work card grid', () => {
     const work = sources.find((s) => s.path.endsWith('work.astro'))!.text;
-    expect(work).toContain("project.id !== 'lidkoping-stenhuggeri'");
+    expect(work).toContain("'lidkoping-stenhuggeri'");
+    expect(work).toContain("'ai-coding-copilots'");
+    expect(work).toContain("'user-behavior-analytics'");
+    expect(work).toContain('!demoted.has(project.id)');
     expect(work).toContain('Earlier work');
     expect(work).toContain('Early Android work, 2013.');
+    expect(work).toContain('Internal AI coding copilots for IFS engineering teams.');
+    expect(work).toContain('Usage telemetry for IFS Cloud roadmap decisions.');
+    expect(work).not.toContain('multi-million');
   });
 
   it('drops the /about/ duplicate in favor of /biography/', () => {

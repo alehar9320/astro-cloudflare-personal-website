@@ -9,8 +9,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const projects = (await getCollection('work')).sort(
   (a, b) => b.data.publishDate.valueOf() - a.data.publishDate.valueOf()
 );
-const featured = projects.filter((project) => project.id !== 'lidkoping-stenhuggeri');
-const earlier = projects.filter((project) => project.id === 'lidkoping-stenhuggeri');
+const demoted = new Set(['lidkoping-stenhuggeri', 'ai-coding-copilots', 'user-behavior-analytics']);
+const featured = projects.filter((project) => !demoted.has(project.id));
+const earlier = projects.filter((project) => demoted.has(project.id));
+const earlierBlurb: Record<string, string> = {
+  'lidkoping-stenhuggeri': 'Early Android work, 2013.',
+  'ai-coding-copilots': 'Internal AI coding copilots for IFS engineering teams.',
+  'user-behavior-analytics': 'Usage telemetry for IFS Cloud roadmap decisions.',
+};
 
 const schema = {
   '@context': 'https://schema.org',
@@ -104,7 +110,7 @@ const schema = {
             earlier.map((project) => (
               <li>
                 <a href={`/work/${project.id}/`}>{project.data.title}</a>
-                <p>Early Android work, 2013.</p>
+                <p>{earlierBlurb[project.id]}</p>
               </li>
             ))
           }
