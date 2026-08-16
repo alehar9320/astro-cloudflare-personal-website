@@ -64,48 +64,46 @@ const schema = {
 
   <div class="stack gap-20">
     <main id="main-content" class="wrapper about">
-      <Hero title="Biography" tagline="A journey through technology, strategy, and innovation." />
+      <Hero title="Biography" tagline="Product Manager, Developer Experience at IFS." />
 
       <section>
-        <h2 class="section-title">The Journey</h2>
+        <h2 class="section-title">Experience</h2>
         <div class="content">
-          <div class="tldr-box">
-            <p>
-              <strong>TL;DR:</strong> Alexander Härenstam is <strong
-                >Product Manager, Developer Experience</strong
-              >
-              {' '}at <strong>IFS</strong>, with a background in <strong
-                >Software Engineering</strong
-              > and
-              {' '}<strong>Innovation Management</strong>. Eight years at IFS across <strong
-                >design systems</strong
-              >,
-              {' '}<strong>DevEx</strong>, and <strong>Industrial AI</strong>.
-            </p>
-          </div>
+          <ol class="timeline">
+            <li>
+              <p class="when">Feb 2025 – present</p>
+              <h3>Product Manager, Developer Experience</h3>
+              <p class="where">IFS, Greater Stockholm</p>
+              <p>
+                Current work is Developer Experience, including AI coding copilots. No new numbered
+                metrics on that work.
+              </p>
+            </li>
+            <li>
+              <p class="when">Eight years at IFS</p>
+              <h3>Design systems, DevEx, and Industrial AI</h3>
+              <p class="where">IFS Cloud</p>
+              <p>
+                The <a href="/work/ifs-design-system/">IFS Design System</a> is the only numbered proof:
+                2x faster delivery, 30x ROI, Zeroheight runner-up.
+              </p>
+            </li>
+            <li>
+              <p class="when">2015 – 2017</p>
+              <h3>M.Sc. Management and Economics of Innovation</h3>
+              <p class="where">Chalmers University of Technology</p>
+            </li>
+            <li>
+              <p class="when">2012 – 2015</p>
+              <h3>B.Sc. Software Engineering</h3>
+              <p class="where">Chalmers University of Technology</p>
+            </li>
+          </ol>
           <p>
-            My path into Product Management and Developer Experience is rooted in software
-            engineering and innovation management. This path began at Chalmers University of
-            Technology, where I earned my B.Sc. in Software Engineering followed by an M.Sc. in
-            Management and Economics of Innovation.
-          </p>
-          <p>
-            Over the past eight years at IFS, I have had the privilege of shaping the company's
-            product experience from the ground up. From scaling the IFS Design System to my current
-            focus on Developer Experience (DevEx) and Industrial AI, I have consistently focused on
-            translating technological potential into measurable business value.
-          </p>
-          <p>
-            I thrive at the intersection of product, design, and technology. By championing an
-            AI-first mindset and leveraging data-driven insights, I solve complex industrial
-            challenges and optimize the workflows of global engineering teams.
-          </p>
-          <p>
-            <em
-              >I am continuously refining my professional narrative as new milestones are reached.
-              Let's connect on LinkedIn to discuss Product Management, Developer Experience, and
-              Industrial AI.</em
-            >
+            Get in touch on
+            <a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer"
+              >LinkedIn</a
+            >.
           </p>
         </div>
       </section>
@@ -140,6 +138,42 @@ const schema = {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+  }
+
+  .timeline {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .timeline h3 {
+    margin: 0.15rem 0;
+    font-size: var(--text-lg);
+    color: var(--gray-0);
+  }
+
+  .when,
+  .where {
+    margin: 0;
+    color: var(--gray-400);
+  }
+
+  .timeline p {
+    margin: 0.35rem 0 0;
+  }
+
+  .content :global(a) {
+    text-decoration: 1px solid underline transparent;
+    text-underline-offset: 0.25em;
+    transition: text-decoration-color var(--theme-transition);
+  }
+
+  .content :global(a:hover),
+  .content :global(a:focus) {
+    text-decoration-color: currentColor;
   }
 
   @media (min-width: 50em) {
