@@ -97,11 +97,7 @@ const shareDescription = entry
   : '404 Error — this page was not found';
 ---
 
-<BaseLayout
-  title={entry ? entry.data.title : 'Not Found'}
-  description={shareDescription}
-  ogTitle={shareTitle}
->
+<BaseLayout title={shareTitle ?? 'Not Found'} description={shareDescription} ogTitle={shareTitle}>
   {schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />}
   {
     entry ? (
