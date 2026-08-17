@@ -654,6 +654,26 @@ describe('identity copy', () => {
     expect(rss).not.toContain('mailto:');
   });
 
+  it('lets the Home RSS alternate link title read Product Manager, Developer Experience at IFS', () => {
+    const head = readFileSync('src/components/MainHead.astro', 'utf8');
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    const rss = readFileSync('src/pages/rss.xml.ts', 'utf8');
+    expect(head).toContain('rel="alternate"');
+    expect(head).toContain('type="application/rss+xml"');
+    expect(head).toContain(
+      'title="Alexander Härenstam | Product Manager, Developer Experience at IFS"'
+    );
+    expect(head).toContain('https://me.alehar.workers.dev/rss.xml');
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+    expect(head).not.toContain('mailto:');
+    expect(home).not.toContain('mailto:');
+    expect(rss).toContain(
+      '<title>Alexander Härenstam | Product Manager, Developer Experience at IFS</title>'
+    );
+    expect(rss).toContain('https://www.linkedin.com/in/alehar/');
+    expect(rss).not.toContain('mailto:');
+  });
+
   it('grounds llms.txt with Chalmers education and recruiter keywords', () => {
     const llms = sources.find((s) => s.path.endsWith('llms.txt'))!.text;
     expect(llms).toContain('Chalmers B.Sc. Software Engineering');
