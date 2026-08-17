@@ -834,6 +834,27 @@ describe('identity copy', () => {
     expect(cta).not.toContain('mailto:');
   });
 
+  it('adds robots noindex on What’s New and keeps the page', () => {
+    expect(existsSync('src/pages/whats-new.astro')).toBe(true);
+    const page = readFileSync('src/pages/whats-new.astro', 'utf8');
+    expect(page).toContain('robots="noindex"');
+    expect(page).toContain('A public changelog of this site.');
+    expect(page).toContain('title="What\'s New | Product Manager, Developer Experience at IFS"');
+    expect(page).not.toContain('mailto:');
+    expect(page).not.toContain('nofollow');
+    const head = readFileSync('src/components/MainHead.astro', 'utf8');
+    expect(head).toContain('<meta name="robots" content={robots} />');
+    expect(head).not.toContain('nofollow');
+    const layout = readFileSync('src/layouts/BaseLayout.astro', 'utf8');
+    expect(layout).toContain('robots={robots}');
+    const sitemap = readFileSync('src/pages/sitemap.xml.ts', 'utf8');
+    expect(sitemap).not.toContain('/whats-new');
+    expect(sitemap).toContain('ifs-design-system');
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(cta).not.toContain('mailto:');
+  });
+
   it('points robots.txt at the live sitemap so search can find it', () => {
     expect(existsSync('public/robots.txt')).toBe(true);
     const robots = readFileSync('public/robots.txt', 'utf8');
