@@ -916,6 +916,36 @@ describe('identity copy', () => {
     expect(sitemap).not.toContain('/work/lidkoping-stenhuggeri');
     const robots = readFileSync('public/robots.txt', 'utf8');
     expect(robots).toContain('Disallow: /work/lidkoping-stenhuggeri/');
+    const rss = readFileSync('src/pages/rss.xml.ts', 'utf8');
+    expect(rss).not.toContain('/work/lidkoping-stenhuggeri');
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(cta).not.toContain('mailto:');
+  });
+
+  it('drops Lidköping Stenhuggeri from the RSS feed and keeps the page', () => {
+    expect(existsSync('src/content/work/lidkoping-stenhuggeri.md')).toBe(true);
+    const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
+    expect(lidkoping).toContain('title: Lidköping Stenhuggeri');
+    expect(lidkoping).toContain('Early Android work, 2013');
+    expect(lidkoping).not.toContain('mailto:');
+    const rss = readFileSync('src/pages/rss.xml.ts', 'utf8');
+    expect(rss).toContain("entry.id !== 'lidkoping-stenhuggeri'");
+    expect(rss).not.toContain('/work/lidkoping-stenhuggeri');
+    expect(rss).toContain('ifs-design-system');
+    expect(rss).toContain('https://www.linkedin.com/in/alehar/');
+    expect(rss).not.toContain('mailto:');
+    const work = readFileSync('src/pages/work.astro', 'utf8');
+    expect(work).not.toContain("'lidkoping-stenhuggeri'");
+    expect(work).not.toContain('/work/lidkoping-stenhuggeri/');
+    expect(work).not.toContain('Lidköping');
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(slug).toContain("entry?.id === 'lidkoping-stenhuggeri' ? 'noindex'");
+    expect(slug).toContain('lidkoping-stenhuggeri');
+    const sitemap = readFileSync('src/pages/sitemap.xml.ts', 'utf8');
+    expect(sitemap).not.toContain('/work/lidkoping-stenhuggeri');
+    const robots = readFileSync('public/robots.txt', 'utf8');
+    expect(robots).toContain('Disallow: /work/lidkoping-stenhuggeri/');
     const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
     expect(cta).toContain('https://www.linkedin.com/in/alehar/');
     expect(cta).not.toContain('mailto:');
@@ -1086,6 +1116,8 @@ describe('identity copy', () => {
       '<description>Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.</description>'
     );
     expect(rss).toContain('ifs-design-system');
+    expect(rss).toContain("entry.id !== 'lidkoping-stenhuggeri'");
+    expect(rss).not.toContain('/work/lidkoping-stenhuggeri');
     expect(rss).not.toContain('localhost');
     expect(rss).not.toContain('harenstam.com');
     expect(rss).not.toContain('mailto:');
