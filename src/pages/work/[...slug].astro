@@ -50,7 +50,7 @@ const schema = entry
           url: `https://me.alehar.workers.dev/work/${entry.id}/`,
           name: `${entry.data.title} | Alexander Härenstam`,
           description:
-            entry.id === 'ifs-design-system'
+            entry.id === 'ifs-design-system' || entry.id === 'ai-coding-copilots'
               ? `${entry.data.description.trim()} Get in touch on LinkedIn.`
               : entry.data.description,
           breadcrumb: {
