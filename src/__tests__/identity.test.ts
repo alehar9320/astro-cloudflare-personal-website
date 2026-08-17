@@ -418,6 +418,17 @@ describe('identity copy', () => {
     expect(ds).not.toContain('mailto:');
   });
 
+  it('lets the IFS Design System work-case TL;DR include at IFS', () => {
+    const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
+    expect(ds).toContain('I am <strong>Product Manager, Developer Experience</strong> at IFS.');
+    expect(ds).toContain('<strong>TL;DR:</strong>');
+    expect(ds).toContain('title: IFS Design System');
+    expect(ds).toContain('**Up to 2x faster**');
+    expect(ds).toContain('**Up to 30x ROI**');
+    expect(ds).toContain('**Zeroheight Design System Awards**');
+    expect(ds).not.toContain('mailto:');
+  });
+
   it('keeps the chat FAB off Earlier work case body copy on a phone', () => {
     const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
     expect(slug).toContain('earlier-case');
