@@ -808,6 +808,19 @@ describe('identity copy', () => {
     expect(work).not.toContain('mailto:');
   });
 
+  it('lets Work ItemList.description read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+    const work = readFileSync('src/pages/work.astro', 'utf8');
+    const itemListDescription =
+      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+    expect(work).toContain("'@type': 'ItemList'");
+    expect(work).toContain(
+      `'@type': 'ItemList',
+      name: 'Work | Product Manager, Developer Experience at IFS',
+      description: '${itemListDescription}'`
+    );
+    expect(work).not.toContain('mailto:');
+  });
+
   it('lets the RSS title read Product Manager, Developer Experience at IFS', () => {
     const rss = readFileSync('src/pages/rss.xml.ts', 'utf8');
     expect(rss).toContain(
