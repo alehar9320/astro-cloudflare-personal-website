@@ -837,6 +837,20 @@ describe('identity copy', () => {
     expect(slug).not.toContain('mailto:');
   });
 
+  it('lets the IFS Design System JSON-LD CreativeWork.description include Get in touch on LinkedIn', () => {
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(slug).toContain("'@type': 'CreativeWork'");
+    expect(slug).toContain(
+      `'@type': 'CreativeWork',
+          name: entry.data.title,
+          description:
+            entry.id === 'ifs-design-system'
+              ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
+              : entry.data.description,`
+    );
+    expect(slug).not.toContain('mailto:');
+  });
+
   it('lets the RSS title read Product Manager, Developer Experience at IFS', () => {
     const rss = readFileSync('src/pages/rss.xml.ts', 'utf8');
     expect(rss).toContain(
