@@ -13,14 +13,21 @@ interface Props {
   description?: string | undefined;
   ogTitle?: string | undefined;
   shareUrl?: string | undefined;
+  canonicalUrl?: string | undefined;
 }
 
-const { title, description, ogTitle, shareUrl } = Astro.props;
+const { title, description, ogTitle, shareUrl, canonicalUrl } = Astro.props;
 ---
 
 <html lang="en">
   <head>
-    <MainHead title={title} description={description} ogTitle={ogTitle} shareUrl={shareUrl} />
+    <MainHead
+      title={title}
+      description={description}
+      ogTitle={ogTitle}
+      shareUrl={shareUrl}
+      canonicalUrl={canonicalUrl}
+    />
   </head>
   <body>
     <!-- Skip to content link for accessibility -->

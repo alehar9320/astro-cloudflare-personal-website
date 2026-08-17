@@ -7,6 +7,7 @@ interface Props {
   description?: string | undefined;
   ogTitle?: string | undefined;
   shareUrl?: string | undefined;
+  canonicalUrl?: string | undefined;
 }
 
 const {
@@ -14,11 +15,12 @@ const {
   description = 'Product Manager, Developer Experience at IFS.',
   ogTitle,
   shareUrl: shareUrlProp,
+  canonicalUrl: canonicalUrlProp,
 } = Astro.props;
 const shareTitle = ogTitle ?? title;
 const shareImage = 'https://me.alehar.workers.dev/assets/portrait.png';
 const liveOrigin = 'https://me.alehar.workers.dev';
-const canonicalUrl = new URL(Astro.url.pathname, liveOrigin).href;
+const canonicalUrl = canonicalUrlProp ?? new URL(Astro.url.pathname, liveOrigin).href;
 const shareUrl = shareUrlProp ?? canonicalUrl;
 ---
 

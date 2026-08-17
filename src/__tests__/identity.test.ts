@@ -868,6 +868,7 @@ describe('identity copy', () => {
     const page = readFileSync('src/pages/404.astro', 'utf8');
     const head = readFileSync('src/components/MainHead.astro', 'utf8');
     expect(page).toContain('shareUrl="https://me.alehar.workers.dev/"');
+    expect(page).toContain('canonicalUrl="https://me.alehar.workers.dev/"');
     expect(head).toContain('property="og:url"');
     expect(head).toContain('content={shareUrl}');
     expect(head).toContain('name="twitter:url"');
