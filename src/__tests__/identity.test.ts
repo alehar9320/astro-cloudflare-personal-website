@@ -793,6 +793,21 @@ describe('identity copy', () => {
     expect(bio).not.toContain('mailto:');
   });
 
+  it('lets Work WebPage.description read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+    const work = readFileSync('src/pages/work.astro', 'utf8');
+    const webpageDescription =
+      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+    expect(work).toContain("'@type': 'WebPage'");
+    expect(work).toContain(
+      `'@type': 'WebPage',
+      '@id': 'https://me.alehar.workers.dev/work/#webpage',
+      url: 'https://me.alehar.workers.dev/work/',
+      name: 'Work | Product Manager, Developer Experience at IFS',
+      description: '${webpageDescription}'`
+    );
+    expect(work).not.toContain('mailto:');
+  });
+
   it('lets the RSS title read Product Manager, Developer Experience at IFS', () => {
     const rss = readFileSync('src/pages/rss.xml.ts', 'utf8');
     expect(rss).toContain(
