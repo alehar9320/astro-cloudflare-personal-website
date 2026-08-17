@@ -19,6 +19,18 @@ As Product Manager, Developer Experience at IFS, I took the design system from t
 
 Product teams needed a shared way to ship UI across Cloud, so feature work could move faster and the experience stayed consistent.
 
+## Problem
+
+Product teams needed a shared way to ship UI across Cloud. There was no Cloud-scale system to inherit.
+
+## Approach
+
+As Product Manager, Developer Experience at IFS, I took the design system from the first version to IFS Cloud, IFS's enterprise product platform.
+
+## Outcome
+
+The system now runs at IFS Cloud scale. Developers and designers use it to ship a consistent experience across Cloud, with up to 2x faster feature delivery and up to 30x ROI on the initial investment. It was a Zeroheight Design System Awards runner-up.
+
 ## Metrics
 
 - **Up to 2x faster** feature delivery

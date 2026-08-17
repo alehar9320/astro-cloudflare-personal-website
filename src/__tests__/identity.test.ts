@@ -447,6 +447,20 @@ describe('identity copy', () => {
     );
   });
 
+  it('lets the IFS Design System case include a problem-approach-outcome section', () => {
+    const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
+    expect(ds).toContain('## Problem');
+    expect(ds).toContain('## Approach');
+    expect(ds).toContain('## Outcome');
+    expect(ds).toContain('up to 2x');
+    expect(ds).toContain('up to 30x');
+    expect(ds).toContain('Zeroheight');
+    expect(ds).toContain(
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+    );
+    expect(ds).not.toContain('mailto:');
+  });
+
   it('lets the AI coding copilots case include a visible Get in touch on LinkedIn CTA', () => {
     const copilots = readFileSync('src/content/work/ai-coding-copilots.md', 'utf8');
     expect(copilots).toContain(
