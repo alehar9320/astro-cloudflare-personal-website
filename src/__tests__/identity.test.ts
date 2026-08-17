@@ -851,6 +851,11 @@ describe('identity copy', () => {
     expect(page).toContain(
       'ogTitle="Page not found | Product Manager, Developer Experience at IFS"'
     );
+    const head = readFileSync('src/components/MainHead.astro', 'utf8');
+    expect(page).toContain('description="This page isn\'t here."');
+    expect(page).not.toContain('404 Error — this page was not found');
+    expect(head).toContain('name="description" property="og:description" content={description}');
+    expect(head).toContain('name="twitter:description" content={description}');
     expect(notFound).toContain('Product Manager, Developer Experience at IFS');
     expect(notFound).not.toContain('mailto:');
     expect(notFound).not.toContain('this is not on the site');
