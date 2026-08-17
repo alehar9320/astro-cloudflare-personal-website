@@ -889,6 +889,7 @@ describe('identity copy', () => {
     const robots = readFileSync('public/robots.txt', 'utf8');
     expect(robots).toContain('Disallow: /experimental/');
     expect(robots).toContain('Disallow: /whats-new/');
+    expect(robots).toContain('Disallow: /work/lidkoping-stenhuggeri/');
     expect(robots).toContain('Sitemap: https://me.alehar.workers.dev/sitemap.xml');
     expect(robots).not.toContain('localhost');
     expect(robots).not.toContain('harenstam.com');
