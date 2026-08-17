@@ -602,6 +602,17 @@ describe('identity copy', () => {
     expect(home).not.toContain('mailto:');
   });
 
+  it('lets Person.jobTitle read Product Manager, Developer Experience at IFS', () => {
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    const bio = readFileSync('src/pages/biography.astro', 'utf8');
+    expect(home).toContain("jobTitle: 'Product Manager, Developer Experience at IFS'");
+    expect(bio).toContain("jobTitle: 'Product Manager, Developer Experience at IFS'");
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+    expect(bio).toContain('https://www.linkedin.com/in/alehar/');
+    expect(home).not.toContain('mailto:');
+    expect(bio).not.toContain('mailto:');
+  });
+
   it('grounds llms.txt with Chalmers education and recruiter keywords', () => {
     const llms = sources.find((s) => s.path.endsWith('llms.txt'))!.text;
     expect(llms).toContain('Chalmers B.Sc. Software Engineering');
