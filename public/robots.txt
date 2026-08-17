@@ -26,5 +26,6 @@
 User-agent: *
 Disallow: /experimental/
 Disallow: /whats-new/
+Disallow: /work/lidkoping-stenhuggeri/
 
 Sitemap: https://me.alehar.workers.dev/sitemap.xml
