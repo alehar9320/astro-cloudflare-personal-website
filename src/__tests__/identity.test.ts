@@ -193,8 +193,8 @@ describe('identity copy', () => {
     expect(footer).not.toContain('href="https://astro.build/"');
     expect(footer).not.toContain('instagram.com');
     expect(footer).not.toContain('facebook.com');
-    expect(nav).toContain('https://www.instagram.com/alle12393');
-    expect(nav).toContain('https://www.facebook.com/alehar9320/');
+    expect(nav).not.toContain('instagram.com');
+    expect(nav).not.toContain('facebook.com');
     expect(footer).not.toContain('Latest Updates');
     expect(footer).not.toContain('Report an issue');
     expect(footer).not.toContain('agentic engineering');
@@ -215,8 +215,8 @@ describe('identity copy', () => {
     expect(footer).toContain('Sweden');
     expect(footer).not.toContain('instagram.com');
     expect(footer).not.toContain('facebook.com');
-    expect(nav).toContain('https://www.instagram.com/alle12393');
-    expect(nav).toContain('https://www.facebook.com/alehar9320/');
+    expect(nav).not.toContain('instagram.com');
+    expect(nav).not.toContain('facebook.com');
     expect(footer).not.toContain('Designed & Developed');
     expect(footer).not.toContain('Latest Updates');
     expect(footer).not.toContain('Report an issue');
@@ -234,8 +234,8 @@ describe('identity copy', () => {
     expect(footer).toContain('Sweden');
     expect(footer).toContain('https://www.linkedin.com/in/alehar/');
     expect(footer).not.toContain('mailto:');
-    expect(nav).toContain('https://www.instagram.com/alle12393');
-    expect(nav).toContain('https://www.facebook.com/alehar9320/');
+    expect(nav).not.toContain('instagram.com');
+    expect(nav).not.toContain('facebook.com');
     expect(footer).not.toContain('instagram.com');
     expect(footer).not.toContain('facebook.com');
     expect(footer).not.toContain('with Astro');
@@ -245,6 +245,20 @@ describe('identity copy', () => {
     expect(footer).not.toContain('agentic engineering');
     expect(footer).not.toContain('>Source</span>');
     expect(footer).not.toContain('source-link');
+  });
+
+  it('drops Instagram and Facebook from the header and keeps LinkedIn hire', () => {
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(nav).not.toContain('instagram.com');
+    expect(nav).not.toContain('facebook.com');
+    expect(nav).toContain('https://www.linkedin.com/in/alehar');
+    expect(nav).toContain('https://github.com/alehar9320');
+    expect(nav).not.toContain('mailto:');
+    expect(footer).not.toContain('instagram.com');
+    expect(footer).not.toContain('facebook.com');
+    expect(footer).toContain('https://www.linkedin.com/in/alehar/');
+    expect(footer).not.toContain('mailto:');
   });
 
   it('keeps the header terminal glyph and drops the competing footer rocket', () => {
