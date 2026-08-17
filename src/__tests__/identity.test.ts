@@ -1069,7 +1069,9 @@ describe('identity copy', () => {
           url: \`https://me.alehar.workers.dev/work/\${entry.id}/\`,
           name: \`\${entry.data.title} | Alexander Härenstam\`,
           description:
-            entry.id === 'ifs-design-system' || entry.id === 'ai-coding-copilots'
+            entry.id === 'ifs-design-system' ||
+            entry.id === 'ai-coding-copilots' ||
+            entry.id === 'user-behavior-analytics'
               ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
               : entry.data.description,`
     );
@@ -1085,7 +1087,27 @@ describe('identity copy', () => {
           url: \`https://me.alehar.workers.dev/work/\${entry.id}/\`,
           name: \`\${entry.data.title} | Alexander Härenstam\`,
           description:
-            entry.id === 'ifs-design-system' || entry.id === 'ai-coding-copilots'
+            entry.id === 'ifs-design-system' ||
+            entry.id === 'ai-coding-copilots' ||
+            entry.id === 'user-behavior-analytics'
+              ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
+              : entry.data.description,`
+    );
+    expect(slug).not.toContain('mailto:');
+  });
+
+  it('lets the user behavior analytics JSON-LD WebPage.description include Get in touch on LinkedIn', () => {
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(slug).toContain("'@type': 'WebPage'");
+    expect(slug).toContain(
+      `'@type': 'WebPage',
+          '@id': \`https://me.alehar.workers.dev/work/\${entry.id}/#webpage\`,
+          url: \`https://me.alehar.workers.dev/work/\${entry.id}/\`,
+          name: \`\${entry.data.title} | Alexander Härenstam\`,
+          description:
+            entry.id === 'ifs-design-system' ||
+            entry.id === 'ai-coding-copilots' ||
+            entry.id === 'user-behavior-analytics'
               ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
               : entry.data.description,`
     );
