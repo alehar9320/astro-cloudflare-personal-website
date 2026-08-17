@@ -1060,6 +1060,26 @@ describe('identity copy', () => {
     expect(work).not.toContain('mailto:');
   });
 
+  it('lets the IFS Design System JSON-LD WebPage.name read Product Manager, Developer Experience at IFS', () => {
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(slug).toContain("'@type': 'WebPage'");
+    expect(slug).toContain(
+      `'@type': 'WebPage',
+          '@id': \`https://me.alehar.workers.dev/work/\${entry.id}/#webpage\`,
+          url: \`https://me.alehar.workers.dev/work/\${entry.id}/\`,
+          name:
+            entry.id === 'ifs-design-system'
+              ? 'IFS Design System | Product Manager, Developer Experience at IFS'
+              : \`\${entry.data.title} | Alexander Härenstam\`,`
+    );
+    expect(slug).toContain("'@type': 'CreativeWork'");
+    expect(slug).toContain(
+      `'@type': 'CreativeWork',
+          name: entry.data.title,`
+    );
+    expect(slug).not.toContain('mailto:');
+  });
+
   it('lets the IFS Design System JSON-LD WebPage.description include Get in touch on LinkedIn', () => {
     const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
     expect(slug).toContain("'@type': 'WebPage'");
@@ -1067,7 +1087,10 @@ describe('identity copy', () => {
       `'@type': 'WebPage',
           '@id': \`https://me.alehar.workers.dev/work/\${entry.id}/#webpage\`,
           url: \`https://me.alehar.workers.dev/work/\${entry.id}/\`,
-          name: \`\${entry.data.title} | Alexander Härenstam\`,
+          name:
+            entry.id === 'ifs-design-system'
+              ? 'IFS Design System | Product Manager, Developer Experience at IFS'
+              : \`\${entry.data.title} | Alexander Härenstam\`,
           description:
             entry.id === 'ifs-design-system' ||
             entry.id === 'ai-coding-copilots' ||
@@ -1086,7 +1109,10 @@ describe('identity copy', () => {
       `'@type': 'WebPage',
           '@id': \`https://me.alehar.workers.dev/work/\${entry.id}/#webpage\`,
           url: \`https://me.alehar.workers.dev/work/\${entry.id}/\`,
-          name: \`\${entry.data.title} | Alexander Härenstam\`,
+          name:
+            entry.id === 'ifs-design-system'
+              ? 'IFS Design System | Product Manager, Developer Experience at IFS'
+              : \`\${entry.data.title} | Alexander Härenstam\`,
           description:
             entry.id === 'ifs-design-system' ||
             entry.id === 'ai-coding-copilots' ||
@@ -1105,7 +1131,10 @@ describe('identity copy', () => {
       `'@type': 'WebPage',
           '@id': \`https://me.alehar.workers.dev/work/\${entry.id}/#webpage\`,
           url: \`https://me.alehar.workers.dev/work/\${entry.id}/\`,
-          name: \`\${entry.data.title} | Alexander Härenstam\`,
+          name:
+            entry.id === 'ifs-design-system'
+              ? 'IFS Design System | Product Manager, Developer Experience at IFS'
+              : \`\${entry.data.title} | Alexander Härenstam\`,
           description:
             entry.id === 'ifs-design-system' ||
             entry.id === 'ai-coding-copilots' ||
@@ -1124,7 +1153,10 @@ describe('identity copy', () => {
       `'@type': 'WebPage',
           '@id': \`https://me.alehar.workers.dev/work/\${entry.id}/#webpage\`,
           url: \`https://me.alehar.workers.dev/work/\${entry.id}/\`,
-          name: \`\${entry.data.title} | Alexander Härenstam\`,
+          name:
+            entry.id === 'ifs-design-system'
+              ? 'IFS Design System | Product Manager, Developer Experience at IFS'
+              : \`\${entry.data.title} | Alexander Härenstam\`,
           description:
             entry.id === 'ifs-design-system' ||
             entry.id === 'ai-coding-copilots' ||
