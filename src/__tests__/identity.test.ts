@@ -576,18 +576,26 @@ describe('identity copy', () => {
     expect(contact).not.toContain('mailto:');
   });
 
-  it('lets a Home share read Product Manager, Developer Experience at IFS', () => {
+  it('lets a Home share read Product Manager, Developer Experience at IFS and LinkedIn', () => {
     const head = readFileSync('src/components/MainHead.astro', 'utf8');
     const home = readFileSync('src/pages/index.astro', 'utf8');
     const layout = readFileSync('src/layouts/BaseLayout.astro', 'utf8');
+    const contact = readFileSync('src/pages/contact.astro', 'utf8');
+    const shareDescription =
+      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
     expect(home).toContain('ogTitle="Product Manager, Developer Experience at IFS"');
-    expect(home).toContain('description="Product Manager, Developer Experience at IFS."');
+    expect(home).toContain(`description="${shareDescription}"`);
+    expect(contact).toContain(`description="${shareDescription}"`);
     expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
     expect(home).toContain('https://www.linkedin.com/in/alehar/');
     expect(home).not.toContain('mailto:');
+    expect(contact).toContain('https://www.linkedin.com/in/alehar/');
+    expect(contact).not.toContain('mailto:');
     expect(layout).toContain('ogTitle={ogTitle}');
     expect(head).toContain('content={shareTitle}');
     expect(head).toContain('property="og:title"');
+    expect(head).toContain('name="description" property="og:description" content={description}');
+    expect(head).toContain('name="twitter:description" content={description}');
     expect(head).not.toContain('Design systems, DevEx, and Industrial AI.');
     expect(head).toContain("description = 'Product Manager, Developer Experience at IFS.'");
   });
