@@ -26,3 +26,5 @@ Product teams needed a shared way to ship UI across Cloud, so feature work could
 - **Zeroheight Design System Awards** runner-up
 
 The system now runs at IFS Cloud scale. Developers and designers use it to ship a consistent experience across Cloud.
+
+<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>
