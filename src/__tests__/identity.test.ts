@@ -497,6 +497,21 @@ describe('identity copy', () => {
     );
   });
 
+  it('lets the user behavior analytics case include a problem-approach-outcome section', () => {
+    const analytics = readFileSync('src/content/work/user-behavior-analytics.md', 'utf8');
+    expect(analytics).toContain('## Problem');
+    expect(analytics).toContain('## Approach');
+    expect(analytics).toContain('## Outcome');
+    expect(analytics).toContain('Product Manager, Developer Experience');
+    expect(analytics).toContain('capturing usage');
+    expect(analytics).toContain('product teams can see what customers actually do');
+    expect(analytics).toContain('Roadmap decisions rest on that usage');
+    expect(analytics).toContain(
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+    );
+    expect(analytics).not.toContain('mailto:');
+  });
+
   it("lets the Chalmers master's thesis case include a visible Get in touch on LinkedIn CTA", () => {
     const thesis = readFileSync('src/content/work/master-thesis.md', 'utf8');
     expect(thesis).toContain(
