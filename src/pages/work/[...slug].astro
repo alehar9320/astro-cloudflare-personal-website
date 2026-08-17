@@ -48,7 +48,10 @@ const schema = entry
           '@type': 'WebPage',
           '@id': `https://me.alehar.workers.dev/work/${entry.id}/#webpage`,
           url: `https://me.alehar.workers.dev/work/${entry.id}/`,
-          name: `${entry.data.title} | Alexander Härenstam`,
+          name:
+            entry.id === 'ifs-design-system'
+              ? 'IFS Design System | Product Manager, Developer Experience at IFS'
+              : `${entry.data.title} | Alexander Härenstam`,
           description:
             entry.id === 'ifs-design-system' ||
             entry.id === 'ai-coding-copilots' ||
