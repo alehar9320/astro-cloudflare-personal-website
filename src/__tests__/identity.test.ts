@@ -479,6 +479,22 @@ describe('identity copy', () => {
     );
   });
 
+  it('lets the AI coding copilots case include a problem-approach-outcome section', () => {
+    const copilots = readFileSync('src/content/work/ai-coding-copilots.md', 'utf8');
+    expect(copilots).toContain('## Problem');
+    expect(copilots).toContain('## Approach');
+    expect(copilots).toContain('## Outcome');
+    expect(copilots).toContain('Product Manager, Developer Experience');
+    expect(copilots).toContain('Greater Stockholm');
+    expect(copilots).toContain('internal AI coding copilots');
+    expect(copilots).toContain('engineering teams');
+    expect(copilots).toContain('February 2025');
+    expect(copilots).toContain(
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+    );
+    expect(copilots).not.toContain('mailto:');
+  });
+
   it('lets the user behavior analytics case include a visible Get in touch on LinkedIn CTA', () => {
     const analytics = readFileSync('src/content/work/user-behavior-analytics.md', 'utf8');
     expect(analytics).toContain(
