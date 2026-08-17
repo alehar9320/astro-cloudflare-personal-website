@@ -439,6 +439,16 @@ describe('identity copy', () => {
     expect(copilots).not.toContain('mailto:');
   });
 
+  it('lets the user behavior analytics work-case TL;DR include at IFS', () => {
+    const analytics = readFileSync('src/content/work/user-behavior-analytics.md', 'utf8');
+    expect(analytics).toContain(
+      'I am <strong>Product Manager, Developer Experience</strong> at IFS.'
+    );
+    expect(analytics).toContain('<strong>TL;DR:</strong>');
+    expect(analytics).toContain('title: User behavior analytics');
+    expect(analytics).not.toContain('mailto:');
+  });
+
   it('keeps the chat FAB off Earlier work case body copy on a phone', () => {
     const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
     expect(slug).toContain('earlier-case');
