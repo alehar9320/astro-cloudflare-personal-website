@@ -322,7 +322,7 @@ describe('identity copy', () => {
     expect(head).toContain('name="twitter:url"');
     expect(head).toContain('content={shareUrl}');
     expect(head).toContain('rel="canonical"');
-    expect(head).toContain('href={shareUrl}');
+    expect(head).toContain('href={canonicalUrl}');
     expect(head).not.toContain('content={Astro.url}');
     expect(head).not.toContain('localhost');
     expect(head).not.toContain('harenstam.com');
@@ -862,6 +862,17 @@ describe('identity copy', () => {
     expect(notFound).not.toContain("this isn't on the site yet");
     expect(notFound.toLowerCase()).not.toContain('this page is missing');
     expect(notFound.toLowerCase()).not.toContain("we couldn't find");
+  });
+
+  it('points 404 og:url and twitter:url at live Home', () => {
+    const page = readFileSync('src/pages/404.astro', 'utf8');
+    const head = readFileSync('src/components/MainHead.astro', 'utf8');
+    expect(page).toContain('shareUrl="https://me.alehar.workers.dev/"');
+    expect(head).toContain('property="og:url"');
+    expect(head).toContain('content={shareUrl}');
+    expect(head).toContain('name="twitter:url"');
+    expect(head).toContain('rel="canonical"');
+    expect(head).toContain('href={canonicalUrl}');
   });
 
   it('ships a live RSS feed at /rss.xml so visitors can follow new work', () => {

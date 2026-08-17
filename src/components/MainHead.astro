@@ -6,17 +6,20 @@ interface Props {
   title?: string | undefined;
   description?: string | undefined;
   ogTitle?: string | undefined;
+  shareUrl?: string | undefined;
 }
 
 const {
   title = 'Alexander Härenstam | Product Manager, Developer Experience',
   description = 'Product Manager, Developer Experience at IFS.',
   ogTitle,
+  shareUrl: shareUrlProp,
 } = Astro.props;
 const shareTitle = ogTitle ?? title;
 const shareImage = 'https://me.alehar.workers.dev/assets/portrait.png';
 const liveOrigin = 'https://me.alehar.workers.dev';
-const shareUrl = new URL(Astro.url.pathname, liveOrigin).href;
+const canonicalUrl = new URL(Astro.url.pathname, liveOrigin).href;
+const shareUrl = shareUrlProp ?? canonicalUrl;
 ---
 
 <meta charset="UTF-8" />
@@ -29,7 +32,7 @@ const shareUrl = new URL(Astro.url.pathname, liveOrigin).href;
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
 <meta property="og:url" content={shareUrl} />
-<link rel="canonical" href={shareUrl} />
+<link rel="canonical" href={canonicalUrl} />
 <meta property="og:title" content={shareTitle} />
 <meta property="og:image" content={shareImage} />
 
