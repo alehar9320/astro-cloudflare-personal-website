@@ -819,6 +819,8 @@ describe('identity copy', () => {
   it('lets the Biography visible current-role title read Product Manager, Developer Experience at IFS', () => {
     const bio = readFileSync('src/pages/biography.astro', 'utf8');
     expect(bio).toContain('<h3>Product Manager, Developer Experience at IFS</h3>');
+    expect(bio).toContain('<p class="where">Greater Stockholm</p>');
+    expect(bio).not.toContain('<p class="where">IFS, Greater Stockholm</p>');
     expect(bio).toContain('https://www.linkedin.com/in/alehar/');
     expect(bio).not.toContain('mailto:');
   });
