@@ -37,9 +37,9 @@ function itemXml(entry: {
 
 export const GET: APIRoute = async () => {
   const work = await getCollection('work');
-  const items = [...work].sort(
-    (a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime()
-  );
+  const items = [...work]
+    .filter((entry) => entry.id !== 'lidkoping-stenhuggeri')
+    .sort((a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime());
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
