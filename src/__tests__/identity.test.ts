@@ -1121,7 +1121,9 @@ describe('identity copy', () => {
       `'@type': 'CreativeWork',
           name: entry.data.title,
           description:
-            entry.id === 'ifs-design-system' || entry.id === 'ai-coding-copilots'
+            entry.id === 'ifs-design-system' ||
+            entry.id === 'ai-coding-copilots' ||
+            entry.id === 'user-behavior-analytics'
               ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
               : entry.data.description,`
     );
@@ -1135,7 +1137,25 @@ describe('identity copy', () => {
       `'@type': 'CreativeWork',
           name: entry.data.title,
           description:
-            entry.id === 'ifs-design-system' || entry.id === 'ai-coding-copilots'
+            entry.id === 'ifs-design-system' ||
+            entry.id === 'ai-coding-copilots' ||
+            entry.id === 'user-behavior-analytics'
+              ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
+              : entry.data.description,`
+    );
+    expect(slug).not.toContain('mailto:');
+  });
+
+  it('lets the user behavior analytics JSON-LD CreativeWork.description include Get in touch on LinkedIn', () => {
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(slug).toContain("'@type': 'CreativeWork'");
+    expect(slug).toContain(
+      `'@type': 'CreativeWork',
+          name: entry.data.title,
+          description:
+            entry.id === 'ifs-design-system' ||
+            entry.id === 'ai-coding-copilots' ||
+            entry.id === 'user-behavior-analytics'
               ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
               : entry.data.description,`
     );
