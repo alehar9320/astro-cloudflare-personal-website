@@ -574,9 +574,14 @@ describe('identity copy', () => {
     expect(sitemap).not.toContain('/experimental/manifesto');
     expect(sitemap).not.toContain('/experimental/now');
     expect(sitemap).not.toContain('/experimental/reading-list');
+    expect(sitemap).not.toContain('/whats-new');
     expect(sitemap).not.toContain('localhost');
     expect(sitemap).not.toContain('harenstam.com');
     expect(sitemap).not.toContain('mailto:');
+    expect(existsSync('src/pages/whats-new.astro')).toBe(true);
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(footer).toContain('https://www.linkedin.com/in/alehar/');
+    expect(footer).not.toContain('mailto:');
   });
 
   it('points robots.txt at the live sitemap so search can find it', () => {
