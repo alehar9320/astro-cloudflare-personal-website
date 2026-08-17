@@ -692,6 +692,18 @@ describe('identity copy', () => {
     expect(rss).not.toContain('mailto:');
   });
 
+  it('lets the RSS channel description read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+    const rss = readFileSync('src/pages/rss.xml.ts', 'utf8');
+    const channelDescription =
+      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+    expect(rss).toContain(`<description>${channelDescription}</description>`);
+    expect(rss).toContain(
+      '<title>Alexander Härenstam | Product Manager, Developer Experience at IFS</title>'
+    );
+    expect(rss).toContain('https://www.linkedin.com/in/alehar/');
+    expect(rss).not.toContain('mailto:');
+  });
+
   it('lets the Home RSS alternate link title read Product Manager, Developer Experience at IFS', () => {
     const head = readFileSync('src/components/MainHead.astro', 'utf8');
     const home = readFileSync('src/pages/index.astro', 'utf8');
@@ -804,6 +816,9 @@ describe('identity copy', () => {
     expect(rss).toContain('https://me.alehar.workers.dev');
     expect(rss).toContain(
       '<title>Alexander Härenstam | Product Manager, Developer Experience at IFS</title>'
+    );
+    expect(rss).toContain(
+      '<description>Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.</description>'
     );
     expect(rss).toContain('ifs-design-system');
     expect(rss).not.toContain('localhost');
