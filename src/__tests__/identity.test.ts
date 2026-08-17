@@ -477,15 +477,15 @@ describe('identity copy', () => {
 
   it('keeps only the IFS Design System on the main /work card grid', () => {
     const work = sources.find((s) => s.path.endsWith('work.astro'))!.text;
-    expect(work).toContain("'lidkoping-stenhuggeri'");
+    expect(work).not.toContain("'lidkoping-stenhuggeri'");
     expect(work).toContain("'ai-coding-copilots'");
     expect(work).toContain("'user-behavior-analytics'");
     expect(work).toContain("'master-thesis'");
     expect(work).toContain("featuredOrder = ['ifs-design-system']");
-    expect(work).toContain("'master-thesis',\n  'lidkoping-stenhuggeri'");
+    expect(work).not.toContain("'master-thesis',\n  'lidkoping-stenhuggeri'");
     expect(work).toContain('const ordered = [...featured, ...earlier]');
     expect(work).toContain('Earlier work');
-    expect(work).toContain('Early Android work, 2013.');
+    expect(work).not.toContain('Early Android work, 2013.');
     expect(work).toContain('Internal AI coding copilots for IFS engineering teams.');
     expect(work).toContain('Usage telemetry for IFS Cloud roadmap decisions.');
     expect(work).toContain("Chalmers master's thesis, 2017.");
@@ -888,7 +888,34 @@ describe('identity copy', () => {
     expect(sitemap).not.toContain('/work/lidkoping-stenhuggeri');
     expect(sitemap).toContain('ifs-design-system');
     const work = readFileSync('src/pages/work.astro', 'utf8');
-    expect(work).toContain("'lidkoping-stenhuggeri'");
+    expect(work).not.toContain("'lidkoping-stenhuggeri'");
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(cta).not.toContain('mailto:');
+  });
+
+  it('drops Lidköping Stenhuggeri from the Work index and keeps the page', () => {
+    expect(existsSync('src/content/work/lidkoping-stenhuggeri.md')).toBe(true);
+    const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
+    expect(lidkoping).toContain('title: Lidköping Stenhuggeri');
+    expect(lidkoping).toContain('Early Android work, 2013');
+    expect(lidkoping).not.toContain('mailto:');
+    const work = readFileSync('src/pages/work.astro', 'utf8');
+    expect(work).not.toContain("'lidkoping-stenhuggeri'");
+    expect(work).not.toContain('/work/lidkoping-stenhuggeri/');
+    expect(work).not.toContain('Lidköping');
+    expect(work).toContain("'ai-coding-copilots'");
+    expect(work).toContain("'user-behavior-analytics'");
+    expect(work).toContain("'master-thesis'");
+    expect(work).toContain("featuredOrder = ['ifs-design-system']");
+    expect(work).toContain('Earlier work');
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(slug).toContain("entry?.id === 'lidkoping-stenhuggeri' ? 'noindex'");
+    expect(slug).toContain('lidkoping-stenhuggeri');
+    const sitemap = readFileSync('src/pages/sitemap.xml.ts', 'utf8');
+    expect(sitemap).not.toContain('/work/lidkoping-stenhuggeri');
+    const robots = readFileSync('public/robots.txt', 'utf8');
+    expect(robots).toContain('Disallow: /work/lidkoping-stenhuggeri/');
     const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
     expect(cta).toContain('https://www.linkedin.com/in/alehar/');
     expect(cta).not.toContain('mailto:');
