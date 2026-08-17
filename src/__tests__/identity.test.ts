@@ -557,6 +557,25 @@ describe('identity copy', () => {
     expect(slug).not.toContain('harenstam.com');
   });
 
+  it('lets Work, Biography, and Contact shares read Product Manager, Developer Experience at IFS', () => {
+    const work = readFileSync('src/pages/work.astro', 'utf8');
+    const bio = readFileSync('src/pages/biography.astro', 'utf8');
+    const contact = readFileSync('src/pages/contact.astro', 'utf8');
+    expect(work).toContain('title="Work | Product Manager, Developer Experience at IFS"');
+    expect(bio).toContain('title="Biography | Product Manager, Developer Experience at IFS"');
+    expect(contact).toContain(
+      'title="Get in touch | Product Manager, Developer Experience at IFS"'
+    );
+    expect(work).not.toContain('title="Work | Alexander Härenstam"');
+    expect(bio).not.toContain('title="Biography | Alexander Härenstam"');
+    expect(contact).not.toContain('title="Get in touch | Alexander Härenstam"');
+    expect(bio).toContain('https://www.linkedin.com/in/alehar/');
+    expect(contact).toContain('https://www.linkedin.com/in/alehar/');
+    expect(work).not.toContain('mailto:');
+    expect(bio).not.toContain('mailto:');
+    expect(contact).not.toContain('mailto:');
+  });
+
   it('lets a Home share read Product Manager, Developer Experience at IFS', () => {
     const head = readFileSync('src/components/MainHead.astro', 'utf8');
     const home = readFileSync('src/pages/index.astro', 'utf8');
