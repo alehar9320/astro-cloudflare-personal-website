@@ -81,7 +81,7 @@ const schema = entry
           '@type': 'CreativeWork',
           name: entry.data.title,
           description:
-            entry.id === 'ifs-design-system'
+            entry.id === 'ifs-design-system' || entry.id === 'ai-coding-copilots'
               ? `${entry.data.description.trim()} Get in touch on LinkedIn.`
               : entry.data.description,
           datePublished: entry.data.publishDate.toISOString(),
