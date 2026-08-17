@@ -20,3 +20,5 @@ This is earlier work. Master's thesis at [Chalmers University of Technology](htt
 3. Where that case differed from the literature.
 
 Opportunities showed up as reach, scale, and data for decisions. Barriers were mostly organizational. The featured case is the [IFS Design System](/work/ifs-design-system/).
+
+<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>
