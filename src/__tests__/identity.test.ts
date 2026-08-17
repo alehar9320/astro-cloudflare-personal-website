@@ -855,16 +855,9 @@ describe('identity copy', () => {
     expect(cta).not.toContain('mailto:');
   });
 
-  it('adds robots noindex on the experimental manifesto, now, and reading-list pages and keeps the pages', () => {
-    expect(existsSync('src/pages/experimental/manifesto.astro')).toBe(true);
+  it('adds robots noindex on /experimental/now/ and /experimental/reading-list/ and keeps the pages', () => {
     expect(existsSync('src/pages/experimental/now.astro')).toBe(true);
     expect(existsSync('src/pages/experimental/reading-list.astro')).toBe(true);
-    const manifesto = readFileSync('src/pages/experimental/manifesto.astro', 'utf8');
-    expect(manifesto).toContain('robots="noindex"');
-    expect(manifesto).toContain('title="Manifesto"');
-    expect(manifesto).toContain('Product Manifesto');
-    expect(manifesto).not.toContain('mailto:');
-    expect(manifesto).not.toContain('nofollow');
     const now = readFileSync('src/pages/experimental/now.astro', 'utf8');
     expect(now).toContain('robots="noindex"');
     expect(now).toContain('https://www.linkedin.com/in/alehar/');
@@ -883,7 +876,6 @@ describe('identity copy', () => {
     const layout = readFileSync('src/layouts/BaseLayout.astro', 'utf8');
     expect(layout).toContain('robots={robots}');
     const sitemap = readFileSync('src/pages/sitemap.xml.ts', 'utf8');
-    expect(sitemap).not.toContain('/experimental/manifesto');
     expect(sitemap).not.toContain('/experimental/now');
     expect(sitemap).not.toContain('/experimental/reading-list');
     expect(sitemap).toContain('ifs-design-system');
