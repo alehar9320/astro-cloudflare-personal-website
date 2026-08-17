@@ -800,6 +800,13 @@ describe('identity copy', () => {
     expect(home).not.toContain('mailto:');
   });
 
+  it('lets the Biography visible current-role title read Product Manager, Developer Experience at IFS', () => {
+    const bio = readFileSync('src/pages/biography.astro', 'utf8');
+    expect(bio).toContain('<h3>Product Manager, Developer Experience at IFS</h3>');
+    expect(bio).toContain('https://www.linkedin.com/in/alehar/');
+    expect(bio).not.toContain('mailto:');
+  });
+
   it('lets Person.jobTitle read Product Manager, Developer Experience at IFS', () => {
     const home = readFileSync('src/pages/index.astro', 'utf8');
     const bio = readFileSync('src/pages/biography.astro', 'utf8');
