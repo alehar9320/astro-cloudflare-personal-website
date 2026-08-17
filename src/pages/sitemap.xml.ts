@@ -5,7 +5,7 @@ export const prerender = true;
 
 const liveOrigin = 'https://me.alehar.workers.dev';
 
-const staticPaths = ['/', '/work/', '/biography/', '/contact/', '/whats-new'];
+const staticPaths = ['/', '/work/', '/biography/', '/contact/'];
 
 function loc(path: string) {
   return `${liveOrigin}${path}`;
