@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
+import { fetchDirectNotFound, isDirectNotFoundPath } from '../direct-not-found';
 import { toVisitorChangelogTitle, toVisitorRelease } from '../utils/visitor-changelog';
 
 const files = [
@@ -874,6 +875,36 @@ describe('identity copy', () => {
     expect(head).toContain('name="twitter:url"');
     expect(head).toContain('rel="canonical"');
     expect(head).toContain('href={canonicalUrl}');
+  });
+
+  it('GET /404/ returns HTTP 404', async () => {
+    const page = readFileSync('src/pages/404.astro', 'utf8');
+    const content = readFileSync('src/components/NotFoundContent.astro', 'utf8');
+    const wrangler = readFileSync('wrangler.jsonc', 'utf8');
+    const worker = readFileSync('src/cloudflare-worker.ts', 'utf8');
+    expect(page).toContain('Astro.response.status = 404');
+    expect(page).toContain('title="Page not found | Product Manager, Developer Experience at IFS"');
+    expect(page).toContain('description="This page isn\'t here."');
+    expect(page).toContain('shareUrl="https://me.alehar.workers.dev/"');
+    expect(page).toContain('canonicalUrl="https://me.alehar.workers.dev/"');
+    expect(content).toContain('title="Page not found"');
+    expect(content).toContain('tagline="This page isn\'t here."');
+    expect(content).toContain('https://www.linkedin.com/in/alehar/');
+    expect(content).not.toContain('mailto:');
+    expect(wrangler).toContain('./src/cloudflare-worker.ts');
+    expect(wrangler).toContain('run_worker_first');
+    expect(wrangler).toContain('"/404/"');
+    expect(wrangler).toContain('"/404"');
+    expect(worker).toContain('fetchDirectNotFound');
+    expect(isDirectNotFoundPath('/404/')).toBe(true);
+    expect(isDirectNotFoundPath('/404')).toBe(true);
+    expect(isDirectNotFoundPath('/')).toBe(false);
+    const html = "<h1>Page not found</h1><p>This page isn't here.</p>";
+    const response = await fetchDirectNotFound(new Request('https://me.alehar.workers.dev/404/'), {
+      fetch: async () => new Response(html, { status: 200 }),
+    });
+    expect(response.status).toBe(404);
+    expect(await response.text()).toContain('Page not found');
   });
 
   it('ships a live RSS feed at /rss.xml so visitors can follow new work', () => {
