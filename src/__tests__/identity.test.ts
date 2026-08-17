@@ -437,12 +437,8 @@ describe('identity copy', () => {
     expect(ds).not.toContain('mailto:');
 
     const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
-    const thesis = readFileSync('src/content/work/master-thesis.md', 'utf8');
     const work = readFileSync('src/pages/work.astro', 'utf8');
-    for (const { path, text } of [
-      { path: 'lidkoping-stenhuggeri.md', text: lidkoping },
-      { path: 'master-thesis.md', text: thesis },
-    ]) {
+    for (const { path, text } of [{ path: 'lidkoping-stenhuggeri.md', text: lidkoping }]) {
       expect(text, path).not.toContain('Get in touch on LinkedIn');
       expect(text, path).not.toContain('https://www.linkedin.com/in/alehar/');
     }
@@ -459,12 +455,8 @@ describe('identity copy', () => {
     expect(copilots).not.toContain('mailto:');
 
     const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
-    const thesis = readFileSync('src/content/work/master-thesis.md', 'utf8');
     const work = readFileSync('src/pages/work.astro', 'utf8');
-    for (const { path, text } of [
-      { path: 'lidkoping-stenhuggeri.md', text: lidkoping },
-      { path: 'master-thesis.md', text: thesis },
-    ]) {
+    for (const { path, text } of [{ path: 'lidkoping-stenhuggeri.md', text: lidkoping }]) {
       expect(text, path).not.toContain('Get in touch on LinkedIn');
       expect(text, path).not.toContain('https://www.linkedin.com/in/alehar/');
     }
@@ -481,12 +473,26 @@ describe('identity copy', () => {
     expect(analytics).not.toContain('mailto:');
 
     const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
-    const thesis = readFileSync('src/content/work/master-thesis.md', 'utf8');
     const work = readFileSync('src/pages/work.astro', 'utf8');
-    for (const { path, text } of [
-      { path: 'lidkoping-stenhuggeri.md', text: lidkoping },
-      { path: 'master-thesis.md', text: thesis },
-    ]) {
+    for (const { path, text } of [{ path: 'lidkoping-stenhuggeri.md', text: lidkoping }]) {
+      expect(text, path).not.toContain('Get in touch on LinkedIn');
+      expect(text, path).not.toContain('https://www.linkedin.com/in/alehar/');
+    }
+    expect(work).not.toContain(
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+    );
+  });
+
+  it("lets the Chalmers master's thesis case include a visible Get in touch on LinkedIn CTA", () => {
+    const thesis = readFileSync('src/content/work/master-thesis.md', 'utf8');
+    expect(thesis).toContain(
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+    );
+    expect(thesis).not.toContain('mailto:');
+
+    const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
+    const work = readFileSync('src/pages/work.astro', 'utf8');
+    for (const { path, text } of [{ path: 'lidkoping-stenhuggeri.md', text: lidkoping }]) {
       expect(text, path).not.toContain('Get in touch on LinkedIn');
       expect(text, path).not.toContain('https://www.linkedin.com/in/alehar/');
     }
