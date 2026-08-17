@@ -808,6 +808,32 @@ describe('identity copy', () => {
     expect(footer).not.toContain('mailto:');
   });
 
+  it('adds robots noindex on the Lidköping Stenhuggeri work page and keeps the page', () => {
+    expect(existsSync('src/content/work/lidkoping-stenhuggeri.md')).toBe(true);
+    const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
+    expect(lidkoping).toContain('title: Lidköping Stenhuggeri');
+    expect(lidkoping).toContain('Early Android work, 2013');
+    expect(lidkoping).not.toContain('mailto:');
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(slug).toContain("entry?.id === 'lidkoping-stenhuggeri' ? 'noindex'");
+    expect(slug).toContain('robots={robots}');
+    expect((slug.match(/noindex/g) || []).length).toBe(1);
+    expect(slug).not.toContain('nofollow');
+    const head = readFileSync('src/components/MainHead.astro', 'utf8');
+    expect(head).toContain('<meta name="robots" content={robots} />');
+    expect(head).not.toContain('nofollow');
+    const layout = readFileSync('src/layouts/BaseLayout.astro', 'utf8');
+    expect(layout).toContain('robots={robots}');
+    const sitemap = readFileSync('src/pages/sitemap.xml.ts', 'utf8');
+    expect(sitemap).not.toContain('/work/lidkoping-stenhuggeri');
+    expect(sitemap).toContain('ifs-design-system');
+    const work = readFileSync('src/pages/work.astro', 'utf8');
+    expect(work).toContain("'lidkoping-stenhuggeri'");
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(cta).not.toContain('mailto:');
+  });
+
   it('points robots.txt at the live sitemap so search can find it', () => {
     expect(existsSync('public/robots.txt')).toBe(true);
     const robots = readFileSync('public/robots.txt', 'utf8');

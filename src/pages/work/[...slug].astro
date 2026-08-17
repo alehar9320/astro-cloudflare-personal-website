@@ -95,9 +95,15 @@ const shareTitle = entry
 const shareDescription = entry
   ? `Product Manager, Developer Experience at IFS. ${entry.data.description.trim()} Get in touch on LinkedIn.`
   : '404 Error — this page was not found';
+const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
 ---
 
-<BaseLayout title={shareTitle ?? 'Not Found'} description={shareDescription} ogTitle={shareTitle}>
+<BaseLayout
+  title={shareTitle ?? 'Not Found'}
+  description={shareDescription}
+  ogTitle={shareTitle}
+  robots={robots}
+>
   {schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />}
   {
     entry ? (

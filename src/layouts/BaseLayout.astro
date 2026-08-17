@@ -14,9 +14,10 @@ interface Props {
   ogTitle?: string | undefined;
   shareUrl?: string | undefined;
   canonicalUrl?: string | undefined;
+  robots?: string | undefined;
 }
 
-const { title, description, ogTitle, shareUrl, canonicalUrl } = Astro.props;
+const { title, description, ogTitle, shareUrl, canonicalUrl, robots } = Astro.props;
 ---
 
 <html lang="en">
@@ -27,6 +28,7 @@ const { title, description, ogTitle, shareUrl, canonicalUrl } = Astro.props;
       ogTitle={ogTitle}
       shareUrl={shareUrl}
       canonicalUrl={canonicalUrl}
+      robots={robots}
     />
   </head>
   <body>

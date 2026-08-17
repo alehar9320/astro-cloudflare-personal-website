@@ -8,6 +8,7 @@ interface Props {
   ogTitle?: string | undefined;
   shareUrl?: string | undefined;
   canonicalUrl?: string | undefined;
+  robots?: string | undefined;
 }
 
 const {
@@ -16,6 +17,7 @@ const {
   ogTitle,
   shareUrl: shareUrlProp,
   canonicalUrl: canonicalUrlProp,
+  robots,
 } = Astro.props;
 const shareTitle = ogTitle ?? title;
 const shareImage = 'https://me.alehar.workers.dev/assets/portrait.png';
@@ -29,6 +31,7 @@ const shareUrl = shareUrlProp ?? canonicalUrl;
 <meta name="viewport" content="width=device-width" />
 <meta name="generator" content={Astro.generator} />
 <meta name="referrer" content="strict-origin-when-cross-origin" />
+{robots && <meta name="robots" content={robots} />}
 <title>{title}</title>
 
 <!-- Open Graph / Facebook -->
