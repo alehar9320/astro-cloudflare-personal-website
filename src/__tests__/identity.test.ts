@@ -344,9 +344,14 @@ describe('identity copy', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
     expect(chat).not.toContain('class="status-tooltip">Ask about the work</span>');
     expect(chat).toContain('id="status-tooltip" class="status-tooltip"></span>');
+    expect(chat).toContain('statusTooltip.textContent = tooltipLabels[state]');
+    expect(chat).not.toContain('statusTooltip.textContent = statusLabels[state]');
+    expect(chat).toContain("idle: ''");
+    expect(chat).not.toMatch(/statusTooltip\.textContent\s*=\s*['"]Ask about the work['"]/);
     expect(chat).not.toContain('placeholder="Ask about the work"');
     expect(chat).not.toContain('placeholder=');
     expect(chat).not.toContain('Ask me something');
+    expect(chat).not.toContain('Ask me anything');
     expect(chat).not.toContain('chat-toggle-portrait');
     expect(chat).not.toContain('mailto:');
     expect(chat).toContain("idle: 'Live'");

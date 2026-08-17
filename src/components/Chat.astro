@@ -558,6 +558,12 @@
     error: 'Not live',
     limited: 'Live. Hourly limit reached',
   };
+  const tooltipLabels = {
+    idle: '',
+    loading: 'Live. Thinking...',
+    error: 'Not live',
+    limited: 'Live. Hourly limit reached',
+  };
   const liveLabels = {
     idle: 'Live',
     loading: 'Live',
@@ -566,7 +572,7 @@
   };
 
   function setStatus(state: 'idle' | 'loading' | 'error' | 'limited') {
-    if (statusTooltip) statusTooltip.textContent = statusLabels[state];
+    if (statusTooltip) statusTooltip.textContent = tooltipLabels[state];
     if (statusAnnouncer) statusAnnouncer.textContent = statusLabels[state];
     if (liveLabel) liveLabel.textContent = liveLabels[state];
     if (statusDot) {
