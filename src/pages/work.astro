@@ -7,12 +7,7 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 const projects = await getCollection('work');
 const byId = new Map(projects.map((project) => [project.id, project]));
 const featuredOrder = ['ifs-design-system'] as const;
-const earlierOrder = [
-  'ai-coding-copilots',
-  'user-behavior-analytics',
-  'master-thesis',
-  'lidkoping-stenhuggeri',
-] as const;
+const earlierOrder = ['ai-coding-copilots', 'user-behavior-analytics', 'master-thesis'] as const;
 const featured = featuredOrder.flatMap((id) => {
   const project = byId.get(id);
   return project ? [project] : [];
@@ -23,7 +18,6 @@ const earlier = earlierOrder.flatMap((id) => {
 });
 const ordered = [...featured, ...earlier];
 const earlierBlurb: Record<string, string> = {
-  'lidkoping-stenhuggeri': 'Early Android work, 2013.',
   'ai-coding-copilots': 'Internal AI coding copilots for IFS engineering teams.',
   'user-behavior-analytics': 'Usage telemetry for IFS Cloud roadmap decisions.',
   'master-thesis': "Chalmers master's thesis, 2017.",
