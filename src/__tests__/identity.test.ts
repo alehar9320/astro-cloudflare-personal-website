@@ -495,6 +495,15 @@ describe('identity copy', () => {
     );
   });
 
+  it('lets the Work index include a visible Get in touch on LinkedIn CTA', () => {
+    const work = readFileSync('src/pages/work.astro', 'utf8');
+    expect(work).toContain('href="https://www.linkedin.com/in/alehar/"');
+    expect(work).toContain('target="_blank"');
+    expect(work).toContain('rel="noopener noreferrer"');
+    expect(work).toMatch(/>Get in touch on LinkedIn<\/a/);
+    expect(work).not.toContain('mailto:');
+  });
+
   it('lets the AI coding copilots work-case TL;DR include at IFS', () => {
     const copilots = readFileSync('src/content/work/ai-coding-copilots.md', 'utf8');
     expect(copilots).toContain(
