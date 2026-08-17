@@ -12,7 +12,7 @@ tags:
 ---
 
 <div class="tldr-box">
-  <p><strong>TL;DR:</strong> The <strong>IFS Design System</strong>, from the first version to IFS Cloud. I am <strong>Product Manager, Developer Experience</strong>.</p>
+  <p><strong>TL;DR:</strong> The <strong>IFS Design System</strong>, from the first version to IFS Cloud. I am <strong>Product Manager, Developer Experience</strong> at IFS.</p>
 </div>
 
 As Product Manager, Developer Experience at IFS, I took the design system from the first version to IFS Cloud. IFS Cloud is IFS's enterprise product platform. There was no Cloud-scale system to inherit.
