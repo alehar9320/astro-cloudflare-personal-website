@@ -576,6 +576,19 @@ describe('identity copy', () => {
     expect(contact).not.toContain('mailto:');
   });
 
+  it('lets a Biography share read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+    const head = readFileSync('src/components/MainHead.astro', 'utf8');
+    const bio = readFileSync('src/pages/biography.astro', 'utf8');
+    const shareDescription =
+      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+    expect(bio).toContain(`description="${shareDescription}"`);
+    expect(bio).toContain('title="Biography | Product Manager, Developer Experience at IFS"');
+    expect(bio).toContain('https://www.linkedin.com/in/alehar/');
+    expect(bio).not.toContain('mailto:');
+    expect(head).toContain('name="description" property="og:description" content={description}');
+    expect(head).toContain('name="twitter:description" content={description}');
+  });
+
   it('lets a Home share read Product Manager, Developer Experience at IFS and LinkedIn', () => {
     const head = readFileSync('src/components/MainHead.astro', 'utf8');
     const home = readFileSync('src/pages/index.astro', 'utf8');
