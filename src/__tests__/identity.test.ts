@@ -377,6 +377,30 @@ describe('identity copy', () => {
     expect(chat).toContain("error: 'Not live'");
   });
 
+  it('drops Ask about the work from the twin chat idle announcer', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    expect(chat).toContain('id="status-announcer"');
+    expect(chat).toContain('statusAnnouncer.textContent = statusLabels[state]');
+    expect(chat).not.toContain("idle: 'Live. Ask about the work'");
+    expect(chat).not.toContain('Ask about the work');
+    expect(chat).toContain("const statusLabels = {\n    idle: 'Live',");
+    expect(chat).not.toContain('Ask about the work, DevEx, Industrial AI, or background.');
+    expect(chat).not.toMatch(/<p>\s*Ask about the work/);
+    expect(chat).toContain('DevEx, Industrial AI, or background.');
+    expect(chat).toContain("I'm an AI with his context.");
+    expect(chat).not.toContain('class="status-tooltip">Ask about the work</span>');
+    expect(chat).toContain('id="status-tooltip" class="status-tooltip"></span>');
+    expect(chat).toContain("idle: ''");
+    expect(chat).not.toContain('placeholder="Ask about the work"');
+    expect(chat).not.toContain('placeholder=');
+    expect(chat).not.toContain('Ask me something');
+    expect(chat).not.toContain('Ask me anything');
+    expect(chat).not.toContain('chat-toggle-portrait');
+    expect(chat).not.toContain('mailto:');
+    expect(chat).toContain("idle: 'Live'");
+    expect(chat).toContain("error: 'Not live'");
+  });
+
   it('lets a visitor clear the twin chat and keeps identity in the header, not the FAB', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
     expect(chat).toContain('aria-label="Clear conversation"');
