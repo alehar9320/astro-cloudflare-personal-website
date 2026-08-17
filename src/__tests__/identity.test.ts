@@ -530,6 +530,24 @@ describe('identity copy', () => {
     );
   });
 
+  it("lets the Chalmers master's thesis case include a problem-approach-outcome section", () => {
+    const thesis = readFileSync('src/content/work/master-thesis.md', 'utf8');
+    expect(thesis).toContain('## Problem');
+    expect(thesis).toContain('## Approach');
+    expect(thesis).toContain('## Outcome');
+    expect(thesis).toContain('Chalmers University of Technology');
+    expect(thesis).toContain('business model innovation and digitalization');
+    expect(thesis).toContain('mapped what digitalization does to business models');
+    expect(thesis).toContain('studied one case');
+    expect(thesis).toContain('compared that to the literature');
+    expect(thesis).toContain('Opportunities showed up as reach, scale, and data for decisions');
+    expect(thesis).toContain('Barriers were mostly organizational');
+    expect(thesis).toContain(
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+    );
+    expect(thesis).not.toContain('mailto:');
+  });
+
   it('lets the Work index include a visible Get in touch on LinkedIn CTA', () => {
     const work = readFileSync('src/pages/work.astro', 'utf8');
     expect(work).toContain('href="https://www.linkedin.com/in/alehar/"');
