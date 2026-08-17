@@ -44,7 +44,7 @@ export const GET: APIRoute = async () => {
   const xml = `<?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Alexander Härenstam | Product Manager, Developer Experience</title>
+    <title>Alexander Härenstam | Product Manager, Developer Experience at IFS</title>
     <link>${liveOrigin}/</link>
     <description>Product Manager, Developer Experience at IFS.</description>
     <atom:link href="${liveOrigin}/rss.xml" rel="self" type="application/rss+xml"/>
