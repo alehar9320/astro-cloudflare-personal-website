@@ -49,7 +49,10 @@ const schema = entry
           '@id': `https://me.alehar.workers.dev/work/${entry.id}/#webpage`,
           url: `https://me.alehar.workers.dev/work/${entry.id}/`,
           name: `${entry.data.title} | Alexander Härenstam`,
-          description: entry.data.description,
+          description:
+            entry.id === 'ifs-design-system'
+              ? `${entry.data.description.trim()} Get in touch on LinkedIn.`
+              : entry.data.description,
           breadcrumb: {
             '@type': 'BreadcrumbList',
             itemListElement: [
