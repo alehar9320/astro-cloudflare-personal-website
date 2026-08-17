@@ -436,13 +436,35 @@ describe('identity copy', () => {
     );
     expect(ds).not.toContain('mailto:');
 
-    const copilots = readFileSync('src/content/work/ai-coding-copilots.md', 'utf8');
     const analytics = readFileSync('src/content/work/user-behavior-analytics.md', 'utf8');
     const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
     const thesis = readFileSync('src/content/work/master-thesis.md', 'utf8');
     const work = readFileSync('src/pages/work.astro', 'utf8');
     for (const { path, text } of [
-      { path: 'ai-coding-copilots.md', text: copilots },
+      { path: 'user-behavior-analytics.md', text: analytics },
+      { path: 'lidkoping-stenhuggeri.md', text: lidkoping },
+      { path: 'master-thesis.md', text: thesis },
+    ]) {
+      expect(text, path).not.toContain('Get in touch on LinkedIn');
+      expect(text, path).not.toContain('https://www.linkedin.com/in/alehar/');
+    }
+    expect(work).not.toContain(
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+    );
+  });
+
+  it('lets the AI coding copilots case include a visible Get in touch on LinkedIn CTA', () => {
+    const copilots = readFileSync('src/content/work/ai-coding-copilots.md', 'utf8');
+    expect(copilots).toContain(
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+    );
+    expect(copilots).not.toContain('mailto:');
+
+    const analytics = readFileSync('src/content/work/user-behavior-analytics.md', 'utf8');
+    const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
+    const thesis = readFileSync('src/content/work/master-thesis.md', 'utf8');
+    const work = readFileSync('src/pages/work.astro', 'utf8');
+    for (const { path, text } of [
       { path: 'user-behavior-analytics.md', text: analytics },
       { path: 'lidkoping-stenhuggeri.md', text: lidkoping },
       { path: 'master-thesis.md', text: thesis },
