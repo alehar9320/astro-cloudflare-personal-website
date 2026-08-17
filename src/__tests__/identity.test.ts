@@ -429,6 +429,16 @@ describe('identity copy', () => {
     expect(ds).not.toContain('mailto:');
   });
 
+  it('lets the AI coding copilots work-case TL;DR include at IFS', () => {
+    const copilots = readFileSync('src/content/work/ai-coding-copilots.md', 'utf8');
+    expect(copilots).toContain(
+      'I am <strong>Product Manager, Developer Experience</strong> at IFS.'
+    );
+    expect(copilots).toContain('<strong>TL;DR:</strong>');
+    expect(copilots).toContain('title: Internal AI coding copilots');
+    expect(copilots).not.toContain('mailto:');
+  });
+
   it('keeps the chat FAB off Earlier work case body copy on a phone', () => {
     const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
     expect(slug).toContain('earlier-case');
