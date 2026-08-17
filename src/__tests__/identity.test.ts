@@ -662,6 +662,24 @@ describe('identity copy', () => {
     expect(home).not.toContain('mailto:');
   });
 
+  it('lets WebSite.description read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    const websiteDescription =
+      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+    expect(home).toContain("'@type': 'WebSite'");
+    expect(home).toContain(
+      `'@type': 'WebSite',
+      '@id': 'https://me.alehar.workers.dev/#website',
+      url: 'https://me.alehar.workers.dev/',
+      name: 'Alexander Härenstam | Product Manager, Developer Experience at IFS',
+      publisher: { '@id': 'https://me.alehar.workers.dev/#person' },
+      description: '${websiteDescription}'`
+    );
+    expect(home).toContain("jobTitle: 'Product Manager, Developer Experience at IFS'");
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+    expect(home).not.toContain('mailto:');
+  });
+
   it('lets Home WebPage.name read Product Manager, Developer Experience at IFS', () => {
     const home = readFileSync('src/pages/index.astro', 'utf8');
     const rss = readFileSync('src/pages/rss.xml.ts', 'utf8');
