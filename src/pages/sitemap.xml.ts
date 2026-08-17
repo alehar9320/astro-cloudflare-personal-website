@@ -25,7 +25,9 @@ export const GET: APIRoute = async () => {
   const work = await getCollection('work');
   const urls = [
     ...staticPaths.map((path) => urlXml(path)),
-    ...work.map((entry) => urlXml(`/work/${entry.id}/`, entry.data.publishDate)),
+    ...work
+      .filter((entry) => entry.id !== 'lidkoping-stenhuggeri')
+      .map((entry) => urlXml(`/work/${entry.id}/`, entry.data.publishDate)),
   ];
 
   const xml = `<?xml version="1.0" encoding="UTF-8"?>

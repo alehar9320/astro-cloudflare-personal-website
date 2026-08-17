@@ -796,10 +796,12 @@ describe('identity copy', () => {
     expect(sitemap).not.toContain('/experimental/now');
     expect(sitemap).not.toContain('/experimental/reading-list');
     expect(sitemap).not.toContain('/whats-new');
+    expect(sitemap).not.toContain('/work/lidkoping-stenhuggeri');
     expect(sitemap).not.toContain('localhost');
     expect(sitemap).not.toContain('harenstam.com');
     expect(sitemap).not.toContain('mailto:');
     expect(existsSync('src/pages/whats-new.astro')).toBe(true);
+    expect(existsSync('src/content/work/lidkoping-stenhuggeri.md')).toBe(true);
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
     expect(footer).toContain('https://www.linkedin.com/in/alehar/');
     expect(footer).not.toContain('mailto:');
