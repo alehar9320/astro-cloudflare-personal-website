@@ -340,6 +340,19 @@ describe('identity copy', () => {
     expect(chat).toContain("error: 'Not live'");
   });
 
+  it('drops Ask about the work from the twin chat tooltip', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    expect(chat).not.toContain('class="status-tooltip">Ask about the work</span>');
+    expect(chat).toContain('id="status-tooltip" class="status-tooltip"></span>');
+    expect(chat).not.toContain('placeholder="Ask about the work"');
+    expect(chat).not.toContain('placeholder=');
+    expect(chat).not.toContain('Ask me something');
+    expect(chat).not.toContain('chat-toggle-portrait');
+    expect(chat).not.toContain('mailto:');
+    expect(chat).toContain("idle: 'Live'");
+    expect(chat).toContain("error: 'Not live'");
+  });
+
   it('lets a visitor clear the twin chat and keeps identity in the header, not the FAB', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
     expect(chat).toContain('aria-label="Clear conversation"');
