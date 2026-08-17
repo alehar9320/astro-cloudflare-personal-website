@@ -46,7 +46,7 @@ export const GET: APIRoute = async () => {
   <channel>
     <title>Alexander Härenstam | Product Manager, Developer Experience at IFS</title>
     <link>${liveOrigin}/</link>
-    <description>Product Manager, Developer Experience at IFS.</description>
+    <description>Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.</description>
     <atom:link href="${liveOrigin}/rss.xml" rel="self" type="application/rss+xml"/>
     <atom:link href="${hireLinkedIn}" rel="related"/>
 ${items.map(itemXml).join('\n')}
