@@ -329,9 +329,10 @@ describe('identity copy', () => {
     expect(head).not.toContain('harenstam.com');
   });
 
-  it('keeps the twin idle prompt as Ask about the work', () => {
+  it('drops Ask about the work from the twin chat input placeholder', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
-    expect(chat).toContain('placeholder="Ask about the work"');
+    expect(chat).not.toContain('placeholder="Ask about the work"');
+    expect(chat).not.toContain('placeholder=');
     expect(chat).not.toContain('Ask me something');
     expect(chat).not.toContain('chat-toggle-portrait');
     expect(chat).not.toContain('mailto:');
