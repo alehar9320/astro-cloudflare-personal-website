@@ -567,6 +567,9 @@ describe('identity copy', () => {
     expect(chat).toContain('if (window.scrollY > 160) dockChat()');
     expect(chat).toContain("chatDock?.addEventListener('click'");
     expect(chat).toContain('setChatExpanded(true)');
+    expect(chat).toContain('prefers-reduced-motion: reduce');
+    expect(chat).toContain('transition: none');
+    expect(chat).toContain('.chat-dock {');
     expect(dockHtml).not.toContain('portrait.png');
     expect(dockHtml).not.toContain('chat-header-avatar');
     expect(dockHtml).not.toContain('<img');

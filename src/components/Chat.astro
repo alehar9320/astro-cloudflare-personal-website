@@ -412,9 +412,11 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .chat-window {
+    .chat-window,
+    .chat-dock {
       animation: none;
       transform: none;
+      transition: none;
     }
   }
 
@@ -817,7 +819,7 @@
 
   chatDock?.addEventListener('click', () => {
     setChatExpanded(true);
-    trackHireEvent('chat_opened', 'dock');
+    trackHireEvent('chat_opened', 'fab');
   });
 
   chatClose?.addEventListener('click', () => {
