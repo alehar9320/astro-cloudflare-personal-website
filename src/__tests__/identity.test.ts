@@ -1298,7 +1298,56 @@ describe('identity copy', () => {
           name:
             entry.id === 'ifs-design-system'
               ? 'IFS Design System | Product Manager, Developer Experience at IFS'
-              : \`\${entry.data.title} | Alexander Härenstam\`,`
+              : entry.id === 'user-behavior-analytics'
+                ? 'User behavior analytics | Product Manager, Developer Experience at IFS'
+                : \`\${entry.data.title} | Alexander Härenstam\`,`
+    );
+    expect(slug).toContain("'@type': 'CreativeWork'");
+    expect(slug).toContain(
+      `'@type': 'CreativeWork',
+          name: entry.data.title,`
+    );
+    expect(slug).not.toContain('mailto:');
+  });
+
+  it('lets the user behavior analytics JSON-LD WebPage.name read Product Manager, Developer Experience at IFS', () => {
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(slug).toContain("'@type': 'WebPage'");
+    expect(slug).toContain(
+      `'@type': 'WebPage',
+          '@id': \`https://me.alehar.workers.dev/work/\${entry.id}/#webpage\`,
+          url: \`https://me.alehar.workers.dev/work/\${entry.id}/\`,
+          name:
+            entry.id === 'ifs-design-system'
+              ? 'IFS Design System | Product Manager, Developer Experience at IFS'
+              : entry.id === 'user-behavior-analytics'
+                ? 'User behavior analytics | Product Manager, Developer Experience at IFS'
+                : \`\${entry.data.title} | Alexander Härenstam\`,`
+    );
+    expect(slug).toContain("'@type': 'CreativeWork'");
+    expect(slug).toContain(
+      `'@type': 'CreativeWork',
+          name: entry.data.title,`
+    );
+    expect(slug).not.toContain('mailto:');
+  });
+
+  it('lets the AI coding copilots JSON-LD WebPage.name stay Alexander Härenstam', () => {
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(slug).toContain("'@type': 'WebPage'");
+    expect(slug).toContain(
+      `'@type': 'WebPage',
+          '@id': \`https://me.alehar.workers.dev/work/\${entry.id}/#webpage\`,
+          url: \`https://me.alehar.workers.dev/work/\${entry.id}/\`,
+          name:
+            entry.id === 'ifs-design-system'
+              ? 'IFS Design System | Product Manager, Developer Experience at IFS'
+              : entry.id === 'user-behavior-analytics'
+                ? 'User behavior analytics | Product Manager, Developer Experience at IFS'
+                : \`\${entry.data.title} | Alexander Härenstam\`,`
+    );
+    expect(slug).not.toContain(
+      "entry.id === 'ai-coding-copilots'\n                ? 'Internal AI coding copilots | Product Manager, Developer Experience at IFS'"
     );
     expect(slug).toContain("'@type': 'CreativeWork'");
     expect(slug).toContain(
@@ -1318,7 +1367,9 @@ describe('identity copy', () => {
           name:
             entry.id === 'ifs-design-system'
               ? 'IFS Design System | Product Manager, Developer Experience at IFS'
-              : \`\${entry.data.title} | Alexander Härenstam\`,
+              : entry.id === 'user-behavior-analytics'
+                ? 'User behavior analytics | Product Manager, Developer Experience at IFS'
+                : \`\${entry.data.title} | Alexander Härenstam\`,
           description:
             entry.id === 'ifs-design-system' ||
             entry.id === 'ai-coding-copilots' ||
@@ -1340,7 +1391,9 @@ describe('identity copy', () => {
           name:
             entry.id === 'ifs-design-system'
               ? 'IFS Design System | Product Manager, Developer Experience at IFS'
-              : \`\${entry.data.title} | Alexander Härenstam\`,
+              : entry.id === 'user-behavior-analytics'
+                ? 'User behavior analytics | Product Manager, Developer Experience at IFS'
+                : \`\${entry.data.title} | Alexander Härenstam\`,
           description:
             entry.id === 'ifs-design-system' ||
             entry.id === 'ai-coding-copilots' ||
@@ -1362,7 +1415,9 @@ describe('identity copy', () => {
           name:
             entry.id === 'ifs-design-system'
               ? 'IFS Design System | Product Manager, Developer Experience at IFS'
-              : \`\${entry.data.title} | Alexander Härenstam\`,
+              : entry.id === 'user-behavior-analytics'
+                ? 'User behavior analytics | Product Manager, Developer Experience at IFS'
+                : \`\${entry.data.title} | Alexander Härenstam\`,
           description:
             entry.id === 'ifs-design-system' ||
             entry.id === 'ai-coding-copilots' ||
@@ -1384,7 +1439,9 @@ describe('identity copy', () => {
           name:
             entry.id === 'ifs-design-system'
               ? 'IFS Design System | Product Manager, Developer Experience at IFS'
-              : \`\${entry.data.title} | Alexander Härenstam\`,
+              : entry.id === 'user-behavior-analytics'
+                ? 'User behavior analytics | Product Manager, Developer Experience at IFS'
+                : \`\${entry.data.title} | Alexander Härenstam\`,
           description:
             entry.id === 'ifs-design-system' ||
             entry.id === 'ai-coding-copilots' ||
