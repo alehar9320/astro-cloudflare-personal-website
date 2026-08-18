@@ -288,7 +288,7 @@ describe('identity copy', () => {
   it('shows a Live / Not live signal on the chat header', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
     expect(chat).toContain('chat-live-label');
-    expect(chat).toContain('class="status-dot"');
+    expect(chat).not.toContain('status-dot');
     expect(chat).toContain("idle: 'Live'");
     expect(chat).toContain("error: 'Not live'");
     expect(chat).not.toContain("idle: 'Available'");
@@ -446,11 +446,14 @@ describe('identity copy', () => {
     expect(home).toContain('https://www.linkedin.com/in/alehar/');
     expect(home).toContain('Get in touch');
     expect(home).not.toContain('mailto:');
-    expect(chat).toContain('chat-welcome-portrait');
+    expect(chat).toContain('chat-header-avatar');
     expect(chat).toContain('/assets/portrait.png');
-    expect(chat).toContain(
-      'alt="Alexander Härenstam smiling in a red plaid shirt and tortoise shell glasses"'
-    );
+    expect(chat).toContain('class="chat-header-avatar"');
+    expect(chat).toContain('width="40"');
+    expect(chat).toContain('height="40"');
+    expect(chat).toContain('alt=""');
+    expect(chat).not.toContain('chat-welcome-portrait');
+    expect(chat).not.toContain('message-avatar');
     expect(chat).not.toContain('chat-toggle-portrait');
     expect(chat).not.toContain('mailto:');
   });
@@ -458,11 +461,14 @@ describe('identity copy', () => {
   it('makes the twin the first-view chat with a headshot, follow-ups, and a docked FAB', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
     const home = readFileSync('src/pages/index.astro', 'utf8');
-    expect(chat).toContain('chat-welcome-portrait');
+    expect(chat).not.toContain('chat-welcome-portrait');
     expect(chat).toContain('/assets/portrait.png');
-    expect(chat).toContain('class="chat-header-avatar" width="64" height="64"');
+    expect(chat).toContain('class="chat-header-avatar"');
+    expect(chat).toContain('width="40"');
+    expect(chat).toContain('height="40"');
     expect(chat).toContain('chat-followups');
     expect(chat).toContain('showFollowUps');
+    expect(chat).toContain('How do I get in touch on LinkedIn?');
     expect(chat).toContain('is-prominent');
     expect(chat).toContain('is-docked');
     expect(chat).toContain('dockChat');
@@ -475,15 +481,74 @@ describe('identity copy', () => {
     expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
     expect(home).not.toContain('mailto:');
     expect(chat).toContain('has-prominent-chat');
-    expect(chat).toContain('min(32rem, calc(50vw - 2rem))');
-    expect(chat).toContain('--prominent-phone-top');
-    expect(chat).toContain('layoutProminentPhone');
-    expect(chat).toContain('cta-hint');
+    expect(chat).toContain('border-radius: 1rem 1rem 0 0');
+    expect(chat).toContain('max-width: 36rem');
+    expect(chat).toContain('height: 62dvh');
+    expect(chat).toContain('translateY(100%)');
+    expect(chat).not.toContain('min(32rem, calc(50vw - 2rem))');
+    expect(chat).not.toContain('top: 5.5rem');
+    expect(chat).not.toContain('50vw');
+    expect(chat).not.toContain('--prominent-phone-top');
+    expect(chat).not.toContain('layoutProminentPhone');
+    expect(home).toContain('cta-hint');
     expect(home).toContain('Get in touch');
     expect(home).toContain('LinkedIn · replies from me');
     expect(home).toContain('body.has-prominent-chat');
+    expect(home).toContain('padding-bottom: 62dvh');
+    expect(home).not.toContain('padding-right: min(34rem, 48vw)');
     expect(home).toContain('proof-card');
     expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
+  });
+
+  it('opens the twin as a bottom sheet with bubbles and one header portrait', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    expect(chat).toContain('border-radius: 1rem 1rem 0 0');
+    expect(chat).toContain('max-width: 36rem');
+    expect(chat).toContain('height: 62dvh');
+    expect(chat).toContain('min-height: 55dvh');
+    expect(chat).toContain('max-height: 70dvh');
+    expect(chat).toContain('translateY(100%)');
+    expect(chat).toContain('translateY(0)');
+    expect(chat).toContain('220ms');
+    expect(chat).toContain('hsla(0, 0%, 0%, 0.28)');
+    expect(chat).toContain('id="chat-scrim"');
+    expect(chat).not.toContain('min(32rem, calc(50vw - 2rem))');
+    expect(chat).not.toContain('top: 5.5rem');
+    expect(chat).not.toContain('50vw');
+    expect(chat).toContain('padding: 0.75rem 1rem');
+    expect(chat).toContain('border-radius: 1rem 1rem 4px 1rem');
+    expect(chat).toContain('border-radius: 1rem 1rem 1rem 4px');
+    expect(chat).toContain('max-width: 80%');
+    expect(chat).toContain('gap: 0.5rem');
+    expect(chat).toContain('.chat-header {\n    padding: 1rem;');
+    expect(chat).toContain('.chat-form {\n    padding: 1rem;');
+    expect(chat).not.toContain('padding: 0.5rem 1rem 1rem');
+    expect(chat).toContain('min-height: 44px');
+    expect(chat).toContain('border-radius: 0.75rem');
+    expect(chat).toContain('width: 2.5rem');
+    expect(chat).toContain('chat-header-avatar');
+    expect(chat).not.toContain('chat-welcome-portrait');
+    expect(chat).not.toContain('message-avatar');
+    expect(chat).not.toContain('chat-toggle-portrait');
+    expect(chat).not.toContain('status-dot');
+    expect(chat).toContain('id="chat-clear"');
+    expect(chat).toContain('chat-followups');
+    expect(chat).toContain('How do I get in touch on LinkedIn?');
+    expect(chat).toContain('What did the IFS design system change?');
+    expect(chat).toContain("I'm an AI with his context.");
+    expect(chat).not.toContain('Ask about the work');
+    expect(chat).toContain('prefers-reduced-motion: reduce');
+    expect(chat).toContain('transform: none');
+    expect(nav).toContain('hsla(var(--gray-999-basis), 0.9)');
+    expect(nav).toContain('backdrop-filter: blur(40px) saturate(140%)');
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+    expect(home).toContain('Get in touch');
+    expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
+    expect(home).not.toContain('mailto:');
+    expect(chat).not.toContain('mailto:');
+    expect(chat).not.toContain('data-hire-surface');
   });
 
   it('keeps the chat FAB off the 2x/30x/Zeroheight proof on the design system case on a phone', () => {
