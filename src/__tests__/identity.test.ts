@@ -739,6 +739,29 @@ describe('identity copy', () => {
     expect(nav).toContain("{ label: 'Work', href: '/work/' }");
   });
 
+  it('lets the open mobile menu sheet use a denser 0.90 frost overlay', () => {
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    expect(nav).toContain('#menu-content:not([hidden]) .nav-items');
+    expect(nav).toContain('#menu-content:not([hidden]) .menu-footer');
+    expect(nav).toContain('hsla(var(--gray-999-basis), 0.9)');
+    expect(nav).toContain('backdrop-filter: blur(40px) saturate(140%)');
+    expect(nav).toContain('-webkit-backdrop-filter: blur(40px) saturate(140%)');
+    expect(nav).toContain('hsla(0, 0%, 0%, 0.18)');
+    expect(nav).toContain('hsla(0, 0%, 100%, 0.14)');
+    expect(nav).toContain('linear-gradient(180deg, hsla(0, 0%, 100%, 0.35), transparent 12px)');
+    expect(nav).toContain('linear-gradient(180deg, hsla(0, 0%, 100%, 0.12), transparent 12px)');
+    expect(nav).toContain(".menu-button[aria-expanded='true']");
+    expect(nav).toContain('prefers-reduced-transparency: reduce');
+    expect(nav).toContain('background: hsl(var(--gray-999-basis))');
+    expect(nav).toContain('@media (prefers-reduced-motion: reduce)');
+    expect(nav).not.toContain('hsla(var(--gray-999-basis), 1.0)');
+    expect(nav).not.toContain('hsla(var(--gray-999-basis), 1)');
+    expect(nav).toContain('background: hsla(var(--gray-999-basis), 0.6)');
+    expect(nav).toContain('backdrop-filter: blur(24px) saturate(150%)');
+    expect(nav).toContain('background: hsla(var(--gray-999-basis), 0.7)');
+    expect(nav).not.toContain('hsla(var(--gray-999-basis), 0.85)');
+  });
+
   it('uses honest Earlier work labels, not Platform or copilots-as-product', () => {
     const copilots = readFileSync('src/content/work/ai-coding-copilots.md', 'utf8');
     const analytics = readFileSync('src/content/work/user-behavior-analytics.md', 'utf8');
