@@ -741,13 +741,18 @@ describe('identity copy', () => {
 
   it('lets the open mobile menu sheet use a denser 0.90 frost overlay', () => {
     const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    const openSheet = nav.slice(nav.indexOf('@media not (min-width: 50em)'));
     expect(nav).toContain('#menu-content:not([hidden]) .nav-items');
     expect(nav).toContain('#menu-content:not([hidden]) .menu-footer');
     expect(nav).toContain('hsla(var(--gray-999-basis), 0.9)');
     expect(nav).toContain('backdrop-filter: blur(40px) saturate(140%)');
     expect(nav).toContain('-webkit-backdrop-filter: blur(40px) saturate(140%)');
+    expect(openSheet.indexOf('-webkit-backdrop-filter: blur(40px) saturate(140%)')).toBeLessThan(
+      openSheet.indexOf('\n      backdrop-filter: blur(40px) saturate(140%)')
+    );
     expect(nav).toContain('hsla(0, 0%, 0%, 0.18)');
     expect(nav).toContain('hsla(0, 0%, 100%, 0.14)');
+    expect(openSheet).toContain('border-width: 0 1px 1px');
     expect(nav).toContain('linear-gradient(180deg, hsla(0, 0%, 100%, 0.35), transparent 12px)');
     expect(nav).toContain('linear-gradient(180deg, hsla(0, 0%, 100%, 0.12), transparent 12px)');
     expect(nav).toContain(".menu-button[aria-expanded='true']");
