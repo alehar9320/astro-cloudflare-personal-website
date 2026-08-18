@@ -9,3 +9,9 @@
 - [Insight 1: Shimmer micro-interactions provide high-quality visual feedback without increasing JS bundle size.]
 - [Insight 2: Using `translateX` for the shimmer sweep is more performant than animating `background-position` as it avoids layout repaints.]
 - [Delta: 18 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-02 - CTA Tactile Interaction | Signal: Technical/Competitive | Lean Implementation: Flagged Scoped CSS Active Scale
+
+- [Insight 1: Primary action buttons feel significantly more responsive when given active press feedback (`translateY` + `scale`).]
+- [Insight 2: Keeping micro-interaction logic scoped inside Astro components avoids runtime JS overhead.]
+- [Delta: 16 lines. Guardrails: All passed autonomously.]

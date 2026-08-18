@@ -8,6 +8,8 @@ interface Props {
   'data-hire-surface'?: string;
 }
 
+import { getEntry } from 'astro:content';
+
 const {
   href,
   target,
@@ -16,6 +18,9 @@ const {
   'data-hire-event': dataHireEvent,
   'data-hire-surface': dataHireSurface,
 } = Astro.props;
+
+const flagsEntry = await getEntry('flags', 'config');
+const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
 ---
 
 <a
@@ -25,6 +30,7 @@ const {
   download={download}
   data-hire-event={dataHireEvent}
   data-hire-surface={dataHireSurface}
+  class:list={[{ tactile: isTactileEnabled }]}
 >
   <slot />
 </a>
@@ -77,6 +83,11 @@ const {
     background-position: 50% 50%;
     transform: translateY(0) scale(0.97);
     box-shadow: var(--shadow-sm);
+  }
+
+  a.tactile:active {
+    transform: translateY(2px) scale(0.96);
+    transition: transform 0.15s ease;
   }
 
   /* Overlay for standard static hover effect no longer needed, using animated gradient */
