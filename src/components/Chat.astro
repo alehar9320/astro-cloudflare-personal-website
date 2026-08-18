@@ -520,6 +520,43 @@
     color: var(--gray-100);
   }
 
+  .chat-explore-card {
+    align-self: flex-start;
+    max-width: 80%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 0.75rem;
+    background-color: var(--gray-900);
+  }
+
+  .chat-explore-card-title {
+    margin: 0;
+    color: var(--gray-0);
+    font-size: 0.875rem;
+    font-weight: 700;
+    line-height: 1.3;
+  }
+
+  .chat-explore-card-line {
+    margin: 0.35rem 0 0.75rem;
+    color: var(--gray-100);
+    font-size: 0.875rem;
+    line-height: 1.4;
+  }
+
+  .chat-explore-card-open {
+    color: var(--accent-regular);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .chat-explore-card-open:hover,
+  .chat-explore-card-open:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+  }
+
   .typing-indicator {
     padding: 0.5rem 1rem;
     font-size: 0.75rem;
@@ -571,6 +608,7 @@
 
 <script>
   import { createChatStreamParser, extractAssistantTextFromSse } from '../utils/chat-stream';
+  import { exploreCardForQuestion, type ExploreCard } from '../utils/chat-explore';
   import { trackHireEvent } from '../utils/hire-analytics';
 
   const chatContainer = document.getElementById('chat-container');
@@ -688,6 +726,7 @@
     messages.splice(0, messages.length);
     sessionStorage.removeItem('chat-history');
     chatMessages?.querySelectorAll('.message:not(.welcome-message)').forEach((el) => el.remove());
+    chatMessages?.querySelectorAll('.chat-explore-card').forEach((el) => el.remove());
     removeFollowUps();
     chatSuggestions?.classList.remove('hidden');
     setStatus('idle');
@@ -726,10 +765,47 @@
     return messageDiv;
   }
 
+  function appendExploreCard(card: ExploreCard) {
+    if (!chatMessages) return;
+    const article = document.createElement('article');
+    article.className = 'chat-explore-card';
+    article.setAttribute('aria-label', card.title);
+
+    const title = document.createElement('p');
+    title.className = 'chat-explore-card-title';
+    title.textContent = card.title;
+
+    const line = document.createElement('p');
+    line.className = 'chat-explore-card-line';
+    line.textContent = card.line;
+
+    const open = document.createElement('a');
+    open.className = 'chat-explore-card-open';
+    open.href = card.href;
+    open.textContent = 'Open';
+
+    article.append(title, line, open);
+    chatMessages.appendChild(article);
+    chatMessages.scrollTo(0, chatMessages.scrollHeight);
+  }
+
+  function maybeAppendExploreCard(userText: string | undefined) {
+    if (!userText) return;
+    const card = exploreCardForQuestion(userText);
+    if (card) appendExploreCard(card);
+  }
+
   // Load history
+  let pendingUser: string | undefined;
   messages.map(normalizeMessage).forEach((msg: Message) => {
     const displayRole = msg.role === 'ai' ? 'assistant' : msg.role;
     appendMessage(displayRole, msg.content);
+    if (displayRole === 'user') {
+      pendingUser = msg.content;
+    } else if (displayRole === 'assistant') {
+      maybeAppendExploreCard(pendingUser);
+      pendingUser = undefined;
+    }
   });
 
   const hasAssistantHistory = messages.some(
@@ -925,6 +1001,7 @@
       messages.push({ role: 'assistant', content: aiContent });
       saveMessages();
       setStatus('idle');
+      maybeAppendExploreCard(content);
       showFollowUps();
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
