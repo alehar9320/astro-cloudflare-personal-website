@@ -51,7 +51,9 @@ const schema = entry
           name:
             entry.id === 'ifs-design-system'
               ? 'IFS Design System | Product Manager, Developer Experience at IFS'
-              : `${entry.data.title} | Alexander Härenstam`,
+              : entry.id === 'user-behavior-analytics'
+                ? 'User behavior analytics | Product Manager, Developer Experience at IFS'
+                : `${entry.data.title} | Alexander Härenstam`,
           description:
             entry.id === 'ifs-design-system' ||
             entry.id === 'ai-coding-copilots' ||
