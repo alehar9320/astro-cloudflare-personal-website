@@ -551,6 +551,57 @@ describe('identity copy', () => {
     expect(chat).not.toContain('data-hire-surface');
   });
 
+  it('docks the open sheet to a compact bottom bar on scroll, not a FAB or right column', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    const dockHtml = chat.slice(chat.indexOf('id="chat-dock"'), chat.indexOf('id="chat-scrim"'));
+    expect(chat).toContain('id="chat-dock"');
+    expect(chat).toContain('class="chat-dock"');
+    expect(chat).toContain('chat-dock-handle');
+    expect(chat).toContain('min-height: 3.25rem');
+    expect(chat).toContain('.chat-container.is-docked .chat-toggle');
+    expect(chat).toContain('.chat-container.is-docked:not(.is-open):not(.is-prominent) .chat-dock');
+    expect(chat).toContain("chatContainer?.classList.add('is-docked')");
+    expect(chat).toContain('setChatExpanded(false)');
+    expect(chat).toContain('if (window.scrollY > 160) dockChat()');
+    expect(chat).toContain("chatDock?.addEventListener('click'");
+    expect(chat).toContain('setChatExpanded(true)');
+    expect(dockHtml).not.toContain('portrait.png');
+    expect(dockHtml).not.toContain('chat-header-avatar');
+    expect(dockHtml).not.toContain('<img');
+    expect(chat).not.toContain('chat-toggle-portrait');
+    expect(chat).not.toContain('min(32rem, calc(50vw - 2rem))');
+    expect(chat).not.toContain('top: 5.5rem');
+    expect(chat).not.toContain('50vw');
+    expect(chat).not.toContain('--prominent-phone-top');
+    expect(chat).not.toContain('layoutProminentPhone');
+    expect(chat).toContain('border-radius: 1rem 1rem 0 0');
+    expect(chat).toContain('max-width: 36rem');
+    expect(chat).toContain('height: 62dvh');
+    expect(chat).toContain('min-height: 55dvh');
+    expect(chat).toContain('max-height: 70dvh');
+    expect(chat).toContain('hsla(0, 0%, 0%, 0.28)');
+    expect(chat).toContain('padding: 0.75rem 1rem');
+    expect(chat).toContain('chat-header-avatar');
+    expect(chat).not.toContain('chat-welcome-portrait');
+    expect(chat).not.toContain('message-avatar');
+    expect(chat).not.toContain('status-dot');
+    expect(chat).toContain('id="chat-clear"');
+    expect(chat).toContain('chat-followups');
+    expect(chat).toContain('How do I get in touch on LinkedIn?');
+    expect(chat).toContain('What did the IFS design system change?');
+    expect(chat).toContain("I'm an AI with his context.");
+    expect(nav).toContain('hsla(var(--gray-999-basis), 0.9)');
+    expect(nav).toContain('backdrop-filter: blur(40px) saturate(140%)');
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+    expect(home).toContain('Get in touch');
+    expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
+    expect(home).not.toContain('mailto:');
+    expect(chat).not.toContain('mailto:');
+    expect(chat).not.toContain('data-hire-surface');
+  });
+
   it('keeps the chat FAB off the 2x/30x/Zeroheight proof on the design system case on a phone', () => {
     const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
     const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');

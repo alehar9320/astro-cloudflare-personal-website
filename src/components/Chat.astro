@@ -28,6 +28,18 @@
     <span role="tooltip" id="status-tooltip" class="status-tooltip"></span>
   </button>
 
+  <button
+    type="button"
+    id="chat-dock"
+    class="chat-dock"
+    aria-label="Open chat"
+    aria-expanded="false"
+    aria-controls="chat-window"
+  >
+    <span class="chat-dock-handle" aria-hidden="true"></span>
+    <span class="chat-dock-label">Chat</span>
+  </button>
+
   <button type="button" id="chat-scrim" class="chat-scrim" hidden aria-label="Dismiss chat"
   ></button>
 
@@ -126,6 +138,15 @@
     justify-content: flex-end;
   }
 
+  .chat-container.is-docked:not(.is-open):not(.is-prominent) {
+    inset: auto 0 0 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-end;
+    pointer-events: none;
+  }
+
   .chat-toggle {
     position: relative;
     width: var(--chat-fab-size);
@@ -157,8 +178,58 @@
   }
 
   .chat-container.is-prominent .chat-toggle,
-  .chat-container.is-open .chat-toggle {
+  .chat-container.is-open .chat-toggle,
+  .chat-container.is-docked .chat-toggle {
     display: none;
+  }
+
+  .chat-dock {
+    display: none;
+    pointer-events: auto;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 36rem;
+    min-height: 3.25rem;
+    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+    border: 1px solid var(--gray-800);
+    border-bottom: 0;
+    border-radius: 1rem 1rem 0 0;
+    background-color: hsla(var(--gray-999-basis), 0.7);
+    color: var(--gray-200);
+    cursor: pointer;
+    box-shadow: var(--shadow-sm);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 500;
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+  }
+
+  .chat-container.is-docked:not(.is-open):not(.is-prominent) .chat-dock {
+    display: flex;
+  }
+
+  .chat-dock-handle {
+    width: 2.5rem;
+    height: 0.25rem;
+    border-radius: 999px;
+    background: var(--gray-600);
+  }
+
+  .chat-dock-label {
+    line-height: 1;
+  }
+
+  .chat-dock:hover,
+  .chat-dock:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+    color: var(--gray-0);
   }
 
   .chat-scrim {
@@ -317,7 +388,8 @@
   }
 
   @media (max-width: 49.99em) {
-    .chat-window {
+    .chat-window,
+    .chat-dock {
       width: 100%;
       max-width: none;
     }
@@ -501,6 +573,7 @@
 
   const chatContainer = document.getElementById('chat-container');
   const chatToggle = document.getElementById('chat-toggle');
+  const chatDock = document.getElementById('chat-dock');
   const chatWindow = document.getElementById('chat-window');
   const chatClose = document.getElementById('chat-close');
   const chatClear = document.getElementById('chat-clear');
@@ -666,6 +739,7 @@
 
   const setChatExpanded = (expand: boolean) => {
     chatToggle?.setAttribute('aria-expanded', String(expand));
+    chatDock?.setAttribute('aria-expanded', String(expand));
     chatWindow?.classList.toggle('hidden', !expand);
     chatContainer?.classList.toggle('is-open', expand);
     if (chatScrim) chatScrim.hidden = !expand;
@@ -695,7 +769,11 @@
     } else {
       setChatExpanded(false);
     }
-    (chatToggle as HTMLElement)?.focus();
+    if (chatContainer?.classList.contains('is-docked') && chatDock) {
+      (chatDock as HTMLElement).focus();
+    } else {
+      (chatToggle as HTMLElement)?.focus();
+    }
   }
 
   function initConversationalFold() {
@@ -735,6 +813,11 @@
     if (!isExpanded) {
       trackHireEvent('chat_opened', 'fab');
     }
+  });
+
+  chatDock?.addEventListener('click', () => {
+    setChatExpanded(true);
+    trackHireEvent('chat_opened', 'dock');
   });
 
   chatClose?.addEventListener('click', () => {
