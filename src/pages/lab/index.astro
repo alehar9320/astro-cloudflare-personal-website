@@ -1,0 +1,128 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Laboratory | Alexander Härenstam"
+  description="Experimental laboratory showcasing creative interactive web art, canvas simulations, and digital experiences."
+  ogTitle="Laboratory & Experiments"
+>
+  <main id="main-content" class="wrapper stack lab-index">
+    <header class="hero">
+      <p class="eyebrow">Laboratory & Sandbox</p>
+      <h1 class="title">Interactive Experiments</h1>
+      <p class="subtitle">
+        A dedicated laboratory space for high-impact visual experiments, mathematical art, and
+        interactive canvas prototypes.
+      </p>
+    </header>
+
+    <section class="experiments-grid" aria-label="Laboratory Experiments">
+      <a class="experiment-card" href="/lab/aurora-refractor/">
+        <div class="card-tag">HTML5 Canvas &bull; Math Superposition</div>
+        <h2 class="card-title">Aurora Refractor</h2>
+        <p class="card-desc">
+          Interactive Northern Lights simulation built with multi-layered sine wave superposition,
+          magnetosphere vector forces, and customizable color refractions.
+        </p>
+        <span class="card-link">Explore Experiment &rarr;</span>
+      </a>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .lab-index {
+    padding-block: 2.5rem;
+    gap: 2.5rem;
+  }
+
+  .hero {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .eyebrow {
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin: 0;
+  }
+
+  .title {
+    font-size: var(--text-3xl);
+    color: var(--gray-0);
+    margin: 0;
+  }
+
+  .subtitle {
+    font-size: var(--text-md);
+    color: var(--gray-300);
+    max-width: 60ch;
+    margin: 0;
+  }
+
+  .experiments-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .experiment-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.75rem;
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    transition:
+      transform 0.25s ease,
+      box-shadow 0.25s ease,
+      border-color 0.25s ease;
+  }
+
+  .experiment-card:hover,
+  .experiment-card:focus-visible {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--accent-light);
+  }
+
+  .experiment-card:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+  }
+
+  .card-tag {
+    font-size: var(--text-xs);
+    color: var(--accent-light);
+  }
+
+  .card-title {
+    font-size: var(--text-xl);
+    color: var(--gray-0);
+    margin: 0;
+  }
+
+  .card-desc {
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .card-link {
+    font-size: var(--text-sm);
+    color: var(--accent-light);
+    font-weight: 500;
+    margin-top: 0.5rem;
+  }
+</style>

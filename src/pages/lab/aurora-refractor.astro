@@ -1,0 +1,377 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Aurora Refractor Lab | Alexander Härenstam"
+  description="Interactive Northern Lights Canvas refractor lab with mathematical wave superposition and magnetosphere interaction."
+  ogTitle="Aurora Refractor Canvas Lab"
+>
+  <main id="main-content" class="wrapper stack lab-page">
+    <header class="lab-header">
+      <p class="lab-badge">Laboratory & Experiment</p>
+      <h1 class="lab-title">Aurora Refractor</h1>
+      <p class="lab-subtitle">
+        A mathematical wave superposition canvas driven by magnetosphere vector physics and Northern
+        Lights refractions.
+      </p>
+    </header>
+
+    <div class="interactive-stage">
+      <canvas
+        id="aurora-refractor-canvas"
+        aria-label="Interactive Northern Lights Aurora simulation"></canvas>
+
+      <div class="canvas-controls" role="toolbar" aria-label="Aurora Canvas Controls">
+        <button
+          id="aurora-toggle-btn"
+          class="control-btn"
+          type="button"
+          aria-pressed="false"
+          aria-label="Pause or play animation"
+        >
+          <span id="aurora-toggle-icon" aria-hidden="true">⏸</span>
+          <span id="aurora-toggle-text">Pause</span>
+        </button>
+
+        <button
+          id="aurora-palette-btn"
+          class="control-btn"
+          type="button"
+          aria-label="Cycle aurora color palette"
+        >
+          <span aria-hidden="true">🎨</span>
+          <span id="aurora-palette-text">Palette: Arctic</span>
+        </button>
+
+        <div class="kbd-hints" aria-hidden="true">
+          <kbd>Space</kbd> Pause/Play &bull; <kbd>C</kbd> Cycle Palette
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  import {
+    calculateMagnetosphereVector,
+    calculateSineSuperposition,
+    getAuroraPalette,
+    lerp,
+  } from '../../utils/aurora-math';
+
+  function initAuroraRefractor() {
+    const canvas = document.getElementById('aurora-refractor-canvas') as HTMLCanvasElement | null;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const toggleBtn = document.getElementById('aurora-toggle-btn') as HTMLButtonElement | null;
+    const toggleIcon = document.getElementById('aurora-toggle-icon');
+    const toggleText = document.getElementById('aurora-toggle-text');
+    const paletteBtn = document.getElementById('aurora-palette-btn') as HTMLButtonElement | null;
+    const paletteText = document.getElementById('aurora-palette-text');
+
+    let animationFrameId: number | null = null;
+    let isPaused = false;
+    let time = 0;
+    let paletteIndex = 0;
+    let activePalette = getAuroraPalette(paletteIndex);
+
+    // Mouse / touch tracking state
+    let targetMouseX = -1000;
+    let targetMouseY = -1000;
+    let currentMouseX = -1000;
+    let currentMouseY = -1000;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      isPaused = true;
+      updateToggleUI();
+    }
+
+    const resize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const width = canvas.parentElement.clientWidth;
+      const height = Math.max(380, Math.min(window.innerHeight * 0.55, 600));
+
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      ctx.scale(dpr, dpr);
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      targetMouseX = e.clientX - rect.left;
+      targetMouseY = e.clientY - rect.top;
+    };
+
+    const handleMouseLeave = () => {
+      targetMouseX = -1000;
+      targetMouseY = -1000;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        const rect = canvas.getBoundingClientRect();
+        targetMouseX = e.touches[0].clientX - rect.left;
+        targetMouseY = e.touches[0].clientY - rect.top;
+      }
+    };
+
+    function updateToggleUI() {
+      if (toggleBtn) {
+        toggleBtn.setAttribute('aria-pressed', String(isPaused));
+      }
+      if (toggleIcon) toggleIcon.textContent = isPaused ? '▶' : '⏸';
+      if (toggleText) toggleText.textContent = isPaused ? 'Play' : 'Pause';
+    }
+
+    function togglePause() {
+      isPaused = !isPaused;
+      updateToggleUI();
+      if (!isPaused) {
+        draw();
+      }
+    }
+
+    function cyclePalette() {
+      paletteIndex = (paletteIndex + 1) % 3;
+      activePalette = getAuroraPalette(paletteIndex);
+      if (paletteText) paletteText.textContent = `Palette: ${activePalette.name}`;
+    }
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (
+        document.activeElement?.tagName === 'INPUT' ||
+        document.activeElement?.tagName === 'TEXTAREA'
+      ) {
+        return;
+      }
+      if (e.code === 'Space') {
+        e.preventDefault();
+        togglePause();
+      } else if (e.code === 'KeyC') {
+        cyclePalette();
+      }
+    };
+
+    const draw = () => {
+      if (!canvas || !ctx) return;
+
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+
+      // Smooth mouse lerp
+      currentMouseX = lerp(currentMouseX, targetMouseX, 0.1);
+      currentMouseY = lerp(currentMouseY, targetMouseY, 0.1);
+
+      ctx.fillStyle = activePalette.background;
+      ctx.fillRect(0, 0, width, height);
+
+      const numWaves = 4;
+      const stepX = Math.max(6, Math.floor(width / 120));
+
+      for (let w = 0; w < numWaves; w++) {
+        ctx.beginPath();
+        const baseHeight = height * (0.35 + w * 0.15);
+        const stops = activePalette.stops;
+        const color = stops[w % stops.length];
+
+        ctx.moveTo(0, height);
+
+        for (let x = 0; x <= width; x += stepX) {
+          const sineOffset = calculateSineSuperposition(
+            x,
+            time + w * 1.5,
+            0.004 - w * 0.0005,
+            25 + w * 8
+          );
+
+          let y = baseHeight + sineOffset;
+
+          const mag = calculateMagnetosphereVector(x, y, currentMouseX, currentMouseY, 160, 35);
+
+          y += mag.dy;
+
+          if (x === 0) {
+            ctx.lineTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+
+        ctx.lineTo(width, height);
+        ctx.closePath();
+
+        const grad = ctx.createLinearGradient(0, baseHeight - 50, 0, height);
+        grad.addColorStop(0, color);
+        grad.addColorStop(1, 'transparent');
+
+        ctx.fillStyle = grad;
+        ctx.globalAlpha = 0.45 - w * 0.08;
+        ctx.globalCompositeOperation = 'screen';
+        ctx.fill();
+      }
+
+      ctx.globalAlpha = 1.0;
+      ctx.globalCompositeOperation = 'source-over';
+
+      if (!isPaused) {
+        time += 0.02;
+        animationFrameId = requestAnimationFrame(draw);
+      }
+    };
+
+    window.addEventListener('resize', resize);
+    window.addEventListener('keydown', handleKeyDown);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseleave', handleMouseLeave);
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: true });
+
+    if (toggleBtn) toggleBtn.addEventListener('click', togglePause);
+    if (paletteBtn) paletteBtn.addEventListener('click', cyclePalette);
+
+    resize();
+    draw();
+
+    // Clean up lifecycle listeners on page swap
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        if (animationFrameId !== null) cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+        window.removeEventListener('keydown', handleKeyDown);
+        canvas.removeEventListener('mousemove', handleMouseMove);
+        canvas.removeEventListener('mouseleave', handleMouseLeave);
+        canvas.removeEventListener('touchmove', handleTouchMove);
+        if (toggleBtn) toggleBtn.removeEventListener('click', togglePause);
+        if (paletteBtn) paletteBtn.removeEventListener('click', cyclePalette);
+      },
+      { once: true }
+    );
+  }
+
+  // Support initial load and View Transitions
+  initAuroraRefractor();
+  document.addEventListener('astro:page-load', initAuroraRefractor);
+</script>
+
+<style>
+  .lab-page {
+    padding-block: 2rem;
+    gap: 2rem;
+  }
+
+  .lab-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .lab-badge {
+    font-size: var(--text-xs);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin: 0;
+  }
+
+  .lab-title {
+    font-size: var(--text-3xl);
+    color: var(--gray-0);
+    margin: 0;
+  }
+
+  .lab-subtitle {
+    font-size: var(--text-md);
+    color: var(--gray-300);
+    max-width: 65ch;
+    margin: 0;
+  }
+
+  .interactive-stage {
+    position: relative;
+    width: 100%;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    border: 1px solid var(--gray-800);
+    box-shadow: var(--shadow-md);
+    background: #090d16;
+  }
+
+  #aurora-refractor-canvas {
+    display: block;
+    width: 100%;
+    height: 420px;
+    cursor: crosshair;
+  }
+
+  .canvas-controls {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    background: rgba(13, 27, 42, 0.75);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 1rem;
+    z-index: 2;
+  }
+
+  .control-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.85rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 999rem;
+    color: var(--gray-0);
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .control-btn:hover {
+    background: rgba(255, 255, 255, 0.18);
+    border-color: var(--accent-light);
+  }
+
+  .control-btn:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 2px;
+  }
+
+  .kbd-hints {
+    margin-left: auto;
+    font-size: var(--text-xs);
+    color: var(--gray-300);
+  }
+
+  kbd {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    padding: 0.1rem 0.35rem;
+    font-family: inherit;
+  }
+
+  @media (max-width: 40em) {
+    .kbd-hints {
+      display: none;
+    }
+  }
+</style>
