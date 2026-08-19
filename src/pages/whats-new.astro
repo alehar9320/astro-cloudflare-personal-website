@@ -58,7 +58,11 @@ const schema = {
         <noscript>
           <p class="release-status">
             Release history is available on
-            <a href="https://github.com/alehar9320/astro-cloudflare-personal-website/releases">
+            <a
+              href="https://github.com/alehar9320/astro-cloudflare-personal-website/releases"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               GitHub Releases
             </a>.
           </p>
@@ -133,6 +137,8 @@ const schema = {
         empty.textContent = 'Site updates are currently unavailable.';
         const link = document.createElement('a');
         link.href = RELEASES_PAGE_URL;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
         link.textContent = 'View GitHub Releases';
         empty.appendChild(document.createTextNode(' '));
         empty.appendChild(link);
@@ -179,6 +185,8 @@ const schema = {
 
         const link = document.createElement('a');
         link.href = release.url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
         link.className = 'release-link';
         link.textContent = 'View on GitHub';
         article.appendChild(link);

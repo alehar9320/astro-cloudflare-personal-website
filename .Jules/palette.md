@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-20 - Preserving Navigational Session Context for External Social Links
+
+**Learning:** External links to third-party platforms (like LinkedIn, IFS Blog, and GitHub) should open in a new tab with `target="_blank"` and `rel="noopener noreferrer"`. This prevents disruptive tab navigation, preserves the user's active session and scroll position on the portfolio, and eliminates reverse tab-nabbing security risks.
+
+**Action:** Added `target="_blank"` and `rel="noopener noreferrer"` attributes to external social links in `Nav.astro` and `Footer.astro`, as well as static and dynamic GitHub Releases links in `whats-new.astro`.
+
 ## 2026-05-17 - Enhancing Content Selection and Standardizing Focus Spatiality
 
 **Learning:** Using `user-select: none` on informational badges (like `Pill`) creates unnecessary friction for users trying to copy text for reference. Additionally, consistent `outline-offset: 4px` across all interactive elements (including theme toggles and cards) reinforces a predictable spatial model for keyboard users. Adding `target="_blank"` with `rel="noopener noreferrer"` to external informational links (like the Astro framework link in the footer) ensures a non-disruptive navigation experience that preserves the user's session.
