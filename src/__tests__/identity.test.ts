@@ -125,7 +125,7 @@ describe('identity copy', () => {
   it('drops Latest Updates from the footer and keeps What’s New', () => {
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
     expect(footer).not.toContain('Latest Updates');
-    expect(footer).not.toContain('/whats-new');
+    expect(footer).toContain('href="/whats-new/"');
     expect(footer).toContain('https://www.linkedin.com/in/alehar/');
     expect(footer).not.toContain('mailto:');
     expect(existsSync('src/pages/whats-new.astro')).toBe(true);
@@ -1010,6 +1010,8 @@ describe('identity copy', () => {
     const nav = readFileSync('src/components/Nav.astro', 'utf8');
     expect(nav).not.toContain('Strategic Portfolio');
     expect(nav).toContain("{ label: 'Work', href: '/work/' }");
+    expect(nav).toContain("What's New");
+    expect(nav).toContain("href: '/whats-new/'");
   });
 
   it('lets the open mobile menu sheet use a denser 0.90 frost overlay', () => {
