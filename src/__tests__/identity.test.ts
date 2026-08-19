@@ -610,7 +610,6 @@ describe('identity copy', () => {
     expect(chat).not.toContain('data-hire-surface');
   });
 
-
   it('docks the composer to the bottom edge and uses the stage, not a 62dvh sheet', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
     const home = readFileSync('src/pages/index.astro', 'utf8');
