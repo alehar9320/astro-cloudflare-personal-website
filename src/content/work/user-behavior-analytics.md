@@ -25,6 +25,6 @@ As Product Manager, Developer Experience at IFS, I worked on user behavior analy
 
 ## Outcome
 
-Usage telemetry so IFS Cloud roadmap decisions rest on how people actually use the product. Roadmap decisions rest on that usage.
+Usage telemetry so IFS Cloud roadmap decisions rest on how people actually use the product.
 
 <a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>
