@@ -1,4 +1,6 @@
 ---
+import { getEntry } from 'astro:content';
+
 interface Props {
   href: string;
   target?: string;
@@ -16,6 +18,9 @@ const {
   'data-hire-event': dataHireEvent,
   'data-hire-surface': dataHireSurface,
 } = Astro.props;
+
+const flagsEntry = await getEntry('flags', 'config');
+const isCtaPulseEnabled = flagsEntry?.data.enable_cta_pulse_v1 ?? false;
 ---
 
 <a
@@ -23,6 +28,7 @@ const {
   target={target}
   rel={rel}
   download={download}
+  class:list={[{ 'cta-pulse': isCtaPulseEnabled }]}
   data-hire-event={dataHireEvent}
   data-hire-surface={dataHireSurface}
 >
@@ -96,6 +102,25 @@ const {
     }
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    a.cta-pulse:hover {
+      animation: cta-pulse-glow 1.5s ease-in-out infinite alternate;
+    }
+
+    @keyframes cta-pulse-glow {
+      0% {
+        box-shadow:
+          0 12px 30px -5px hsla(210, 100%, 50%, 0.6),
+          var(--shadow-md);
+      }
+      100% {
+        box-shadow:
+          0 16px 40px -2px hsla(210, 100%, 60%, 0.8),
+          var(--shadow-lg);
+      }
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     a {
       transition: none;
@@ -105,6 +130,7 @@ const {
     a:focus-visible,
     a:active {
       transform: none;
+      animation: none;
     }
   }
 </style>
