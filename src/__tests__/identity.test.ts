@@ -2025,6 +2025,9 @@ describe('identity copy', () => {
     expect(page).toContain('outline: 2px solid var(--accent-regular)');
     expect(page).toContain('outline-offset: 4px');
     expect(page).toContain('min(52rem, calc(100vw - 3rem))');
+    expect(page).toContain('flex-direction: row');
+    expect(page).toContain('.clusters');
+    expect(page).not.toContain('.group + .group');
     expect(page).not.toContain('target="_blank"');
     expect(page).not.toContain("target = '_blank'");
     expect(page).not.toContain('noopener');

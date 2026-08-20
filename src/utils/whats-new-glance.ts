@@ -15,7 +15,7 @@ const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 const MONTH_MS = 30 * 24 * 60 * 60 * 1000;
 
 const DROP_PATTERN =
-  /\bjson-ld\b|\bgithub[_-]?token\b|\btwin[- ]context\b|\bauthor linkedin context\b|\bno documented changes\b/i;
+  /\bjson-ld\b|\bgithub[_-]?token\b|\btwin[- ]context\b|\bauthor linkedin context\b|\bno documented changes\b|latest banner from the first card|github links by release version/i;
 
 const VISIBLE_SURFACE =
   /what[’']s new|\bchat\b|\bcomposer\b|\btwin\b|\boverlay\b|\bmenu\b|\blayout\b|\bdock\b|\bbottom sheet\b|\bbubble|\bwork\b|\bbiograph|\banalytics\b|\boutcome\b|\blinkedin\b|\bhire\b|\bget in touch\b|\bglance\b|\bvisitor|\bhome\b|\bcontact\b|\bportrait\b|\bheadshot\b|\brss\b/i;
@@ -115,9 +115,11 @@ export function buildWhatsNewGlance(
     .filter((item) => nowMs - item.publishedMs <= WEEK_MS)
     .map((item) => item.title)
     .slice(0, 3);
+  const thisWeekKeys = new Set(thisWeek.map((title) => title.toLowerCase()));
 
   const buckets = new Map<string, GlanceItem[]>();
   for (const item of items) {
+    if (thisWeekKeys.has(item.title.toLowerCase())) continue;
     const theme = themeFor(item.title);
     if (!theme) continue;
     const list = buckets.get(theme.heading) ?? [];

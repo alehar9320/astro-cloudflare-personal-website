@@ -30,11 +30,13 @@ describe('whats-new glance', () => {
     expect(kept('feat: read Worker GITHUB_TOKEN on /api/releases (#627)')).toBe(false);
     expect(isKeptVisitorLine('No documented changes.', 'No documented changes.')).toBe(false);
     expect(kept('fix: four typos in author LinkedIn context (#631)')).toBe(false);
+    expect(kept('fix: paint What’s New latest banner from the first card (#629)')).toBe(false);
+    expect(kept('fix: name What’s New GitHub links by release version (#628)')).toBe(false);
   });
 
   it('keeps visitor-facing chat, What’s New, and work-case notes', () => {
     expect(kept('feat: dock chat composer to the bottom edge and use the stage (#618)')).toBe(true);
-    expect(kept('fix: paint What’s New latest banner from the first card (#629)')).toBe(true);
+    expect(kept('feat: restore What’s New in the main menu')).toBe(true);
     expect(kept('open the visit glance on tap at 375 (#461)')).toBe(true);
   });
 
@@ -69,19 +71,44 @@ describe('whats-new glance', () => {
           body: '- 8302a2a feat: offer LinkedIn hire on the not-found page (#519)',
           publishedAt: '2026-08-16T12:00:00Z',
         }),
+        release({
+          body: '- feat: restore What’s New in the main menu',
+          publishedAt: '2026-08-10T12:00:00Z',
+        }),
+        release({
+          body: '- 66e3fe9 fix: open the visit glance on tap at 375 (#461)',
+          publishedAt: '2026-08-10T11:00:00Z',
+        }),
+        release({
+          body: '- feat: rewrite analytics page as a visitor PM story (#492)',
+          publishedAt: '2026-08-10T10:00:00Z',
+        }),
+        release({
+          body: '- feat: point LinkedIn share photos at the live portrait (#501)',
+          publishedAt: '2026-08-10T09:00:00Z',
+        }),
       ],
       now
     );
 
     expect(glance.thisWeek).toHaveLength(3);
     expect(glance.thisWeek.join('\n')).not.toMatch(/2026\.|GITHUB_TOKEN|JSON-LD|No documented/i);
-    expect(glance.thisWeek[0]).toContain('What’s New');
+    expect(glance.thisWeek.join('\n')).not.toMatch(/latest banner from the first card/i);
+    expect(glance.thisWeek.join('\n')).toMatch(/composer/i);
+    expect(glance.thisWeek.join('\n')).toMatch(/Outcome/i);
+    expect(glance.thisWeek.join('\n')).toMatch(/LinkedIn/i);
     expect(glance.groups.length).toBeGreaterThan(0);
     expect(glance.groups.length).toBeLessThanOrEqual(4);
     for (const group of glance.groups) {
       expect(group.lines.length).toBeGreaterThan(0);
       expect(group.lines.length).toBeLessThanOrEqual(2);
     }
+    const groupLines = glance.groups.flatMap((group) => group.lines);
+    const thisWeekKeys = new Set(glance.thisWeek.map((title) => title.toLowerCase()));
+    for (const line of groupLines) {
+      expect(thisWeekKeys.has(line.toLowerCase())).toBe(false);
+    }
+    expect(groupLines.join('\n')).not.toMatch(/latest banner from the first card/i);
     expect(glance.groups.map((group) => group.heading)).toContain("What's New");
     expect(glance.groups.map((group) => group.heading)).toContain('Chat and layout');
     expect(glance.groups.map((group) => group.heading)).toContain('Work-case copy');
@@ -108,7 +135,10 @@ describe('whats-new glance', () => {
     expect(glance.thisWeek.length).toBeGreaterThan(0);
     expect(glance.thisWeek.join('\n')).not.toMatch(/2026\.08\.15\.1720|66e3fe9|feat:|fix:/);
     expect(glance.thisWeek[0]).toMatch(/glance/i);
-    expect(glance.groups.length).toBeGreaterThan(0);
+    const groupLines = glance.groups.flatMap((group) => group.lines);
+    for (const title of glance.thisWeek) {
+      expect(groupLines.map((line) => line.toLowerCase())).not.toContain(title.toLowerCase());
+    }
   });
 
   it('omits snapshot ships older than 30 days', () => {

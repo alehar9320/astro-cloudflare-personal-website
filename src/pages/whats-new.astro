@@ -109,16 +109,18 @@ const schema = {
         glance.groups.length > 0 && (
           <section class="last-30" aria-labelledby="last-30-heading">
             <h2 id="last-30-heading">Last 30 days</h2>
-            {glance.groups.map((group) => (
-              <div class="group">
-                <h3>{group.heading}</h3>
-                <ul>
-                  {group.lines.map((line) => (
-                    <li>{line}</li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+            <div class="clusters">
+              {glance.groups.map((group) => (
+                <div class="group">
+                  <h3>{group.heading}</h3>
+                  <ul>
+                    {group.lines.map((line) => (
+                      <li>{line}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
           </section>
         )
       }
@@ -171,10 +173,25 @@ const schema = {
     line-height: 1.6;
   }
 
-  .group + .group {
-    margin-top: 1.25rem;
-    padding-top: 1.25rem;
-    border-top: 1px solid var(--gray-800);
+  .last-30 .clusters {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 50em) {
+    /* site desktop breakpoint from global.css */
+    .last-30 .clusters {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 1.25rem;
+    }
+
+    .last-30 .group {
+      flex: 1 1 0;
+      min-width: 0;
+    }
   }
 
   .group h3 {
