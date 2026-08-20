@@ -2004,6 +2004,14 @@ describe('identity copy', () => {
     expect(page).toContain('toVisitorChangelogTitle');
     expect(page).toContain('toVisitorRelease');
     expect(page).toContain('ContactCTA');
+    expect(page).toContain('View ${release.version} on GitHub');
+    expect(page).toContain('.release-link:focus-visible');
+    expect(page).toContain('.release-status a:focus-visible');
+    expect(page).toContain('outline: 2px solid var(--accent-regular)');
+    expect(page).toContain('outline-offset: 4px');
+    expect(page).not.toContain('target="_blank"');
+    expect(page).not.toContain("target = '_blank'");
+    expect(page).not.toContain('noopener');
     expect(page).not.toContain('mailto:');
     expect(page).not.toContain('this is not on the site');
     expect(page).not.toContain("this isn't on the site yet");
