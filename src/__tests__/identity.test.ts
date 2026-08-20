@@ -2008,7 +2008,9 @@ describe('identity copy', () => {
     expect(page).toContain("method: 'POST'");
     expect(page).toContain("fetch('/api/release-summary'");
     expect(page).toContain('tag !== latest.version');
-    expect(page).toContain('paintSummary(groundedReleaseSummary(latest.version, latest.body, latest.title))');
+    expect(page).toContain(
+      'paintSummary(groundedReleaseSummary(latest.version, latest.body, latest.title))'
+    );
     expect(page).not.toContain('LATEST_RELEASE_SNAPSHOT');
     expect(page).toContain('View ${release.version} on GitHub');
     expect(page).toContain(':global(.release-link:focus-visible)');
