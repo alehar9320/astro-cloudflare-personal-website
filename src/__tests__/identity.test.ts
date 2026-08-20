@@ -2037,7 +2037,9 @@ describe('identity copy', () => {
     expect(api).toContain("'Cache-Control': 'public, max-age=60'");
     expect(api).not.toContain('CHAT_STORE');
     const githubUtil = readFileSync('src/utils/github-releases.ts', 'utf8');
-    expect(githubUtil).toContain("from 'cloudflare:workers'");
+    expect(githubUtil).not.toContain("from 'cloudflare:workers'");
+    expect(githubUtil).not.toContain('GITHUB_TOKEN');
+    expect(githubUtil).not.toContain('process.env');
     expect(githubUtil).toContain('FetchReleasesOptions');
     expect(githubUtil).not.toContain('CHAT_STORE');
 
