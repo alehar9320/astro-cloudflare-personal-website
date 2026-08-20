@@ -1,4 +1,3 @@
-import { env } from 'cloudflare:workers';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
@@ -200,9 +199,7 @@ describe('github releases utility', () => {
     });
   });
 
-  it('uses GITHUB_TOKEN and logs status on error', async () => {
-    vi.stubEnv('GITHUB_TOKEN', 'test-token');
-    vi.stubGlobal('process', { env: { GITHUB_TOKEN: 'test-token' } });
+  it('uses an options token and logs status on error', async () => {
     vi.stubGlobal('window', undefined);
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const fetchMock = vi.fn().mockResolvedValue({
@@ -212,7 +209,7 @@ describe('github releases utility', () => {
       headers: new Map([['x-ratelimit-limit', '60']]),
     });
 
-    await fetchGitHubReleases(fetchMock as typeof fetch);
+    await fetchGitHubReleases(fetchMock as typeof fetch, undefined, { token: 'test-token' });
 
     expect(fetchMock).toHaveBeenCalledWith(
       expect.any(String),
@@ -261,26 +258,6 @@ describe('github releases utility', () => {
       })
     );
 
-    vi.unstubAllGlobals();
-  });
-
-  it('uses Worker env.GITHUB_TOKEN when process is absent', async () => {
-    vi.stubGlobal('process', undefined);
-    const bindings = env as { GITHUB_TOKEN?: string };
-    bindings.GITHUB_TOKEN = 'worker-token';
-    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => [] });
-    await fetchGitHubReleases(fetchMock as typeof fetch);
-
-    expect(fetchMock).toHaveBeenCalledWith(
-      expect.any(String),
-      expect.objectContaining({
-        headers: expect.objectContaining({
-          Authorization: 'token worker-token',
-        }),
-      })
-    );
-
-    delete bindings.GITHUB_TOKEN;
     vi.unstubAllGlobals();
   });
 
