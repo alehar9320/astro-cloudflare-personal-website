@@ -44,9 +44,9 @@
 
 ## 2026-05-20 - Enhancing Dynamic Release Link Accessibility & Focus Spatiality
 
-**Learning:** Dynamically rendered links in client-side scripts often bypass standard global link focus rules and accessible external link patterns. Adding `target="_blank"` and `rel="noopener noreferrer"` to client-rendered external links prevents session context loss, while supplying context-rich `aria-label`s (e.g. `View release v1.2.0 on GitHub`) ensures screen reader users navigating links out of context can distinguish identical link text across repeated list cards. Explicitly pairing `:focus-visible` outline rings (2px accent with 4px offset) on custom class links ensures complete keyboard accessibility alignment.
+**Learning:** Dynamically rendered links in client-side scripts often bypass standard global link focus rules and accessible external link patterns. Adding `target="_blank"` and `rel="noopener noreferrer"` to client-rendered external links prevents session context loss. Providing descriptive visible text (e.g. `View ${release.version} on GitHub`) gives both sighted visitors and screen reader users a unique, context-rich link name without needing redundant `aria-label` overrides. Explicitly pairing `:focus-visible` outline rings (2px accent with 4px offset) on custom class links ensures complete keyboard accessibility alignment.
 
-**Action:** Updated client-side link creation logic in `src/pages/whats-new.astro` to include `target="_blank"`, `rel="noopener noreferrer"`, and version-specific `aria-label` attributes for release cards and fallback links. Added explicit `:hover` and `:focus-visible` CSS rules for `.release-link` and `.release-status a`.
+**Action:** Updated client-side link creation logic in `src/pages/whats-new.astro` to include `target="_blank"`, `rel="noopener noreferrer"`, and version-specific visible link text (`View ${release.version} on GitHub`) for release cards. Added explicit `:hover` and `:focus-visible` CSS rules for `.release-link` and `.release-status a`.
 
 ## 2026-05-19 - Optimizing LCP for Portfolio Galleries and Hero Assets
 

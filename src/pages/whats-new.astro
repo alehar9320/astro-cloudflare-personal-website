@@ -139,7 +139,6 @@ const schema = {
         link.href = RELEASES_PAGE_URL;
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
-        link.setAttribute('aria-label', 'View GitHub Releases');
         link.textContent = 'View GitHub Releases';
         empty.appendChild(document.createTextNode(' '));
         empty.appendChild(link);
@@ -189,8 +188,7 @@ const schema = {
         link.className = 'release-link';
         link.target = '_blank';
         link.rel = 'noopener noreferrer';
-        link.setAttribute('aria-label', `View release ${release.version} on GitHub`);
-        link.textContent = 'View on GitHub';
+        link.textContent = `View ${release.version} on GitHub`;
         article.appendChild(link);
 
         fragment.appendChild(article);
