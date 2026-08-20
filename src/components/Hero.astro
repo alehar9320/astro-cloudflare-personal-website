@@ -80,4 +80,10 @@ const { align = 'center', tagline, title, variant = 'secondary' } = Astro.props;
       font-size: var(--text-5xl);
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .primary .title {
+      animation: none;
+    }
+  }
 </style>
