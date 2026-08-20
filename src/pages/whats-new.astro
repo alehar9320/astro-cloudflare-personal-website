@@ -70,7 +70,6 @@ const schema = {
 </BaseLayout>
 
 <script>
-  import { LATEST_RELEASE_SNAPSHOT } from '../data/latest-release';
   import {
     RELEASES_PAGE_URL,
     fetchGitHubReleases,
@@ -96,35 +95,44 @@ const schema = {
     summaryContainer.replaceChildren(tldr);
   };
 
-  if (summaryContainer instanceof HTMLElement) {
-    fetch('/api/release-summary')
-      .then(async (response) => {
-        if (response.status === 204 || !response.ok) return;
-        let data: unknown;
-        try {
-          data = await response.json();
-        } catch {
-          return;
-        }
-        if (!data || typeof data !== 'object') return;
-        const summary = (data as { summary?: unknown }).summary;
-        const tag = (data as { tag?: unknown }).tag;
-        if (typeof summary !== 'string' || !summary.trim()) return;
-        const source = `${typeof tag === 'string' ? tag : ''}\n${LATEST_RELEASE_SNAPSHOT.body}`;
-        const prepared = prepareReleaseSummary(summary, source);
-        if (prepared) paintSummary(prepared);
-      })
-      .catch(() => {
-        // Fail-open: notes-only fallback still paints with the changelog.
-      });
-  }
-
   if (releaseList instanceof HTMLDivElement) {
     fetchGitHubReleases().then((rawReleases) => {
       const releases = rawReleases.map(toVisitorRelease);
-      if (summaryContainer instanceof HTMLElement && !summaryContainer.hasChildNodes()) {
-        const latest = releases[0] ?? LATEST_RELEASE_SNAPSHOT;
+      const latest = releases[0];
+
+      if (summaryContainer instanceof HTMLElement && latest) {
         paintSummary(groundedReleaseSummary(latest.version, latest.body, latest.title));
+
+        fetch('/api/release-summary', {
+          method: 'POST',
+          headers: { Accept: 'application/json', 'content-type': 'application/json' },
+          body: JSON.stringify({
+            tag: latest.version,
+            version: latest.version,
+            title: latest.title,
+            body: latest.body,
+          }),
+        })
+          .then(async (response) => {
+            if (response.status === 204 || !response.ok) return;
+            let data: unknown;
+            try {
+              data = await response.json();
+            } catch {
+              return;
+            }
+            if (!data || typeof data !== 'object') return;
+            const summary = (data as { summary?: unknown }).summary;
+            const tag = (data as { tag?: unknown }).tag;
+            if (typeof summary !== 'string' || !summary.trim()) return;
+            if (typeof tag === 'string' && tag !== latest.version) return;
+            const source = `${latest.version}\n${latest.body}`;
+            const prepared = prepareReleaseSummary(summary, source);
+            if (prepared) paintSummary(prepared);
+          })
+          .catch(() => {
+            // Grounded banner from the first card already painted.
+          });
       }
 
       if (releases.length === 0) {
