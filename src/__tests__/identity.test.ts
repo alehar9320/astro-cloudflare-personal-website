@@ -2004,6 +2004,12 @@ describe('identity copy', () => {
     expect(page).toContain('toVisitorChangelogTitle');
     expect(page).toContain('toVisitorRelease');
     expect(page).toContain('ContactCTA');
+    expect(page).toContain('fetchGitHubReleases');
+    expect(page).toContain("method: 'POST'");
+    expect(page).toContain("fetch('/api/release-summary'");
+    expect(page).toContain('tag !== latest.version');
+    expect(page).toContain('paintSummary(groundedReleaseSummary(latest.version, latest.body, latest.title))');
+    expect(page).not.toContain('LATEST_RELEASE_SNAPSHOT');
     expect(page).toContain('View ${release.version} on GitHub');
     expect(page).toContain(':global(.release-link:focus-visible)');
     expect(page).toContain(':global(.release-status a:focus-visible)');
