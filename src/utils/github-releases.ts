@@ -1,3 +1,4 @@
+import { env } from 'cloudflare:workers';
 import { z } from 'zod';
 
 export const GitHubReleaseApiItemSchema = z.object({
@@ -70,14 +71,24 @@ export function normalizeRelease(release: GitHubReleaseApiItem): SiteRelease | n
 }
 
 /**
+ * Options for fetching GitHub releases.
+ */
+export interface FetchReleasesOptions {
+  /** Optional GitHub API personal access token or worker secret. */
+  token?: string;
+}
+
+/**
  * Fetches and validates a list of non-prerelease items from the GitHub Releases API.
  * @param {typeof fetch} [fetchImpl=fetch] - The fetch implementation to use (useful for testing).
  * @param {string} [url=RELEASES_API_URL] - The GitHub API endpoint to fetch from.
+ * @param {FetchReleasesOptions} [options] - Additional options including token.
  * @returns {Promise<SiteRelease[]>} A promise resolving to an array of normalized site releases.
  */
 export async function fetchGitHubReleases(
   fetchImpl: typeof fetch = fetch,
-  url: string = RELEASES_API_URL
+  url: string = RELEASES_API_URL,
+  options?: FetchReleasesOptions
 ): Promise<SiteRelease[]> {
   if (typeof window !== 'undefined' && url === RELEASES_API_URL) {
     // Same-origin /api/releases is cheap. Skip sessionStorage so a new GitHub
@@ -103,11 +114,26 @@ export async function fetchGitHubReleases(
     return [];
   }
 
-  let githubToken: string | undefined;
-  try {
-    githubToken = typeof process !== 'undefined' ? process.env.GITHUB_TOKEN : undefined;
-  } catch {
-    githubToken = undefined;
+  let githubToken: string | undefined = options?.token?.trim();
+  if (!githubToken) {
+    try {
+      const globalProcess = (globalThis as { process?: { env?: Record<string, string> } }).process;
+      githubToken = globalProcess?.env?.GITHUB_TOKEN;
+    } catch {
+      githubToken = undefined;
+    }
+  }
+  if (!githubToken) {
+    try {
+      if (env && typeof env === 'object' && 'GITHUB_TOKEN' in env) {
+        const workerToken = (env as { GITHUB_TOKEN?: unknown }).GITHUB_TOKEN;
+        if (typeof workerToken === 'string') {
+          githubToken = workerToken.trim();
+        }
+      }
+    } catch {
+      // cloudflare:workers env fallback
+    }
   }
 
   // Defensive check to ensure we only fetch from the trusted GitHub API domain

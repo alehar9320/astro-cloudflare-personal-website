@@ -246,6 +246,23 @@ describe('github releases utility', () => {
     vi.unstubAllGlobals();
   });
 
+  it('uses explicitly provided token in options parameter', async () => {
+    vi.stubGlobal('process', undefined);
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => [] });
+    await fetchGitHubReleases(fetchMock as typeof fetch, undefined, { token: 'explicit-token' });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: 'token explicit-token',
+        }),
+      })
+    );
+
+    vi.unstubAllGlobals();
+  });
+
   it('rejects invalid GitHub API URLs', async () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const fetchMock = vi.fn();
