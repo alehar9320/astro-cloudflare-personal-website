@@ -42,6 +42,12 @@
 
 **Action:** Standardized `outline-offset: 4px` and tactile scaling across `Nav.astro`, `Footer.astro`, and global link styles. Refined `global.css` to gate smooth scrolling behind `prefers-reduced-motion: no-preference`. Ensured site-wide "Skip to Content" functionality by adding `id="main-content"` to all primary page layouts and components.
 
+## 2026-05-20 - Enhancing Dynamic Release Link Accessibility & Focus Spatiality
+
+**Learning:** Dynamically rendered links in client-side scripts often bypass standard global link focus rules and accessible external link patterns. Adding `target="_blank"` and `rel="noopener noreferrer"` to client-rendered external links prevents session context loss, while supplying context-rich `aria-label`s (e.g. `View release v1.2.0 on GitHub`) ensures screen reader users navigating links out of context can distinguish identical link text across repeated list cards. Explicitly pairing `:focus-visible` outline rings (2px accent with 4px offset) on custom class links ensures complete keyboard accessibility alignment.
+
+**Action:** Updated client-side link creation logic in `src/pages/whats-new.astro` to include `target="_blank"`, `rel="noopener noreferrer"`, and version-specific `aria-label` attributes for release cards and fallback links. Added explicit `:hover` and `:focus-visible` CSS rules for `.release-link` and `.release-status a`.
+
 ## 2026-05-19 - Optimizing LCP for Portfolio Galleries and Hero Assets
 
 **Learning:** To optimize Largest Contentful Paint (LCP) in Astro projects, primary visual assets (like hero images) and the first items in repeated galleries should be prioritised by the browser. Applying `loading="eager"` and `fetchpriority="high"` to these elements prevents the browser from delaying their loading, ensuring a faster perceived performance for users.

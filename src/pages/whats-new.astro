@@ -58,7 +58,11 @@ const schema = {
         <noscript>
           <p class="release-status">
             Release history is available on
-            <a href="https://github.com/alehar9320/astro-cloudflare-personal-website/releases">
+            <a
+              href="https://github.com/alehar9320/astro-cloudflare-personal-website/releases"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               GitHub Releases
             </a>.
           </p>
@@ -133,6 +137,9 @@ const schema = {
         empty.textContent = 'Site updates are currently unavailable.';
         const link = document.createElement('a');
         link.href = RELEASES_PAGE_URL;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.setAttribute('aria-label', 'View GitHub Releases');
         link.textContent = 'View GitHub Releases';
         empty.appendChild(document.createTextNode(' '));
         empty.appendChild(link);
@@ -180,6 +187,9 @@ const schema = {
         const link = document.createElement('a');
         link.href = release.url;
         link.className = 'release-link';
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        link.setAttribute('aria-label', `View release ${release.version} on GitHub`);
         link.textContent = 'View on GitHub';
         article.appendChild(link);
 
@@ -247,9 +257,29 @@ const schema = {
     line-height: 1.6;
   }
 
-  .release-link {
+  .release-link,
+  .release-status a {
     display: inline-block;
     margin-top: 0.25rem;
+    color: var(--link-color);
+    text-decoration: 1px solid underline transparent;
+    text-underline-offset: 0.25em;
+    transition:
+      text-decoration-color var(--theme-transition),
+      color var(--theme-transition);
+  }
+
+  .release-link:hover,
+  .release-status a:hover {
+    text-decoration-color: currentColor;
+  }
+
+  .release-link:focus-visible,
+  .release-status a:focus-visible {
+    text-decoration-color: currentColor;
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+    border-radius: 0.25rem;
   }
 
   .commit-hash {
