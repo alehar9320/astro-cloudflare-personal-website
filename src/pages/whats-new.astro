@@ -1,15 +1,49 @@
 ---
-import { env } from 'cloudflare:workers';
+export const prerender = false;
 
+import { env } from 'cloudflare:workers';
+import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
 import { LATEST_RELEASE_SNAPSHOT } from '../data/latest-release';
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { fetchGitHubReleases, formatReleaseDate, type SiteRelease } from '../utils/github-releases';
+import { fetchGitHubReleases } from '../utils/github-releases';
 import { toVisitorChangelogTitle, toVisitorRelease } from '../utils/visitor-changelog';
-import { buildWhatsNewPage } from '../utils/whats-new-exec';
+import { buildWhatsNewGlance } from '../utils/whats-new-glance';
 
-export const prerender = false;
+interface Bindings {
+  GITHUB_TOKEN?: string;
+}
+
+function readEnv(): Bindings {
+  try {
+    if (env && typeof env === 'object') return env as Bindings;
+  } catch {
+    // cloudflare:workers env is the only binding surface after adapter v13.
+  }
+  return {};
+}
+
+const token = readEnv().GITHUB_TOKEN?.trim();
+const fetched = await fetchGitHubReleases(fetch, undefined, token ? { token } : undefined);
+const baseReleases = fetched.length > 0 ? fetched : [LATEST_RELEASE_SNAPSHOT];
+const visitorReleases = baseReleases.map((release) => {
+  const visitor = toVisitorRelease(release);
+  return {
+    ...visitor,
+    body: visitor.body
+      .split('\n')
+      .map((line) => {
+        const bullet = line.match(/^([-*+]\s+)(.*)$/);
+        if (!bullet) return toVisitorChangelogTitle(line);
+        return `${bullet[1]}${toVisitorChangelogTitle(bullet[2])}`;
+      })
+      .join('\n'),
+  };
+});
+const glance = buildWhatsNewGlance(visitorReleases);
+
+const dek = 'What you can see on this site lately.';
+const pageTitle = "What's New | Product Manager, Developer Experience at IFS";
 
 const schema = {
   '@context': 'https://schema.org',
@@ -18,8 +52,8 @@ const schema = {
       '@type': 'WebPage',
       '@id': 'https://me.alehar.workers.dev/whats-new/#webpage',
       url: 'https://me.alehar.workers.dev/whats-new/',
-      name: "What's New | Product Manager, Developer Experience at IFS",
-      description: 'A public changelog of this site.',
+      name: pageTitle,
+      description: dek,
       breadcrumb: {
         '@type': 'BreadcrumbList',
         itemListElement: [
@@ -45,205 +79,115 @@ const schema = {
     },
   ],
 };
-
-interface WhatsNewEnv {
-  GITHUB_TOKEN?: string;
-}
-
-function readEnv(): WhatsNewEnv {
-  try {
-    if (env && typeof env === 'object') return env as WhatsNewEnv;
-  } catch {
-    // cloudflare:workers env is the only binding surface after adapter v13.
-  }
-  return {};
-}
-
-const bindings = readEnv();
-const token = bindings.GITHUB_TOKEN?.trim();
-
-let fetched: SiteRelease[] = [];
-try {
-  fetched = await fetchGitHubReleases(fetch, undefined, token ? { token } : undefined);
-} catch {
-  fetched = [];
-}
-
-const baseReleases = fetched.length > 0 ? fetched : [LATEST_RELEASE_SNAPSHOT];
-const releases = baseReleases.map(toVisitorRelease);
-const now = new Date();
-const pageModel = buildWhatsNewPage(releases, now);
-const olderUpdatesHref =
-  'https://github.com/alehar9320/astro-cloudflare-personal-website/commits/main';
 ---
 
 <BaseLayout
   title="What's New | Product Manager, Developer Experience at IFS"
   ogTitle="What's New | Product Manager, Developer Experience at IFS"
-  description="A public changelog of this site. Product Manager, Developer Experience at IFS."
+  description={`${dek} Product Manager, Developer Experience at IFS.`}
   robots="noindex"
 >
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="stack gap-20">
-    <main id="main-content" class="wrapper stack gap-8">
-      <Hero title="What's New" tagline="A public changelog of this site." align="start" />
+    <main id="main-content" class="glance stack gap-8">
+      <Hero title="What's New" tagline={dek} align="start" />
 
-      <div class="content">
-        {
-          pageModel.thisWeek.length > 0 && (
-            <section class="this-week">
-              <h2>This week</h2>
-              <p class="this-week-strip">
-                {pageModel.thisWeek.map((release) => release.version).join(' · ')}
-              </p>
-            </section>
-          )
-        }
-
-        {
-          pageModel.latest && (
-            <section class="exec-summary">
-              <h2>Last 30 days</h2>
-              <p class="exec-lead">
-                {pageModel.latest.version}
-                {pageModel.latest.publishedAt
-                  ? ` · ${formatReleaseDate(pageModel.latest.publishedAt)}`
-                  : ''}
-                {pageModel.latestLead ? `. ${pageModel.latestLead}.` : '.'}
-              </p>
-              {pageModel.groups.map((group) => (
-                <div>
-                  {group.label && <h3>{group.label}</h3>}
-                  <ul>
-                    {group.titles.map((title) => (
-                      <li>{toVisitorChangelogTitle(title)}</li>
-                    ))}
-                  </ul>
-                </div>
+      {
+        glance.thisWeek.length > 0 && (
+          <section class="this-week" aria-labelledby="this-week-heading">
+            <h2 id="this-week-heading">This week</h2>
+            <ul>
+              {glance.thisWeek.map((line) => (
+                <li>{line}</li>
               ))}
-            </section>
-          )
-        }
+            </ul>
+          </section>
+        )
+      }
 
-        {
-          pageModel.last30.length === 0 && (
-            <p class="release-status">Site updates are currently unavailable.</p>
-          )
-        }
+      {
+        glance.groups.length > 0 && (
+          <section class="last-30" aria-labelledby="last-30-heading">
+            <h2 id="last-30-heading">Last 30 days</h2>
+            {glance.groups.map((group) => (
+              <div class="group">
+                <h3>{group.heading}</h3>
+                <ul>
+                  {group.lines.map((line) => (
+                    <li>{line}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </section>
+        )
+      }
 
-        <div class="release-list">
-          {
-            pageModel.last30.map((release) => (
-              <article class="release-card">
-                <h2>{release.version}</h2>
-                <p class="release-meta">{formatReleaseDate(release.publishedAt)}</p>
-                <a href={release.url} class="release-link">
-                  {`View ${release.version} on GitHub`}
-                </a>
-              </article>
-            ))
-          }
-        </div>
-
-        <p class="older-updates release-status">
-          <a href={olderUpdatesHref}>Older updates on GitHub</a>
-        </p>
-
-        <noscript>
-          <p class="release-status">
-            Release history is available on
-            <a href="https://github.com/alehar9320/astro-cloudflare-personal-website/releases">
-              GitHub Releases
-            </a>.
-          </p>
-        </noscript>
-      </div>
+      <p class="history">
+        <a
+          class="history-link"
+          href="https://github.com/alehar9320/astro-cloudflare-personal-website/commits"
+        >
+          Full history on GitHub
+        </a>
+      </p>
     </main>
     <ContactCTA />
   </div>
 </BaseLayout>
 
 <style>
-  .content {
-    background: var(--gradient-subtle);
-    border: 1px solid var(--gray-800);
-    border-radius: 1.5rem;
-    padding: 2.5rem;
-    box-shadow: var(--shadow-sm);
+  .glance {
+    width: min(52rem, calc(100vw - 3rem));
+    margin-inline: auto;
   }
 
   .this-week,
-  .exec-summary {
-    margin-bottom: 1.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--gray-800);
+  .last-30 {
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 1.5rem;
+    padding: 1.5rem 2rem;
+    box-shadow: var(--shadow-sm);
   }
 
   .this-week h2,
-  .exec-summary h2,
-  .release-card h2 {
+  .last-30 h2 {
     font-size: var(--text-xl);
-    margin-bottom: 0.35rem;
     color: var(--gray-100);
-  }
-
-  .exec-summary h3 {
-    margin: 1rem 0 0.5rem;
-    color: var(--gray-100);
-  }
-
-  .this-week-strip,
-  .exec-lead {
-    color: var(--gray-300);
-    line-height: 1.6;
     margin-bottom: 0.75rem;
   }
 
-  .exec-summary ul {
-    margin-left: 1.5rem;
+  .this-week ul,
+  .last-30 ul {
+    margin-left: 1.25rem;
     list-style-type: disc;
-    margin-bottom: 0.75rem;
     color: var(--gray-300);
   }
 
-  .exec-summary li {
+  .this-week li,
+  .last-30 li {
+    margin-bottom: 0.4rem;
+    line-height: 1.6;
+  }
+
+  .group + .group {
+    margin-top: 1.25rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid var(--gray-800);
+  }
+
+  .group h3 {
+    font-size: var(--text-lg);
+    color: var(--gray-100);
     margin-bottom: 0.5rem;
-    line-height: 1.6;
   }
 
-  .release-list {
-    display: grid;
-    gap: 1.5rem;
+  .history {
+    margin-top: 0.5rem;
   }
 
-  .release-card {
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--gray-800);
-  }
-
-  .release-card:last-child {
-    border-bottom: 0;
-    padding-bottom: 0;
-  }
-
-  .release-meta {
-    color: var(--gray-400);
-    margin-bottom: 1rem;
-  }
-
-  .release-status {
-    color: var(--gray-300);
-    line-height: 1.6;
-  }
-
-  .older-updates {
-    margin-top: 1.5rem;
-  }
-
-  :global(.release-link),
-  :global(.release-status a) {
-    display: inline-block;
-    margin-top: 0.25rem;
+  :global(.history-link) {
     color: var(--link-color);
     text-decoration: 1px solid underline transparent;
     text-underline-offset: 0.25em;
@@ -252,34 +196,14 @@ const olderUpdatesHref =
       color var(--theme-transition);
   }
 
-  :global(.release-link:hover),
-  :global(.release-status a:hover) {
+  :global(.history-link:hover) {
     text-decoration-color: currentColor;
   }
 
-  :global(.release-link:focus-visible),
-  :global(.release-status a:focus-visible) {
+  :global(.history-link:focus-visible) {
     text-decoration-color: currentColor;
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
     border-radius: 0.25rem;
-  }
-
-  .commit-hash {
-    background: var(--gray-800);
-    padding: 0.1rem 0.3rem;
-    border-radius: 0.25rem;
-    font-size: 0.85em;
-    font-family: monospace;
-    margin-right: 0.25rem;
-  }
-
-  .commit-hash a {
-    text-decoration: none;
-    color: var(--accent-regular);
-  }
-
-  :root.theme-dark .commit-hash a {
-    color: var(--accent-dark);
   }
 </style>
