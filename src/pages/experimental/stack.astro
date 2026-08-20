@@ -1,0 +1,96 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_tech_stack) return Astro.redirect('/404/');
+
+const stack = [
+  { name: 'Astro', role: 'Framework', note: 'Zero-JS by default for fast, static rendering.' },
+  {
+    name: 'Cloudflare Workers',
+    role: 'Edge Compute',
+    note: 'Global edge deployment with serverless performance.',
+  },
+  {
+    name: 'TypeScript',
+    role: 'Type Safety',
+    note: 'Strict compile-time guarantees across components.',
+  },
+  { name: 'Vitest', role: 'Testing', note: 'Unit testing suite for API and utility logic.' },
+];
+---
+
+<BaseLayout
+  title="Tech Stack | Alexander Härenstam"
+  description="Core tech stack choices powering Alexander Härenstam's portfolio."
+  robots="noindex"
+>
+  <main id="main-content" class="wrapper stack gap-10">
+    <Hero title="Tech Stack" align="start">
+      <p class="lede">Core architecture and tooling choices for speed, safety, and reliability.</p>
+    </Hero>
+    <div class="grid">
+      {
+        stack.map(({ name, role, note }) => (
+          <div class="card">
+            <strong>{name}</strong>
+            <p class="role">{role}</p>
+            <p class="note">{note}</p>
+          </div>
+        ))
+      }
+    </div>
+    <div class="actions">
+      <CallToAction
+        href="https://www.linkedin.com/in/alehar/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Get in touch
+      </CallToAction>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .lede {
+    color: var(--gray-200);
+    max-width: 46ch;
+    margin: 0;
+  }
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .card {
+    padding: 1rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+    background: var(--gradient-subtle);
+  }
+  .card strong {
+    display: block;
+    color: var(--gray-0);
+  }
+  .card .role {
+    color: var(--gray-400);
+    font-size: var(--text-sm);
+    margin: 0.2rem 0;
+  }
+  .card .note {
+    color: var(--gray-200);
+    margin: 0.35rem 0 0;
+  }
+  .actions {
+    padding-bottom: var(--chat-fab-clearance);
+  }
+  @media (min-width: 50em) {
+    .actions {
+      padding-bottom: 0;
+    }
+  }
+</style>
