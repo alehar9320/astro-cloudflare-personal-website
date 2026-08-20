@@ -6,7 +6,7 @@ import { toVisitorChangelogTitle, toVisitorRelease } from '../../utils/visitor-c
 
 const jsonHeaders = {
   'content-type': 'application/json',
-  'Cache-Control': 'public, max-age=60',
+  'Cache-Control': 'public, max-age=60, s-maxage=60, stale-while-revalidate=30',
   'X-Content-Type-Options': 'nosniff',
   'X-Frame-Options': 'DENY',
   'Strict-Transport-Security': 'max-age=31536000; includeSubDomains',

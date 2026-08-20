@@ -20,7 +20,7 @@ const securityHeaders = {
 
 const jsonHeaders = {
   'content-type': 'application/json',
-  'Cache-Control': 'public, max-age=60',
+  'Cache-Control': 'public, max-age=60, s-maxage=60, stale-while-revalidate=30',
   ...securityHeaders,
 } as const;
 
