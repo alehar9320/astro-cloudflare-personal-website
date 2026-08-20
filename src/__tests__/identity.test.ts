@@ -2005,8 +2005,10 @@ describe('identity copy', () => {
     expect(page).toContain('toVisitorRelease');
     expect(page).toContain('ContactCTA');
     expect(page).toContain('View ${release.version} on GitHub');
-    expect(page).toContain('.release-link:focus-visible');
-    expect(page).toContain('.release-status a:focus-visible');
+    expect(page).toContain(':global(.release-link:focus-visible)');
+    expect(page).toContain(':global(.release-status a:focus-visible)');
+    expect(page).toContain(':global(.release-link:hover)');
+    expect(page).toContain(':global(.release-status a:hover)');
     expect(page).toContain('outline: 2px solid var(--accent-regular)');
     expect(page).toContain('outline-offset: 4px');
     expect(page).not.toContain('target="_blank"');
