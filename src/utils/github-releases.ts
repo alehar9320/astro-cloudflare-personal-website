@@ -69,15 +69,22 @@ export function normalizeRelease(release: GitHubReleaseApiItem): SiteRelease | n
   };
 }
 
+export interface FetchReleasesOptions {
+  /** Optional GitHub API token from the Worker API route. Never log this. */
+  token?: string;
+}
+
 /**
  * Fetches and validates a list of non-prerelease items from the GitHub Releases API.
  * @param {typeof fetch} [fetchImpl=fetch] - The fetch implementation to use (useful for testing).
  * @param {string} [url=RELEASES_API_URL] - The GitHub API endpoint to fetch from.
+ * @param {FetchReleasesOptions} [options] - Optional token from the API route.
  * @returns {Promise<SiteRelease[]>} A promise resolving to an array of normalized site releases.
  */
 export async function fetchGitHubReleases(
   fetchImpl: typeof fetch = fetch,
-  url: string = RELEASES_API_URL
+  url: string = RELEASES_API_URL,
+  options?: FetchReleasesOptions
 ): Promise<SiteRelease[]> {
   if (typeof window !== 'undefined' && url === RELEASES_API_URL) {
     // Same-origin /api/releases is cheap. Skip sessionStorage so a new GitHub
@@ -103,12 +110,7 @@ export async function fetchGitHubReleases(
     return [];
   }
 
-  let githubToken: string | undefined;
-  try {
-    githubToken = typeof process !== 'undefined' ? process.env.GITHUB_TOKEN : undefined;
-  } catch {
-    githubToken = undefined;
-  }
+  const githubToken = options?.token?.trim() || undefined;
 
   // Defensive check to ensure we only fetch from the trusted GitHub API domain
   if (!url.startsWith('https://api.github.com/')) {

@@ -199,9 +199,7 @@ describe('github releases utility', () => {
     });
   });
 
-  it('uses GITHUB_TOKEN and logs status on error', async () => {
-    vi.stubEnv('GITHUB_TOKEN', 'test-token');
-    vi.stubGlobal('process', { env: { GITHUB_TOKEN: 'test-token' } });
+  it('uses an options token and logs status on error', async () => {
     vi.stubGlobal('window', undefined);
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const fetchMock = vi.fn().mockResolvedValue({
@@ -211,7 +209,7 @@ describe('github releases utility', () => {
       headers: new Map([['x-ratelimit-limit', '60']]),
     });
 
-    await fetchGitHubReleases(fetchMock as typeof fetch);
+    await fetchGitHubReleases(fetchMock as typeof fetch, undefined, { token: 'test-token' });
 
     expect(fetchMock).toHaveBeenCalledWith(
       expect.any(String),
@@ -242,6 +240,23 @@ describe('github releases utility', () => {
 
     const callWithNoAuth = fetchMock.mock.calls.find((call) => !call[1]?.headers?.Authorization);
     expect(callWithNoAuth).toBeDefined();
+
+    vi.unstubAllGlobals();
+  });
+
+  it('uses explicitly provided token in options parameter', async () => {
+    vi.stubGlobal('process', undefined);
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => [] });
+    await fetchGitHubReleases(fetchMock as typeof fetch, undefined, { token: 'explicit-token' });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: 'token explicit-token',
+        }),
+      })
+    );
 
     vi.unstubAllGlobals();
   });
