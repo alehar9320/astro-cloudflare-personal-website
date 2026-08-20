@@ -130,7 +130,8 @@ describe('identity copy', () => {
     expect(footer).not.toContain('mailto:');
     expect(existsSync('src/pages/whats-new.astro')).toBe(true);
     const page = readFileSync('src/pages/whats-new.astro', 'utf8');
-    expect(page).toContain('A public changelog of this site.');
+    expect(page).not.toContain('A public changelog of this site.');
+    expect(page).toContain('What you can see on this site lately.');
   });
 
   it('drops Report an issue from the footer and keeps LinkedIn hire', () => {
@@ -1758,7 +1759,8 @@ describe('identity copy', () => {
     expect(existsSync('src/pages/whats-new.astro')).toBe(true);
     const page = readFileSync('src/pages/whats-new.astro', 'utf8');
     expect(page).toContain('robots="noindex"');
-    expect(page).toContain('A public changelog of this site.');
+    expect(page).not.toContain('A public changelog of this site.');
+    expect(page).toContain('What you can see on this site lately.');
     expect(page).toContain('title="What\'s New | Product Manager, Developer Experience at IFS"');
     expect(page).not.toContain('mailto:');
     expect(page).not.toContain('nofollow');
@@ -1996,8 +1998,17 @@ describe('identity copy', () => {
   it('rewrites What’s New for visitors, not a project log', () => {
     const page = readFileSync('src/pages/whats-new.astro', 'utf8');
     const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    const robots = readFileSync('public/robots.txt', 'utf8');
     expect(page).not.toContain('A real-time log of project milestones');
-    expect(page).toContain('A public changelog of this site.');
+    expect(page).not.toContain('A public changelog of this site.');
+    expect(page).not.toContain('Loading the latest site updates');
+    expect(page).not.toContain('Loading...');
+    expect(page).not.toContain('data-release-summary');
+    expect(page).not.toContain('View ${release.version} on GitHub');
+    expect(page).toContain('export const prerender = false');
+    expect(page).toContain('What you can see on this site lately.');
     expect(page).toContain('title="What\'s New | Product Manager, Developer Experience at IFS"');
     expect(page).toContain('ogTitle="What\'s New | Product Manager, Developer Experience at IFS"');
     expect(page).toContain('Product Manager, Developer Experience');
@@ -2005,20 +2016,18 @@ describe('identity copy', () => {
     expect(page).toContain('toVisitorRelease');
     expect(page).toContain('ContactCTA');
     expect(page).toContain('fetchGitHubReleases');
-    expect(page).toContain("method: 'POST'");
-    expect(page).toContain("fetch('/api/release-summary'");
-    expect(page).toContain('tag !== latest.version');
-    expect(page).toContain(
-      'paintSummary(groundedReleaseSummary(latest.version, latest.body, latest.title))'
-    );
-    expect(page).not.toContain('LATEST_RELEASE_SNAPSHOT');
-    expect(page).toContain('View ${release.version} on GitHub');
-    expect(page).toContain(':global(.release-link:focus-visible)');
-    expect(page).toContain(':global(.release-status a:focus-visible)');
-    expect(page).toContain(':global(.release-link:hover)');
-    expect(page).toContain(':global(.release-status a:hover)');
+    expect(page).toContain('fetchGitHubReleases(fetch, undefined, token ? { token } : undefined)');
+    expect(page).toContain('LATEST_RELEASE_SNAPSHOT');
+    expect(page).toContain('This week');
+    expect(page).toContain('Full history on GitHub');
+    expect(page).toContain('astro-cloudflare-personal-website/commits"');
+    expect(page).not.toContain('/commits/main');
     expect(page).toContain('outline: 2px solid var(--accent-regular)');
     expect(page).toContain('outline-offset: 4px');
+    expect(page).toContain('min(52rem, calc(100vw - 3rem))');
+    expect(page).toContain('flex-direction: row');
+    expect(page).toContain('.clusters');
+    expect(page).not.toContain('.group + .group');
     expect(page).not.toContain('target="_blank"');
     expect(page).not.toContain("target = '_blank'");
     expect(page).not.toContain('noopener');
@@ -2026,6 +2035,9 @@ describe('identity copy', () => {
     expect(page).not.toContain('this is not on the site');
     expect(page).not.toContain("this isn't on the site yet");
     expect(page).not.toContain('stay blank rather than invented');
+    expect(chat).toContain('max-height: 36dvh');
+    expect(nav).toContain("href: '/whats-new/'");
+    expect(robots).toContain('Disallow: /whats-new/');
     expect(cta).toContain('https://www.linkedin.com/in/alehar/');
     expect(cta).toContain('Get in touch');
     expect(cta).toContain('LinkedIn · replies from me');

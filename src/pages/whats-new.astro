@@ -1,7 +1,49 @@
 ---
+export const prerender = false;
+
+import { env } from 'cloudflare:workers';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
+import { LATEST_RELEASE_SNAPSHOT } from '../data/latest-release';
+import { fetchGitHubReleases } from '../utils/github-releases';
+import { toVisitorChangelogTitle, toVisitorRelease } from '../utils/visitor-changelog';
+import { buildWhatsNewGlance } from '../utils/whats-new-glance';
+
+interface Bindings {
+  GITHUB_TOKEN?: string;
+}
+
+function readEnv(): Bindings {
+  try {
+    if (env && typeof env === 'object') return env as Bindings;
+  } catch {
+    // cloudflare:workers env is the only binding surface after adapter v13.
+  }
+  return {};
+}
+
+const token = readEnv().GITHUB_TOKEN?.trim();
+const fetched = await fetchGitHubReleases(fetch, undefined, token ? { token } : undefined);
+const baseReleases = fetched.length > 0 ? fetched : [LATEST_RELEASE_SNAPSHOT];
+const visitorReleases = baseReleases.map((release) => {
+  const visitor = toVisitorRelease(release);
+  return {
+    ...visitor,
+    body: visitor.body
+      .split('\n')
+      .map((line) => {
+        const bullet = line.match(/^([-*+]\s+)(.*)$/);
+        if (!bullet) return toVisitorChangelogTitle(line);
+        return `${bullet[1]}${toVisitorChangelogTitle(bullet[2])}`;
+      })
+      .join('\n'),
+  };
+});
+const glance = buildWhatsNewGlance(visitorReleases);
+
+const dek = 'What you can see on this site lately.';
+const pageTitle = "What's New | Product Manager, Developer Experience at IFS";
 
 const schema = {
   '@context': 'https://schema.org',
@@ -10,8 +52,8 @@ const schema = {
       '@type': 'WebPage',
       '@id': 'https://me.alehar.workers.dev/whats-new/#webpage',
       url: 'https://me.alehar.workers.dev/whats-new/',
-      name: "What's New | Product Manager, Developer Experience at IFS",
-      description: 'A public changelog of this site.',
+      name: pageTitle,
+      description: dek,
       breadcrumb: {
         '@type': 'BreadcrumbList',
         itemListElement: [
@@ -42,223 +84,127 @@ const schema = {
 <BaseLayout
   title="What's New | Product Manager, Developer Experience at IFS"
   ogTitle="What's New | Product Manager, Developer Experience at IFS"
-  description="A public changelog of this site. Product Manager, Developer Experience at IFS."
+  description={`${dek} Product Manager, Developer Experience at IFS.`}
   robots="noindex"
 >
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="stack gap-20">
-    <main id="main-content" class="wrapper stack gap-8">
-      <Hero title="What's New" tagline="A public changelog of this site." align="start" />
+    <main id="main-content" class="glance stack gap-8">
+      <Hero title="What's New" tagline={dek} align="start" />
 
-      <div class="content">
-        <div data-release-summary></div>
-        <div class="release-list" data-release-list>
-          <p class="release-status">Loading the latest site updates...</p>
-        </div>
-        <noscript>
-          <p class="release-status">
-            Release history is available on
-            <a href="https://github.com/alehar9320/astro-cloudflare-personal-website/releases">
-              GitHub Releases
-            </a>.
-          </p>
-        </noscript>
-      </div>
+      {
+        glance.thisWeek.length > 0 && (
+          <section class="this-week" aria-labelledby="this-week-heading">
+            <h2 id="this-week-heading">This week</h2>
+            <ul>
+              {glance.thisWeek.map((line) => (
+                <li>{line}</li>
+              ))}
+            </ul>
+          </section>
+        )
+      }
+
+      {
+        glance.groups.length > 0 && (
+          <section class="last-30" aria-labelledby="last-30-heading">
+            <h2 id="last-30-heading">Last 30 days</h2>
+            <div class="clusters">
+              {glance.groups.map((group) => (
+                <div class="group">
+                  <h3>{group.heading}</h3>
+                  <ul>
+                    {group.lines.map((line) => (
+                      <li>{line}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
+          </section>
+        )
+      }
+
+      <p class="history">
+        <a
+          class="history-link"
+          href="https://github.com/alehar9320/astro-cloudflare-personal-website/commits"
+        >
+          Full history on GitHub
+        </a>
+      </p>
     </main>
     <ContactCTA />
   </div>
 </BaseLayout>
 
-<script>
-  import {
-    RELEASES_PAGE_URL,
-    fetchGitHubReleases,
-    formatReleaseDate,
-    splitReleaseBody,
-  } from '../utils/github-releases';
-  import { groundedReleaseSummary, prepareReleaseSummary } from '../utils/release-summary';
-  import { toVisitorChangelogTitle, toVisitorRelease } from '../utils/visitor-changelog';
-
-  const releaseList = document.querySelector('[data-release-list]');
-  const summaryContainer = document.querySelector('[data-release-summary]');
-
-  const paintSummary = (summary: string) => {
-    if (!(summaryContainer instanceof HTMLElement)) return;
-    const tldr = document.createElement('div');
-    tldr.className = 'tldr-box';
-    const p = document.createElement('p');
-    const strong = document.createElement('strong');
-    strong.textContent = 'Latest release';
-    p.appendChild(strong);
-    p.appendChild(document.createTextNode(` ${summary.trim()}`));
-    tldr.appendChild(p);
-    summaryContainer.replaceChildren(tldr);
-  };
-
-  if (releaseList instanceof HTMLDivElement) {
-    fetchGitHubReleases().then((rawReleases) => {
-      const releases = rawReleases.map(toVisitorRelease);
-      const latest = releases[0];
-
-      if (summaryContainer instanceof HTMLElement && latest) {
-        paintSummary(groundedReleaseSummary(latest.version, latest.body, latest.title));
-
-        fetch('/api/release-summary', {
-          method: 'POST',
-          headers: { Accept: 'application/json', 'content-type': 'application/json' },
-          body: JSON.stringify({
-            tag: latest.version,
-            version: latest.version,
-            title: latest.title,
-            body: latest.body,
-          }),
-        })
-          .then(async (response) => {
-            if (response.status === 204 || !response.ok) return;
-            let data: unknown;
-            try {
-              data = await response.json();
-            } catch {
-              return;
-            }
-            if (!data || typeof data !== 'object') return;
-            const summary = (data as { summary?: unknown }).summary;
-            const tag = (data as { tag?: unknown }).tag;
-            if (typeof summary !== 'string' || !summary.trim()) return;
-            if (typeof tag === 'string' && tag !== latest.version) return;
-            const source = `${latest.version}\n${latest.body}`;
-            const prepared = prepareReleaseSummary(summary, source);
-            if (prepared) paintSummary(prepared);
-          })
-          .catch(() => {
-            // Grounded banner from the first card already painted.
-          });
-      }
-
-      if (releases.length === 0) {
-        const empty = document.createElement('p');
-        empty.className = 'release-status';
-        empty.textContent = 'Site updates are currently unavailable.';
-        const link = document.createElement('a');
-        link.href = RELEASES_PAGE_URL;
-        link.textContent = 'View GitHub Releases';
-        empty.appendChild(document.createTextNode(' '));
-        empty.appendChild(link);
-        empty.appendChild(document.createTextNode('.'));
-        releaseList.replaceChildren(empty);
-        return;
-      }
-
-      const fragment = document.createDocumentFragment();
-
-      releases.forEach((release) => {
-        const article = document.createElement('article');
-        article.className = 'release-card';
-
-        const heading = document.createElement('h2');
-        heading.textContent = release.version;
-
-        const meta = document.createElement('p');
-        meta.className = 'release-meta';
-        meta.textContent = formatReleaseDate(release.publishedAt);
-
-        const bodyItems = splitReleaseBody(release.body);
-
-        if (bodyItems.length > 0) {
-          const list = document.createElement('ul');
-
-          bodyItems.forEach((item) => {
-            const listItem = document.createElement('li');
-            listItem.textContent = toVisitorChangelogTitle(item.message);
-            list.appendChild(listItem);
-          });
-
-          article.appendChild(heading);
-          article.appendChild(meta);
-          article.appendChild(list);
-        } else {
-          const fallback = document.createElement('p');
-          fallback.className = 'release-status';
-          fallback.textContent = 'No release notes were published for this version.';
-          article.appendChild(heading);
-          article.appendChild(meta);
-          article.appendChild(fallback);
-        }
-
-        const link = document.createElement('a');
-        link.href = release.url;
-        link.className = 'release-link';
-        link.textContent = `View ${release.version} on GitHub`;
-        article.appendChild(link);
-
-        fragment.appendChild(article);
-      });
-
-      releaseList.replaceChildren(fragment);
-    });
-  }
-</script>
-
 <style>
-  .content {
+  .glance {
+    width: min(52rem, calc(100vw - 3rem));
+    margin-inline: auto;
+  }
+
+  .this-week,
+  .last-30 {
     background: var(--gradient-subtle);
     border: 1px solid var(--gray-800);
     border-radius: 1.5rem;
-    padding: 2.5rem;
+    padding: 1.5rem 2rem;
     box-shadow: var(--shadow-sm);
   }
 
-  .release-list {
-    display: grid;
-    gap: 1.5rem;
-  }
-
-  [data-release-summary]:not(:empty) {
-    margin-bottom: 1.5rem;
-  }
-
-  .release-card {
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--gray-800);
-  }
-
-  .release-card:last-child {
-    border-bottom: 0;
-    padding-bottom: 0;
-  }
-
-  .release-card h2 {
+  .this-week h2,
+  .last-30 h2 {
     font-size: var(--text-xl);
-    margin-bottom: 0.35rem;
     color: var(--gray-100);
+    margin-bottom: 0.75rem;
   }
 
-  .release-meta {
-    color: var(--gray-400);
-    margin-bottom: 1rem;
-  }
-
-  .release-card ul {
-    margin-left: 1.5rem;
+  .this-week ul,
+  .last-30 ul {
+    margin-left: 1.25rem;
     list-style-type: disc;
-    margin-bottom: 1rem;
     color: var(--gray-300);
   }
 
-  .release-card li {
+  .this-week li,
+  .last-30 li {
+    margin-bottom: 0.4rem;
+    line-height: 1.6;
+  }
+
+  .last-30 .clusters {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 50em) {
+    /* site desktop breakpoint from global.css */
+    .last-30 .clusters {
+      display: flex;
+      flex-direction: row;
+      align-items: flex-start;
+      gap: 1.25rem;
+    }
+
+    .last-30 .group {
+      flex: 1 1 0;
+      min-width: 0;
+    }
+  }
+
+  .group h3 {
+    font-size: var(--text-lg);
+    color: var(--gray-100);
     margin-bottom: 0.5rem;
-    line-height: 1.6;
   }
 
-  .release-status {
-    color: var(--gray-300);
-    line-height: 1.6;
+  .history {
+    margin-top: 0.5rem;
   }
 
-  :global(.release-link),
-  :global(.release-status a) {
-    display: inline-block;
-    margin-top: 0.25rem;
+  :global(.history-link) {
     color: var(--link-color);
     text-decoration: 1px solid underline transparent;
     text-underline-offset: 0.25em;
@@ -267,34 +213,14 @@ const schema = {
       color var(--theme-transition);
   }
 
-  :global(.release-link:hover),
-  :global(.release-status a:hover) {
+  :global(.history-link:hover) {
     text-decoration-color: currentColor;
   }
 
-  :global(.release-link:focus-visible),
-  :global(.release-status a:focus-visible) {
+  :global(.history-link:focus-visible) {
     text-decoration-color: currentColor;
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
     border-radius: 0.25rem;
-  }
-
-  .commit-hash {
-    background: var(--gray-800);
-    padding: 0.1rem 0.3rem;
-    border-radius: 0.25rem;
-    font-size: 0.85em;
-    font-family: monospace;
-    margin-right: 0.25rem;
-  }
-
-  .commit-hash a {
-    text-decoration: none;
-    color: var(--accent-regular);
-  }
-
-  :root.theme-dark .commit-hash a {
-    color: var(--accent-dark);
   }
 </style>
