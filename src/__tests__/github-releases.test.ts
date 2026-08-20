@@ -1,3 +1,4 @@
+import { env } from 'cloudflare:workers';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import {
@@ -243,6 +244,43 @@ describe('github releases utility', () => {
     const callWithNoAuth = fetchMock.mock.calls.find((call) => !call[1]?.headers?.Authorization);
     expect(callWithNoAuth).toBeDefined();
 
+    vi.unstubAllGlobals();
+  });
+
+  it('uses explicitly provided token in options parameter', async () => {
+    vi.stubGlobal('process', undefined);
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => [] });
+    await fetchGitHubReleases(fetchMock as typeof fetch, undefined, { token: 'explicit-token' });
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: 'token explicit-token',
+        }),
+      })
+    );
+
+    vi.unstubAllGlobals();
+  });
+
+  it('uses Worker env.GITHUB_TOKEN when process is absent', async () => {
+    vi.stubGlobal('process', undefined);
+    const bindings = env as { GITHUB_TOKEN?: string };
+    bindings.GITHUB_TOKEN = 'worker-token';
+    const fetchMock = vi.fn().mockResolvedValue({ ok: true, json: async () => [] });
+    await fetchGitHubReleases(fetchMock as typeof fetch);
+
+    expect(fetchMock).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.objectContaining({
+        headers: expect.objectContaining({
+          Authorization: 'token worker-token',
+        }),
+      })
+    );
+
+    delete bindings.GITHUB_TOKEN;
     vi.unstubAllGlobals();
   });
 
