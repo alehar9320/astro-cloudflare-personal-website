@@ -1,4 +1,3 @@
-import { env } from 'cloudflare:workers';
 import { z } from 'zod';
 
 export const GitHubReleaseApiItemSchema = z.object({
@@ -71,7 +70,7 @@ export function normalizeRelease(release: GitHubReleaseApiItem): SiteRelease | n
 }
 
 export interface FetchReleasesOptions {
-  /** Optional GitHub API token. Worker secret or process env. Never log this. */
+  /** Optional GitHub API token from the Worker API route. Never log this. */
   token?: string;
 }
 
@@ -79,7 +78,7 @@ export interface FetchReleasesOptions {
  * Fetches and validates a list of non-prerelease items from the GitHub Releases API.
  * @param {typeof fetch} [fetchImpl=fetch] - The fetch implementation to use (useful for testing).
  * @param {string} [url=RELEASES_API_URL] - The GitHub API endpoint to fetch from.
- * @param {FetchReleasesOptions} [options] - Optional Worker/process token.
+ * @param {FetchReleasesOptions} [options] - Optional token from the API route.
  * @returns {Promise<SiteRelease[]>} A promise resolving to an array of normalized site releases.
  */
 export async function fetchGitHubReleases(
@@ -111,30 +110,7 @@ export async function fetchGitHubReleases(
     return [];
   }
 
-  let githubToken: string | undefined = options?.token?.trim() || undefined;
-  if (!githubToken) {
-    try {
-      const globalProcess = (
-        globalThis as { process?: { env?: Record<string, string | undefined> } }
-      ).process;
-      const fromProcess = globalProcess?.env?.GITHUB_TOKEN;
-      githubToken = typeof fromProcess === 'string' ? fromProcess.trim() || undefined : undefined;
-    } catch {
-      githubToken = undefined;
-    }
-  }
-  if (!githubToken) {
-    try {
-      if (env && typeof env === 'object' && 'GITHUB_TOKEN' in env) {
-        const workerToken = (env as { GITHUB_TOKEN?: unknown }).GITHUB_TOKEN;
-        if (typeof workerToken === 'string') {
-          githubToken = workerToken.trim() || undefined;
-        }
-      }
-    } catch {
-      // cloudflare:workers env is the Worker binding surface after adapter v13.
-    }
-  }
+  const githubToken = options?.token?.trim() || undefined;
 
   // Defensive check to ensure we only fetch from the trusted GitHub API domain
   if (!url.startsWith('https://api.github.com/')) {
