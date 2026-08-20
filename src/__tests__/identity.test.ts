@@ -3,6 +3,12 @@ import { describe, expect, it } from 'vitest';
 
 import { fetchDirectNotFound, isDirectNotFoundPath } from '../direct-not-found';
 import { toVisitorChangelogTitle, toVisitorRelease } from '../utils/visitor-changelog';
+import {
+  WEEK_DAYS,
+  WINDOW_DAYS,
+  buildWhatsNewPage,
+  filterReleasesSince,
+} from '../utils/whats-new-exec';
 
 const files = [
   'src/pages/biography.astro',
@@ -2005,14 +2011,26 @@ describe('identity copy', () => {
     expect(page).toContain('toVisitorRelease');
     expect(page).toContain('ContactCTA');
     expect(page).toContain('fetchGitHubReleases');
-    expect(page).toContain("method: 'POST'");
-    expect(page).toContain("fetch('/api/release-summary'");
-    expect(page).toContain('tag !== latest.version');
+    expect(page).toContain('export const prerender = false');
+    expect(page).toContain("from 'cloudflare:workers'");
+    expect(page).toContain('GITHUB_TOKEN');
+    expect(page).toContain('LATEST_RELEASE_SNAPSHOT');
+    expect(page).toContain('This week');
+    expect(page).toContain('Last 30 days');
     expect(page).toContain(
-      'paintSummary(groundedReleaseSummary(latest.version, latest.body, latest.title))'
+      'https://github.com/alehar9320/astro-cloudflare-personal-website/commits/main'
     );
-    expect(page).not.toContain('LATEST_RELEASE_SNAPSHOT');
+    expect(page).toContain('Older updates on GitHub');
+    expect(page).not.toContain('data-release-summary');
+    expect(page).not.toContain('/api/release-summary');
+    expect(page).not.toContain('paintSummary');
+    expect(page).not.toContain('tldr-box');
+    expect(page).not.toContain("method: 'POST'");
+    expect(page).not.toContain('fetchGitHubReleases().then');
+    expect(page).not.toContain("createElement('article')");
     expect(page).toContain('View ${release.version} on GitHub');
+    expect(WEEK_DAYS).toBe(7);
+    expect(WINDOW_DAYS).toBe(30);
     expect(page).toContain(':global(.release-link:focus-visible)');
     expect(page).toContain(':global(.release-status a:focus-visible)');
     expect(page).toContain(':global(.release-link:hover)');
@@ -2144,5 +2162,45 @@ describe('identity copy', () => {
       );
       expect(toVisitorChangelogTitle(raw)).not.toMatch(/\(#\d+\)/);
     }
+  });
+
+  it('server-renders a 7-day This week strip and a 30-day exec summary window', () => {
+    const page = readFileSync('src/pages/whats-new.astro', 'utf8');
+    expect(page).toContain('export const prerender = false');
+    expect(page).toContain('This week');
+    expect(page).toContain('Last 30 days');
+    expect(page).toContain(
+      'https://github.com/alehar9320/astro-cloudflare-personal-website/commits/main'
+    );
+    expect(WEEK_DAYS).toBe(7);
+    expect(WINDOW_DAYS).toBe(30);
+
+    const now = new Date('2026-08-20T20:00:00Z');
+    const recent = {
+      body: '- Dock chat composer to the bottom edge and use the stage',
+      publishedAt: '2026-08-18T00:00:00Z',
+      title: '2026.08.18.0000',
+      url: 'https://github.com/alehar9320/astro-cloudflare-personal-website/releases/tag/2026.08.18.0000',
+      version: '2026.08.18.0000',
+    };
+    const olderThanMonth = {
+      body: '- 66e3fe9 fix: open the visit glance on tap at 375 (#461)',
+      publishedAt: '2026-07-01T00:00:00Z',
+      title: '2026.07.01.0000',
+      url: 'https://github.com/alehar9320/astro-cloudflare-personal-website/releases/tag/2026.07.01.0000',
+      version: '2026.07.01.0000',
+    };
+
+    expect(
+      filterReleasesSince([recent, olderThanMonth], now, WEEK_DAYS).map((row) => row.version)
+    ).toEqual(['2026.08.18.0000']);
+    expect(
+      filterReleasesSince([recent, olderThanMonth], now, WINDOW_DAYS).map((row) => row.version)
+    ).toEqual(['2026.08.18.0000']);
+
+    const stale = buildWhatsNewPage([olderThanMonth], now);
+    expect(stale.thisWeek).toEqual([]);
+    expect(stale.last30.map((row) => row.version)).toEqual(['2026.07.01.0000']);
+    expect(stale.latest?.version).toBe('2026.07.01.0000');
   });
 });

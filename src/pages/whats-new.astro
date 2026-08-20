@@ -1,7 +1,15 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
+import { env } from 'cloudflare:workers';
+
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
+import { LATEST_RELEASE_SNAPSHOT } from '../data/latest-release';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { fetchGitHubReleases, formatReleaseDate, type SiteRelease } from '../utils/github-releases';
+import { toVisitorChangelogTitle, toVisitorRelease } from '../utils/visitor-changelog';
+import { buildWhatsNewPage } from '../utils/whats-new-exec';
+
+export const prerender = false;
 
 const schema = {
   '@context': 'https://schema.org',
@@ -37,6 +45,36 @@ const schema = {
     },
   ],
 };
+
+interface WhatsNewEnv {
+  GITHUB_TOKEN?: string;
+}
+
+function readEnv(): WhatsNewEnv {
+  try {
+    if (env && typeof env === 'object') return env as WhatsNewEnv;
+  } catch {
+    // cloudflare:workers env is the only binding surface after adapter v13.
+  }
+  return {};
+}
+
+const bindings = readEnv();
+const token = bindings.GITHUB_TOKEN?.trim();
+
+let fetched: SiteRelease[] = [];
+try {
+  fetched = await fetchGitHubReleases(fetch, undefined, token ? { token } : undefined);
+} catch {
+  fetched = [];
+}
+
+const baseReleases = fetched.length > 0 ? fetched : [LATEST_RELEASE_SNAPSHOT];
+const releases = baseReleases.map(toVisitorRelease);
+const now = new Date();
+const pageModel = buildWhatsNewPage(releases, now);
+const olderUpdatesHref =
+  'https://github.com/alehar9320/astro-cloudflare-personal-website/commits/main';
 ---
 
 <BaseLayout
@@ -51,10 +89,66 @@ const schema = {
       <Hero title="What's New" tagline="A public changelog of this site." align="start" />
 
       <div class="content">
-        <div data-release-summary></div>
-        <div class="release-list" data-release-list>
-          <p class="release-status">Loading the latest site updates...</p>
+        {
+          pageModel.thisWeek.length > 0 && (
+            <section class="this-week">
+              <h2>This week</h2>
+              <p class="this-week-strip">
+                {pageModel.thisWeek.map((release) => release.version).join(' · ')}
+              </p>
+            </section>
+          )
+        }
+
+        {
+          pageModel.latest && (
+            <section class="exec-summary">
+              <h2>Last 30 days</h2>
+              <p class="exec-lead">
+                {pageModel.latest.version}
+                {pageModel.latest.publishedAt
+                  ? ` · ${formatReleaseDate(pageModel.latest.publishedAt)}`
+                  : ''}
+                {pageModel.latestLead ? `. ${pageModel.latestLead}.` : '.'}
+              </p>
+              {pageModel.groups.map((group) => (
+                <div>
+                  {group.label && <h3>{group.label}</h3>}
+                  <ul>
+                    {group.titles.map((title) => (
+                      <li>{toVisitorChangelogTitle(title)}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </section>
+          )
+        }
+
+        {
+          pageModel.last30.length === 0 && (
+            <p class="release-status">Site updates are currently unavailable.</p>
+          )
+        }
+
+        <div class="release-list">
+          {
+            pageModel.last30.map((release) => (
+              <article class="release-card">
+                <h2>{release.version}</h2>
+                <p class="release-meta">{formatReleaseDate(release.publishedAt)}</p>
+                <a href={release.url} class="release-link">
+                  {`View ${release.version} on GitHub`}
+                </a>
+              </article>
+            ))
+          }
         </div>
+
+        <p class="older-updates release-status">
+          <a href={olderUpdatesHref}>Older updates on GitHub</a>
+        </p>
+
         <noscript>
           <p class="release-status">
             Release history is available on
@@ -69,136 +163,6 @@ const schema = {
   </div>
 </BaseLayout>
 
-<script>
-  import {
-    RELEASES_PAGE_URL,
-    fetchGitHubReleases,
-    formatReleaseDate,
-    splitReleaseBody,
-  } from '../utils/github-releases';
-  import { groundedReleaseSummary, prepareReleaseSummary } from '../utils/release-summary';
-  import { toVisitorChangelogTitle, toVisitorRelease } from '../utils/visitor-changelog';
-
-  const releaseList = document.querySelector('[data-release-list]');
-  const summaryContainer = document.querySelector('[data-release-summary]');
-
-  const paintSummary = (summary: string) => {
-    if (!(summaryContainer instanceof HTMLElement)) return;
-    const tldr = document.createElement('div');
-    tldr.className = 'tldr-box';
-    const p = document.createElement('p');
-    const strong = document.createElement('strong');
-    strong.textContent = 'Latest release';
-    p.appendChild(strong);
-    p.appendChild(document.createTextNode(` ${summary.trim()}`));
-    tldr.appendChild(p);
-    summaryContainer.replaceChildren(tldr);
-  };
-
-  if (releaseList instanceof HTMLDivElement) {
-    fetchGitHubReleases().then((rawReleases) => {
-      const releases = rawReleases.map(toVisitorRelease);
-      const latest = releases[0];
-
-      if (summaryContainer instanceof HTMLElement && latest) {
-        paintSummary(groundedReleaseSummary(latest.version, latest.body, latest.title));
-
-        fetch('/api/release-summary', {
-          method: 'POST',
-          headers: { Accept: 'application/json', 'content-type': 'application/json' },
-          body: JSON.stringify({
-            tag: latest.version,
-            version: latest.version,
-            title: latest.title,
-            body: latest.body,
-          }),
-        })
-          .then(async (response) => {
-            if (response.status === 204 || !response.ok) return;
-            let data: unknown;
-            try {
-              data = await response.json();
-            } catch {
-              return;
-            }
-            if (!data || typeof data !== 'object') return;
-            const summary = (data as { summary?: unknown }).summary;
-            const tag = (data as { tag?: unknown }).tag;
-            if (typeof summary !== 'string' || !summary.trim()) return;
-            if (typeof tag === 'string' && tag !== latest.version) return;
-            const source = `${latest.version}\n${latest.body}`;
-            const prepared = prepareReleaseSummary(summary, source);
-            if (prepared) paintSummary(prepared);
-          })
-          .catch(() => {
-            // Grounded banner from the first card already painted.
-          });
-      }
-
-      if (releases.length === 0) {
-        const empty = document.createElement('p');
-        empty.className = 'release-status';
-        empty.textContent = 'Site updates are currently unavailable.';
-        const link = document.createElement('a');
-        link.href = RELEASES_PAGE_URL;
-        link.textContent = 'View GitHub Releases';
-        empty.appendChild(document.createTextNode(' '));
-        empty.appendChild(link);
-        empty.appendChild(document.createTextNode('.'));
-        releaseList.replaceChildren(empty);
-        return;
-      }
-
-      const fragment = document.createDocumentFragment();
-
-      releases.forEach((release) => {
-        const article = document.createElement('article');
-        article.className = 'release-card';
-
-        const heading = document.createElement('h2');
-        heading.textContent = release.version;
-
-        const meta = document.createElement('p');
-        meta.className = 'release-meta';
-        meta.textContent = formatReleaseDate(release.publishedAt);
-
-        const bodyItems = splitReleaseBody(release.body);
-
-        if (bodyItems.length > 0) {
-          const list = document.createElement('ul');
-
-          bodyItems.forEach((item) => {
-            const listItem = document.createElement('li');
-            listItem.textContent = toVisitorChangelogTitle(item.message);
-            list.appendChild(listItem);
-          });
-
-          article.appendChild(heading);
-          article.appendChild(meta);
-          article.appendChild(list);
-        } else {
-          const fallback = document.createElement('p');
-          fallback.className = 'release-status';
-          fallback.textContent = 'No release notes were published for this version.';
-          article.appendChild(heading);
-          article.appendChild(meta);
-          article.appendChild(fallback);
-        }
-
-        const link = document.createElement('a');
-        link.href = release.url;
-        link.className = 'release-link';
-        link.textContent = `View ${release.version} on GitHub`;
-        article.appendChild(link);
-
-        fragment.appendChild(article);
-      });
-
-      releaseList.replaceChildren(fragment);
-    });
-  }
-</script>
-
 <style>
   .content {
     background: var(--gradient-subtle);
@@ -208,13 +172,48 @@ const schema = {
     box-shadow: var(--shadow-sm);
   }
 
+  .this-week,
+  .exec-summary {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--gray-800);
+  }
+
+  .this-week h2,
+  .exec-summary h2,
+  .release-card h2 {
+    font-size: var(--text-xl);
+    margin-bottom: 0.35rem;
+    color: var(--gray-100);
+  }
+
+  .exec-summary h3 {
+    margin: 1rem 0 0.5rem;
+    color: var(--gray-100);
+  }
+
+  .this-week-strip,
+  .exec-lead {
+    color: var(--gray-300);
+    line-height: 1.6;
+    margin-bottom: 0.75rem;
+  }
+
+  .exec-summary ul {
+    margin-left: 1.5rem;
+    list-style-type: disc;
+    margin-bottom: 0.75rem;
+    color: var(--gray-300);
+  }
+
+  .exec-summary li {
+    margin-bottom: 0.5rem;
+    line-height: 1.6;
+  }
+
   .release-list {
     display: grid;
     gap: 1.5rem;
-  }
-
-  [data-release-summary]:not(:empty) {
-    margin-bottom: 1.5rem;
   }
 
   .release-card {
@@ -227,32 +226,18 @@ const schema = {
     padding-bottom: 0;
   }
 
-  .release-card h2 {
-    font-size: var(--text-xl);
-    margin-bottom: 0.35rem;
-    color: var(--gray-100);
-  }
-
   .release-meta {
     color: var(--gray-400);
     margin-bottom: 1rem;
   }
 
-  .release-card ul {
-    margin-left: 1.5rem;
-    list-style-type: disc;
-    margin-bottom: 1rem;
-    color: var(--gray-300);
-  }
-
-  .release-card li {
-    margin-bottom: 0.5rem;
-    line-height: 1.6;
-  }
-
   .release-status {
     color: var(--gray-300);
     line-height: 1.6;
+  }
+
+  .older-updates {
+    margin-top: 1.5rem;
   }
 
   :global(.release-link),
