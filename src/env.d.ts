@@ -13,6 +13,7 @@ interface Env {
     run: (model: string, input: unknown) => Promise<ReadableStream>;
   };
   CHAT_STORE: KVNamespace;
+  GITHUB_TOKEN?: string;
 }
 
 declare module '*.txt?raw' {
