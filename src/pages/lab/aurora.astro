@@ -1,0 +1,329 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Aurora Magnetosphere Lab | Alexander Härenstam"
+  description="Interactive Northern Lights wave synthesis and interactive magnetosphere vector laboratory."
+>
+  <main class="wrapper stack gap-8 aurora-lab-page">
+    <header class="lab-header">
+      <h1 class="title">Aurora Magnetosphere Lab</h1>
+      <p class="tagline">
+        Interactive HTML5 Canvas experiment synthesizing multi-frequency sine wave dynamics and
+        magnetosphere displacement vectors.
+      </p>
+    </header>
+
+    <div class="interactive-container">
+      <canvas
+        id="aurora-lab-canvas"
+        aria-label="Interactive Northern Lights wave animation canvas"
+        role="img"></canvas>
+      <div class="controls-overlay">
+        <p class="control-text">
+          <kbd class="key">Space</kbd> Toggle Animation &nbsp;|&nbsp;
+          <kbd class="key">R</kbd> Reset Magnetosphere
+        </p>
+        <div class="status-badge">
+          <span id="anim-status-indicator" class="status-dot active"></span>
+          <span id="anim-status-text">Active (60fps)</span>
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  import {
+    calculateAuroraWave,
+    calculateMagnetosphereDisplacement,
+    getAdaptiveScale,
+  } from '../../utils/aurora-math';
+
+  interface Particle {
+    x: number;
+    y: number;
+    baseY: number;
+    radius: number;
+    color: string;
+    speedMultiplier: number;
+  }
+
+  const canvas = document.getElementById('aurora-lab-canvas') as HTMLCanvasElement | null;
+  const statusIndicator = document.getElementById('anim-status-indicator');
+  const statusText = document.getElementById('anim-status-text');
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let animationFrameId: number;
+    let isPlaying = true;
+    let time = 0;
+    let mouseX = -1000;
+    let mouseY = -1000;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      isPlaying = false;
+      if (statusText) statusText.textContent = 'Reduced Motion Active';
+      if (statusIndicator) statusIndicator.classList.remove('active');
+    }
+
+    const particles: Particle[] = [];
+    const colors = [
+      'rgba(0, 242, 254, 0.65)', // Cyan glow
+      'rgba(79, 172, 254, 0.55)', // Marine blue
+      'rgba(0, 255, 170, 0.45)', // Northern lights emerald green
+      'rgba(138, 43, 226, 0.35)', // Subtle violet
+    ];
+
+    const initParticles = () => {
+      particles.length = 0;
+      if (!canvas) return;
+      const scale = getAdaptiveScale(window.innerWidth);
+      const count = Math.floor(120 * scale);
+
+      for (let i = 0; i < count; i++) {
+        const x = Math.random() * canvas.width;
+        const baseY = canvas.height * 0.3 + Math.random() * (canvas.height * 0.4);
+        particles.push({
+          x,
+          y: baseY,
+          baseY,
+          radius: Math.random() * 3 + 1.5,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          speedMultiplier: Math.random() * 0.8 + 0.6,
+        });
+      }
+    };
+
+    const resize = () => {
+      if (!canvas) return;
+      const parent = canvas.parentElement;
+      canvas.width = parent?.clientWidth || 800;
+      canvas.height = parent?.clientHeight || 450;
+      initParticles();
+    };
+
+    const draw = () => {
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Render dark glassmorphic canvas background
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+      bgGrad.addColorStop(0, 'rgba(5, 12, 28, 0.95)');
+      bgGrad.addColorStop(1, 'rgba(10, 22, 40, 0.98)');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      if (isPlaying) {
+        time += 1;
+      }
+
+      // Draw mathematical wave ribbon
+      ctx.beginPath();
+      ctx.moveTo(0, canvas.height);
+      for (let x = 0; x <= canvas.width; x += 10) {
+        const waveY = canvas.height * 0.45 + calculateAuroraWave(x, time, 0.006, 35, 0.025);
+        ctx.lineTo(x, waveY);
+      }
+      ctx.lineTo(canvas.width, canvas.height);
+      ctx.closePath();
+
+      const ribbonGrad = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      ribbonGrad.addColorStop(0, 'rgba(0, 242, 254, 0.22)');
+      ribbonGrad.addColorStop(0.5, 'rgba(0, 255, 170, 0.18)');
+      ribbonGrad.addColorStop(1, 'rgba(79, 172, 254, 0.1)');
+      ctx.fillStyle = ribbonGrad;
+      ctx.fill();
+
+      // Render interactive particles with magnetosphere vector displacement
+      for (const p of particles) {
+        const waveOffset = calculateAuroraWave(p.x, time * p.speedMultiplier, 0.008, 25, 0.02);
+        const targetY = p.baseY + waveOffset;
+
+        const magnetosphere = calculateMagnetosphereDisplacement(
+          p.x,
+          targetY,
+          mouseX,
+          mouseY,
+          160,
+          0.4
+        );
+
+        const finalX = p.x + magnetosphere.dx;
+        const finalY = targetY + magnetosphere.dy;
+
+        ctx.beginPath();
+        ctx.arc(finalX, finalY, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = p.color;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      }
+
+      if (isPlaying) {
+        animationFrameId = requestAnimationFrame(draw);
+      }
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      mouseX = e.clientX - rect.left;
+      mouseY = e.clientY - rect.top;
+    };
+
+    const handlePointerLeave = () => {
+      mouseX = -1000;
+      mouseY = -1000;
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        isPlaying = !isPlaying;
+        if (isPlaying) {
+          if (statusIndicator) statusIndicator.classList.add('active');
+          if (statusText) statusText.textContent = 'Active (60fps)';
+          draw();
+        } else {
+          if (statusIndicator) statusIndicator.classList.remove('active');
+          if (statusText) statusText.textContent = 'Paused';
+        }
+      } else if (e.code === 'KeyR') {
+        mouseX = -1000;
+        mouseY = -1000;
+      }
+    };
+
+    window.addEventListener('resize', resize);
+    window.addEventListener('keydown', handleKeyDown);
+    canvas.addEventListener('pointermove', handlePointerMove);
+    canvas.addEventListener('pointerleave', handlePointerLeave);
+
+    resize();
+    draw();
+
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+        window.removeEventListener('keydown', handleKeyDown);
+        if (canvas) {
+          canvas.removeEventListener('pointermove', handlePointerMove);
+          canvas.removeEventListener('pointerleave', handlePointerLeave);
+        }
+      },
+      { once: true }
+    );
+  }
+</script>
+
+<style>
+  .aurora-lab-page {
+    padding-block: 2rem 4rem;
+  }
+
+  .lab-header {
+    text-align: center;
+    max-width: 50ch;
+    margin-inline: auto;
+  }
+
+  .title {
+    font-size: var(--text-3xl);
+    color: var(--gray-0);
+  }
+
+  .tagline {
+    font-size: var(--text-md);
+    color: var(--gray-300);
+    margin-top: 0.5rem;
+  }
+
+  .interactive-container {
+    width: 100%;
+    height: 480px;
+    position: relative;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    border: 1px solid var(--gray-800);
+    box-shadow: var(--shadow-lg);
+    background: var(--gray-999);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  .controls-overlay {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    border-radius: 1rem;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: var(--gray-200);
+    font-size: var(--text-sm);
+  }
+
+  .control-text {
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .key {
+    background: rgba(255, 255, 255, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.25rem;
+    padding: 0.15rem 0.4rem;
+    font-family: var(--font-monospace, monospace);
+    font-size: 0.8em;
+    color: var(--gray-0);
+  }
+
+  .status-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--text-xs);
+    color: var(--gray-300);
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--gray-500);
+  }
+
+  .status-dot.active {
+    background-color: #00f2fe;
+    box-shadow: 0 0 8px #00f2fe;
+  }
+
+  @media (max-width: 40em) {
+    .interactive-container {
+      height: 380px;
+    }
+    .controls-overlay {
+      flex-direction: column;
+      gap: 0.5rem;
+      align-items: flex-start;
+    }
+  }
+</style>
