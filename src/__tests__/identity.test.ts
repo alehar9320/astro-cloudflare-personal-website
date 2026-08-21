@@ -54,6 +54,12 @@ describe('identity copy', () => {
     expect(twin).toContain('up to 30x ROI');
   });
 
+  it('lets the Biography timeline name Zeroheight Design System Awards runner-up', () => {
+    const bio = readFileSync('src/pages/biography.astro', 'utf8');
+    expect(bio).toContain('Zeroheight Design System Awards runner-up.');
+    expect(bio).not.toContain(', Zeroheight runner-up.');
+  });
+
   it('keeps spaces around TL;DR strong terms (Astro drops newline-only spaces)', () => {
     const work = sources.find((s) => s.path.endsWith('work.astro'))!.text;
     expect(work).toContain("{' '}<strong>IFS</strong>");
