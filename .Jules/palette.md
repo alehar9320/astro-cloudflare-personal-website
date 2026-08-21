@@ -47,3 +47,9 @@
 **Learning:** To optimize Largest Contentful Paint (LCP) in Astro projects, primary visual assets (like hero images) and the first items in repeated galleries should be prioritised by the browser. Applying `loading="eager"` and `fetchpriority="high"` to these elements prevents the browser from delaying their loading, ensuring a faster perceived performance for users.
 
 **Action:** Enhanced the `PortfolioPreview` component to support dynamic `loading` and `fetchpriority` props. Updated `index.astro` and `work.astro` to prioritise the first project in their respective galleries. Explicitly added `loading="eager"` to the primary portrait image on the home page.
+
+## 2026-05-20 - Keyboard Escape Dismissal and Focus Restoration for Navigation Overlay
+
+**Learning:** Modal and overlay components like mobile navigation menus must support standard keyboard dismissal via the `Escape` key (WCAG 2.1 SC 2.1.1). When an overlay is dismissed using `Escape`, focus must be explicitly restored to the triggering element (the menu toggle button) to prevent focus loss or context disorientation for screen reader and keyboard users.
+
+**Action:** Added a global `keydown` event listener to `Nav.astro`'s `MenuButton` component that checks for `Escape` when `aria-expanded="true"`. When triggered, it collapses the mobile navigation menu and returns focus to the menu toggle button.

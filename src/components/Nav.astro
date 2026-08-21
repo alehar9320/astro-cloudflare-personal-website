@@ -160,6 +160,14 @@ const isCurrentPage = (href: string) => {
       // Toggle menu visibility when the menu button is clicked.
       btn.addEventListener('click', () => setExpanded(menu.hidden === true));
 
+      // Dismiss expanded mobile navigation menu on Escape key press.
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && btn.getAttribute('aria-expanded') === 'true' && !btn.hidden) {
+          setExpanded(false);
+          btn.focus();
+        }
+      });
+
       // Hide menu button for large screens.
       const handleViewports = (e: MediaQueryList | MediaQueryListEvent) => {
         setExpanded(e.matches);
