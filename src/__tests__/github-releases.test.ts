@@ -142,6 +142,13 @@ describe('github releases utility', () => {
     expect(splitReleaseBody(body)).toEqual([{ message: 'List item' }]);
   });
 
+  it('returns empty array for empty, whitespace, or marker-only bodies', () => {
+    expect(splitReleaseBody('')).toEqual([]);
+    expect(splitReleaseBody('   \n  \n\t')).toEqual([]);
+    expect(splitReleaseBody('-\n*\n+')).toEqual([]);
+    expect(splitReleaseBody('-   \n*  ')).toEqual([]);
+  });
+
   it('drops Jules, agent-farm, and Johan nits internals and keeps product bullets', () => {
     const body = `- d5d9afd Stop auto-merge for Jules and agent-farm PRs (#447)
 - 6e4bc7e fix: Johan nits after #439 — small-hero padding and aurora blur (#446)
