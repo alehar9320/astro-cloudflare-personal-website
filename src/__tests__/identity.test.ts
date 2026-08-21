@@ -140,6 +140,18 @@ describe('identity copy', () => {
     expect(page).toContain('What you can see on this site lately.');
   });
 
+  it('puts a middot inside the hidden footer visit-stats span', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    expect(footer).toContain('class="colophon"');
+    expect(footer).toContain("What's New");
+    expect(footer).toContain('data-visit-stats hidden');
+    expect(footer.slice(footer.indexOf('data-visit-stats hidden'))).toContain(' · ');
+    expect(footer).toContain("What's New</a><span");
+    expect(footer).not.toMatch(/What's New<\/a>\s*·/);
+    expect(cta).toContain('LinkedIn · replies from me');
+  });
+
   it('drops Report an issue from the footer and keeps LinkedIn hire', () => {
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
     expect(footer).not.toContain('Report an issue');
