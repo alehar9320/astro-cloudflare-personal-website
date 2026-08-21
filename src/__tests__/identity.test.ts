@@ -140,6 +140,32 @@ describe('identity copy', () => {
     expect(page).toContain('What you can see on this site lately.');
   });
 
+  it('puts a middot inside the hidden footer visit-stats span', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    expect(footer).toContain('class="colophon"');
+    expect(footer).toContain("What's New");
+    expect(footer).toContain('data-visit-stats hidden');
+    expect(footer).toContain("What's New</a><span");
+    // Space-middot-space as Astro text node so paint is What's New · N (survives Prettier).
+    expect(footer).toContain("{' · '}");
+    expect(footer.slice(footer.indexOf('data-visit-stats hidden'))).toContain("{' · '}");
+    // Fail the prior bug: newline/indent then middot (leading space collapsed in paint).
+    expect(footer).not.toMatch(/>\s*\n\s+·\s/);
+    expect(footer).not.toMatch(/What's New<\/a>\s*·/);
+    expect(cta).toContain('LinkedIn · replies from me');
+  });
+
+  it('keeps Footer .visit-stats display:inline only when not [hidden]', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(footer).toContain('.visit-stats:not([hidden])');
+    expect(footer).toContain('display: inline');
+    // Bare .visit-stats { display: inline } overrides UA [hidden]{display:none}.
+    expect(footer).not.toMatch(/\.visit-stats\s*\{\s*display:\s*inline/);
+    expect(footer).toContain("{' · '}");
+    expect(footer).toContain('https://www.linkedin.com/in/alehar/');
+  });
+
   it('drops Report an issue from the footer and keeps LinkedIn hire', () => {
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
     expect(footer).not.toContain('Report an issue');

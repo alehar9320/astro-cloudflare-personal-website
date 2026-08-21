@@ -17,9 +17,8 @@ const currentYear = new Date().getFullYear();
     </p>
     <p>&copy; {currentYear} Alexander Härenstam</p>
     <div class="colophon">
-      <a href="/whats-new/">What's New</a>
-      <span class="visit-stats" data-visit-stats hidden>
-        <button
+      <a href="/whats-new/">What's New</a><span class="visit-stats" data-visit-stats hidden
+        >{' · '}<button
           type="button"
           class="visit-trigger"
           data-visit-count
@@ -245,8 +244,11 @@ const currentYear = new Date().getFullYear();
     line-height: 1.5;
   }
 
-  .visit-stats {
+  .visit-stats:not([hidden]) {
     display: inline;
+  }
+
+  .visit-stats {
     color: inherit;
     font-size: inherit;
   }
