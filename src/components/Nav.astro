@@ -138,6 +138,7 @@ const isCurrentPage = (href: string) => {
 
 <script>
   class MenuButton extends HTMLElement {
+    #keydownAbort?: AbortController;
     constructor() {
       super();
 
@@ -160,6 +161,19 @@ const isCurrentPage = (href: string) => {
       // Toggle menu visibility when the menu button is clicked.
       btn.addEventListener('click', () => setExpanded(menu.hidden === true));
 
+      this.#keydownAbort = new AbortController();
+      window.addEventListener(
+        'keydown',
+        (e: KeyboardEvent) => {
+          if (e.key !== 'Escape') return;
+          if (btn.hidden) return;
+          if (btn.getAttribute('aria-expanded') !== 'true') return;
+          setExpanded(false);
+          btn.focus();
+        },
+        { signal: this.#keydownAbort.signal }
+      );
+
       // Hide menu button for large screens.
       const handleViewports = (e: MediaQueryList | MediaQueryListEvent) => {
         setExpanded(e.matches);
@@ -168,6 +182,9 @@ const isCurrentPage = (href: string) => {
       const mediaQueries = window.matchMedia('(min-width: 50em)');
       handleViewports(mediaQueries);
       mediaQueries.addEventListener('change', handleViewports);
+    }
+    disconnectedCallback() {
+      this.#keydownAbort?.abort();
     }
   }
   customElements.define('menu-button', MenuButton);

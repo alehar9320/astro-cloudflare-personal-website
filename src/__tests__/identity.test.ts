@@ -1043,6 +1043,15 @@ describe('identity copy', () => {
     expect(nav).not.toContain('hsla(var(--gray-999-basis), 0.85)');
   });
 
+  it('closes the mobile nav overlay on Escape and restores focus without leaking the keydown', () => {
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    expect(nav).toContain('AbortController');
+    expect(nav).toContain('disconnectedCallback');
+    expect(nav).toContain('btn.focus()');
+    expect(nav).toContain('Escape');
+    expect(nav).toContain('aria-expanded');
+  });
+
   it('uses honest Earlier work labels, not Platform or copilots-as-product', () => {
     const copilots = readFileSync('src/content/work/ai-coding-copilots.md', 'utf8');
     const analytics = readFileSync('src/content/work/user-behavior-analytics.md', 'utf8');
