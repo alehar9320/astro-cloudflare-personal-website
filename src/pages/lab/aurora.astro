@@ -3,16 +3,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout
-  title="Aurora Magnetosphere Lab | Alexander Härenstam"
-  description="Interactive Northern Lights wave synthesis and interactive magnetosphere vector laboratory."
+  title="Aurora | Alexander Härenstam"
+  description="Northern lights on a canvas. Move your pointer and they bend."
 >
   <main class="wrapper stack gap-8 aurora-lab-page">
     <header class="lab-header">
-      <h1 class="title">Aurora Magnetosphere Lab</h1>
-      <p class="tagline">
-        Interactive HTML5 Canvas experiment synthesizing multi-frequency sine wave dynamics and
-        magnetosphere displacement vectors.
-      </p>
+      <h1 class="title">Aurora</h1>
+      <p class="tagline">Northern lights on a canvas. Move your pointer and they bend.</p>
     </header>
 
     <div class="interactive-container">
@@ -22,12 +19,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         role="img"></canvas>
       <div class="controls-overlay">
         <p class="control-text">
-          <kbd class="key">Space</kbd> Toggle Animation &nbsp;|&nbsp;
-          <kbd class="key">R</kbd> Reset Magnetosphere
+          <kbd class="key">Space</kbd> Pause &nbsp;|&nbsp;
+          <kbd class="key">R</kbd> Reset
         </p>
         <div class="status-badge">
           <span id="anim-status-indicator" class="status-dot active"></span>
-          <span id="anim-status-text">Active (60fps)</span>
+          <span id="anim-status-text">Playing</span>
         </div>
       </div>
     </div>
@@ -65,7 +62,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReducedMotion) {
       isPlaying = false;
-      if (statusText) statusText.textContent = 'Reduced Motion Active';
+      if (statusText) statusText.textContent = 'Paused';
       if (statusIndicator) statusIndicator.classList.remove('active');
     }
 
@@ -185,7 +182,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         isPlaying = !isPlaying;
         if (isPlaying) {
           if (statusIndicator) statusIndicator.classList.add('active');
-          if (statusText) statusText.textContent = 'Active (60fps)';
+          if (statusText) statusText.textContent = 'Playing';
           draw();
         } else {
           if (statusIndicator) statusIndicator.classList.remove('active');
