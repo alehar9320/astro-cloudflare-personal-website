@@ -244,8 +244,11 @@ const currentYear = new Date().getFullYear();
     line-height: 1.5;
   }
 
-  .visit-stats {
+  .visit-stats:not([hidden]) {
     display: inline;
+  }
+
+  .visit-stats {
     color: inherit;
     font-size: inherit;
   }

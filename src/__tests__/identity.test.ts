@@ -156,6 +156,16 @@ describe('identity copy', () => {
     expect(cta).toContain('LinkedIn · replies from me');
   });
 
+  it('keeps Footer .visit-stats display:inline only when not [hidden]', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(footer).toContain('.visit-stats:not([hidden])');
+    expect(footer).toContain('display: inline');
+    // Bare .visit-stats { display: inline } overrides UA [hidden]{display:none}.
+    expect(footer).not.toMatch(/\.visit-stats\s*\{\s*display:\s*inline/);
+    expect(footer).toContain("{' · '}");
+    expect(footer).toContain('https://www.linkedin.com/in/alehar/');
+  });
+
   it('drops Report an issue from the footer and keeps LinkedIn hire', () => {
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
     expect(footer).not.toContain('Report an issue');
