@@ -5,6 +5,14 @@ import { defineCollection } from 'astro:content';
 import { collections } from '../content.config';
 import flagsFixture from '../content/flags/config.json';
 
+interface ZodSchemaWithSafeParse {
+  safeParse(data: unknown): { success: boolean; data?: Record<string, unknown>; error?: unknown };
+}
+
+function isSchemaWithSafeParse(schema: unknown): schema is ZodSchemaWithSafeParse {
+  return typeof schema === 'object' && schema !== null && 'safeParse' in schema;
+}
+
 describe('content.config', () => {
   it('exercises infrastructure mocks', () => {
     const schema = z.object({ test: z.string() });
@@ -29,10 +37,13 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
+    if (!isSchemaWithSafeParse(schema)) {
+      throw new Error('collections.flags.schema is not a direct Zod schema');
+    }
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
-    if (result.success) {
+    if (result.success && result.data) {
       // Use toMatchObject to ensure all fixture properties are correctly validated
       // while allowing for Zod-injected default values.
       expect(result.data).toMatchObject(flagsFixture);
@@ -41,6 +52,9 @@ describe('content.config', () => {
 
   it('validates work schema with sample data', () => {
     const { schema } = collections.work;
+    if (!isSchemaWithSafeParse(schema)) {
+      throw new Error('collections.work.schema is not a direct Zod schema');
+    }
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -51,7 +65,7 @@ describe('content.config', () => {
     };
     const result = schema.safeParse(sampleWork);
     expect(result.success).toBe(true);
-    if (result.success) {
+    if (result.success && result.data) {
       expect(result.data.title).toBe(sampleWork.title);
       expect(result.data.publishDate).toBeInstanceOf(Date);
     }

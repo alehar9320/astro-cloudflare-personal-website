@@ -217,8 +217,8 @@ export function toVisitorChangelogTitle(raw: string): string {
   const bySubject = BY_SUBJECT.get(subject.toLowerCase());
   if (bySubject) return bySubject;
 
+  if (!subject) return titleCaseFirst(trimmed.replace(/^[a-f0-9]{7,40}\s*/i, '').trim());
   if (subject === trimmed) return trimmed;
-  if (!subject) return titleCaseFirst(trimmed.replace(SHA_PREFIX, '').trim());
   return titleCaseFirst(subject);
 }
 
@@ -226,19 +226,20 @@ export function toVisitorChangelogTitle(raw: string): string {
  * Rewrite a GitHub release body so list items are visitor copy, not SHA + feat + (#PR).
  */
 export function toVisitorReleaseBody(body: string): string {
-  const items = body
-    .split('\n')
-    .map((line) => line.trim())
+  const rawLines = body.split('\n').map((line) => line.trim());
+  const hasBullets = rawLines.some((line) => /^[-*+]\s+/.test(line));
+
+  const items = rawLines
     .filter((line) => /^[-*+]\s+/.test(line))
     .map((line) => line.replace(/^[-*+]\s+/, ''))
     .filter((message) => !INTERNAL_CHANGELOG_ITEM.test(message));
 
-  if (items.length === 0) {
-    const trimmed = body.trim();
-    return trimmed ? toVisitorChangelogTitle(trimmed) : '';
+  if (hasBullets) {
+    return items.map((message) => `- ${toVisitorChangelogTitle(message)}`).join('\n');
   }
 
-  return items.map((message) => `- ${toVisitorChangelogTitle(message)}`).join('\n');
+  const trimmed = body.trim();
+  return trimmed ? toVisitorChangelogTitle(trimmed) : '';
 }
 
 /**
