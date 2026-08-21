@@ -146,8 +146,12 @@ describe('identity copy', () => {
     expect(footer).toContain('class="colophon"');
     expect(footer).toContain("What's New");
     expect(footer).toContain('data-visit-stats hidden');
-    expect(footer.slice(footer.indexOf('data-visit-stats hidden'))).toContain(' · ');
     expect(footer).toContain("What's New</a><span");
+    // Space-middot-space as Astro text node so paint is What's New · N (survives Prettier).
+    expect(footer).toContain("{' · '}");
+    expect(footer.slice(footer.indexOf('data-visit-stats hidden'))).toContain("{' · '}");
+    // Fail the prior bug: newline/indent then middot (leading space collapsed in paint).
+    expect(footer).not.toMatch(/>\s*\n\s+·\s/);
     expect(footer).not.toMatch(/What's New<\/a>\s*·/);
     expect(cta).toContain('LinkedIn · replies from me');
   });
