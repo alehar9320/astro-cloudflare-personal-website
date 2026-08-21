@@ -8,6 +8,8 @@ interface Props {
   'data-hire-surface'?: string;
 }
 
+import { getEntry } from 'astro:content';
+
 const {
   href,
   target,
@@ -16,6 +18,9 @@ const {
   'data-hire-event': dataHireEvent,
   'data-hire-surface': dataHireSurface,
 } = Astro.props;
+
+const flagsEntry = await getEntry('flags', 'config');
+const isGlowEnabled = flagsEntry?.data.enable_cta_glow_v1 ?? false;
 ---
 
 <a
@@ -23,6 +28,7 @@ const {
   target={target}
   rel={rel}
   download={download}
+  class:list={[{ 'cta-glow': isGlowEnabled }]}
   data-hire-event={dataHireEvent}
   data-hire-surface={dataHireSurface}
 >
@@ -64,6 +70,14 @@ const {
     background-position: 100% 50%;
     transform: translateY(-3px) scale(1.02);
     box-shadow:
+      0 12px 30px -5px hsla(210, 100%, 50%, 0.6),
+      var(--shadow-md);
+  }
+
+  a.cta-glow:hover,
+  a.cta-glow:focus-visible {
+    box-shadow:
+      0 0 20px hsla(var(--accent-regular-basis, 210), 100%, 50%, 0.4),
       0 12px 30px -5px hsla(210, 100%, 50%, 0.6),
       var(--shadow-md);
   }

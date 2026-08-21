@@ -9,3 +9,9 @@
 - [Insight 1: Shimmer micro-interactions provide high-quality visual feedback without increasing JS bundle size.]
 - [Insight 2: Using `translateX` for the shimmer sweep is more performant than animating `background-position` as it avoids layout repaints.]
 - [Delta: 18 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-02 - Call To Action Ambient Glow | Signal: Technical/Competitive | Lean Implementation: Flagged Scoped CSS Box Shadow Glow
+
+- [Insight 1: Subtle box-shadow glows on primary calls-to-action increase visual hierarchy and guide user conversion.]
+- [Insight 2: Controlling CSS effects behind Astro Content Collection feature flags ensures non-disruptive, isolated rollout.]
+- [Delta: 12 lines. Guardrails: All passed autonomously.]
