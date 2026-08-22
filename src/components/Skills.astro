@@ -55,7 +55,8 @@ const flagsEntry = await getEntry('flags', 'config');
       border-color var(--theme-transition);
   }
 
-  .box:hover {
+  .box:hover,
+  .box:focus-within {
     transform: translateY(-4px);
     border-color: var(--accent-regular);
     box-shadow:
@@ -63,11 +64,18 @@ const flagsEntry = await getEntry('flags', 'config');
       var(--shadow-md);
   }
 
+  .skills a:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+    border-radius: 0.25rem;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .box {
       transition: none;
     }
-    .box:hover {
+    .box:hover,
+    .box:focus-within {
       transform: none;
     }
   }

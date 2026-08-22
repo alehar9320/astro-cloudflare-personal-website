@@ -47,3 +47,9 @@
 **Learning:** To optimize Largest Contentful Paint (LCP) in Astro projects, primary visual assets (like hero images) and the first items in repeated galleries should be prioritised by the browser. Applying `loading="eager"` and `fetchpriority="high"` to these elements prevents the browser from delaying their loading, ensuring a faster perceived performance for users.
 
 **Action:** Enhanced the `PortfolioPreview` component to support dynamic `loading` and `fetchpriority` props. Updated `index.astro` and `work.astro` to prioritise the first project in their respective galleries. Explicitly added `loading="eager"` to the primary portrait image on the home page.
+
+## 2026-05-20 - Synchronizing Focus Elevation and Link Focus Spatiality in Skills Cards
+
+**Learning:** When interactive elements (such as links) live inside composite container components (like `Skills.astro` cards), keyboard navigation can create a disconnect if only the focused link is styled while the surrounding parent container remains in a static state. Using `:focus-within` on the parent container ensures that focusing an internal link visually elevates the parent container in the exact same manner as hover, maintaining spatial predictability for keyboard users. Adding scoped `:focus-visible` styles with a standardized `outline-offset: 4px` to embedded links completes the focus affordance hierarchy.
+
+**Action:** Updated `src/components/Skills.astro` to include `:focus-within` on the card `.box` containers and added explicit `:focus-visible` styling with `outline-offset: 4px` for internal inline links.
