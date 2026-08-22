@@ -94,7 +94,7 @@ As a strategic thinker and problem solver, I excel in analyzing complex business
 
 Collaboration is at the heart of my approach. I firmly believe that the best outcomes are achieved through effective teamwork and cross-functional collaboration. With my strong interpersonal skills and ability to build relationships across diverse teams, I am adept at bringing stakeholders together to align visions, leverage expertise, and drive projects forward.
 
-In addition to my expertise in product management and business analysis, I possess a unique blend of creative and technical skills. With a background in software technology, I have a deep understanding of the intersection between product, design, technology. I leverage this knowledge to create compelling and user-centric digital solutions that captivate audiences and drive engagement.
+In addition to my expertise in product management and business analysis, I possess a unique blend of creative and technical skills. With a background in software technology, I have a deep understanding of the intersection between product, design, and technology. I leverage this knowledge to create compelling and user-centric digital solutions that captivate audiences and drive engagement.
 
 My commitment to continuous learning and adaptability allows me to thrive in dynamic environments. I am comfortable navigating ambiguity and embrace a fail-fast, learn-fast mentality. To stay on the right course, I also leverage data-driven insights to make informed decisions, ensuring that strategies are grounded in evidence and results.
 
@@ -309,7 +309,7 @@ Other contributors
 5
 Display OS
 Sep 2016 - Jan 2017
-Our vision is a future where we are more and more dependent upon information. Thus, we have created a platform that allows you to get all the information you need, in just a glance, right when you need it. No matter if it's displayed on your tv, your fridge or projected on your wall. This is all made possible by combining a user-friendly GUI with API:s from the world-wide web.
+Our vision is a future where we are more and more dependent upon information. Thus, we have created a platform that allows you to get all the information you need, in just a glance, right when you need it. No matter if it's displayed on your tv, your fridge or projected on your wall. This is all made possible by combining a user-friendly GUI with APIs from the world-wide web.
 Other contributors
 
 Show all 5 projects
