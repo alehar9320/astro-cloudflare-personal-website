@@ -187,10 +187,14 @@ export const POST: APIRoute = async ({ request }) => {
     if (store) {
       hourlyCount += 1;
       dailyCount += 1;
-      await Promise.all([
-        store.put(hourlyKey, hourlyCount.toString(), { expirationTtl: 3600 }),
-        store.put(dailyKey, dailyCount.toString(), dailyPutOptions()),
-      ]);
+      try {
+        await Promise.all([
+          store.put(hourlyKey, hourlyCount.toString(), { expirationTtl: 3600 }),
+          store.put(dailyKey, dailyCount.toString(), dailyPutOptions()),
+        ]);
+      } catch (kvError: unknown) {
+        console.error({ event: 'chat_api_kv_write_error', error: String(kvError) });
+      }
     }
 
     return new Response(stream, {

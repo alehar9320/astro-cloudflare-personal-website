@@ -33,15 +33,16 @@ export const ChatRequestSchema = z.object({
  * @returns A pruned array of messages that satisfies all constraints.
  */
 export function pruneMessages(messages: ChatMessage[]): ChatMessage[] {
-  const pruned = messages.slice(-MAX_MESSAGES);
-  let totalLength = pruned.reduce((acc, msg) => acc + msg.content.length, 0);
+  const recent = messages.slice(-MAX_MESSAGES);
+  let totalLength = recent.reduce((acc, msg) => acc + msg.content.length, 0);
+  let startIndex = 0;
 
-  while (pruned.length > 1 && totalLength > MAX_TOTAL_CONTENT_LENGTH) {
-    // biome-ignore lint/style/noNonNullAssertion: loop guard ensures shift() returns an element
-    totalLength -= pruned.shift()!.content.length;
+  while (recent.length - startIndex > 1 && totalLength > MAX_TOTAL_CONTENT_LENGTH) {
+    totalLength -= recent[startIndex].content.length;
+    startIndex += 1;
   }
 
-  return pruned;
+  return startIndex > 0 ? recent.slice(startIndex) : recent;
 }
 
 export const DESIGN_SYSTEM_CHIP = 'What did the IFS design system change?';

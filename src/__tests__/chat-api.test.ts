@@ -617,6 +617,28 @@ describe('chat API', () => {
     expect(put).not.toHaveBeenCalled();
   });
 
+  it('gracefully logs telemetry and returns 200 stream when KV store write fails', async () => {
+    const ai = createAi();
+    const get = vi.fn().mockResolvedValue('1');
+    const put = vi.fn().mockRejectedValue(new Error('KV write timeout'));
+    const store = { get, put } as unknown as KVNamespace;
+    const env = { AI: ai, CHAT_STORE: store };
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const response = await POST(
+      createContext(createRequest({ messages: [{ role: 'user', content: 'Hello' }] }), env)
+    );
+
+    expect(response.status).toBe(200);
+    expect(ai.run).toHaveBeenCalled();
+    expect(put).toHaveBeenCalled();
+    const loggedKvError = consoleSpy.mock.calls.find(
+      (call) => call[0]?.event === 'chat_api_kv_write_error'
+    )?.[0];
+    expect(loggedKvError).toBeDefined();
+    expect(loggedKvError.error).toContain('KV write timeout');
+  });
+
   it('returns 429 and skips AI when the site-wide daily cap is reached', async () => {
     const ai = createAi();
     const get = vi.fn().mockImplementation(async (key: string) => {
