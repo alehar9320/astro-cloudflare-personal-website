@@ -2,7 +2,7 @@
 title: Internal AI coding copilots
 publishDate: 2025-02-01 00:00:00
 description: |
-  Internal AI coding copilots and developer tooling for IFS engineering teams.
+  Internal AI coding copilots for IFS engineering teams.
 tags:
   - Developer Experience
   - AI Strategy
