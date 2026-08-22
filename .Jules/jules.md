@@ -9,3 +9,9 @@
 - [Insight 1: Shimmer micro-interactions provide high-quality visual feedback without increasing JS bundle size.]
 - [Insight 2: Using `translateX` for the shimmer sweep is more performant than animating `background-position` as it avoids layout repaints.]
 - [Delta: 18 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-02 - Pill Tactile Feedback | Signal: Technical | Lean Implementation: Flagged CSS Active Scale State
+
+- [Insight 1: Tactile press feedback on badge components increases interactive clarity without introducing JavaScript event handlers.]
+- [Insight 2: Using CSS transform scale(0.97) delivers high responsive tactile feel with minimal style delta.]
+- [Delta: 18 lines. Guardrails: All passed autonomously.]
