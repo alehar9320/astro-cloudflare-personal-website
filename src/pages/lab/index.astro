@@ -1,0 +1,240 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+---
+
+<BaseLayout
+  title="Interactive Canvas Lab | Alexander Härenstam"
+  description="Experimental Northern Lights Canvas Lab exploring mathematical wave superposition and magnetosphere vector displacement."
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <header class="hero">
+      <Hero
+        title="Interactive Canvas Lab"
+        tagline="Experimental interactive visual art exploring harmonic sine wave superposition and magnetosphere vector displacement."
+        align="start"
+      />
+    </header>
+
+    <section class="lab-container" aria-label="Northern Lights Refraction Canvas">
+      <div class="canvas-card">
+        <canvas
+          id="aurora-lab-canvas"
+          class="aurora-canvas"
+          role="img"
+          aria-label="Interactive Northern Lights visual simulation responding to pointer movement."
+        ></canvas>
+        <div class="canvas-controls">
+          <button id="toggle-motion-btn" class="control-btn" type="button" aria-pressed="false">
+            Pause Motion
+          </button>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import { calculateWaveY, applyMagnetosphereDisplacement } from '../../utils/aurora-math';
+
+  const setupLabCanvas = () => {
+    const canvas = document.getElementById('aurora-lab-canvas') as HTMLCanvasElement | null;
+    const toggleBtn = document.getElementById('toggle-motion-btn') as HTMLButtonElement | null;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animId: number | null = null;
+    let time = 0;
+    let isPaused = false;
+    let pointer = { x: -1000, y: -1000 };
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      isPaused = true;
+      if (toggleBtn) toggleBtn.textContent = 'Play Motion';
+    }
+
+    const resize = () => {
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const rect = canvas.getBoundingClientRect();
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+    };
+
+    const waves = [
+      {
+        amplitude: 25,
+        frequency: 0.008,
+        speed: 0.02,
+        harmonic: 2.2,
+        color: 'rgba(0, 242, 254, 0.45)',
+        baseYRatio: 0.35,
+      },
+      {
+        amplitude: 35,
+        frequency: 0.005,
+        speed: 0.015,
+        harmonic: 1.8,
+        color: 'rgba(0, 102, 204, 0.40)',
+        baseYRatio: 0.5,
+      },
+      {
+        amplitude: 20,
+        frequency: 0.012,
+        speed: 0.025,
+        harmonic: 2.5,
+        color: 'rgba(121, 40, 202, 0.35)',
+        baseYRatio: 0.65,
+      },
+    ];
+
+    const render = () => {
+      const w = canvas.getBoundingClientRect().width;
+      const h = canvas.getBoundingClientRect().height;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Render dark glassmorphic background gradient
+      const bgGrad = ctx.createLinearGradient(0, 0, w, h);
+      bgGrad.addColorStop(0, '#090b11');
+      bgGrad.addColorStop(0.5, '#0a192f');
+      bgGrad.addColorStop(1, '#141925');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, w, h);
+
+      if (!isPaused) time += 1;
+
+      // Draw each wave harmonic
+      waves.forEach((wave) => {
+        ctx.beginPath();
+        const baseY = h * wave.baseYRatio;
+        const step = 8;
+
+        for (let x = 0; x <= w + step; x += step) {
+          const rawY = calculateWaveY(x, time, baseY, wave);
+          const displaced = applyMagnetosphereDisplacement({ x, y: rawY }, pointer, 160, 40);
+
+          if (x === 0) {
+            ctx.moveTo(displaced.x, displaced.y);
+          } else {
+            ctx.lineTo(displaced.x, displaced.y);
+          }
+        }
+
+        ctx.lineTo(w, h);
+        ctx.lineTo(0, h);
+        ctx.closePath();
+
+        ctx.fillStyle = wave.color;
+        ctx.fill();
+      });
+
+      if (!isPaused) {
+        animId = requestAnimationFrame(render);
+      }
+    };
+
+    const handlePointerMove = (e: MouseEvent | TouchEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = 'touches' in e ? (e.touches[0]?.clientX ?? -1000) : e.clientX;
+      const clientY = 'touches' in e ? (e.touches[0]?.clientY ?? -1000) : e.clientY;
+      pointer = { x: clientX - rect.left, y: clientY - rect.top };
+    };
+
+    const handlePointerLeave = () => {
+      pointer = { x: -1000, y: -1000 };
+    };
+
+    const handleToggle = () => {
+      isPaused = !isPaused;
+      if (toggleBtn) {
+        toggleBtn.textContent = isPaused ? 'Play Motion' : 'Pause Motion';
+        toggleBtn.setAttribute('aria-pressed', String(isPaused));
+      }
+      if (!isPaused && !animId) {
+        animId = requestAnimationFrame(render);
+      }
+    };
+
+    window.addEventListener('resize', resize);
+    canvas.addEventListener('mousemove', handlePointerMove);
+    canvas.addEventListener('mouseleave', handlePointerLeave);
+    canvas.addEventListener('touchstart', handlePointerMove, { passive: true });
+    canvas.addEventListener('touchend', handlePointerLeave);
+    if (toggleBtn) toggleBtn.addEventListener('click', handleToggle);
+
+    resize();
+    render();
+
+    const cleanup = () => {
+      if (animId) cancelAnimationFrame(animId);
+      window.removeEventListener('resize', resize);
+      canvas.removeEventListener('mousemove', handlePointerMove);
+      canvas.removeEventListener('mouseleave', handlePointerLeave);
+      canvas.removeEventListener('touchstart', handlePointerMove);
+      canvas.removeEventListener('touchend', handlePointerLeave);
+      if (toggleBtn) toggleBtn.removeEventListener('click', handleToggle);
+    };
+
+    document.addEventListener('astro:before-swap', cleanup, { once: true });
+  };
+
+  document.addEventListener('astro:page-load', setupLabCanvas);
+</script>
+
+<style>
+  .lab-container {
+    width: 100%;
+    margin-block: 1rem 3rem;
+  }
+
+  .canvas-card {
+    position: relative;
+    width: 100%;
+    height: 420px;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    border: 1px solid var(--gray-800);
+    box-shadow: var(--shadow-md);
+  }
+
+  .aurora-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+  }
+
+  .canvas-controls {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 10;
+  }
+
+  .control-btn {
+    background: rgba(20, 25, 37, 0.75);
+    color: var(--gray-100);
+    border: 1px solid var(--gray-700);
+    border-radius: 0.5rem;
+    padding: 0.5rem 1rem;
+    font-size: var(--text-sm);
+    font-family: var(--font-body);
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .control-btn:hover,
+  .control-btn:focus-visible {
+    background: rgba(40, 48, 68, 0.9);
+    border-color: var(--accent-regular);
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 2px;
+  }
+</style>
