@@ -10,20 +10,21 @@ if (!flagsEntry?.data.enable_tech_stack_v1) return Astro.redirect('/404/');
 const linkedinHref = 'https://www.linkedin.com/in/alehar/';
 
 const stack = [
-  { name: 'Astro & Cloudflare Workers', role: 'Edge & Static Architecture' },
-  { name: 'TypeScript & Vitest', role: 'Type Safety & Testing' },
-  { name: 'Figma & Vanilla CSS', role: 'Design Systems & UI' },
+  { name: 'Astro', role: 'Pages ship as HTML.' },
+  { name: 'Cloudflare Workers', role: 'Runs at the edge.' },
+  { name: 'TypeScript', role: 'Typed, so the site does not drift.' },
+  { name: 'Vitest', role: 'Checks the bits that can break.' },
 ];
 ---
 
 <BaseLayout
-  title="Tech Stack | Product Manager, Developer Experience at IFS"
-  description="Core engineering & product stack powering modern developer experiences."
+  title="Stack | Alexander Härenstam"
+  description="What this site is built with."
   robots="noindex"
 >
   <main id="main-content" class="wrapper stack gap-8">
     <Hero title="Tech Stack" align="start">
-      <p class="lede">Core tools & frameworks utilized in product delivery and DevEx.</p>
+      <p class="lede">What this site is built with.</p>
     </Hero>
 
     <ul class="stack-list">
@@ -39,7 +40,7 @@ const stack = [
 
     <div class="actions">
       <CallToAction href={linkedinHref} target="_blank" rel="noopener noreferrer">
-        Connect on LinkedIn
+        Get in touch
       </CallToAction>
     </div>
   </main>
