@@ -1,0 +1,85 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_tech_stack_v1) return Astro.redirect('/404/');
+
+const linkedinHref = 'https://www.linkedin.com/in/alehar/';
+
+const stack = [
+  { name: 'Astro & Cloudflare Workers', role: 'Edge & Static Architecture' },
+  { name: 'TypeScript & Vitest', role: 'Type Safety & Testing' },
+  { name: 'Figma & Vanilla CSS', role: 'Design Systems & UI' },
+];
+---
+
+<BaseLayout
+  title="Tech Stack | Product Manager, Developer Experience at IFS"
+  description="Core engineering & product stack powering modern developer experiences."
+  robots="noindex"
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero title="Tech Stack" align="start">
+      <p class="lede">Core tools & frameworks utilized in product delivery and DevEx.</p>
+    </Hero>
+
+    <ul class="stack-list">
+      {
+        stack.map((item) => (
+          <li class="stack-item">
+            <strong>{item.name}</strong>
+            <span>{item.role}</span>
+          </li>
+        ))
+      }
+    </ul>
+
+    <div class="actions">
+      <CallToAction href={linkedinHref} target="_blank" rel="noopener noreferrer">
+        Connect on LinkedIn
+      </CallToAction>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .lede {
+    margin: 0;
+    color: var(--gray-200);
+  }
+
+  .stack-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
+  .stack-item {
+    padding: 1rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+    background: var(--gradient-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .stack-item strong {
+    color: var(--gray-0);
+  }
+
+  .stack-item span {
+    color: var(--gray-300);
+    font-size: var(--text-sm);
+  }
+
+  .actions {
+    margin-top: 1rem;
+  }
+</style>
