@@ -1,0 +1,75 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Icon from '../../components/Icon.astro';
+
+const flags = await getEntry('flags', 'config');
+if (!flags?.data.enable_tech_stack) return Astro.redirect('/404/');
+
+const stack = [
+  {
+    name: 'Design Systems & UI',
+    detail: 'Astro, Glassmorphism, Design Tokens',
+    icon: 'terminal-window' as const,
+  },
+  {
+    name: 'DevEx & AI Tooling',
+    detail: 'Agentic Workflows, MCP, Custom LLM Pipelines',
+    icon: 'rocket-launch' as const,
+  },
+  {
+    name: 'Edge Infrastructure',
+    detail: 'Cloudflare Workers, Vitest, Zero-Dep Utilities',
+    icon: 'strategy' as const,
+  },
+];
+---
+
+<BaseLayout
+  title="Tech Stack | DevEx Radar"
+  description="Core technology stack and engineering tools."
+>
+  <main class="wrapper stack gap-8" style="margin-top: 4rem;">
+    <Hero
+      title="Tech Stack Radar"
+      tagline="Core engineering primitives and DevEx toolchain."
+      align="start"
+    />
+    <div class="grid">
+      {
+        stack.map((s) => (
+          <section class="card">
+            <Icon icon={s.icon} color="var(--accent-regular)" size="2.5rem" gradient />
+            <h2>{s.name}</h2>
+            <p>{s.detail}</p>
+          </section>
+        ))
+      }
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+  .card {
+    padding: 1.5rem;
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 0.75rem;
+  }
+  .card h2 {
+    font-size: var(--text-lg);
+    margin: 0.75rem 0 0.35rem;
+    color: var(--gray-0);
+  }
+  .card p {
+    color: var(--gray-300);
+    font-size: var(--text-sm);
+    margin: 0;
+  }
+</style>

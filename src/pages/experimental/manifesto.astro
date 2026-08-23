@@ -4,7 +4,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Hero from '../../components/Hero.astro';
 import Icon from '../../components/Icon.astro';
 
-const flags = await getEntry('flags', 'index');
+const flags = await getEntry('flags', 'config');
 if (!flags?.data.enable_product_manifesto) return Astro.redirect('/404/');
 
 const principles = [
