@@ -1,0 +1,219 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Aurora Waves Lab | Alexander Härenstam"
+  description="Interactive Northern Lights Canvas Wave Simulation."
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <header class="hero stack gap-2">
+      <h1 class="title">Aurora Waves Interactive Canvas</h1>
+      <p class="tagline">
+        Mathematical wave superposition and magnetosphere vector displacement inspired by the
+        Northern Lights.
+      </p>
+    </header>
+
+    <div class="interactive-container">
+      <canvas id="aurora-waves-canvas"></canvas>
+      <div class="canvas-controls">
+        <span class="status-badge" id="fps-counter">60 FPS</span>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  const canvas = document.getElementById('aurora-waves-canvas') as HTMLCanvasElement | null;
+  const fpsCounter = document.getElementById('fps-counter');
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let animationFrameId: number;
+    let lastTime = performance.now();
+    let frameCount = 0;
+
+    // Check prefers-reduced-motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Mouse position state
+    const mouse = { x: -1000, y: -1000, targetX: -1000, targetY: -1000 };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.targetX = e.clientX - rect.left;
+      mouse.targetY = e.clientY - rect.top;
+    };
+
+    const handleMouseLeave = () => {
+      mouse.targetX = -1000;
+      mouse.targetY = -1000;
+    };
+
+    const resize = () => {
+      if (!canvas) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const width = canvas.parentElement?.clientWidth || 800;
+      const height = 450;
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+      if (ctx) ctx.scale(dpr, dpr);
+    };
+
+    // Wave parameters
+    let time = 0;
+    const waves = [
+      { amplitude: 35, wavelength: 0.008, speed: 0.012, color: 'rgba(0, 212, 255, 0.45)' },
+      { amplitude: 45, wavelength: 0.005, speed: 0.008, color: 'rgba(0, 119, 190, 0.4)' },
+      { amplitude: 25, wavelength: 0.012, speed: 0.018, color: 'rgba(74, 222, 128, 0.35)' },
+    ];
+
+    const draw = (now: number) => {
+      if (!ctx || !canvas) return;
+
+      // Calculate FPS
+      frameCount++;
+      if (now - lastTime >= 1000) {
+        if (fpsCounter) {
+          fpsCounter.textContent = `${frameCount} FPS`;
+        }
+        frameCount = 0;
+        lastTime = now;
+      }
+
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Smooth mouse interpolation
+      mouse.x += (mouse.targetX - mouse.x) * 0.1;
+      mouse.y += (mouse.targetY - mouse.y) * 0.1;
+
+      time += prefersReducedMotion ? 0 : 0.015;
+
+      // Render each sine wave curve layer
+      waves.forEach((wave, idx) => {
+        ctx.beginPath();
+        ctx.moveTo(0, height);
+
+        const baseHeight = height * (0.4 + idx * 0.15);
+
+        for (let x = 0; x <= width; x += 4) {
+          // Mathematical wave superposition
+          let y = Math.sin(x * wave.wavelength + time * wave.speed * (idx + 1)) * wave.amplitude;
+          y += Math.cos((x + time * 10) * wave.wavelength * 0.5) * (wave.amplitude * 0.5);
+
+          // Cursor attraction/repulsion displacement (magnetosphere displacement)
+          const dx = x - mouse.x;
+          const dy = baseHeight + y - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 180) {
+            const force = (1 - dist / 180) * 35;
+            y -= force;
+          }
+
+          if (x === 0) {
+            ctx.moveTo(x, baseHeight + y);
+          } else {
+            ctx.lineTo(x, baseHeight + y);
+          }
+        }
+
+        ctx.lineTo(width, height);
+        ctx.lineTo(0, height);
+        ctx.closePath();
+
+        const gradient = ctx.createLinearGradient(0, 0, 0, height);
+        gradient.addColorStop(0, wave.color);
+        gradient.addColorStop(1, 'rgba(5, 25, 35, 0.05)');
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      });
+
+      if (!prefersReducedMotion) {
+        animationFrameId = requestAnimationFrame(draw);
+      }
+    };
+
+    window.addEventListener('resize', resize);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseleave', handleMouseLeave);
+
+    resize();
+    draw(performance.now());
+
+    // Clean up on page navigation
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+        if (canvas) {
+          canvas.removeEventListener('mousemove', handleMouseMove);
+          canvas.removeEventListener('mouseleave', handleMouseLeave);
+        }
+      },
+      { once: true }
+    );
+  }
+</script>
+
+<style>
+  .interactive-container {
+    position: relative;
+    width: 100%;
+    height: 450px;
+    border-radius: 1.5rem;
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 30%, var(--gray-900), var(--gray-999));
+    border: 1px solid var(--gray-800);
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(16px);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+  }
+
+  .canvas-controls {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    pointer-events: none;
+  }
+
+  .status-badge {
+    font-size: var(--text-sm);
+    padding: 0.35rem 0.75rem;
+    background: hsla(var(--gray-999-basis), 0.6);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--gray-800);
+    border-radius: 999rem;
+    color: var(--accent-light);
+    font-family: var(--font-brand);
+  }
+
+  .hero {
+    text-align: center;
+    padding-top: 2rem;
+  }
+
+  .title {
+    font-size: var(--text-3xl);
+    color: var(--gray-0);
+  }
+
+  .tagline {
+    font-size: var(--text-lg);
+    color: var(--gray-300);
+    max-width: 45ch;
+    margin-inline: auto;
+  }
+</style>
