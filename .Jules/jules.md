@@ -9,3 +9,9 @@
 - [Insight 1: Shimmer micro-interactions provide high-quality visual feedback without increasing JS bundle size.]
 - [Insight 2: Using `translateX` for the shimmer sweep is more performant than animating `background-position` as it avoids layout repaints.]
 - [Delta: 18 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-02 - Active Navigation Pulse | Signal: Technical/Competitive | Lean Implementation: Flagged CSS Keyframe Glow
+
+- [Insight 1: Subtle keyframe glow on active navigation elements improves location context and visual clarity without impacting JavaScript runtime.]
+- [Insight 2: Scoping animations within `prefers-reduced-motion: no-preference` guarantees accessibility compliance.]
+- [Delta: 17 lines. Guardrails: All passed autonomously.]

@@ -6,6 +6,7 @@ import ThemeToggle from './ThemeToggle.astro';
 
 const flagsEntry = await getEntry('flags', 'config');
 const isLogoWobbleEnabled = flagsEntry?.data.enable_logo_wobble_v1 ?? false;
+const isNavActivePulseEnabled = flagsEntry?.data.enable_nav_active_pulse_v1 ?? false;
 
 /** Main menu items */
 const textLinks: { label: string; href: string; event?: string; surface?: string }[] = [
@@ -67,7 +68,7 @@ const isCurrentPage = (href: string) => {
     </menu-button>
   </div>
   <noscript>
-    <ul class="nav-items">
+    <ul class:list={['nav-items', { 'active-pulse-enabled': isNavActivePulseEnabled }]}>
       {
         textLinks.map(({ label, href, event, surface }) => (
           <li>
@@ -100,7 +101,7 @@ const isCurrentPage = (href: string) => {
     </div>
   </noscript>
   <div id="menu-content" hidden>
-    <ul class="nav-items">
+    <ul class:list={['nav-items', { 'active-pulse-enabled': isNavActivePulseEnabled }]}>
       {
         textLinks.map(({ label, href, event, surface }) => (
           <li>
@@ -559,6 +560,9 @@ const isCurrentPage = (href: string) => {
     .logo-wobble:hover :global(svg) {
       animation: wobble 0.5s ease-in-out;
     }
+    .active-pulse-enabled .link[aria-current='page'] {
+      animation: nav-active-pulse 3s ease-in-out infinite;
+    }
     @keyframes wobble {
       0%,
       100% {
@@ -569,6 +573,15 @@ const isCurrentPage = (href: string) => {
       }
       75% {
         rotate: -10deg;
+      }
+    }
+    @keyframes nav-active-pulse {
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 transparent;
+      }
+      50% {
+        box-shadow: 0 0 8px 1px hsla(210, 100%, 45%, 0.5);
       }
     }
   }
