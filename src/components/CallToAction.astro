@@ -31,6 +31,9 @@ const {
 
 <style>
   a {
+    --cta-glow-color: hsla(210, 100%, 50%, 0.6);
+    --cta-border-light: hsla(0, 0%, 100%, 0.25);
+
     position: relative;
     display: flex;
     place-content: center;
@@ -41,16 +44,20 @@ const {
     text-decoration: none;
     line-height: 1.1;
     border-radius: 999rem;
+    border: 1px solid var(--cta-border-light);
     overflow: hidden;
     background-image: var(--gradient-accent-orange);
     background-size: 300% 300%;
     background-position: 0% 50%;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     box-shadow: var(--shadow-md);
     white-space: nowrap;
     transition:
       background-position 0.6s cubic-bezier(0.22, 1, 0.36, 1),
       transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
-      box-shadow 0.3s ease;
+      box-shadow 0.3s ease,
+      border-color 0.3s ease;
   }
 
   @media (min-width: 20em) {
@@ -63,8 +70,9 @@ const {
   a:focus-visible {
     background-position: 100% 50%;
     transform: translateY(-3px) scale(1.02);
+    border-color: hsla(0, 0%, 100%, 0.45);
     box-shadow:
-      0 12px 30px -5px hsla(210, 100%, 50%, 0.6),
+      0 12px 30px -5px var(--cta-glow-color),
       var(--shadow-md);
   }
 
@@ -79,14 +87,21 @@ const {
     box-shadow: var(--shadow-sm);
   }
 
-  /* Overlay for standard static hover effect no longer needed, using animated gradient */
+  /* Frosted glass top highlight sheen overlay */
   a::after {
     content: '';
     position: absolute;
     inset: 0;
     pointer-events: none;
-    transition: background-color var(--theme-transition);
+    background: linear-gradient(180deg, hsla(0, 0%, 100%, 0.2) 0%, transparent 50%);
+    opacity: 0.8;
+    transition: opacity 0.3s ease;
     mix-blend-mode: overlay;
+  }
+
+  a:hover::after,
+  a:focus-visible::after {
+    opacity: 1;
   }
 
   @media (min-width: 50em) {
