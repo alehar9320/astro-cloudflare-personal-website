@@ -3,36 +3,28 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 ---
 
 <BaseLayout
-  title="Aurora Waves Lab | Alexander Härenstam"
-  description="Interactive Northern Lights Canvas Wave Simulation."
+  title="Northern Lights | Alexander Härenstam"
+  description="Move your pointer. The lights move with you."
+  robots="noindex"
 >
   <main id="main-content" class="wrapper stack gap-8">
     <header class="hero stack gap-2">
-      <h1 class="title">Aurora Waves Interactive Canvas</h1>
-      <p class="tagline">
-        Mathematical wave superposition and magnetosphere vector displacement inspired by the
-        Northern Lights.
-      </p>
+      <h1 class="title">Northern lights</h1>
+      <p class="tagline">Move your pointer. The lights shift.</p>
     </header>
 
     <div class="interactive-container">
       <canvas id="aurora-waves-canvas"></canvas>
-      <div class="canvas-controls">
-        <span class="status-badge" id="fps-counter">60 FPS</span>
-      </div>
     </div>
   </main>
 </BaseLayout>
 
 <script>
   const canvas = document.getElementById('aurora-waves-canvas') as HTMLCanvasElement | null;
-  const fpsCounter = document.getElementById('fps-counter');
 
   if (canvas) {
     const ctx = canvas.getContext('2d');
     let animationFrameId: number;
-    let lastTime = performance.now();
-    let frameCount = 0;
 
     // Check prefers-reduced-motion
     const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -71,18 +63,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       { amplitude: 25, wavelength: 0.012, speed: 0.018, color: 'rgba(74, 222, 128, 0.35)' },
     ];
 
-    const draw = (now: number) => {
+    const draw = () => {
       if (!ctx || !canvas) return;
-
-      // Calculate FPS
-      frameCount++;
-      if (now - lastTime >= 1000) {
-        if (fpsCounter) {
-          fpsCounter.textContent = `${frameCount} FPS`;
-        }
-        frameCount = 0;
-        lastTime = now;
-      }
 
       const width = canvas.clientWidth;
       const height = canvas.clientHeight;
@@ -144,7 +126,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     canvas.addEventListener('mouseleave', handleMouseLeave);
 
     resize();
-    draw(performance.now());
+    draw();
 
     // Clean up on page navigation
     document.addEventListener(
@@ -180,24 +162,6 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     width: 100%;
     height: 100%;
     cursor: crosshair;
-  }
-
-  .canvas-controls {
-    position: absolute;
-    top: 1rem;
-    right: 1rem;
-    pointer-events: none;
-  }
-
-  .status-badge {
-    font-size: var(--text-sm);
-    padding: 0.35rem 0.75rem;
-    background: hsla(var(--gray-999-basis), 0.6);
-    backdrop-filter: blur(8px);
-    border: 1px solid var(--gray-800);
-    border-radius: 999rem;
-    color: var(--accent-light);
-    font-family: var(--font-brand);
   }
 
   .hero {
