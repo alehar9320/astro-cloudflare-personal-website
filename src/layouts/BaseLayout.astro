@@ -255,7 +255,8 @@ const { title, description, ogTitle, shareUrl, canonicalUrl, robots } = Astro.pr
         white-space: nowrap;
       }
 
-      .sr-only.focus-visible:focus {
+      .sr-only.focus-visible:focus,
+      .sr-only.focus-visible:focus-visible {
         clip: auto;
         height: auto;
         margin: auto;
@@ -280,6 +281,8 @@ const { title, description, ogTitle, shareUrl, canonicalUrl, robots } = Astro.pr
         font-family: var(--font-brand);
         font-weight: 500;
         box-shadow: var(--shadow-lg);
+        outline: 2px solid var(--accent-regular);
+        outline-offset: 4px;
       }
     </style>
   </body>

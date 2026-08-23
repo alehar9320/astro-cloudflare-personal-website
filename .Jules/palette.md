@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-20 - Preserving Session Continuity & High-Visibility Skip Link Focus
+
+**Learning:** Navigation links to third-party social or external platforms in site headers and footers should open in new tabs (`target="_blank"` with `rel="noopener noreferrer"`) so users do not lose their active browsing session, scroll position, or digital twin chat state when exploring external profiles. Furthermore, the accessibility skip-to-content link requires explicit `:focus-visible` styling with a high-contrast focus ring (`outline: 2px solid var(--accent-regular)` with `4px` offset) to guarantee clear visual feedback when keyboard users initiate navigation.
+
+**Action:** Added `target="_blank"` and `rel="noopener noreferrer"` attributes to social links in `Nav.astro` and `Footer.astro`. Enhanced `BaseLayout.astro` skip-to-content CSS with `:focus-visible` selector and accent outline rules.
+
 ## 2026-05-17 - Enhancing Content Selection and Standardizing Focus Spatiality
 
 **Learning:** Using `user-select: none` on informational badges (like `Pill`) creates unnecessary friction for users trying to copy text for reference. Additionally, consistent `outline-offset: 4px` across all interactive elements (including theme toggles and cards) reinforces a predictable spatial model for keyboard users. Adding `target="_blank"` with `rel="noopener noreferrer"` to external informational links (like the Astro framework link in the footer) ensures a non-disruptive navigation experience that preserves the user's session.
