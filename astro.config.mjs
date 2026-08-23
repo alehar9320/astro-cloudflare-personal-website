@@ -16,7 +16,7 @@ const isAstroCheck = process.argv.includes('check');
 // PostHog never initialized on prod (key missing → PostHog.astro no-ops).
 try {
   const wranglerConfig = JSON.parse(
-    readFileSync(new URL('./wrangler.jsonc', import.meta.url), 'utf8')
+    readFileSync(fileURLToPath(new URL('./wrangler.jsonc', import.meta.url)), 'utf8')
   );
   for (const [key, value] of Object.entries(wranglerConfig.vars ?? {})) {
     if (process.env[key] === undefined && value != null) {
@@ -74,7 +74,6 @@ export default defineConfig({
     }),
   ],
   vite: {
-    // @ts-expect-error Codecov's Vite plugin is typed against a different Vite instance than Astro's bundled one.
     plugins: [codecovPlugin],
     resolve: isRender
       ? {

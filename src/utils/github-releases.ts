@@ -27,7 +27,7 @@ const RELEASES_API_URL =
 const RELEASES_PAGE_URL =
   'https://github.com/alehar9320/astro-cloudflare-personal-website/releases';
 const REPO_URL = 'https://github.com/alehar9320/astro-cloudflare-personal-website';
-function logReleaseValidationFailed(issues: z.ZodIssue[]): void {
+function logReleaseValidationFailed(issues: z.ZodError['issues']): void {
   const sanitizedIssues = issues.map((issue) => {
     const safeIssue = { ...issue } as Record<string, unknown>;
     delete safeIssue.received;

@@ -98,7 +98,7 @@ const currentYear = new Date().getFullYear();
         last7d.textContent = lines.last7d;
         first.textContent = lines.firstSeen;
         visitStats.hidden = false;
-        document.body.append(panel);
+        document.body.appendChild(panel);
 
         const place = () => {
           const box = trigger.getBoundingClientRect();
@@ -127,7 +127,7 @@ const currentYear = new Date().getFullYear();
             return;
           }
           openedByHover = false;
-          setOpen(panel.hidden);
+          setOpen(Boolean(panel.hidden));
         });
 
         trigger.addEventListener('pointerenter', (event) => {

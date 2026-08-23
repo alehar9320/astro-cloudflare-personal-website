@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   pruneMessages,
+  groundedDesignSystemAnswer,
+  sseTextStream,
   MAX_MESSAGES,
   MAX_TOTAL_CONTENT_LENGTH,
   type ChatMessage,
@@ -100,6 +102,30 @@ describe('chat logic utilities', () => {
       const pruned = pruneMessages(messages);
       expect(pruned).toHaveLength(1);
       expect(pruned[0].content).toBe('short');
+    });
+  });
+
+  describe('groundedDesignSystemAnswer', () => {
+    it('returns canned proof when asking about the IFS design system', () => {
+      expect(groundedDesignSystemAnswer('What did the IFS design system change?')).toBe(
+        'The IFS Design System delivered up to 2x faster delivery and up to 30x ROI, and was a Zeroheight runner-up.'
+      );
+    });
+
+    it('returns null for unrelated questions', () => {
+      expect(groundedDesignSystemAnswer('Tell me about your education')).toBeNull();
+    });
+  });
+
+  describe('sseTextStream', () => {
+    it('encodes text into an SSE readable stream', async () => {
+      const stream = sseTextStream('Hello world');
+      const reader = stream.getReader();
+      const { value, done } = await reader.read();
+      expect(done).toBe(false);
+      const text = new TextDecoder().decode(value);
+      expect(text).toContain('data: {"response":"Hello world"}');
+      expect(text).toContain('data: [DONE]');
     });
   });
 });

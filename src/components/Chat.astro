@@ -656,7 +656,7 @@
     chatMessages?.querySelectorAll('.chat-followups').forEach((el) => el.remove());
   }
 
-  function bindChipSubmit(root: ParentNode) {
+  function bindChipSubmit(root: Element | DocumentFragment) {
     root.querySelectorAll('button').forEach((button) => {
       button.addEventListener('click', () => {
         if (!(chatForm instanceof HTMLFormElement) || !chatInput) return;
@@ -757,7 +757,9 @@
     open.href = card.href;
     open.textContent = 'Open';
 
-    article.append(title, line, open);
+    article.appendChild(title);
+    article.appendChild(line);
+    article.appendChild(open);
     chatMessages.appendChild(article);
     chatMessages.scrollTo(0, chatMessages.scrollHeight);
   }
