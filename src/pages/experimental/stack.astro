@@ -8,34 +8,19 @@ const flags = await getEntry('flags', 'config');
 if (!flags?.data.enable_tech_stack) return Astro.redirect('/404/');
 
 const stack = [
-  {
-    name: 'Design Systems & UI',
-    detail: 'Astro, Glassmorphism, Design Tokens',
-    icon: 'terminal-window' as const,
-  },
-  {
-    name: 'DevEx & AI Tooling',
-    detail: 'Agentic Workflows, MCP, Custom LLM Pipelines',
-    icon: 'rocket-launch' as const,
-  },
-  {
-    name: 'Edge Infrastructure',
-    detail: 'Cloudflare Workers, Vitest, Zero-Dep Utilities',
-    icon: 'strategy' as const,
-  },
+  { name: 'Astro', detail: 'Pages ship as HTML.', icon: 'terminal-window' as const },
+  { name: 'Cloudflare Workers', detail: 'Runs at the edge.', icon: 'rocket-launch' as const },
+  { name: 'TypeScript', detail: 'Typed, so the site does not drift.', icon: 'strategy' as const },
 ];
 ---
 
 <BaseLayout
-  title="Tech Stack | DevEx Radar"
-  description="Core technology stack and engineering tools."
+  title="Stack | Alexander Härenstam"
+  description="What this site is built with."
+  robots="noindex"
 >
   <main class="wrapper stack gap-8" style="margin-top: 4rem;">
-    <Hero
-      title="Tech Stack Radar"
-      tagline="Core engineering primitives and DevEx toolchain."
-      align="start"
-    />
+    <Hero title="Stack" tagline="What this site is built with." align="start" />
     <div class="grid">
       {
         stack.map((s) => (
