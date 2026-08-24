@@ -103,7 +103,7 @@ describe('identity copy', () => {
     expect(home).toContain('not only DevEx');
     expect(home).toContain('Chalmers software engineering');
     expect(home).toContain('MEI');
-    expect(home).toContain('eight years at IFS');
+    expect(home.replace(/\s+/g, ' ')).toContain('eight years at IFS');
     expect(home).toContain('IFS Design System');
     expect(home).toContain('copilots, analytics, and thesis');
     expect(home).toContain('https://www.linkedin.com/in/alehar/');
