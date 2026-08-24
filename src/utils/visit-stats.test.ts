@@ -230,8 +230,14 @@ describe('formatColophonVisits', () => {
   });
 
   it('uses singular unique visitor for 1', () => {
-    expect(formatColophonVisits({ ...glance, uniqueVisitors: 1, uniqueVisitorsDoD: null, uniqueVisitorsWoW: null, uniqueVisitorsYoY: null })).toBe(
-      'up to 1 unique visitor'
-    );
+    expect(
+      formatColophonVisits({
+        ...glance,
+        uniqueVisitors: 1,
+        uniqueVisitorsDoD: null,
+        uniqueVisitorsWoW: null,
+        uniqueVisitorsYoY: null,
+      })
+    ).toBe('up to 1 unique visitor');
   });
 });
