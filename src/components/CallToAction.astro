@@ -1,4 +1,6 @@
 ---
+import { getEntry } from 'astro:content';
+
 interface Props {
   href: string;
   target?: string;
@@ -16,6 +18,9 @@ const {
   'data-hire-event': dataHireEvent,
   'data-hire-surface': dataHireSurface,
 } = Astro.props;
+
+const flagsEntry = await getEntry('flags', 'config');
+const isCtaGlowEnabled = flagsEntry?.data.enable_cta_glow_v1 ?? false;
 ---
 
 <a
@@ -25,6 +30,7 @@ const {
   download={download}
   data-hire-event={dataHireEvent}
   data-hire-surface={dataHireSurface}
+  class={isCtaGlowEnabled ? 'cta-glow' : undefined}
 >
   <slot />
 </a>
@@ -66,6 +72,16 @@ const {
     box-shadow:
       0 12px 30px -5px hsla(210, 100%, 50%, 0.6),
       var(--shadow-md);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    a.cta-glow:hover,
+    a.cta-glow:focus-visible {
+      box-shadow:
+        0 0 25px hsla(210, 100%, 55%, 0.5),
+        0 12px 30px -5px hsla(210, 100%, 50%, 0.6),
+        var(--shadow-md);
+    }
   }
 
   a:focus-visible {

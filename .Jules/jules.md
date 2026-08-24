@@ -9,3 +9,9 @@
 - [Insight 1: Shimmer micro-interactions provide high-quality visual feedback without increasing JS bundle size.]
 - [Insight 2: Using `translateX` for the shimmer sweep is more performant than animating `background-position` as it avoids layout repaints.]
 - [Delta: 18 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-03 - Call To Action Ambient Glow | Signal: Technical/Competitive | Lean Implementation: Feature Flagged Soft Box Shadow Micro-interaction
+
+- [Insight 1: Subtly expanding cyan/blue ambient glow around CTA buttons enhances visual affordance without introducing JavaScript runtime overhead.]
+- [Insight 2: Scoping hardware-accelerated CSS box-shadows inside `prefers-reduced-motion: no-preference` guards accessibility compliance.]
+- [Delta: 20 lines. Guardrails: All passed autonomously.]
