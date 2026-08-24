@@ -163,11 +163,14 @@ describe('identity copy', () => {
     expect(page).toContain('What you can see on this site lately.');
   });
 
-  it('flattens the home proof affordance and omits flatten from /roadmap/', () => {
+  it('flattens the home proof affordance and hides empty Upcoming', () => {
     expect(existsSync('src/pages/roadmap.astro')).toBe(true);
+    expect(existsSync('src/data/upcoming.ts')).toBe(true);
     const page = readFileSync('src/pages/roadmap.astro', 'utf8');
+    const upcoming = readFileSync('src/data/upcoming.ts', 'utf8');
     const home = readFileSync('src/pages/index.astro', 'utf8');
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    const sitemap = readFileSync('src/pages/sitemap.xml.ts', 'utf8');
     const whatsNew = readFileSync('src/pages/whats-new.astro', 'utf8');
     expect(home).toContain('class="proof-card"');
     expect(home).toContain('href="/work/ifs-design-system/"');
@@ -178,19 +181,13 @@ describe('identity copy', () => {
     expect(home).not.toContain('border-radius: 1.5rem');
     expect(home).not.toContain('box-shadow: var(--shadow-sm)');
     expect(home).not.toContain('padding: 1.5rem');
-    expect(page).toContain('Hero title="Upcoming"');
-    expect(page).toContain('const upcoming: readonly string[] = []');
-    expect(page).not.toMatch(/upcoming = \['Flatter first view/);
+    expect(upcoming).toContain('export const UPCOMING: readonly string[] = []');
     expect(page).toContain("throw new Error('Roadmap still promises flatten.')");
-    expect(page).not.toContain("throw new Error('Roadmap would ship empty.')");
-    expect(page).toContain('upcoming.length > 0');
-    expect(page).toContain('ContactCTA');
-    expect(page).not.toContain('mailto:');
-    expect(page).not.toMatch(/\bVP\b/);
-    expect(page).not.toContain('sorry');
-    expect(page).not.toContain('nothing coming');
-    expect(footer).toContain('href="/roadmap/"');
+    expect(page).toContain("Astro.redirect('/')");
+    expect(footer).toContain('showUpcoming');
     expect(footer).toContain('href="/whats-new/"');
+    expect(footer).not.toContain("What's New</a>{' · '}<a href=\"/roadmap/\">Upcoming</a>");
+    expect(sitemap).toContain('UPCOMING.length > 0');
     expect(whatsNew).toContain('What you can see on this site lately.');
   });
 
@@ -201,11 +198,9 @@ describe('identity copy', () => {
     expect(footer).toContain("What's New");
     expect(footer).toContain('data-visit-stats');
     expect(footer).toContain('hidden');
-    expect(footer).toContain('href="/roadmap/"');
-    expect(footer).toContain('Upcoming');
-    expect(footer).toContain("What's New</a>{' · '}");
-    expect(footer).toContain('href="/roadmap/"');
-    // Space-middot-space as Astro text node so paint is What's New · Upcoming · N (survives Prettier).
+    expect(footer).toContain('showUpcoming');
+    expect(footer).toContain("What's New</a>");
+    // Space-middot-space as Astro text node so paint is What's New · N when Upcoming is hidden.
     expect(footer).toContain("{' · '}");
     expect(footer.slice(footer.indexOf('data-visit-stats'))).toContain("{' · '}");
     // Fail the prior bug: newline/indent then middot (leading space collapsed in paint).
@@ -1801,7 +1796,7 @@ describe('identity copy', () => {
     expect(sitemap).toContain("'/work/'");
     expect(sitemap).toContain("'/biography/'");
     expect(sitemap).toContain("'/contact/'");
-    expect(sitemap).toContain("'/roadmap/'");
+    expect(sitemap).toContain('UPCOMING.length > 0');
     expect(sitemap).toContain('ifs-design-system');
     expect(sitemap).not.toContain('/experimental/manifesto');
     expect(sitemap).not.toContain('/experimental/now');

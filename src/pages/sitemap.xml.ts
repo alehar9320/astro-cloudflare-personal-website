@@ -1,11 +1,18 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
+import { UPCOMING } from '../data/upcoming';
 
 export const prerender = true;
 
 const liveOrigin = 'https://me.alehar.workers.dev';
 
-const staticPaths = ['/', '/work/', '/biography/', '/contact/', '/roadmap/'];
+const staticPaths = [
+  '/',
+  '/work/',
+  '/biography/',
+  '/contact/',
+  ...(UPCOMING.length > 0 ? ['/roadmap/'] : []),
+];
 
 function loc(path: string) {
   return `${liveOrigin}${path}`;
