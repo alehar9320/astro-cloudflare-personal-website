@@ -1,0 +1,35 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Icon from '../../components/Icon.astro';
+
+const flags = await getEntry('flags', 'config');
+if (!flags?.data.enable_tech_stack) return Astro.redirect('/404/');
+
+const stack = [
+  { name: 'Astro & TypeScript', role: 'Frontend & Architecture', icon: 'terminal-window' as const },
+  { name: 'Cloudflare Workers', role: 'Edge & Serverless API', icon: 'strategy' as const },
+  { name: 'Figma & Design Systems', role: 'UX & Prototyping', icon: 'rocket-launch' as const },
+];
+---
+<BaseLayout title="Tech Stack" description="Tools powering product development and DevEx.">
+  <main class="wrapper stack gap-8" style="margin-top: 4rem;">
+    <Hero title="Tech Stack" tagline="Tools powering product development and DevEx." align="start" />
+    <div class="grid">
+      {stack.map((item) => (
+        <div class="card">
+          <Icon icon={item.icon} color="var(--accent-regular)" size="2rem" gradient />
+          <h2>{item.name}</h2>
+          <p>{item.role}</p>
+        </div>
+      ))}
+    </div>
+  </main>
+</BaseLayout>
+<style>
+  .grid { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+  .card { padding: 1.5rem; background: var(--gradient-subtle); border: 1px solid var(--gray-800); border-radius: 0.75rem; }
+  .card h2 { font-size: var(--text-lg); margin: 0.75rem 0 0.25rem; color: var(--gray-0); }
+  .card p { margin: 0; color: var(--gray-300); font-size: var(--text-sm); }
+</style>
