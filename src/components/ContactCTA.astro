@@ -33,6 +33,25 @@ import Icon from './Icon.astro';
     backdrop-filter: blur(32px) saturate(120%);
     -webkit-backdrop-filter: blur(32px) saturate(120%);
     box-shadow: var(--shadow-sm);
+    transition:
+      border-color var(--theme-transition),
+      background-color var(--theme-transition),
+      box-shadow var(--theme-transition);
+  }
+
+  aside:hover,
+  aside:focus-within {
+    border-color: hsla(var(--gray-999-basis), 0.35);
+    background: hsla(var(--gray-999-basis), 0.08);
+    box-shadow:
+      0 12px 30px -5px hsla(210, 100%, 45%, 0.15),
+      var(--shadow-md);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    aside {
+      transition: none;
+    }
   }
 
   h2 {

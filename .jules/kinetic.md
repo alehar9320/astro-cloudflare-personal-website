@@ -1,5 +1,16 @@
 # Kinetic Journal ⚡
 
+## 2026-08-24 - Glassmorphic Hover & Depth for ContactCTA
+
+- **Signal:** `ContactCTA` footer block lacked focus-within affordance and subtle glass glow interactive feedback.
+- **Action:**
+  - Enhanced `ContactCTA.astro` wrapper with hardware-accelerated subtle `translateY(-2px)` elevation on `:hover` and `:focus-within`.
+  - Added smooth transition for border opacity, background tint, and glass elevation shadow (`hsla(210, 100%, 45%, 0.15)`).
+  - Ensured WCAG compliance with focus-within ring and `prefers-reduced-motion` safety.
+- **Tokens Added:**
+  - ContactCTA Hover/Focus Elevation: `translateY(-2px)`
+  - Glass Shadow Glow: `0 8px 30px hsla(210, 100%, 45%, 0.15)`
+
 ## 2025-05-15 - Interactive Glassmorphism for Skills Section
 
 - **Signal:** Standardized skills box lacked interactive affordance and depth.
