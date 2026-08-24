@@ -163,19 +163,53 @@ describe('identity copy', () => {
     expect(page).toContain('What you can see on this site lately.');
   });
 
+  it('ships /roadmap/ with the remaining flatter-first-view upcoming row', () => {
+    expect(existsSync('src/pages/roadmap.astro')).toBe(true);
+    const page = readFileSync('src/pages/roadmap.astro', 'utf8');
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    const whatsNew = readFileSync('src/pages/whats-new.astro', 'utf8');
+    expect(page).toContain('Hero title="Upcoming"');
+    expect(page).toContain('Product Manager, Developer Experience at IFS');
+    expect(page).toContain('Flatter first view. Boxes only for affordance or grouping.');
+    expect(page).toContain("throw new Error('Roadmap would ship empty.')");
+    expect(page).toContain('ContactCTA');
+    expect(readFileSync('src/components/ContactCTA.astro', 'utf8')).toContain(
+      'https://www.linkedin.com/in/alehar/'
+    );
+    expect(page).not.toContain('mailto:');
+    expect(page).not.toMatch(/\bVP\b/);
+    expect(page).not.toContain('Head of');
+    expect(page).not.toContain('Director');
+    expect(page).not.toContain('#687');
+    expect(page).not.toContain('full-screen');
+    expect(page).not.toContain('fullscreen');
+    expect(page).not.toContain('visit count');
+    expect(page).not.toContain('DoD');
+    expect(home).toContain('class="hero-dek"');
+    expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
+    expect(footer).toContain('href="/roadmap/"');
+    expect(footer).toContain('href="/whats-new/"');
+    expect(whatsNew).toContain('What you can see on this site lately.');
+    expect(whatsNew).not.toContain('href="/roadmap/"');
+  });
+
   it('puts a middot inside the hidden footer visit-stats span', () => {
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
     const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
     expect(footer).toContain('class="colophon"');
     expect(footer).toContain("What's New");
-    expect(footer).toContain('data-visit-stats hidden');
-    expect(footer).toContain("What's New</a><span");
-    // Space-middot-space as Astro text node so paint is What's New · N (survives Prettier).
+    expect(footer).toContain('data-visit-stats');
+    expect(footer).toContain('hidden');
+    expect(footer).toContain('href="/roadmap/"');
+    expect(footer).toContain('Upcoming');
+    expect(footer).toContain("What's New</a>{' · '}");
+    expect(footer).toContain('href="/roadmap/"');
+    // Space-middot-space as Astro text node so paint is What's New · Upcoming · N (survives Prettier).
     expect(footer).toContain("{' · '}");
-    expect(footer.slice(footer.indexOf('data-visit-stats hidden'))).toContain("{' · '}");
+    expect(footer.slice(footer.indexOf('data-visit-stats'))).toContain("{' · '}");
     // Fail the prior bug: newline/indent then middot (leading space collapsed in paint).
     expect(footer).not.toMatch(/>\s*\n\s+·\s/);
-    expect(footer).not.toMatch(/What's New<\/a>\s*·/);
     expect(cta).toContain('LinkedIn · replies from me');
   });
 
@@ -1767,6 +1801,7 @@ describe('identity copy', () => {
     expect(sitemap).toContain("'/work/'");
     expect(sitemap).toContain("'/biography/'");
     expect(sitemap).toContain("'/contact/'");
+    expect(sitemap).toContain("'/roadmap/'");
     expect(sitemap).toContain('ifs-design-system');
     expect(sitemap).not.toContain('/experimental/manifesto');
     expect(sitemap).not.toContain('/experimental/now');
