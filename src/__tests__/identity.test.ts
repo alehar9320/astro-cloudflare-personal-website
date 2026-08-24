@@ -605,6 +605,37 @@ describe('identity copy', () => {
     expect(chat).not.toContain('data-hire-surface');
   });
 
+  it('makes phone talking a full-page chat and keeps desktop stage locks', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    expect(chat).toContain('@media (max-width: 49.99em)');
+    expect(chat).toContain('Phone talking = full page');
+    expect(chat).toContain('height: 100dvh');
+    expect(chat).toContain('padding-top: 0');
+    expect(chat).toContain('max-height: none');
+    expect(chat).toContain('border-radius: 0');
+    expect(chat).toContain('background-color: var(--gray-999)');
+    expect(chat).toContain('.chat-container.is-prominent .chat-header');
+    expect(chat).toContain('display: block');
+    expect(chat).toContain(':global(body.has-prominent-chat)');
+    expect(chat).toContain(':global(body:has(.chat-container.is-open))');
+    expect(chat).toContain('overflow: hidden');
+    // Desktop locks stay in source for ≥50em / identity keep-list.
+    expect(chat).toContain('max-height: 36dvh');
+    expect(chat).toContain('width: min(52rem, calc(100vw - 3rem))');
+    expect(chat).toContain('border-radius: 1rem 1rem 0 0');
+    expect(chat).not.toContain('height: 62dvh');
+    expect(chat).not.toContain('Get in touch');
+    expect(chat).toContain('/assets/portrait.png');
+    expect((chat.match(/class="chat-header-avatar"/g) || []).length).toBe(1);
+    expect(home).toContain('padding-bottom: 36dvh');
+    expect(home).toContain('padding-bottom: 0');
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+    expect(home).toContain('Get in touch');
+    expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
+    expect(home).not.toContain('mailto:');
+  });
+
   it('docks the open sheet to a compact bottom bar on scroll, not a FAB or right column', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
     const home = readFileSync('src/pages/index.astro', 'utf8');
