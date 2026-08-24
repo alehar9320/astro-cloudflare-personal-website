@@ -152,14 +152,21 @@ export function formatVisitGlance(glance: VisitGlance): {
 
 export function formatSignedPercent(percent: number): string {
   const rounded = Math.round(percent);
-  if (rounded === 0) return 'up to 0%';
+  if (rounded === 0) return '0%';
   const sign = rounded > 0 ? '+' : '';
-  return `up to ${sign}${rounded}%`;
+  return `${sign}${rounded}%`;
 }
+
+export const PERIOD_WORDS = {
+  DoD: 'day over day',
+  WoW: 'week over week',
+  MoM: 'month over month',
+  YoY: 'year over year',
+} as const;
 
 export function formatColophonVisits(glance: VisitGlance): string {
   const parts = [formatUniqueVisitorCount(glance.uniqueVisitors)];
-  const periods: Array<[string, number | null]> = [
+  const periods: Array<[keyof typeof PERIOD_WORDS, number | null]> = [
     ['DoD', glance.uniqueVisitorsDoD],
     ['WoW', glance.uniqueVisitorsWoW],
     ['MoM', glance.uniqueVisitorsMoM],
@@ -170,4 +177,20 @@ export function formatColophonVisits(glance: VisitGlance): string {
     parts.push(`${label} ${formatSignedPercent(value)}`);
   }
   return parts.join(' · ');
+}
+
+export function formatColophonVisitsTitle(glance: VisitGlance): string {
+  const parts = [formatUniqueVisitorCount(glance.uniqueVisitors)];
+  const periods: Array<[keyof typeof PERIOD_WORDS, number | null]> = [
+    ['DoD', glance.uniqueVisitorsDoD],
+    ['WoW', glance.uniqueVisitorsWoW],
+    ['MoM', glance.uniqueVisitorsMoM],
+    ['YoY', glance.uniqueVisitorsYoY],
+  ];
+  for (const [label, value] of periods) {
+    if (value === null || !Number.isFinite(value)) continue;
+    parts.push(`${label} ${PERIOD_WORDS[label]} ${formatSignedPercent(value)}`);
+  }
+  parts.push(POSTHOG_SOURCE_TITLE);
+  return parts.join('. ');
 }

@@ -43,9 +43,7 @@ const currentYear = new Date().getFullYear();
 <script>
   import {
     formatColophonVisits,
-    formatVisitGlance,
-    POSTHOG_SOURCE_LABEL,
-    POSTHOG_SOURCE_TITLE,
+    formatColophonVisitsTitle,
     shouldShowVisitCount,
     type VisitGlance,
   } from '../utils/visit-stats';
@@ -94,13 +92,13 @@ const currentYear = new Date().getFullYear();
           return;
         }
 
-        const lines = formatVisitGlance(data);
+        const title = formatColophonVisitsTitle(data);
         trigger.textContent = formatColophonVisits(data);
-        trigger.title = POSTHOG_SOURCE_TITLE;
-        trigger.setAttribute('aria-label', POSTHOG_SOURCE_LABEL);
-        all.textContent = lines.all;
-        last7d.textContent = lines.last7d;
-        first.textContent = lines.firstSeen;
+        trigger.title = title;
+        trigger.setAttribute('aria-label', title);
+        all.textContent = title;
+        last7d.textContent = '';
+        first.textContent = '';
         visitStats.hidden = false;
         document.body.append(panel);
 
@@ -134,6 +132,14 @@ const currentYear = new Date().getFullYear();
           setOpen(panel.hidden);
         });
 
+        trigger.addEventListener('focus', () => {
+          setOpen(true);
+        });
+        trigger.addEventListener('blur', (event) => {
+          const next = event.relatedTarget;
+          if (next instanceof Node && (trigger.contains(next) || panel.contains(next))) return;
+          setOpen(false);
+        });
         trigger.addEventListener('pointerenter', (event) => {
           if (event.pointerType !== 'mouse') return;
           openedByHover = true;
