@@ -93,6 +93,29 @@ describe('identity copy', () => {
     expect(cta).not.toContain('high-impact');
   });
 
+  it('keeps the current DevEx role true and names adjacent hireable pictures in visitor language', () => {
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
+    expect(home).toContain('class="hero-dek"');
+    expect(home).toContain('developer platforms');
+    expect(home).toContain('design systems');
+    expect(home).toContain('Industrial AI copilots');
+    expect(home).toContain('not only DevEx');
+    expect(home).toContain('Chalmers software engineering');
+    expect(home).toContain('MEI');
+    expect(home).toContain('eight years at IFS');
+    expect(home).toContain('IFS Design System');
+    expect(home).toContain('copilots, analytics, and thesis');
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+    expect(home).toContain('Get in touch');
+    expect(home).not.toContain('mailto:');
+    expect(home).not.toMatch(/\bVP\b/);
+    expect(home).not.toContain('Head of');
+    expect(home).not.toContain('Director');
+    expect((home.match(/class="proof-card"/g) || []).length).toBe(1);
+    expect((home.match(/class="hero-dek"/g) || []).length).toBe(1);
+  });
+
   it('keeps the chat FAB off Earlier work and the biography timeline on a phone', () => {
     const work = readFileSync('src/pages/work.astro', 'utf8');
     const bio = readFileSync('src/pages/biography.astro', 'utf8');

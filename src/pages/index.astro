@@ -72,6 +72,12 @@ const schema = {
     <header class="hero">
       <div class="hero-copy">
         <Hero title="Product Manager, Developer Experience at IFS" align="start">
+          <p class="hero-dek">
+            Also hireable for product work across developer platforms, design systems, and
+            Industrial AI copilots, not only DevEx. Chalmers software engineering and MEI,
+            eight years at IFS, the IFS Design System, plus copilots, analytics, and thesis
+            work.
+          </p>
           <div class="hero-actions">
             <CallToAction
               href={linkedinHref}
@@ -128,6 +134,15 @@ const schema = {
     flex-direction: column;
     gap: 1.25rem;
     width: 100%;
+  }
+
+  .hero-dek {
+    margin: 0;
+    max-width: 42ch;
+    font-size: var(--text-sm);
+    font-weight: 400;
+    color: var(--gray-200);
+    line-height: 1.45;
   }
 
   .hero-actions {
@@ -228,6 +243,10 @@ const schema = {
     .hero-actions {
       justify-content: flex-start;
       align-items: flex-start;
+    }
+
+    .hero-dek {
+      max-width: 48ch;
     }
 
     .proof-card {
