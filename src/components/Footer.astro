@@ -42,8 +42,10 @@ const currentYear = new Date().getFullYear();
 
 <script>
   import {
-    formatPageviewCount,
+    formatColophonVisits,
     formatVisitGlance,
+    POSTHOG_SOURCE_LABEL,
+    POSTHOG_SOURCE_TITLE,
     shouldShowVisitCount,
     type VisitGlance,
   } from '../utils/visit-stats';
@@ -54,9 +56,9 @@ const currentYear = new Date().getFullYear();
     if (!data || typeof data !== 'object') return false;
     const row = data as VisitGlance;
     return (
-      shouldShowVisitCount(row.pageviews) &&
-      typeof row.uniqueVisitors === 'number' &&
-      Number.isFinite(row.uniqueVisitors) &&
+      shouldShowVisitCount(row.uniqueVisitors) &&
+      typeof row.pageviews === 'number' &&
+      Number.isFinite(row.pageviews) &&
       typeof row.firstSeen === 'string' &&
       Number.isFinite(row.pageviews7d) &&
       Number.isFinite(row.uniqueVisitors7d)
@@ -93,7 +95,9 @@ const currentYear = new Date().getFullYear();
         }
 
         const lines = formatVisitGlance(data);
-        trigger.textContent = formatPageviewCount(data.pageviews);
+        trigger.textContent = formatColophonVisits(data);
+        trigger.title = POSTHOG_SOURCE_TITLE;
+        trigger.setAttribute('aria-label', POSTHOG_SOURCE_LABEL);
         all.textContent = lines.all;
         last7d.textContent = lines.last7d;
         first.textContent = lines.firstSeen;
@@ -254,7 +258,7 @@ const currentYear = new Date().getFullYear();
   }
 
   .visit-trigger {
-    display: inline-block;
+    display: inline;
     appearance: none;
     -webkit-appearance: none;
     margin: 0;
@@ -265,7 +269,6 @@ const currentYear = new Date().getFullYear();
     color: var(--gray-400);
     cursor: pointer;
     touch-action: manipulation;
-    white-space: nowrap;
     text-underline-offset: 0.25em;
     text-decoration: 1px dotted underline transparent;
   }

@@ -4,7 +4,14 @@ export type VisitGlance = {
   firstSeen: string;
   pageviews7d: number;
   uniqueVisitors7d: number;
+  uniqueVisitorsDoD: number | null;
+  uniqueVisitorsWoW: number | null;
+  uniqueVisitorsMoM: number | null;
+  uniqueVisitorsYoY: number | null;
 };
+
+export const POSTHOG_SOURCE_LABEL = 'Unique visitors from PostHog (EU)';
+export const POSTHOG_SOURCE_TITLE = 'Source: PostHog, eu.posthog.com';
 
 export function shouldShowVisitCount(count: unknown): count is number {
   return typeof count === 'number' && Number.isFinite(count) && count > 0;
@@ -12,6 +19,10 @@ export function shouldShowVisitCount(count: unknown): count is number {
 
 export function formatPageviewCount(count: number): string {
   return `${count} pageview${count === 1 ? '' : 's'}`;
+}
+
+export function formatUniqueVisitorCount(count: number): string {
+  return `up to ${count} unique visitor${count === 1 ? '' : 's'}`;
 }
 
 function asFiniteNumber(raw: unknown): number | null {
@@ -40,15 +51,23 @@ function valueFromRow(
   key: string,
   index: number
 ): unknown {
-  if (Array.isArray(row)) return row[index];
-  if (row && typeof row === 'object' && key in row) {
+  if (row && typeof row === 'object' && !Array.isArray(row) && key in row) {
     return (row as Record<string, unknown>)[key];
   }
   if (Array.isArray(row) && columns) {
     const colIndex = columns.indexOf(key);
     if (colIndex >= 0) return row[colIndex];
   }
+  if (Array.isArray(row)) return row[index];
   return undefined;
+}
+
+function percentChange(current: number | null, previous: number | null): number | null {
+  if (current === null || previous === null) return null;
+  if (!Number.isFinite(current) || !Number.isFinite(previous)) return null;
+  if (previous <= 0) return null;
+  const pct = ((current - previous) / previous) * 100;
+  return Number.isFinite(pct) ? pct : null;
 }
 
 export function parseVisitGlance(payload: unknown): VisitGlance | null {
@@ -67,6 +86,17 @@ export function parseVisitGlance(payload: unknown): VisitGlance | null {
   const firstSeen = asIsoTimestamp(valueFromRow(row, columnNames, 'first_seen', 2));
   const pageviews7d = asFiniteNumber(valueFromRow(row, columnNames, 'pageviews_7d', 3));
   const uniqueVisitors7d = asFiniteNumber(valueFromRow(row, columnNames, 'unique_visitors_7d', 4));
+  const unique1d = asFiniteNumber(valueFromRow(row, columnNames, 'unique_visitors_1d', 5));
+  const unique1dPrev = asFiniteNumber(valueFromRow(row, columnNames, 'unique_visitors_1d_prev', 6));
+  const unique7dPrev = asFiniteNumber(valueFromRow(row, columnNames, 'unique_visitors_7d_prev', 7));
+  const unique30d = asFiniteNumber(valueFromRow(row, columnNames, 'unique_visitors_30d', 8));
+  const unique30dPrev = asFiniteNumber(
+    valueFromRow(row, columnNames, 'unique_visitors_30d_prev', 9)
+  );
+  const unique365d = asFiniteNumber(valueFromRow(row, columnNames, 'unique_visitors_365d', 10));
+  const unique365dPrev = asFiniteNumber(
+    valueFromRow(row, columnNames, 'unique_visitors_365d_prev', 11)
+  );
 
   if (
     pageviews === null ||
@@ -78,7 +108,17 @@ export function parseVisitGlance(payload: unknown): VisitGlance | null {
     return null;
   }
 
-  return { pageviews, uniqueVisitors, firstSeen, pageviews7d, uniqueVisitors7d };
+  return {
+    pageviews,
+    uniqueVisitors,
+    firstSeen,
+    pageviews7d,
+    uniqueVisitors7d,
+    uniqueVisitorsDoD: percentChange(unique1d, unique1dPrev),
+    uniqueVisitorsWoW: percentChange(uniqueVisitors7d, unique7dPrev),
+    uniqueVisitorsMoM: percentChange(unique30d, unique30dPrev),
+    uniqueVisitorsYoY: percentChange(unique365d, unique365dPrev),
+  };
 }
 
 export function formatFirstSeen(iso: string): string {
@@ -108,4 +148,26 @@ export function formatVisitGlance(glance: VisitGlance): {
     last7d,
     firstSeen: `First seen ${seen}`,
   };
+}
+
+export function formatSignedPercent(percent: number): string {
+  const rounded = Math.round(percent);
+  if (rounded === 0) return 'up to 0%';
+  const sign = rounded > 0 ? '+' : '';
+  return `up to ${sign}${rounded}%`;
+}
+
+export function formatColophonVisits(glance: VisitGlance): string {
+  const parts = [formatUniqueVisitorCount(glance.uniqueVisitors)];
+  const periods: Array<[string, number | null]> = [
+    ['DoD', glance.uniqueVisitorsDoD],
+    ['WoW', glance.uniqueVisitorsWoW],
+    ['MoM', glance.uniqueVisitorsMoM],
+    ['YoY', glance.uniqueVisitorsYoY],
+  ];
+  for (const [label, value] of periods) {
+    if (value === null || !Number.isFinite(value)) continue;
+    parts.push(`${label} ${formatSignedPercent(value)}`);
+  }
+  return parts.join(' · ');
 }
