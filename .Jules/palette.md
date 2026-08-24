@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-20 - Standardizing Focus-Visible Rings for Scoped Content Links
+
+**Learning:** Links embedded inside Markdown/content blocks (`.content :global(a)`) often retain browser default focus rings or raw `:focus` styles that trigger on mouse click and lack the signature 4px offset used across the site. Standardizing focus indicators via `:focus-visible` (`outline: 2px solid var(--accent-regular)`, `outline-offset: 4px`, `border-radius: 0.25rem`) provides a predictable, non-intrusive focus experience for keyboard users while eliminating sticky focus outlines on mouse clicks.
+
+**Action:** Replaced `:focus` pseudo-classes with `:focus-visible` for `.content :global(a)` in `biography.astro` and `work/[...slug].astro`, adding standard accent outlines and offsets.
+
 ## 2026-05-17 - Enhancing Content Selection and Standardizing Focus Spatiality
 
 **Learning:** Using `user-select: none` on informational badges (like `Pill`) creates unnecessary friction for users trying to copy text for reference. Additionally, consistent `outline-offset: 4px` across all interactive elements (including theme toggles and cards) reinforces a predictable spatial model for keyboard users. Adding `target="_blank"` with `rel="noopener noreferrer"` to external informational links (like the Astro framework link in the footer) ensures a non-disruptive navigation experience that preserves the user's session.
