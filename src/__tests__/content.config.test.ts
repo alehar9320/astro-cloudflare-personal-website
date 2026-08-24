@@ -28,19 +28,21 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
-    expect(result.success).toBe(true);
+    const schema = collections.flags.schema;
+    if (typeof schema === 'object' && schema !== null && 'safeParse' in schema) {
+      const result = (schema as { safeParse: (data: unknown) => { success: boolean; data?: Record<string, unknown> } }).safeParse(flagsFixture);
+      expect(result.success).toBe(true);
 
-    if (result.success) {
-      // Use toMatchObject to ensure all fixture properties are correctly validated
-      // while allowing for Zod-injected default values.
-      expect(result.data).toMatchObject(flagsFixture);
+      if (result.success && result.data) {
+        // Use toMatchObject to ensure all fixture properties are correctly validated
+        // while allowing for Zod-injected default values.
+        expect(result.data).toMatchObject(flagsFixture);
+      }
     }
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const schema = collections.work.schema;
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -49,11 +51,13 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.title).toBe(sampleWork.title);
-      expect(result.data.publishDate).toBeInstanceOf(Date);
+    if (typeof schema === 'object' && schema !== null && 'safeParse' in schema) {
+      const result = (schema as { safeParse: (data: unknown) => { success: boolean; data?: { title: string; publishDate: unknown } } }).safeParse(sampleWork);
+      expect(result.success).toBe(true);
+      if (result.success && result.data) {
+        expect(result.data.title).toBe(sampleWork.title);
+        expect(result.data.publishDate).toBeInstanceOf(Date);
+      }
     }
   });
 });

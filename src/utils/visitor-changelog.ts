@@ -176,7 +176,7 @@ const BY_SUBJECT = new Map(
 
 const SHA_PREFIX = /^[a-f0-9]{7,40}\s+/i;
 const CONVENTIONAL_PREFIX =
-  /^(feat|fix|chore|docs|refactor|test|style|perf|build|ci)(\([^)]+\))?:\s*/i;
+  /^(?:\*\*|\*|`|)?(feat|fix|chore|docs|refactor|test|style|perf|build|ci)(\([^)]+\))?!?:(?:\*\*|\*|`|)?\s*/i;
 const PR_SUFFIX = /\s*\(#(\d+)\)\s*$/;
 
 /**
