@@ -11,6 +11,7 @@ const staticPaths = [
   '/work/',
   '/biography/',
   '/contact/',
+  '/this-site/',
   ...(UPCOMING.length > 0 ? ['/roadmap/'] : []),
 ];
 

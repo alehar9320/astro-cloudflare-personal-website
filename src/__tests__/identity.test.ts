@@ -186,9 +186,38 @@ describe('identity copy', () => {
     expect(page).toContain("Astro.redirect('/')");
     expect(footer).toContain('showUpcoming');
     expect(footer).toContain('href="/whats-new/"');
+    expect(footer).toContain('href="/this-site/"');
+    expect(footer).toContain('This site');
     expect(footer).not.toContain("What's New</a>{' · '}<a href=\"/roadmap/\">Upcoming</a>");
+    expect(sitemap).toContain("'/this-site/'");
     expect(sitemap).toContain('UPCOMING.length > 0');
     expect(whatsNew).toContain('What you can see on this site lately.');
+  });
+
+  it('ships /this-site/ as the twin explainer and keeps Upcoming omitted', () => {
+    expect(existsSync('src/pages/this-site.astro')).toBe(true);
+    const page = readFileSync('src/pages/this-site.astro', 'utf8').replace(/\s+/g, ' ');
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    const whatsNew = readFileSync('src/pages/whats-new.astro', 'utf8');
+    expect(page).toContain('Hero title="This site"');
+    expect(page).toContain('Product Manager, Developer Experience at IFS');
+    expect(page).toContain('digital twin');
+    expect(page).toContain('AI with his context');
+    expect(page).toContain('It can get things wrong.');
+    expect(page).toContain('It is not him.');
+    expect(page).toContain('ContactCTA');
+    expect(page).not.toContain('mailto:');
+    expect(page).not.toContain('/roadmap/');
+    expect(page).not.toContain('Upcoming');
+    expect(page).not.toMatch(/\\bVP\\b/);
+    expect(footer).toContain('href="/this-site/"');
+    expect(footer).toContain('href="/whats-new/"');
+    expect(footer).toContain('showUpcoming');
+    expect(home).toContain('class="hero-dek"');
+    expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
+    expect(whatsNew).toContain('What you can see on this site lately.');
+    expect(whatsNew).not.toContain('href="/this-site/"');
   });
 
   it('puts a middot inside the hidden footer visit-stats span', () => {
@@ -1796,6 +1825,7 @@ describe('identity copy', () => {
     expect(sitemap).toContain("'/work/'");
     expect(sitemap).toContain("'/biography/'");
     expect(sitemap).toContain("'/contact/'");
+    expect(sitemap).toContain("'/this-site/'");
     expect(sitemap).toContain('UPCOMING.length > 0');
     expect(sitemap).toContain('ifs-design-system');
     expect(sitemap).not.toContain('/experimental/manifesto');

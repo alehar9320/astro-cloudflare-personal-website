@@ -1,0 +1,57 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContactCTA from '../components/ContactCTA.astro';
+import Hero from '../components/Hero.astro';
+
+const dek = 'What this site is, and what the chat in the corner is.';
+const pageTitle = 'This site | Product Manager, Developer Experience at IFS';
+---
+
+<BaseLayout
+  title={pageTitle}
+  ogTitle={pageTitle}
+  description={`${dek} Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.`}
+>
+  <div class="stack gap-20">
+    <main id="main-content" class="this-site stack gap-8">
+      <Hero title="This site" tagline={dek} align="start" />
+      <div class="copy stack gap-4">
+        <p>
+          This is Alexander Härenstam's personal site. He is a Product Manager, Developer Experience
+          at IFS.
+        </p>
+        <p>
+          The chat at the bottom is his digital twin. It is an AI with his context. It can get
+          things wrong. It is not him.
+        </p>
+        <p>What's New is what you can see on this site lately.</p>
+      </div>
+    </main>
+    <ContactCTA />
+  </div>
+</BaseLayout>
+
+<style>
+  .this-site {
+    width: min(52rem, calc(100vw - 3rem));
+    margin-inline: auto;
+    padding-bottom: var(--chat-fab-clearance);
+  }
+
+  .copy {
+    max-width: 46ch;
+  }
+
+  .copy p {
+    margin: 0;
+    color: var(--gray-200);
+    font-size: var(--text-lg);
+    line-height: 1.5;
+  }
+
+  @media (min-width: 50em) {
+    .this-site {
+      padding-bottom: 0;
+    }
+  }
+</style>
