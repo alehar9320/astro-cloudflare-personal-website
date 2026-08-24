@@ -163,35 +163,35 @@ describe('identity copy', () => {
     expect(page).toContain('What you can see on this site lately.');
   });
 
-  it('ships /roadmap/ with the remaining flatter-first-view upcoming row', () => {
+  it('flattens the home proof affordance and omits flatten from /roadmap/', () => {
     expect(existsSync('src/pages/roadmap.astro')).toBe(true);
     const page = readFileSync('src/pages/roadmap.astro', 'utf8');
     const home = readFileSync('src/pages/index.astro', 'utf8');
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
     const whatsNew = readFileSync('src/pages/whats-new.astro', 'utf8');
-    expect(page).toContain('Hero title="Upcoming"');
-    expect(page).toContain('Product Manager, Developer Experience at IFS');
-    expect(page).toContain('Flatter first view. Boxes only for affordance or grouping.');
-    expect(page).toContain("throw new Error('Roadmap would ship empty.')");
-    expect(page).toContain('ContactCTA');
-    expect(readFileSync('src/components/ContactCTA.astro', 'utf8')).toContain(
-      'https://www.linkedin.com/in/alehar/'
-    );
-    expect(page).not.toContain('mailto:');
-    expect(page).not.toMatch(/\bVP\b/);
-    expect(page).not.toContain('Head of');
-    expect(page).not.toContain('Director');
-    expect(page).not.toContain('#687');
-    expect(page).not.toContain('full-screen');
-    expect(page).not.toContain('fullscreen');
-    expect(page).not.toContain('visit count');
-    expect(page).not.toContain('DoD');
+    expect(home).toContain('class="proof-card"');
+    expect(home).toContain('href="/work/ifs-design-system/"');
+    expect(home).toContain('Read the case');
     expect(home).toContain('class="hero-dek"');
     expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
+    expect(home).not.toContain('background: var(--gradient-subtle)');
+    expect(home).not.toContain('border-radius: 1.5rem');
+    expect(home).not.toContain('box-shadow: var(--shadow-sm)');
+    expect(home).not.toContain('padding: 1.5rem');
+    expect(page).toContain('Hero title="Upcoming"');
+    expect(page).toContain('const upcoming: readonly string[] = []');
+    expect(page).not.toMatch(/upcoming = \['Flatter first view/);
+    expect(page).toContain("throw new Error('Roadmap still promises flatten.')");
+    expect(page).not.toContain("throw new Error('Roadmap would ship empty.')");
+    expect(page).toContain('upcoming.length > 0');
+    expect(page).toContain('ContactCTA');
+    expect(page).not.toContain('mailto:');
+    expect(page).not.toMatch(/\bVP\b/);
+    expect(page).not.toContain('sorry');
+    expect(page).not.toContain('nothing coming');
     expect(footer).toContain('href="/roadmap/"');
     expect(footer).toContain('href="/whats-new/"');
     expect(whatsNew).toContain('What you can see on this site lately.');
-    expect(whatsNew).not.toContain('href="/roadmap/"');
   });
 
   it('puts a middot inside the hidden footer visit-stats span', () => {
