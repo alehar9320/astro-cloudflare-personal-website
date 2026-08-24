@@ -36,7 +36,14 @@ export const HOGQL = `SELECT
   uniq(distinct_id) AS unique_visitors,
   min(timestamp) AS first_seen,
   countIf(timestamp >= now() - INTERVAL 7 DAY) AS pageviews_7d,
-  uniqIf(distinct_id, timestamp >= now() - INTERVAL 7 DAY) AS unique_visitors_7d
+  uniqIf(distinct_id, timestamp >= now() - INTERVAL 7 DAY) AS unique_visitors_7d,
+  uniqIf(distinct_id, timestamp >= now() - INTERVAL 1 DAY) AS unique_visitors_1d,
+  uniqIf(distinct_id, timestamp >= now() - INTERVAL 2 DAY AND timestamp < now() - INTERVAL 1 DAY) AS unique_visitors_1d_prev,
+  uniqIf(distinct_id, timestamp >= now() - INTERVAL 14 DAY AND timestamp < now() - INTERVAL 7 DAY) AS unique_visitors_7d_prev,
+  uniqIf(distinct_id, timestamp >= now() - INTERVAL 30 DAY) AS unique_visitors_30d,
+  uniqIf(distinct_id, timestamp >= now() - INTERVAL 60 DAY AND timestamp < now() - INTERVAL 30 DAY) AS unique_visitors_30d_prev,
+  uniqIf(distinct_id, timestamp >= now() - INTERVAL 365 DAY) AS unique_visitors_365d,
+  uniqIf(distinct_id, timestamp >= now() - INTERVAL 730 DAY AND timestamp < now() - INTERVAL 365 DAY) AS unique_visitors_365d_prev
 FROM events
 WHERE event = '$pageview' AND timestamp >= toDateTime('1970-01-01 00:00:00')`;
 
@@ -114,7 +121,7 @@ export const GET: APIRoute = async () => {
       }
 
       const glance = parseVisitGlance(payload);
-      if (!glance || !shouldShowVisitCount(glance.pageviews)) {
+      if (!glance || !shouldShowVisitCount(glance.uniqueVisitors)) {
         console.error({ event: 'visits_count_hidden' });
         return empty204();
       }

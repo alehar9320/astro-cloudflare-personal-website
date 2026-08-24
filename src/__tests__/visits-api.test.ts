@@ -16,13 +16,20 @@ describe('visits API', () => {
     delete bindings.POSTHOG_QUERY_HOST;
   });
 
-  it('uses one HogQL query for pageviews, uniques, first seen, and 7d splits', () => {
+  it('uses one HogQL query for uniques, first seen, 7d splits, and period comparisons', () => {
     expect(HOGQL.match(/SELECT/g)?.length).toBe(1);
     expect(HOGQL).toContain("event = '$pageview'");
     expect(HOGQL).toContain('unique_visitors');
     expect(HOGQL).toContain('first_seen');
     expect(HOGQL).toContain('pageviews_7d');
     expect(HOGQL).toContain('INTERVAL 7 DAY');
+    expect(HOGQL).toContain('unique_visitors_1d');
+    expect(HOGQL).toContain('unique_visitors_7d_prev');
+    expect(HOGQL).toContain('unique_visitors_30d');
+    expect(HOGQL).toContain('unique_visitors_365d');
+    expect(HOGQL).toContain('INTERVAL 1 DAY');
+    expect(HOGQL).toContain('INTERVAL 30 DAY');
+    expect(HOGQL).toContain('INTERVAL 365 DAY');
   });
 
   it('returns 204 when the PostHog key is missing', async () => {

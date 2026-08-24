@@ -166,6 +166,22 @@ describe('identity copy', () => {
     expect(footer).toContain('https://www.linkedin.com/in/alehar/');
   });
 
+  it('leads the colophon visit trigger with unique visitors and names PostHog', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(footer).toContain('formatColophonVisits');
+    expect(footer).toContain('POSTHOG_SOURCE_TITLE');
+    expect(footer).toContain('POSTHOG_SOURCE_LABEL');
+    expect(footer).toContain('shouldShowVisitCount(row.uniqueVisitors)');
+    expect(footer).not.toContain('formatPageviewCount(data.pageviews)');
+    expect(footer).not.toContain('white-space: nowrap');
+    expect(footer).toContain('.visit-stats:not([hidden])');
+    expect(footer).toContain("{' · '}");
+    expect(footer).toContain('https://www.linkedin.com/in/alehar/');
+    expect(footer).not.toContain('mailto:');
+    expect(footer).toContain('class="colophon"');
+    expect(footer.match(/class="group"/g)?.length).toBe(1);
+  });
+
   it('drops Report an issue from the footer and keeps LinkedIn hire', () => {
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
     expect(footer).not.toContain('Report an issue');
