@@ -169,8 +169,8 @@ describe('identity copy', () => {
   it('leads the colophon visit trigger with unique visitors and names PostHog', () => {
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
     expect(footer).toContain('formatColophonVisits');
-    expect(footer).toContain('POSTHOG_SOURCE_TITLE');
-    expect(footer).toContain('POSTHOG_SOURCE_LABEL');
+    expect(footer).toContain('formatColophonVisitsTitle');
+    expect(footer).toContain("trigger.addEventListener('focus'");
     expect(footer).toContain('shouldShowVisitCount(row.uniqueVisitors)');
     expect(footer).not.toContain('formatPageviewCount(data.pageviews)');
     expect(footer).not.toContain('white-space: nowrap');

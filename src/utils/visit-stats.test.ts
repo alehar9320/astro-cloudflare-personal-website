@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   formatColophonVisits,
+  formatColophonVisitsTitle,
   formatPageviewCount,
   formatUniqueVisitorCount,
   formatVisitGlance,
@@ -211,9 +212,9 @@ describe('formatColophonVisits', () => {
     uniqueVisitorsYoY: 0,
   };
 
-  it('leads with unique visitors and prefixes every hard figure with up to', () => {
+  it('leads with unique visitors and does not repeat up to on every token', () => {
     expect(formatColophonVisits(glance)).toBe(
-      'up to 12 unique visitors · DoD up to +25% · WoW up to -10% · YoY up to 0%'
+      'up to 12 unique visitors · DoD +25% · WoW -10% · YoY 0%'
     );
   });
 
@@ -239,5 +240,25 @@ describe('formatColophonVisits', () => {
         uniqueVisitorsYoY: null,
       })
     ).toBe('up to 1 unique visitor');
+  });
+});
+
+describe('formatColophonVisitsTitle', () => {
+  const glance = {
+    pageviews: 94,
+    uniqueVisitors: 12,
+    firstSeen: '2026-08-14T07:03:00.000Z',
+    pageviews7d: 20,
+    uniqueVisitors7d: 8,
+    uniqueVisitorsDoD: 25,
+    uniqueVisitorsWoW: -10,
+    uniqueVisitorsMoM: null,
+    uniqueVisitorsYoY: 0,
+  };
+
+  it('spells out DoD/WoW/MoM/YoY and names PostHog EU without inventing missing periods', () => {
+    expect(formatColophonVisitsTitle(glance)).toBe(
+      'up to 12 unique visitors. DoD day over day +25%. WoW week over week -10%. YoY year over year 0%. Source: PostHog, eu.posthog.com'
+    );
   });
 });
