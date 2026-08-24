@@ -2,7 +2,9 @@ import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
 import { LATEST_RELEASE_SNAPSHOT } from '../../data/latest-release';
 import { fetchGitHubReleases, type SiteRelease } from '../../utils/github-releases';
-import { toVisitorRelease } from '../../utils/visitor-changelog';
+import { toVisitorChangelogTitle, toVisitorRelease } from '../../utils/visitor-changelog';
+
+export { toVisitorChangelogTitle };
 
 const jsonHeaders = {
   'content-type': 'application/json',

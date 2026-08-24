@@ -30,7 +30,11 @@ describe('content.config', () => {
   it('validates flags fixture against schema', async () => {
     const schema = collections.flags.schema;
     if (typeof schema === 'object' && schema !== null && 'safeParse' in schema) {
-      const result = (schema as { safeParse: (data: unknown) => { success: boolean; data?: Record<string, unknown> } }).safeParse(flagsFixture);
+      const result = (
+        schema as {
+          safeParse: (data: unknown) => { success: boolean; data?: Record<string, unknown> };
+        }
+      ).safeParse(flagsFixture);
       expect(result.success).toBe(true);
 
       if (result.success && result.data) {
@@ -52,7 +56,14 @@ describe('content.config', () => {
       img_alt: 'Sample alt text',
     };
     if (typeof schema === 'object' && schema !== null && 'safeParse' in schema) {
-      const result = (schema as { safeParse: (data: unknown) => { success: boolean; data?: { title: string; publishDate: unknown } } }).safeParse(sampleWork);
+      const result = (
+        schema as {
+          safeParse: (data: unknown) => {
+            success: boolean;
+            data?: { title: string; publishDate: unknown };
+          };
+        }
+      ).safeParse(sampleWork);
       expect(result.success).toBe(true);
       if (result.success && result.data) {
         expect(result.data.title).toBe(sampleWork.title);
