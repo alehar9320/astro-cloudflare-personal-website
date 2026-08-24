@@ -163,35 +163,32 @@ describe('identity copy', () => {
     expect(page).toContain('What you can see on this site lately.');
   });
 
-  it('ships /roadmap/ with the remaining flatter-first-view upcoming row', () => {
+  it('flattens the home proof affordance and hides empty Upcoming', () => {
     expect(existsSync('src/pages/roadmap.astro')).toBe(true);
+    expect(existsSync('src/data/upcoming.ts')).toBe(true);
     const page = readFileSync('src/pages/roadmap.astro', 'utf8');
+    const upcoming = readFileSync('src/data/upcoming.ts', 'utf8');
     const home = readFileSync('src/pages/index.astro', 'utf8');
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    const sitemap = readFileSync('src/pages/sitemap.xml.ts', 'utf8');
     const whatsNew = readFileSync('src/pages/whats-new.astro', 'utf8');
-    expect(page).toContain('Hero title="Upcoming"');
-    expect(page).toContain('Product Manager, Developer Experience at IFS');
-    expect(page).toContain('Flatter first view. Boxes only for affordance or grouping.');
-    expect(page).toContain("throw new Error('Roadmap would ship empty.')");
-    expect(page).toContain('ContactCTA');
-    expect(readFileSync('src/components/ContactCTA.astro', 'utf8')).toContain(
-      'https://www.linkedin.com/in/alehar/'
-    );
-    expect(page).not.toContain('mailto:');
-    expect(page).not.toMatch(/\bVP\b/);
-    expect(page).not.toContain('Head of');
-    expect(page).not.toContain('Director');
-    expect(page).not.toContain('#687');
-    expect(page).not.toContain('full-screen');
-    expect(page).not.toContain('fullscreen');
-    expect(page).not.toContain('visit count');
-    expect(page).not.toContain('DoD');
+    expect(home).toContain('class="proof-card"');
+    expect(home).toContain('href="/work/ifs-design-system/"');
+    expect(home).toContain('Read the case');
     expect(home).toContain('class="hero-dek"');
     expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
-    expect(footer).toContain('href="/roadmap/"');
+    expect(home).not.toContain('background: var(--gradient-subtle)');
+    expect(home).not.toContain('border-radius: 1.5rem');
+    expect(home).not.toContain('box-shadow: var(--shadow-sm)');
+    expect(home).not.toContain('padding: 1.5rem');
+    expect(upcoming).toContain('export const UPCOMING: readonly string[] = []');
+    expect(page).toContain("throw new Error('Roadmap still promises flatten.')");
+    expect(page).toContain("Astro.redirect('/')");
+    expect(footer).toContain('showUpcoming');
     expect(footer).toContain('href="/whats-new/"');
+    expect(footer).not.toContain("What's New</a>{' · '}<a href=\"/roadmap/\">Upcoming</a>");
+    expect(sitemap).toContain('UPCOMING.length > 0');
     expect(whatsNew).toContain('What you can see on this site lately.');
-    expect(whatsNew).not.toContain('href="/roadmap/"');
   });
 
   it('puts a middot inside the hidden footer visit-stats span', () => {
@@ -201,11 +198,9 @@ describe('identity copy', () => {
     expect(footer).toContain("What's New");
     expect(footer).toContain('data-visit-stats');
     expect(footer).toContain('hidden');
-    expect(footer).toContain('href="/roadmap/"');
-    expect(footer).toContain('Upcoming');
-    expect(footer).toContain("What's New</a>{' · '}");
-    expect(footer).toContain('href="/roadmap/"');
-    // Space-middot-space as Astro text node so paint is What's New · Upcoming · N (survives Prettier).
+    expect(footer).toContain('showUpcoming');
+    expect(footer).toContain("What's New</a>");
+    // Space-middot-space as Astro text node so paint is What's New · N when Upcoming is hidden.
     expect(footer).toContain("{' · '}");
     expect(footer.slice(footer.indexOf('data-visit-stats'))).toContain("{' · '}");
     // Fail the prior bug: newline/indent then middot (leading space collapsed in paint).
@@ -1801,7 +1796,7 @@ describe('identity copy', () => {
     expect(sitemap).toContain("'/work/'");
     expect(sitemap).toContain("'/biography/'");
     expect(sitemap).toContain("'/contact/'");
-    expect(sitemap).toContain("'/roadmap/'");
+    expect(sitemap).toContain('UPCOMING.length > 0');
     expect(sitemap).toContain('ifs-design-system');
     expect(sitemap).not.toContain('/experimental/manifesto');
     expect(sitemap).not.toContain('/experimental/now');

@@ -2,14 +2,18 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
+import { UPCOMING, stillPromisesFlatten } from '../data/upcoming';
 
 const dek = 'What is coming next on this site.';
 const pageTitle = 'Upcoming | Product Manager, Developer Experience at IFS';
+const upcoming = UPCOMING;
 
-const upcoming = ['Flatter first view. Boxes only for affordance or grouping.'] as const;
+if (stillPromisesFlatten(upcoming)) {
+  throw new Error('Roadmap still promises flatten.');
+}
 
 if (upcoming.length === 0) {
-  throw new Error('Roadmap would ship empty.');
+  return Astro.redirect('/');
 }
 
 const schema = {
@@ -57,9 +61,15 @@ const schema = {
   <div class="stack gap-20">
     <main id="main-content" class="upcoming-page stack gap-8">
       <Hero title="Upcoming" tagline={dek} align="start" />
-      <ul class="upcoming-list">
-        {upcoming.map((line) => <li>{line}</li>)}
-      </ul>
+      {
+        upcoming.length > 0 && (
+          <ul class="upcoming-list">
+            {upcoming.map((line) => (
+              <li>{line}</li>
+            ))}
+          </ul>
+        )
+      }
     </main>
     <ContactCTA />
   </div>
