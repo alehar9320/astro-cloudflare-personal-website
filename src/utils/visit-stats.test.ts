@@ -76,6 +76,43 @@ describe('parseVisitGlance', () => {
     });
   });
 
+  it('reads reordered columns in array rows and string numbers / Date instances', () => {
+    const glance = parseVisitGlance({
+      columns: ['unique_visitors', 'pageviews', 'first_seen', 'unique_visitors_7d', 'pageviews_7d'],
+      results: [['12', '94', new Date('2026-08-14T07:03:00.000Z'), '8', '20']],
+    });
+    expect(glance).toEqual({
+      pageviews: 94,
+      uniqueVisitors: 12,
+      firstSeen: '2026-08-14T07:03:00.000Z',
+      pageviews7d: 20,
+      uniqueVisitors7d: 8,
+    });
+  });
+
+  it('returns null for invalid or null payloads', () => {
+    expect(parseVisitGlance(null)).toBeNull();
+    expect(parseVisitGlance(123)).toBeNull();
+    expect(parseVisitGlance({})).toBeNull();
+    expect(parseVisitGlance({ results: [] })).toBeNull();
+    expect(parseVisitGlance({ results: [null] })).toBeNull();
+    expect(parseVisitGlance({ results: [{ pageviews: 'invalid' }] })).toBeNull();
+    expect(parseVisitGlance({ results: [{ first_seen: 'not-a-date' }] })).toBeNull();
+    expect(parseVisitGlance({ results: [{ first_seen: new Date('invalid') }] })).toBeNull();
+  });
+
+  it('handles invalid date strings in formatFirstSeen', () => {
+    expect(
+      formatVisitGlance({
+        pageviews: 10,
+        uniqueVisitors: 5,
+        firstSeen: 'invalid-date',
+        pageviews7d: 2,
+        uniqueVisitors7d: 1,
+      }).firstSeen
+    ).toBe('First seen invalid-date');
+  });
+
   it('parses a zero row so the API can fail-open', () => {
     expect(
       parseVisitGlance({

@@ -40,13 +40,15 @@ function valueFromRow(
   key: string,
   index: number
 ): unknown {
-  if (Array.isArray(row)) return row[index];
+  if (Array.isArray(row)) {
+    if (columns) {
+      const colIndex = columns.indexOf(key);
+      if (colIndex >= 0) return row[colIndex];
+    }
+    return row[index];
+  }
   if (row && typeof row === 'object' && key in row) {
     return (row as Record<string, unknown>)[key];
-  }
-  if (Array.isArray(row) && columns) {
-    const colIndex = columns.indexOf(key);
-    if (colIndex >= 0) return row[colIndex];
   }
   return undefined;
 }
