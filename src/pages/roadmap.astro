@@ -1,0 +1,94 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ContactCTA from '../components/ContactCTA.astro';
+import Hero from '../components/Hero.astro';
+
+const dek = 'What is coming next on this site.';
+const pageTitle = 'Upcoming | Product Manager, Developer Experience at IFS';
+
+const upcoming = ['Flatter first view. Boxes only for affordance or grouping.'] as const;
+
+if (upcoming.length === 0) {
+  throw new Error('Roadmap would ship empty.');
+}
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      '@id': 'https://me.alehar.workers.dev/roadmap/#webpage',
+      url: 'https://me.alehar.workers.dev/roadmap/',
+      name: pageTitle,
+      description: dek,
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://me.alehar.workers.dev/',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Upcoming',
+            item: 'https://me.alehar.workers.dev/roadmap/',
+          },
+        ],
+      },
+      publisher: {
+        '@type': 'Person',
+        '@id': 'https://me.alehar.workers.dev/#person',
+        name: 'Alexander Härenstam',
+      },
+    },
+  ],
+};
+---
+
+<BaseLayout
+  title={pageTitle}
+  ogTitle={pageTitle}
+  description={`${dek} Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.`}
+>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <div class="stack gap-20">
+    <main id="main-content" class="upcoming-page stack gap-8">
+      <Hero title="Upcoming" tagline={dek} align="start" />
+      <ul class="upcoming-list">
+        {upcoming.map((line) => <li>{line}</li>)}
+      </ul>
+    </main>
+    <ContactCTA />
+  </div>
+</BaseLayout>
+
+<style>
+  .upcoming-page {
+    width: min(52rem, calc(100vw - 3rem));
+    margin-inline: auto;
+    padding-bottom: var(--chat-fab-clearance);
+  }
+
+  .upcoming-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    color: var(--gray-200);
+    font-size: var(--text-lg);
+    line-height: 1.5;
+    max-width: 42ch;
+  }
+
+  .upcoming-list li {
+    margin: 0;
+  }
+
+  @media (min-width: 50em) {
+    .upcoming-page {
+      padding-bottom: 0;
+    }
+  }
+</style>
