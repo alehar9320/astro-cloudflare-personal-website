@@ -1,0 +1,339 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+
+const title = 'Aurora Refractor | Lab | Alexander Härenstam';
+const description =
+  'An interactive canvas laboratory experiment exploring Northern Lights cyan and marine blue wave superposition and cursor magnetosphere refractions.';
+---
+
+<BaseLayout title={title} description={description} ogTitle="Aurora Refractor Lab">
+  <main id="main-content" class="lab-container stack gap-8">
+    <Hero
+      title="Aurora Refractor"
+      tagline="Interactive Canvas Lab — Northern Lights Wave Superposition & Refraction"
+      align="start"
+    />
+
+    <section aria-label="Interactive Canvas Experiment" class="canvas-card">
+      <div class="canvas-header">
+        <h2 class="canvas-title">Refraction Field</h2>
+        <div class="canvas-controls">
+          <button
+            id="toggle-anim-btn"
+            type="button"
+            class="control-btn"
+            aria-label="Pause animation"
+          >
+            Pause
+          </button>
+        </div>
+      </div>
+
+      <div class="canvas-wrapper">
+        <canvas
+          id="aurora-refractor-canvas"
+          role="img"
+          aria-label="Interactive visual canvas demonstrating fluid wave refraction in marine blue and cyan light."
+        ></canvas>
+      </div>
+
+      <p class="canvas-description">
+        Move your cursor or touch to distort the aurora magnetosphere field. Designed with
+        hardware-accelerated 2D canvas context and mathematical wave superposition.
+      </p>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  interface WaveParticle {
+    x: number;
+    y: number;
+    baseY: number;
+    speed: number;
+    amplitude: number;
+    frequency: number;
+    phase: number;
+    radius: number;
+    hue: number;
+  }
+
+  const canvas = document.getElementById('aurora-refractor-canvas') as HTMLCanvasElement | null;
+  const toggleBtn = document.getElementById('toggle-anim-btn') as HTMLButtonElement | null;
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let animationFrameId: number;
+    let isPaused = false;
+    let time = 0;
+
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mediaQuery.matches) {
+      isPaused = true;
+      if (toggleBtn) toggleBtn.textContent = 'Play';
+    }
+
+    const mouse = {
+      x: -1000,
+      y: -1000,
+      targetX: -1000,
+      targetY: -1000,
+      active: false,
+    };
+
+    const particles: WaveParticle[] = [];
+    const count = 40;
+
+    const initParticles = (width: number, height: number) => {
+      particles.length = 0;
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: (width / count) * i,
+          y: height / 2,
+          baseY: height * 0.35 + (i % 5) * 12,
+          speed: 0.015 + (i % 3) * 0.008,
+          amplitude: 25 + (i % 4) * 15,
+          frequency: 0.008 + (i % 3) * 0.004,
+          phase: (i * Math.PI) / 8,
+          radius: 3 + (i % 3) * 2,
+          hue: 175 + (i % 6) * 10, // Cyan to Marine Blue spectrum
+        });
+      }
+    };
+
+    const resize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      if (ctx) {
+        ctx.scale(dpr, dpr);
+      }
+      initParticles(rect.width, rect.height);
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      mouse.targetX = e.clientX - rect.left;
+      mouse.targetY = e.clientY - rect.top;
+      mouse.active = true;
+    };
+
+    const handleMouseLeave = () => {
+      mouse.active = false;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (!canvas || !e.touches[0]) return;
+      const rect = canvas.getBoundingClientRect();
+      mouse.targetX = e.touches[0].clientX - rect.left;
+      mouse.targetY = e.touches[0].clientY - rect.top;
+      mouse.active = true;
+    };
+
+    const draw = () => {
+      if (!ctx || !canvas || !canvas.parentElement) return;
+      const width = canvas.parentElement.clientWidth;
+      const height = canvas.parentElement.clientHeight;
+
+      // Smooth cursor interpolation
+      mouse.x += (mouse.targetX - mouse.x) * 0.1;
+      mouse.y += (mouse.targetY - mouse.y) * 0.1;
+
+      ctx.fillStyle = 'rgba(2, 27, 41, 0.25)';
+      ctx.fillRect(0, 0, width, height);
+
+      time += 0.02;
+
+      // Draw light refraction wave curves
+      ctx.beginPath();
+      ctx.lineWidth = 2;
+
+      for (let layer = 0; layer < 3; layer++) {
+        const gradient = ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, 'rgba(0, 242, 254, 0.3)');
+        gradient.addColorStop(0.5, 'rgba(79, 172, 254, 0.2)');
+        gradient.addColorStop(1, 'rgba(0, 205, 172, 0.3)');
+
+        ctx.strokeStyle = gradient;
+        ctx.beginPath();
+
+        for (let x = 0; x <= width; x += 15) {
+          const sineY =
+            Math.sin(x * 0.005 + time + layer * 1.5) * (30 + layer * 10) +
+            Math.cos(x * 0.002 - time * 0.5) * 15;
+
+          // Magnetosphere refraction displacement
+          const dx = x - mouse.x;
+          const dy = height * 0.5 + sineY - mouse.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          const force = mouse.active && dist < 180 ? (180 - dist) / 180 : 0;
+          const offsetY = sineY - force * 45;
+
+          const yPos = height * (0.35 + layer * 0.12) + offsetY;
+
+          if (x === 0) {
+            ctx.moveTo(x, yPos);
+          } else {
+            ctx.lineTo(x, yPos);
+          }
+        }
+        ctx.stroke();
+      }
+
+      // Render glowing dynamic node points
+      particles.forEach((p) => {
+        p.phase += p.speed;
+        const waveY = p.baseY + Math.sin(p.phase) * p.amplitude;
+
+        const dx = p.x - mouse.x;
+        const dy = waveY - mouse.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        const force = mouse.active && dist < 150 ? (150 - dist) / 150 : 0;
+
+        const renderX = p.x + (dist > 0 ? (dx / dist) * force * 30 : 0);
+        const renderY = waveY + (dist > 0 ? (dy / dist) * force * 30 : 0);
+
+        ctx.beginPath();
+        ctx.arc(renderX, renderY, p.radius + force * 2, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${p.hue}, 90%, 65%, ${0.5 + force * 0.4})`;
+        ctx.shadowBlur = 12;
+        ctx.shadowColor = `hsl(${p.hue}, 100%, 70%)`;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+
+      if (!isPaused) {
+        animationFrameId = requestAnimationFrame(draw);
+      }
+    };
+
+    const toggleAnimation = () => {
+      isPaused = !isPaused;
+      if (toggleBtn) {
+        toggleBtn.textContent = isPaused ? 'Play' : 'Pause';
+        toggleBtn.setAttribute('aria-label', isPaused ? 'Play animation' : 'Pause animation');
+      }
+      if (!isPaused) {
+        draw();
+      } else {
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', toggleAnimation);
+    }
+
+    window.addEventListener('resize', resize);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseleave', handleMouseLeave);
+    canvas.addEventListener('touchmove', handleTouchMove);
+
+    resize();
+    draw();
+
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+        if (canvas) {
+          canvas.removeEventListener('mousemove', handleMouseMove);
+          canvas.removeEventListener('mouseleave', handleMouseLeave);
+          canvas.removeEventListener('touchmove', handleTouchMove);
+        }
+        if (toggleBtn) {
+          toggleBtn.removeEventListener('click', toggleAnimation);
+        }
+      },
+      { once: true }
+    );
+  }
+</script>
+
+<style>
+  .lab-container {
+    width: min(56rem, calc(100vw - 3rem));
+    margin-inline: auto;
+    padding-block: 2rem var(--chat-fab-clearance);
+  }
+
+  .canvas-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    background: rgba(2, 27, 41, 0.65);
+    border: 1px solid rgba(0, 242, 254, 0.2);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  }
+
+  .canvas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .canvas-title {
+    margin: 0;
+    font-size: var(--text-lg);
+    color: var(--gray-0);
+  }
+
+  .control-btn {
+    padding: 0.4rem 0.8rem;
+    font-size: var(--text-sm);
+    color: var(--gray-0);
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .control-btn:hover {
+    background: rgba(0, 242, 254, 0.15);
+    border-color: rgba(0, 242, 254, 0.4);
+  }
+
+  .control-btn:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 2px;
+  }
+
+  .canvas-wrapper {
+    width: 100%;
+    height: 380px;
+    position: relative;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: #021b29;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .canvas-description {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    line-height: 1.5;
+  }
+
+  @media (max-width: 50em) {
+    .canvas-wrapper {
+      height: 280px;
+    }
+  }
+</style>
