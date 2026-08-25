@@ -336,9 +336,8 @@
       width: 100%;
     }
 
-    /* Phone talking = full page, not a padded rounded sheet over the site. */
-    .chat-container.is-open:not(.is-prominent),
-    .chat-container.is-prominent {
+    /* Phone talking = full page only after is-open. First paint stays docked. */
+    .chat-container.is-open:not(.is-prominent) {
       inset: 0;
       padding-top: 0;
       max-height: none;
@@ -347,8 +346,7 @@
       justify-content: stretch;
     }
 
-    .chat-container.is-open:not(.is-prominent) .chat-window,
-    .chat-container.is-prominent .chat-window {
+    .chat-container.is-open:not(.is-prominent) .chat-window {
       flex: 1 1 auto;
       height: auto;
       min-height: 0;
@@ -360,8 +358,7 @@
       -webkit-backdrop-filter: none;
     }
 
-    .chat-container.is-open .chat-form,
-    .chat-container.is-prominent .chat-form {
+    .chat-container.is-open:not(.is-prominent) .chat-form {
       border-radius: 0;
       border-left: 0;
       border-right: 0;
@@ -880,23 +877,10 @@
       document.body.classList.remove('has-prominent-chat');
       return;
     }
-    if (!isHomePath()) {
-      chatContainer.classList.add('is-docked');
-      document.body.classList.remove('has-prominent-chat');
-      return;
-    }
-    if (sessionStorage.getItem(FOLD_DISMISSED_KEY) === '1') {
-      chatContainer.classList.add('is-docked');
-      document.body.classList.remove('has-prominent-chat');
-      return;
-    }
-    if (window.scrollY > 160) {
-      dockChat();
-      return;
-    }
-    chatContainer.classList.add('is-prominent');
-    chatWindow?.classList.remove('hidden');
-    document.body.classList.add('has-prominent-chat');
+    // First paint is identity + hire. Docked composer. 100dvh only after is-open.
+    chatContainer.classList.remove('is-prominent');
+    chatContainer.classList.add('is-docked');
+    document.body.classList.remove('has-prominent-chat');
     window.addEventListener(
       'scroll',
       () => {
