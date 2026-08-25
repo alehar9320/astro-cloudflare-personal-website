@@ -703,6 +703,40 @@ describe('identity copy', () => {
     expect(chat).not.toContain('data-hire-surface');
   });
 
+  it('keeps first paint identity and hire, docks chat until open', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    const hero = readFileSync('src/components/Hero.astro', 'utf8');
+    expect(chat).toContain('First paint is identity + hire');
+    expect(chat).toContain('100dvh only after is-open');
+    expect(chat).toContain("classList.add('is-docked')");
+    expect(chat).not.toContain("classList.add('is-prominent')");
+    expect(chat).toContain('height: 100dvh');
+    expect(chat).toContain('.chat-container.is-open:not(.is-prominent)');
+    expect(chat).toContain('is-docked');
+    expect(chat).not.toContain('mailto:');
+    expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
+    expect(home).toContain('class="hero-dek"');
+    expect((home.match(/class="hero-dek"/g) || []).length).toBe(1);
+    expect(home).toContain(
+      'Also hireable for product work across developer platforms, design systems, and'
+    );
+    expect(home).toContain('Industrial AI copilots, not only DevEx.');
+    expect(home).toContain('class="hero-bridge"');
+    expect(home.replace(/\s+/g, ' ')).toContain('eight years at IFS');
+    expect(home).toContain('Chalmers software engineering');
+    expect(home).toContain('Get in touch');
+    expect(home).toContain('LinkedIn · replies from me');
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+    expect(home).toContain('proof-card');
+    expect(home).toContain('Zeroheight runner-up');
+    expect(home).not.toContain('mailto:');
+    expect(home).not.toMatch(/\bVP\b/);
+    expect(hero).toContain('font-size: var(--text-xl)');
+    expect(hero).toContain('font-size: var(--text-5xl)');
+    expect(hero).not.toContain("variant = 'primary'");
+  });
+
   it('makes phone talking a full-page chat and keeps desktop stage locks', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
     const home = readFileSync('src/pages/index.astro', 'utf8');
