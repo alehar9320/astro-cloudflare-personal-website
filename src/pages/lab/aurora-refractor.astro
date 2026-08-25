@@ -2,22 +2,16 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Hero from '../../components/Hero.astro';
 
-const title = 'Aurora Refractor | Lab | Alexander Härenstam';
-const description =
-  'An interactive canvas laboratory experiment exploring Northern Lights cyan and marine blue wave superposition and cursor magnetosphere refractions.';
+const title = 'Northern Lights | Alexander Härenstam';
+const description = 'Move your pointer. The lights move with you.';
 ---
 
-<BaseLayout title={title} description={description} ogTitle="Aurora Refractor Lab">
+<BaseLayout title={title} description={description} ogTitle="Northern Lights" robots="noindex">
   <main id="main-content" class="lab-container stack gap-8">
-    <Hero
-      title="Aurora Refractor"
-      tagline="Interactive Canvas Lab — Northern Lights Wave Superposition & Refraction"
-      align="start"
-    />
+    <Hero title="Northern lights" tagline="Move your pointer. The lights shift." align="start" />
 
-    <section aria-label="Interactive Canvas Experiment" class="canvas-card">
+    <section aria-label="Northern lights" class="canvas-card">
       <div class="canvas-header">
-        <h2 class="canvas-title">Refraction Field</h2>
         <div class="canvas-controls">
           <button
             id="toggle-anim-btn"
@@ -34,14 +28,10 @@ const description =
         <canvas
           id="aurora-refractor-canvas"
           role="img"
-          aria-label="Interactive visual canvas demonstrating fluid wave refraction in marine blue and cyan light."
-        ></canvas>
+          aria-label="Northern lights. Move your pointer to shift the waves."></canvas>
       </div>
 
-      <p class="canvas-description">
-        Move your cursor or touch to distort the aurora magnetosphere field. Designed with
-        hardware-accelerated 2D canvas context and mathematical wave superposition.
-      </p>
+      <p class="canvas-description">Move your pointer. The lights shift.</p>
     </section>
   </main>
 </BaseLayout>
@@ -97,7 +87,7 @@ const description =
           frequency: 0.008 + (i % 3) * 0.004,
           phase: (i * Math.PI) / 8,
           radius: 3 + (i % 3) * 2,
-          hue: 175 + (i % 6) * 10, // Cyan to Marine Blue spectrum
+          hue: 175 + (i % 6) * 10,
         });
       }
     };
@@ -139,7 +129,6 @@ const description =
       const width = canvas.parentElement.clientWidth;
       const height = canvas.parentElement.clientHeight;
 
-      // Smooth cursor interpolation
       mouse.x += (mouse.targetX - mouse.x) * 0.1;
       mouse.y += (mouse.targetY - mouse.y) * 0.1;
 
@@ -148,7 +137,6 @@ const description =
 
       time += 0.02;
 
-      // Draw light refraction wave curves
       ctx.beginPath();
       ctx.lineWidth = 2;
 
@@ -166,7 +154,6 @@ const description =
             Math.sin(x * 0.005 + time + layer * 1.5) * (30 + layer * 10) +
             Math.cos(x * 0.002 - time * 0.5) * 15;
 
-          // Magnetosphere refraction displacement
           const dx = x - mouse.x;
           const dy = height * 0.5 + sineY - mouse.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
@@ -184,7 +171,6 @@ const description =
         ctx.stroke();
       }
 
-      // Render glowing dynamic node points
       particles.forEach((p) => {
         p.phase += p.speed;
         const waveY = p.baseY + Math.sin(p.phase) * p.amplitude;
@@ -276,14 +262,8 @@ const description =
 
   .canvas-header {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     align-items: center;
-  }
-
-  .canvas-title {
-    margin: 0;
-    font-size: var(--text-lg);
-    color: var(--gray-0);
   }
 
   .control-btn {
