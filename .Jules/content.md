@@ -1,1 +1,1 @@
-2026-08-25 - [Evergreen Work Content] | Signal: [Stale] | Lean Update: Refined repetitive placeholder text in AI coding copilots work entry (Problem, Approach, Outcome) to improve clarity while preserving identity test bounds.
+2026-08-25 - [Evergreen Work Content] | Signal: [Feedback] | Lean Update: Reverted speculative copy in AI coding copilots entry after PR review feedback to maintain strict facts and identity test alignment.
