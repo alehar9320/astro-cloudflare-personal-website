@@ -378,6 +378,23 @@ describe('identity copy', () => {
     expect(footer).not.toContain('source-link');
   });
 
+  it('opens footer socials with noopener so the site window stays', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    const socials = footer.slice(footer.indexOf('class="socials"'), footer.indexOf('</footer>'));
+    expect(socials).toContain('https://www.linkedin.com/in/alehar/');
+    expect(socials).toContain('https://blog.ifs.com/author/alexander-harenstam/');
+    expect(socials).toContain('https://github.com/alehar9320');
+    expect([...socials.matchAll(/target="_blank"/g)]).toHaveLength(3);
+    expect([...socials.matchAll(/rel="noopener noreferrer"/g)]).toHaveLength(3);
+    expect(socials).not.toContain('journal');
+    expect(socials).not.toContain("What's New");
+    expect(footer).toContain('showUpcoming');
+    expect(footer).toContain('href="/this-site/"');
+    expect(footer).toContain('href="/whats-new/"');
+    expect(footer).not.toContain("What's New</a>{' · '}<a href=\"/roadmap/\">Upcoming</a>");
+    expect(footer).not.toContain('mailto:');
+  });
+
   it('drops Instagram and Facebook from site socials and keeps LinkedIn hire', () => {
     const nav = readFileSync('src/components/Nav.astro', 'utf8');
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
