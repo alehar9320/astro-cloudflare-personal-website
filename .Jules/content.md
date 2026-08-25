@@ -1,0 +1,1 @@
+2026-08-25 - [Evergreen Work Content] | Signal: [Stale] | Lean Update: Refined repetitive placeholder text in AI coding copilots work entry (Problem, Approach, Outcome) to improve clarity while preserving identity test bounds.
