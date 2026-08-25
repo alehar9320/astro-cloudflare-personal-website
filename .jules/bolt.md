@@ -5,3 +5,7 @@ Action: Added fetchpriority="high" and decoding="async" to the hero images in sr
 2026-05-30 - Icon Payload Pruning
 Learning: Inlined SVG icons in Astro components contribute directly to the HTML payload size. Commenting out unused icons in a shared IconPaths configuration reduces the bytes served per page and the memory footprint of the Cloudflare Worker.
 Action: Commented out unused icons in src/components/IconPaths.ts and updated related tests. Use grep -r to periodically audit icon usage across the codebase.
+
+2026-06-15 - Unused Icon Path Cleanup
+Learning: Periodically auditing icon usage across the application reveals unused exported icon definitions. Commenting out unused icons like `instagram-logo` and `facebook-logo` in `IconPaths.ts` reduces JavaScript asset size and eliminates unneeded code from the build output while retaining backwards compatibility.
+Action: Comment out unreferenced icon definitions in `IconPaths.ts` rather than deleting them.
