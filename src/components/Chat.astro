@@ -853,12 +853,6 @@
     }
   };
 
-  function isHomePath() {
-    const raw = location.pathname || '';
-    const path = raw.replace(/\/index\.html?$/, '').replace(/\/+$/, '') || '/';
-    return path === '/' || path === '' || path === '/index';
-  }
-
   function dockChat() {
     chatContainer?.classList.remove('is-prominent');
     chatContainer?.classList.add('is-docked');
