@@ -9,3 +9,9 @@
 - [Insight 1: Shimmer micro-interactions provide high-quality visual feedback without increasing JS bundle size.]
 - [Insight 2: Using `translateX` for the shimmer sweep is more performant than animating `background-position` as it avoids layout repaints.]
 - [Delta: 18 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-02 - Pill Tactile Feedback | Signal: Technical/Competitive | Lean Implementation: Flagged CSS Micro-interaction
+
+- [Insight 1: Adding subtle hover elevation and transform states to Pill tags improves tactile awareness without extra JS.]
+- [Insight 2: Scoping micro-interactions behind feature flags and respecting prefers-reduced-motion ensures accessibility compliance.]
+- [Delta: 12 lines. Guardrails: All passed autonomously.]
