@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-20 - Securing External Social Links in Footer Navigation
+
+**Learning:** External links to third-party services (such as LinkedIn, IFS Blog, and GitHub in footer navigation) should open in a new tab using `target="_blank"` paired with `rel="noopener noreferrer"`. This prevents tab-jacking security risks while offering non-disruptive navigation that preserves the user's active session on the portfolio site.
+
+**Action:** Added `target="_blank" rel="noopener noreferrer"` attributes to all social media links in `src/components/Footer.astro`.
+
 ## 2026-05-17 - Enhancing Content Selection and Standardizing Focus Spatiality
 
 **Learning:** Using `user-select: none` on informational badges (like `Pill`) creates unnecessary friction for users trying to copy text for reference. Additionally, consistent `outline-offset: 4px` across all interactive elements (including theme toggles and cards) reinforces a predictable spatial model for keyboard users. Adding `target="_blank"` with `rel="noopener noreferrer"` to external informational links (like the Astro framework link in the footer) ensures a non-disruptive navigation experience that preserves the user's session.
