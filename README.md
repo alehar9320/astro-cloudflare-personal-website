@@ -30,7 +30,7 @@ This project is built with a modern web stack designed for speed, SEO, and devel
 ## 🛠 Features
 
 - **Responsive Design**: Fast and accessible UI mapped to look great on desktop, tablet, and mobile devices.
-- **Professional Portfolio**: Highlights my work experience, including my role at IFS, Ericsson, and other ventures.
+- **Professional Portfolio**: Highlights my work experience, including my role at IFS.
 - **Skills & Education**: A detailed breakdown of my technical, design, and product management skills, backed by my academic background from Chalmers University of Technology.
 - **SEO Optimized**: Standard Astro best practices with fast load times and clean, accessible HTML out of the box.
 
