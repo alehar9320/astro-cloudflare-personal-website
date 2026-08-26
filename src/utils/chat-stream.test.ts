@@ -28,6 +28,27 @@ describe('chat stream parser', () => {
     expect(parser.flush()).toBe('End');
   });
 
+  it('handles CRLF line endings split across buffer boundaries', () => {
+    const parser = createChatStreamParser();
+
+    expect(parser.push('data: {"response":"Hello"}\r')).toBe('');
+    expect(parser.push('\n\r\ndata: {"response":" World"}\r\n\r\n')).toBe('Hello World');
+    expect(parser.flush()).toBe('');
+  });
+
+  it('handles consecutive blank lines and single-line data event fast paths', () => {
+    const parser = createChatStreamParser();
+
+    expect(parser.push('\n\n\ndata: {"response":"Fast"}\n\n\n\n')).toBe('Fast');
+    expect(parser.flush()).toBe('');
+  });
+
+  it('treats padded [DONE] as the done marker on the single-line path', () => {
+    const raw = `${event('Hi')}data:  [DONE] \n\n`;
+
+    expect(extractAssistantTextFromSse(raw)).toBe('Hi');
+  });
+
   it('ignores invalid and metadata-only SSE payloads', () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const raw =
