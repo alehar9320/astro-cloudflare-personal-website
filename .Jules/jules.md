@@ -9,3 +9,9 @@
 - [Insight 1: Shimmer micro-interactions provide high-quality visual feedback without increasing JS bundle size.]
 - [Insight 2: Using `translateX` for the shimmer sweep is more performant than animating `background-position` as it avoids layout repaints.]
 - [Delta: 18 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-02 - CallToAction Tactile Compression | Signal: Technical/Competitive | Lean Implementation: Flagged CSS Active Transform Scaling
+
+- [Insight 1: Primary action buttons require instant tactile compression on press to minimize perceived input latency.]
+- [Insight 2: Scoped CSS transform with 0.15s timing prevents awkward lingering states when users tap or click rapidly.]
+- [Delta: 15 lines across 3 files. Guardrails: All passed autonomously.]
