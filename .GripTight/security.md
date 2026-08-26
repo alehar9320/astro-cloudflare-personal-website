@@ -1,5 +1,11 @@
 # .GripTight/security.md - Configuration Security Journal
 
+## 2026-11-02 - GripTight: Environment & Configuration Security Baseline
+
+| Verified Template   | Corrected Keys                                                         | Validation State   |
+| :------------------ | :--------------------------------------------------------------------- | :----------------- |
+| `.dev.vars.example` | `POSTHOG_PERSONAL_API_KEY`, `POSTHOG_PROJECT_ID`, `POSTHOG_QUERY_HOST` | Verified (Generic) |
+
 ## 2026-05-22 - Environment & Configuration Security Baseline
 
 | Verified Template   | Corrected Keys    | Validation State                  |
