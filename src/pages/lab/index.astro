@@ -3,34 +3,34 @@ import ContactCTA from '../../components/ContactCTA.astro';
 import Hero from '../../components/Hero.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
-const dek =
-  'Interactive canvas laboratory, generative math, and Northern Lights refraction simulations.';
-const pageTitle = 'Laboratory | Alexander Härenstam';
+const dek = 'Move your pointer. The lights shift.';
+const pageTitle = 'Northern Lights | Alexander Härenstam';
 ---
 
 <BaseLayout
   title={pageTitle}
   ogTitle={pageTitle}
-  description={`${dek} Personal site laboratory experiments.`}
+  description="Move your pointer. The lights move with you."
+  robots="noindex"
 >
   <div class="stack gap-20">
     <main id="main-content" class="lab-page stack gap-8">
-      <Hero title="Laboratory" tagline={dek} align="start" />
+      <Hero title="Northern lights" tagline={dek} align="start" />
 
       <section class="lab-container stack gap-4" aria-label="Interactive Aurora Refraction Canvas">
         <div class="canvas-controls">
           <p class="canvas-status" id="canvas-status" aria-live="polite">
-            Interactive mode: Move cursor or touch to distort magnetosphere vectors.
+            Move your pointer. The lights shift.
           </p>
           <button id="toggle-anim-btn" type="button" class="control-btn" aria-pressed="false">
-            Pause Animation
+            Pause
           </button>
         </div>
 
         <div class="canvas-wrapper">
           <canvas
             id="aurora-refraction-canvas"
-            aria-label="Interactive Northern Lights refraction canvas"></canvas>
+            aria-label="Northern lights. Move your pointer to shift the waves."></canvas>
         </div>
       </section>
     </main>
@@ -66,11 +66,11 @@ const pageTitle = 'Laboratory | Alexander Härenstam';
     if (prefersReducedMotion) {
       isRunning = false;
       if (toggleBtn) {
-        toggleBtn.textContent = 'Play Animation';
+        toggleBtn.textContent = 'Play';
         toggleBtn.setAttribute('aria-pressed', 'true');
       }
       if (statusText) {
-        statusText.textContent = 'Animation paused (prefers-reduced-motion active).';
+        statusText.textContent = 'Paused.';
       }
     }
 
@@ -196,11 +196,11 @@ const pageTitle = 'Laboratory | Alexander Härenstam';
     const toggleAnimation = () => {
       isRunning = !isRunning;
       if (toggleBtn) {
-        toggleBtn.textContent = isRunning ? 'Pause Animation' : 'Play Animation';
+        toggleBtn.textContent = isRunning ? 'Pause' : 'Play';
         toggleBtn.setAttribute('aria-pressed', (!isRunning).toString());
       }
       if (statusText) {
-        statusText.textContent = isRunning ? 'Interactive mode active.' : 'Animation paused.';
+        statusText.textContent = isRunning ? 'Move your pointer. The lights shift.' : 'Paused.';
       }
 
       if (isRunning) {

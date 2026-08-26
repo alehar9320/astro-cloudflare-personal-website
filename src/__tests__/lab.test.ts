@@ -12,16 +12,19 @@ describe('Laboratory page & canvas interactive elements', () => {
     const pageText = readFileSync(labPath, 'utf8');
 
     // Title and layout structure
-    expect(pageText).toContain("const pageTitle = 'Laboratory | Alexander Härenstam'");
+    expect(pageText).toContain("const pageTitle = 'Northern Lights | Alexander Härenstam'");
     expect(pageText).toContain('title={pageTitle}');
     expect(pageText).toContain('BaseLayout');
-    expect(pageText).toContain('Hero title="Laboratory"');
+    expect(pageText).toContain('Hero title="Northern lights"');
+    expect(pageText).toContain('robots="noindex"');
 
     // Interactive canvas markup
     expect(pageText).toContain('id="aurora-refraction-canvas"');
-    expect(pageText).toContain('aria-label="Interactive Northern Lights refraction canvas"');
+    expect(pageText).toContain(
+      'aria-label="Northern lights. Move your pointer to shift the waves."'
+    );
     expect(pageText).toContain('id="toggle-anim-btn"');
-    expect(pageText).toContain('Pause Animation');
+    expect(pageText).toContain('Pause');
 
     // Canvas math and lifecycle features
     expect(pageText).toContain('prefers-reduced-motion');
