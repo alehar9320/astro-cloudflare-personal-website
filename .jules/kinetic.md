@@ -1,5 +1,15 @@
 # Kinetic Journal ⚡
 
+## 2026-08-26 - Hardware-Accelerated Portfolio Card Image Zoom
+
+- **Signal:** Portfolio preview cards lacked internal visual depth during hover and focus interactions.
+- **Action:**
+  - Enhanced `src/components/PortfolioPreview.astro` card image with smooth `transform: scale(1.04)` transition on hover and focus-visible.
+  - Used hardware-accelerated `transform` with a smooth `cubic-bezier(0.22, 1, 0.36, 1)` timing function.
+  - Wrapped hover/focus scale effect in `@media (prefers-reduced-motion: no-preference)` for accessibility compliance.
+- **Tokens Added:**
+  - Card Image Hover Zoom: `scale(1.04)` with `cubic-bezier(0.22, 1, 0.36, 1)`
+
 ## 2025-05-15 - Interactive Glassmorphism for Skills Section
 
 - **Signal:** Standardized skills box lacked interactive affordance and depth.
