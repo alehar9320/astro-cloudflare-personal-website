@@ -58,12 +58,18 @@ function extractResponseFromPayload(payload: string): string {
 /**
  * Processes a single line of the SSE stream, updating the parser state.
  * @param state - The current parser state.
- * @param line - The line to process.
+ * @param line - The line to process (carriage returns stripped).
  * @returns The extracted text if a full event was completed.
  */
 function consumeLine(state: SseParserState, line: string): string {
   if (line === '') {
-    const payload = state.currentEventLines.join('\n').trim();
+    if (state.currentEventLines.length === 0) {
+      return '';
+    }
+    const payload =
+      state.currentEventLines.length === 1
+        ? state.currentEventLines[0].trim()
+        : state.currentEventLines.join('\n').trim();
     state.currentEventLines = [];
     return extractResponseFromPayload(payload);
   }
@@ -83,19 +89,31 @@ function consumeLine(state: SseParserState, line: string): string {
  * @returns The accumulated parsed text.
  */
 function processBufferedText(state: SseParserState, input: string, isFinalChunk: boolean): string {
-  const normalizedInput = `${state.partialLine}${input}`.replaceAll('\r\n', '\n');
-  const lines = normalizedInput.split('\n');
+  const combined = state.partialLine + input;
+  const lines = combined.split('\n');
   const lastIndex = isFinalChunk ? lines.length : Math.max(lines.length - 1, 0);
   let parsedText = '';
 
   for (let index = 0; index < lastIndex; index += 1) {
-    parsedText += consumeLine(state, lines[index]);
+    let line = lines[index];
+    if (line.endsWith('\r')) {
+      line = line.slice(0, -1);
+    }
+    parsedText += consumeLine(state, line);
   }
 
-  state.partialLine = isFinalChunk ? '' : lines[lines.length - 1];
+  let remaining = isFinalChunk ? '' : lines[lines.length - 1];
+  if (remaining.endsWith('\r')) {
+    remaining = remaining.slice(0, -1);
+  }
+  state.partialLine = remaining;
 
   if (isFinalChunk && state.currentEventLines.length > 0) {
-    parsedText += extractResponseFromPayload(state.currentEventLines.join('\n').trim());
+    const payload =
+      state.currentEventLines.length === 1
+        ? state.currentEventLines[0].trim()
+        : state.currentEventLines.join('\n').trim();
+    parsedText += extractResponseFromPayload(payload);
     state.currentEventLines = [];
   }
 
