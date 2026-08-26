@@ -8,30 +8,18 @@ const flagsConfig = await getEntry('flags', 'config');
 if (!flagsConfig?.data?.enable_uses_page) return Astro.redirect('/');
 
 const stack = [
-  {
-    title: 'VS Code & Astro',
-    desc: 'Primary IDE & modern content framework.',
-    icon: 'terminal-window',
-  },
-  { title: 'Linear & Notion', desc: 'Issue tracking & product documentation.', icon: 'strategy' },
-  {
-    title: 'Vitest & Playwright',
-    desc: 'Automated unit & end-to-end verification.',
-    icon: 'rocket',
-  },
+  { title: 'Astro', desc: 'Pages ship as HTML.', icon: 'terminal-window' },
+  { title: 'Vitest', desc: 'Checks the bits that can break.', icon: 'rocket' },
 ] as const;
 ---
 
 <BaseLayout
-  title="DX & Product Stack | Alexander Härenstam"
-  description="Developer tools and productivity stack used daily."
+  title="Stack | Alexander Härenstam"
+  description="What this site is built with."
+  robots="noindex"
 >
   <div class="stack flex flex-col gap-10">
-    <Hero
-      title="DX & Product Stack"
-      tagline="Everyday tools driving engineering and product strategy."
-      align="start"
-    />
+    <Hero title="Stack" tagline="What this site is built with." align="start" />
     <main class="wrapper">
       <ul class="uses-grid">
         {
