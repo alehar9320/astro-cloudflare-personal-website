@@ -287,7 +287,8 @@
     cursor: pointer;
     transition:
       background-color 0.15s ease,
-      border-color 0.15s ease;
+      border-color 0.15s ease,
+      transform 0.15s ease;
   }
 
   .chat-suggestion:hover,
@@ -295,6 +296,11 @@
     background: var(--gray-800);
     border-color: var(--accent-regular);
     color: var(--gray-0);
+  }
+
+  .chat-suggestion:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 2px;
   }
 
   .chat-window {
@@ -453,6 +459,10 @@
     font: inherit;
     font-size: 0.75rem;
     font-weight: 500;
+    border-radius: 0.25rem;
+    transition:
+      color 0.15s ease,
+      transform 0.15s ease;
   }
 
   .chat-clear:hover,
@@ -462,12 +472,22 @@
     color: var(--gray-0);
   }
 
+  .chat-clear:focus-visible,
+  .chat-close:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 2px;
+  }
+
   .chat-close {
     background: none;
     border: none;
     color: var(--gray-400);
     cursor: pointer;
     padding: 0.25rem;
+    border-radius: 0.25rem;
+    transition:
+      color 0.15s ease,
+      transform 0.15s ease;
   }
 
   .chat-messages {
@@ -630,6 +650,23 @@
     display: flex;
     align-items: center;
     justify-content: center;
+    transition:
+      background-color 0.15s ease,
+      transform 0.15s ease;
+  }
+
+  .chat-form button:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .chat-clear:active,
+    .chat-close:active,
+    .chat-suggestion:active,
+    .chat-form button:active {
+      transform: scale(0.96);
+    }
   }
 </style>
 

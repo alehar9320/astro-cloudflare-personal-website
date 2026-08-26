@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-20 - Enhancing Focus Outlines and Tactile Feedback in Chat UI Controls
+
+**Learning:** Compact overlay controls (e.g. chat header action buttons, suggestion chips, and send form triggers) often lack explicit focus indicators, which degrades keyboard accessibility. Using scoped `:focus-visible` styling with `outline: 2px solid var(--accent-regular)` and a tighter `outline-offset: 2px` keeps the focus ring contained within small overlay surfaces. Combining this with `scale(0.96)` tactile transforms on `:active` states (gated by `prefers-reduced-motion: no-preference`) provides immediate physical feedback for both touch and keyboard users without causing visual disturbance.
+
+**Action:** Added explicit `:focus-visible` outline rings with 2px offset to `.chat-clear`, `.chat-close`, `.chat-suggestion`, and `.chat-form button` in `Chat.astro`. Gated active tactile scaling (`scale(0.96)`) behind `prefers-reduced-motion: no-preference`.
+
 ## 2026-05-17 - Enhancing Content Selection and Standardizing Focus Spatiality
 
 **Learning:** Using `user-select: none` on informational badges (like `Pill`) creates unnecessary friction for users trying to copy text for reference. Additionally, consistent `outline-offset: 4px` across all interactive elements (including theme toggles and cards) reinforces a predictable spatial model for keyboard users. Adding `target="_blank"` with `rel="noopener noreferrer"` to external informational links (like the Astro framework link in the footer) ensures a non-disruptive navigation experience that preserves the user's session.
