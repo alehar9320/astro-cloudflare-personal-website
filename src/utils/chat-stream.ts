@@ -37,12 +37,13 @@ function looksLikeSsePayload(raw: string): boolean {
  * @returns The extracted 'response' field or an empty string.
  */
 function extractResponseFromPayload(payload: string): string {
-  if (!payload || payload === DONE_MARKER) {
+  const trimmed = payload ? payload.trim() : '';
+  if (!trimmed || trimmed === DONE_MARKER) {
     return '';
   }
 
   try {
-    const parsed: unknown = JSON.parse(payload);
+    const parsed: unknown = JSON.parse(trimmed);
 
     if (isRecord(parsed) && typeof parsed.response === 'string') {
       return parsed.response;
@@ -68,7 +69,7 @@ function consumeLine(state: SseParserState, line: string): string {
     }
     const payload =
       state.currentEventLines.length === 1
-        ? state.currentEventLines[0]
+        ? state.currentEventLines[0].trim()
         : state.currentEventLines.join('\n').trim();
     state.currentEventLines = [];
     return extractResponseFromPayload(payload);
@@ -111,7 +112,7 @@ function processBufferedText(state: SseParserState, input: string, isFinalChunk:
   if (isFinalChunk && state.currentEventLines.length > 0) {
     const payload =
       state.currentEventLines.length === 1
-        ? state.currentEventLines[0]
+        ? state.currentEventLines[0].trim()
         : state.currentEventLines.join('\n').trim();
     parsedText += extractResponseFromPayload(payload);
     state.currentEventLines = [];
