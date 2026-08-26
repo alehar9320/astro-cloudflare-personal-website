@@ -239,7 +239,7 @@ IFS Design System
 IFS Design System. Design and development resources for creating delightful end-to-end experiences that scale.
 Show all 6 experiences
 Knowit Solutions CoCreate logo
-Master Thesis Worker
+Master's Thesis Worker
 Invativa - Specialister på Digitala Affärer · Contract
 Jan 2017 - Jun 2017 · 6 mosJan 2017 to Jun 2017 · 6 mos
 Göteborg, Sverige
@@ -285,7 +285,7 @@ My thesis revolved around business model innovation, and the opportunities and b
    Chalmers University of Technology
    Bachelor's degree, Software Engineering
    2012 - 2015
-   The first three years the study mainly consists of software development and mathematics, which is the basis of the engineering degree. In parallel, students gain knowledge in communication with both clients and end users and develop the ability to work in projects. In order to promote a sustainable society, it is important that people with different skills work together. In grade 3, a bachelor thesis is completed together with students from other programs. The work is done in project form, which is both a personal challenge and a splendid opportunity to practice the skills to work in different roles in a group. The last two years then provide a specialization to the education by specializing with any of the information technology's master's programs.
+   The first three years the study mainly consists of software development and mathematics, which is the basis of the engineering degree. In parallel, students gain knowledge in communication with both clients and end users and develop the ability to work in projects. In order to promote a sustainable society, it is important that people with different skills work together. In grade 3, a bachelor's thesis is completed together with students from other programs. The work is done in project form, which is both a personal challenge and a splendid opportunity to practice the skills to work in different roles in a group. The last two years then provide a specialization to the education by specializing with any of the information technology's master's programs.
 
 Show all 3 educations
 Licenses & certifications
@@ -333,7 +333,7 @@ You haven't received a recommendation yet
 Try asking one of your connections to recommend you
 Ask for a recommendation
 Publications
-Business Model Innovation for a digital future (Master Thesis)
+Business Model Innovation for a digital future (Master's Thesis)
 Chalmers University of Technology · Jan 1, 2017
 Show publication
 Digital developments have significantly affected the market environment over the last decade. A sense of urgency has put concepts related to business transformation in high demand. Among these concepts, a popular term has been business model innovation; the strategic and innovative re-arrangement of business activities. Compared to industries’ previous investments in digital initiatives, which focused on turning manual tasks digital, turning the structure of a company digital impacts how the business itself is set up. The thesis initially clarifies the two terms of business model innovation and digitalization. It then explores where and how digitalization is affecting business model innovation as a concept. The theoretical framework is applied to a study of a large established firm that is looking to innovate its business model, with a focus on how to become more digital.
@@ -345,10 +345,10 @@ The objective of the thesis is captured through the following research questions
 Three key takeaways were found in the study. First, that opportunities are primarily identified through an increased reach, scalability, and decision-support based on data collection. Secondly, that barriers are related to the organizational inability to implement digital changes on a business level. Third and last, that the main drivers are trends, private impressions, and a fear of substitution.
 Other authors
 
-Sketchagram - Communication application for Android Wear (Bachelor Thesis)
+Sketchagram - Communication application for Android Wear (Bachelor's Thesis)
 Chalmers University of Technology · Jan 1, 2015
 Show publication
-Not long after the release of smart watches and Android Wear we sought to explore the different ways of communicating through small graphical interfaces (a smartwatch). Hence, we developed an application for Android together with a companion app that allowed users to send live drawings to one another.
+Not long after the release of smartwatches and Android Wear we sought to explore the different ways of communicating through small graphical interfaces (a smartwatch). Hence, we developed an application for Android together with a companion app that allowed users to send live drawings to one another.
 Other authors
 
 5
