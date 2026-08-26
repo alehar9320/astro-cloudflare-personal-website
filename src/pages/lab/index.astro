@@ -1,0 +1,331 @@
+---
+import ContactCTA from '../../components/ContactCTA.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const dek =
+  'Interactive canvas laboratory, generative math, and Northern Lights refraction simulations.';
+const pageTitle = 'Laboratory | Alexander Härenstam';
+---
+
+<BaseLayout
+  title={pageTitle}
+  ogTitle={pageTitle}
+  description={`${dek} Personal site laboratory experiments.`}
+>
+  <div class="stack gap-20">
+    <main id="main-content" class="lab-page stack gap-8">
+      <Hero title="Laboratory" tagline={dek} align="start" />
+
+      <section class="lab-container stack gap-4" aria-label="Interactive Aurora Refraction Canvas">
+        <div class="canvas-controls">
+          <p class="canvas-status" id="canvas-status" aria-live="polite">
+            Interactive mode: Move cursor or touch to distort magnetosphere vectors.
+          </p>
+          <button id="toggle-anim-btn" type="button" class="control-btn" aria-pressed="false">
+            Pause Animation
+          </button>
+        </div>
+
+        <div class="canvas-wrapper">
+          <canvas
+            id="aurora-refraction-canvas"
+            aria-label="Interactive Northern Lights refraction canvas"></canvas>
+        </div>
+      </section>
+    </main>
+    <ContactCTA />
+  </div>
+</BaseLayout>
+
+<script>
+  function setupAuroraCanvas() {
+    const canvas = document.getElementById('aurora-refraction-canvas') as HTMLCanvasElement | null;
+    const toggleBtn = document.getElementById('toggle-anim-btn') as HTMLButtonElement | null;
+    const statusText = document.getElementById('canvas-status') as HTMLParagraphElement | null;
+
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animFrameId: number | null = null;
+    let isRunning = true;
+    let width = 0;
+    let height = 0;
+    let dpr = 1;
+
+    // Interactive pointer state
+    let pointerX = -1000;
+    let pointerY = -1000;
+    let targetPointerX = -1000;
+    let targetPointerY = -1000;
+
+    // Prefers reduced motion
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      isRunning = false;
+      if (toggleBtn) {
+        toggleBtn.textContent = 'Play Animation';
+        toggleBtn.setAttribute('aria-pressed', 'true');
+      }
+      if (statusText) {
+        statusText.textContent = 'Animation paused (prefers-reduced-motion active).';
+      }
+    }
+
+    const resize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      dpr = Math.min(window.devicePixelRatio || 1, 2);
+      width = rect.width;
+      height = Math.max(rect.height, 380);
+
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      ctx.scale(dpr, dpr);
+
+      if (!isRunning) {
+        drawFrame(0);
+      }
+    };
+
+    // Math parameters for wave superposition
+    let time = 0;
+
+    const drawFrame = (timestamp: number) => {
+      if (!ctx) return;
+
+      time = timestamp * 0.001;
+
+      // Smooth pointer interpolation
+      pointerX += (targetPointerX - pointerX) * 0.1;
+      pointerY += (targetPointerY - pointerY) * 0.1;
+
+      // Clear canvas with subtle glassmorphic backdrop fill
+      ctx.clearRect(0, 0, width, height);
+
+      // Render mathematical aurora wave ribbons (cyan / marine blue)
+      const numWaves = width < 600 ? 3 : 5;
+      const baseStep = width < 600 ? 12 : 6;
+
+      for (let w = 0; w < numWaves; w++) {
+        ctx.beginPath();
+
+        const opacity = 0.25 + w * 0.12;
+        const hue = 180 + w * 18; // Cyan to deep marine blue range
+        ctx.strokeStyle = `hsla(${hue}, 85%, 60%, ${opacity})`;
+        ctx.lineWidth = 2 + w * 1.5;
+
+        let first = true;
+
+        for (let x = 0; x <= width; x += baseStep) {
+          // Sine wave superposition
+          const freq1 = 0.008 + w * 0.002;
+          const freq2 = 0.015 - w * 0.001;
+          const speed = time * (0.8 + w * 0.2);
+
+          let y =
+            height * 0.45 +
+            Math.sin(x * freq1 + speed) * (30 + w * 12) +
+            Math.cos(x * freq2 - speed * 0.7) * (20 + w * 8);
+
+          // Magnetosphere vector displacement around interactive cursor
+          if (pointerX > 0 && pointerY > 0) {
+            const dx = x - pointerX;
+            const dy = y - pointerY;
+            const distSq = dx * dx + dy * dy;
+            const radius = 160;
+
+            if (distSq < radius * radius) {
+              const dist = Math.sqrt(distSq);
+              const force = (1 - dist / radius) * 45;
+              const angle = Math.atan2(dy, dx);
+              y += Math.sin(angle) * force;
+            }
+          }
+
+          if (first) {
+            ctx.moveTo(x, y);
+            first = false;
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+
+        ctx.stroke();
+      }
+
+      // Render interactive magnetosphere aura node if active
+      if (pointerX > 0 && pointerY > 0) {
+        const grad = ctx.createRadialGradient(pointerX, pointerY, 0, pointerX, pointerY, 80);
+        grad.addColorStop(0, 'rgba(0, 240, 255, 0.35)');
+        grad.addColorStop(0.5, 'rgba(0, 119, 255, 0.15)');
+        grad.addColorStop(1, 'rgba(0, 119, 255, 0)');
+
+        ctx.fillStyle = grad;
+        ctx.beginPath();
+        ctx.arc(pointerX, pointerY, 80, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      if (isRunning) {
+        animFrameId = requestAnimationFrame(drawFrame);
+      }
+    };
+
+    const handlePointerMove = (e: MouseEvent | TouchEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      if ('touches' in e && e.touches.length > 0) {
+        targetPointerX = e.touches[0].clientX - rect.left;
+        targetPointerY = e.touches[0].clientY - rect.top;
+      } else if ('clientX' in e) {
+        targetPointerX = e.clientX - rect.left;
+        targetPointerY = e.clientY - rect.top;
+      }
+    };
+
+    const handlePointerLeave = () => {
+      targetPointerX = -1000;
+      targetPointerY = -1000;
+    };
+
+    const toggleAnimation = () => {
+      isRunning = !isRunning;
+      if (toggleBtn) {
+        toggleBtn.textContent = isRunning ? 'Pause Animation' : 'Play Animation';
+        toggleBtn.setAttribute('aria-pressed', (!isRunning).toString());
+      }
+      if (statusText) {
+        statusText.textContent = isRunning ? 'Interactive mode active.' : 'Animation paused.';
+      }
+
+      if (isRunning) {
+        animFrameId = requestAnimationFrame(drawFrame);
+      } else if (animFrameId !== null) {
+        cancelAnimationFrame(animFrameId);
+        animFrameId = null;
+      }
+    };
+
+    // Event Listeners
+    window.addEventListener('resize', resize);
+    canvas.addEventListener('mousemove', handlePointerMove);
+    canvas.addEventListener('mouseleave', handlePointerLeave);
+    canvas.addEventListener('touchmove', handlePointerMove, { passive: true });
+    canvas.addEventListener('touchend', handlePointerLeave);
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', toggleAnimation);
+    }
+
+    // Initialize
+    resize();
+    if (isRunning) {
+      animFrameId = requestAnimationFrame(drawFrame);
+    }
+
+    // Teardown listener for Astro View Transitions
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        if (animFrameId !== null) {
+          cancelAnimationFrame(animFrameId);
+        }
+        window.removeEventListener('resize', resize);
+        if (canvas) {
+          canvas.removeEventListener('mousemove', handlePointerMove);
+          canvas.removeEventListener('mouseleave', handlePointerLeave);
+          canvas.removeEventListener('touchmove', handlePointerMove);
+          canvas.removeEventListener('touchend', handlePointerLeave);
+        }
+        if (toggleBtn) {
+          toggleBtn.removeEventListener('click', toggleAnimation);
+        }
+      },
+      { once: true }
+    );
+  }
+
+  // Initialize on page load and navigation
+  document.addEventListener('astro:page-load', setupAuroraCanvas);
+</script>
+
+<style>
+  .lab-page {
+    width: min(56rem, calc(100vw - 3rem));
+    margin-inline: auto;
+    padding-bottom: var(--chat-fab-clearance);
+  }
+
+  .lab-container {
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .canvas-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .canvas-status {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+  }
+
+  .control-btn {
+    background: hsla(var(--gray-999-basis), 0.6);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid hsla(var(--gray-0-basis), 0.2);
+    border-radius: 999rem;
+    padding: 0.4rem 1rem;
+    font-size: var(--text-sm);
+    color: var(--gray-0);
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .control-btn:hover {
+    background: hsla(var(--gray-999-basis), 0.85);
+    border-color: var(--accent-regular);
+  }
+
+  .control-btn:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 2px;
+  }
+
+  .canvas-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 380px;
+    border-radius: 1rem;
+    overflow: hidden;
+    background: hsla(var(--gray-999-basis), 0.5);
+    border: 1px solid hsla(var(--gray-0-basis), 0.12);
+    box-shadow: var(--shadow-sm);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+  }
+
+  @media (min-width: 50em) {
+    .lab-page {
+      padding-bottom: 0;
+    }
+  }
+</style>
