@@ -80,7 +80,16 @@
     <p id="chat-remaining" class="chat-remaining" aria-live="polite" hidden></p>
   </div>
   <form id="chat-form" class="chat-form">
-    <img src="/assets/portrait.png" alt="" class="chat-header-avatar" width="40" height="40" />
+    <!-- Bolt optimization: added loading="lazy" and decoding="async" to chat avatar to prevent image load/decode from blocking initial paint -->
+    <img
+      src="/assets/portrait.png"
+      alt=""
+      class="chat-header-avatar"
+      width="40"
+      height="40"
+      loading="lazy"
+      decoding="async"
+    />
     <input type="text" id="chat-input" required autocomplete="off" />
     <button type="submit" aria-label="Send message">
       <svg
