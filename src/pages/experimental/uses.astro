@@ -1,0 +1,76 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Icon from '../../components/Icon.astro';
+import { getEntry } from 'astro:content';
+
+const flagsConfig = await getEntry('flags', 'config');
+if (!flagsConfig?.data?.enable_uses_page) return Astro.redirect('/');
+
+const stack = [
+  {
+    title: 'VS Code & Astro',
+    desc: 'Primary IDE & modern content framework.',
+    icon: 'terminal-window',
+  },
+  { title: 'Linear & Notion', desc: 'Issue tracking & product documentation.', icon: 'strategy' },
+  {
+    title: 'Vitest & Playwright',
+    desc: 'Automated unit & end-to-end verification.',
+    icon: 'rocket',
+  },
+] as const;
+---
+
+<BaseLayout
+  title="DX & Product Stack | Alexander Härenstam"
+  description="Developer tools and productivity stack used daily."
+>
+  <div class="stack flex flex-col gap-10">
+    <Hero
+      title="DX & Product Stack"
+      tagline="Everyday tools driving engineering and product strategy."
+      align="start"
+    />
+    <main class="wrapper">
+      <ul class="uses-grid">
+        {
+          stack.map((item) => (
+            <li class="card">
+              <Icon icon={item.icon} size="2rem" />
+              <h3>{item.title}</h3>
+              <p>{item.desc}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </main>
+  </div>
+</BaseLayout>
+
+<style>
+  .uses-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 1rem;
+    list-style: none;
+    padding: 0;
+  }
+  .card {
+    padding: 1.5rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 0.75rem;
+    background: var(--gradient-subtle);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  .card h3 {
+    font-size: var(--text-lg);
+    color: var(--gray-100);
+  }
+  .card p {
+    color: var(--gray-400);
+    font-size: var(--text-sm);
+  }
+</style>

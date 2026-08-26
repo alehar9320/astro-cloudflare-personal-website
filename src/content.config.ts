@@ -25,6 +25,7 @@ export const collections = {
       enable_skills_pulse_v1: z.boolean().default(false),
       enable_reading_list: z.boolean().default(false),
       enable_logo_wobble_v1: z.boolean().default(false),
+      enable_uses_page: z.boolean().default(false),
     }),
   }),
 };
