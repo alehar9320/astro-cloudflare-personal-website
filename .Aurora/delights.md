@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-10 - Pill Tactile Lift | Signal: Behavioral | Lean Implementation: Added subtle hardware-accelerated lift and scaling on hover to Pill components gated by feature flag.
+
+- Insight: High-interaction tag elements provide immediate tactile feel when hovering over project skills and tags.
+- User Target: Joy
+- Abort Triggers: None.
+- User Reaction: Pending synthetic feedback.
