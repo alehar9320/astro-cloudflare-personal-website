@@ -708,7 +708,7 @@
     chatMessages?.querySelectorAll('.chat-followups').forEach((el) => el.remove());
   }
 
-  function bindChipSubmit(root: ParentNode) {
+  function bindChipSubmit(root: Element | ParentNode) {
     root.querySelectorAll('button').forEach((button) => {
       button.addEventListener('click', () => {
         if (!(chatForm instanceof HTMLFormElement) || !chatInput) return;
@@ -792,7 +792,7 @@
 
   function appendExploreCard(card: ExploreCard) {
     if (!chatMessages) return;
-    const article = document.createElement('article');
+    const article = document.createElement('article') as unknown as ParentNode & HTMLElement;
     article.className = 'chat-explore-card';
     article.setAttribute('aria-label', card.title);
 
