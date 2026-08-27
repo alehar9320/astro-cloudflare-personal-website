@@ -151,6 +151,11 @@ const schema = {
   .proof-card:focus-visible {
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
+    border-radius: 1.5rem;
+  }
+
+  .proof-card:active {
+    transform: translateY(0) scale(0.98);
   }
 
   .proof-eyebrow {
@@ -262,6 +267,16 @@ const schema = {
     .proof-card:focus-visible {
       transform: translateY(-2px);
       box-shadow: var(--shadow-md);
+    }
+
+    .proof-card:active {
+      transform: translateY(0) scale(0.98);
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .proof-card:active {
+      transform: none;
     }
   }
 
