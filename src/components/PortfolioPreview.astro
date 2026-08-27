@@ -129,6 +129,17 @@ const isShimmerEnabled = flagsEntry?.data.portfolio_shimmer_v1 ?? false;
     object-fit: cover;
   }
 
+  @media (prefers-reduced-motion: no-preference) {
+    img {
+      transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .card:hover img,
+    .card:focus-visible img {
+      transform: scale(1.04);
+    }
+  }
+
   @media (min-width: 50em) {
     .card {
       height: 22rem;

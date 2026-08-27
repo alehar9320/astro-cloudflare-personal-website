@@ -9,3 +9,9 @@
 - [Insight 1: Shimmer micro-interactions provide high-quality visual feedback without increasing JS bundle size.]
 - [Insight 2: Using `translateX` for the shimmer sweep is more performant than animating `background-position` as it avoids layout repaints.]
 - [Delta: 18 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-02 - Portfolio Image Zoom | Signal: Competitive/Technical | Lean Implementation: Scoped CSS Transform Transition
+
+- [Insight 1: Hardware-accelerated image scaling (`scale(1.04)`) adds depth and responsiveness to portfolio cards.]
+- [Insight 2: Restricting transition animations within `@media (prefers-reduced-motion: no-preference)` guarantees WCAG accessibility compliance.]
+- [Delta: 11 lines. Guardrails: All passed autonomously.]
