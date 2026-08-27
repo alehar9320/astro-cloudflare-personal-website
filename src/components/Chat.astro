@@ -75,8 +75,17 @@
         <button type="button" class="chat-suggestion">How do you work as a PM?</button>
         <button type="button" class="chat-suggestion">What's the Industrial AI bet?</button>
       </div>
+      <div
+        id="typing-indicator"
+        class="thinking-indicator hidden"
+        role="status"
+        aria-live="polite"
+        aria-label="Thinking"
+      >
+        <span class="thinking-dots" aria-hidden="true"><span></span><span></span><span></span></span>
+        <span class="thinking-ellipsis">…</span>
+      </div>
     </div>
-    <div id="typing-indicator" class="typing-indicator hidden">Alexander is typing...</div>
     <p id="chat-remaining" class="chat-remaining" aria-live="polite" hidden></p>
   </div>
   <form id="chat-form" class="chat-form">
@@ -487,7 +496,7 @@
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.85rem;
   }
 
   .user-message + .assistant-message,
@@ -502,25 +511,31 @@
     padding: 0.75rem 1rem;
     font-size: 0.875rem;
     line-height: 1.4;
+    overflow-wrap: anywhere;
   }
 
   .user-message {
     align-self: flex-end;
     background-color: var(--accent-regular);
     color: white;
-    border-radius: 1rem 1rem 4px 1rem;
+    border-radius: 1.1rem 1.1rem 0.25rem 1.1rem;
   }
 
   .ai-message,
   .assistant-message {
     align-self: flex-start;
-    background-color: var(--gray-800);
+    background-color: var(--gray-900);
     color: var(--gray-100);
-    border-radius: 1rem 1rem 1rem 4px;
+    border-radius: 1.1rem 1.1rem 1.1rem 0.25rem;
   }
 
   .welcome-message {
-    max-width: 80%;
+    max-width: 100%;
+    align-self: stretch;
+    background: none;
+    color: var(--gray-100);
+    padding: 0.15rem 0 0.35rem;
+    border-radius: 0;
   }
 
   .welcome-message h2 {
@@ -573,15 +588,73 @@
     outline-offset: 4px;
   }
 
-  .typing-indicator {
-    padding: 0.5rem 1rem;
-    font-size: 0.75rem;
-    color: var(--gray-400);
-    font-style: italic;
+  .thinking-indicator {
+    align-self: flex-start;
+    max-width: 80%;
+    padding: 0.75rem 1rem;
+    background-color: var(--gray-900);
+    color: var(--gray-300);
+    border-radius: 1.1rem 1.1rem 1.1rem 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1;
   }
 
-  .typing-indicator.hidden {
+  .thinking-indicator.hidden {
     display: none;
+  }
+
+  .thinking-dots {
+    display: inline-flex;
+    gap: 0.28rem;
+    align-items: center;
+    height: 1em;
+  }
+
+  .thinking-dots span {
+    width: 0.35rem;
+    height: 0.35rem;
+    border-radius: 50%;
+    background: var(--gray-400);
+    opacity: 0.35;
+  }
+
+  .thinking-ellipsis {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .thinking-dots span {
+      animation: thinking-pulse 1.05s ease-in-out infinite;
+    }
+
+    .thinking-dots span:nth-child(2) {
+      animation-delay: 0.15s;
+    }
+
+    .thinking-dots span:nth-child(3) {
+      animation-delay: 0.3s;
+    }
+  }
+
+  @keyframes thinking-pulse {
+    0%,
+    80%,
+    100% {
+      opacity: 0.25;
+    }
+    40% {
+      opacity: 1;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .thinking-dots {
+      display: none;
+    }
+
+    .thinking-ellipsis {
+      display: inline;
+    }
   }
 
   .chat-remaining {
@@ -770,6 +843,7 @@
     chatMessages?.querySelectorAll('.message:not(.welcome-message)').forEach((el) => el.remove());
     chatMessages?.querySelectorAll('.chat-explore-card').forEach((el) => el.remove());
     removeFollowUps();
+    typingIndicator?.classList.add('hidden');
     chatSuggestions?.classList.remove('hidden');
     setStatus('idle');
     chatInput?.focus();
@@ -960,7 +1034,11 @@
     saveMessages();
     trackHireEvent('chat_message_sent', 'fab');
 
-    typingIndicator?.classList.remove('hidden');
+    if (typingIndicator && chatMessages) {
+      chatMessages.appendChild(typingIndicator);
+      typingIndicator.classList.remove('hidden');
+      chatMessages.scrollTo(0, chatMessages.scrollHeight);
+    }
 
     setStatus('loading');
 
@@ -1001,10 +1079,19 @@
         return;
       }
 
-      typingIndicator?.classList.add('hidden');
-      const aiMessageDiv = appendMessage('assistant', '');
+      let aiMessageDiv: HTMLDivElement | undefined;
       let aiContent = '';
       const streamParser = createChatStreamParser();
+
+      const revealAssistant = (piece: string) => {
+        if (!piece) return;
+        if (!aiMessageDiv) {
+          typingIndicator?.classList.add('hidden');
+          aiMessageDiv = appendMessage('assistant', '');
+        }
+        aiContent += piece;
+        aiMessageDiv.textContent = aiContent;
+      };
 
       const reader = response.body?.getReader();
       const decoder = new TextDecoder();
@@ -1014,19 +1101,15 @@
           const { done, value } = await reader.read();
           if (done) break;
           const chunk = decoder.decode(value, { stream: true });
-          const parsedChunk = streamParser.push(chunk);
-          if (parsedChunk) {
-            aiContent += parsedChunk;
-            aiMessageDiv.textContent = aiContent;
-          }
+          revealAssistant(streamParser.push(chunk));
           chatMessages?.scrollTo(0, chatMessages.scrollHeight);
         }
       }
 
-      const remainingContent = streamParser.flush();
-      if (remainingContent) {
-        aiContent += remainingContent;
-        aiMessageDiv.textContent = aiContent;
+      revealAssistant(streamParser.flush());
+      typingIndicator?.classList.add('hidden');
+      if (!aiMessageDiv) {
+        aiMessageDiv = appendMessage('assistant', aiContent);
       }
 
       messages.push({ role: 'assistant', content: aiContent });
