@@ -1,0 +1,496 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+---
+
+<BaseLayout
+  title="Interactive Canvas Lab | Alexander Härenstam"
+  description="Experimental Northern Lights digital art, wave superposition, and light refraction canvas."
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero
+      title="Northern Lights Refraction Field"
+      tagline="Interactive digital art lab evaluating fluid wave superposition, cursor magnetosphere vectors, and light refractions."
+      align="start"
+    />
+
+    <section class="lab-container" aria-label="Interactive Aurora Canvas Simulation">
+      <div class="canvas-wrapper">
+        <canvas
+          id="aurora-lab-canvas"
+          role="img"
+          aria-label="Interactive Northern Lights wave superposition and cyan light refraction simulation"
+        ></canvas>
+        <div class="controls-overlay">
+          <button
+            id="toggle-anim-btn"
+            type="button"
+            class="control-btn"
+            aria-label="Toggle canvas animation"
+            aria-pressed="true"
+          >
+            <span class="btn-icon" aria-hidden="true">⏸</span>
+            <span class="btn-text">Pause Animation</span>
+          </button>
+          <span class="fps-badge" id="lab-fps-counter" aria-live="off">60 FPS</span>
+        </div>
+      </div>
+
+      <div class="lab-details">
+        <h2>Mathematical Mechanics</h2>
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <h3>Wave Superposition</h3>
+            <p>
+              Superimposes triple sine and cosine harmonic waves (<code
+                >y = ∑ A_i · sin(k_i · x + ω_i · t)</code
+              >) to model fluid auroral curtains.
+            </p>
+          </div>
+          <div class="metric-card">
+            <h3>Magnetosphere Displacement</h3>
+            <p>
+              Interactive cursor and touch vectors perturb local particle matrices using an inverse
+              quadratic distance falloff function.
+            </p>
+          </div>
+          <div class="metric-card">
+            <h3>Adaptive Viewport Scaling</h3>
+            <p>
+              Automatically downscales sampling grid resolution and particle count on mobile devices
+              or low-power hardware to maintain 60fps.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  interface RefractionParticle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    radius: number;
+    hue: number;
+    alpha: number;
+    phase: number;
+  }
+
+  const initAuroraLab = () => {
+    const canvas = document.getElementById('aurora-lab-canvas') as HTMLCanvasElement | null;
+    const toggleBtn = document.getElementById('toggle-anim-btn') as HTMLButtonElement | null;
+    const fpsBadge = document.getElementById('lab-fps-counter') as HTMLSpanElement | null;
+
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animFrameId: number = 0;
+    let isRunning = true;
+    let time = 0;
+    let lastTimestamp = performance.now();
+    let frameCount = 0;
+    let fps = 60;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      isRunning = false;
+      if (toggleBtn) {
+        toggleBtn.setAttribute('aria-pressed', 'false');
+        const textNode = toggleBtn.querySelector('.btn-text');
+        const iconNode = toggleBtn.querySelector('.btn-icon');
+        if (textNode) textNode.textContent = 'Play Animation';
+        if (iconNode) iconNode.textContent = '▶';
+      }
+    }
+
+    // Interactive Magnetosphere Cursor
+    const mouse = {
+      x: -1000,
+      y: -1000,
+      targetX: -1000,
+      targetY: -1000,
+      radius: 180,
+      active: false,
+    };
+
+    let particles: RefractionParticle[] = [];
+
+    const setupParticles = (width: number, height: number, isMobile: boolean) => {
+      const count = isMobile ? 12 : 35;
+      particles = [];
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          vx: (Math.random() - 0.5) * 0.6,
+          vy: (Math.random() - 0.5) * 0.4,
+          radius: Math.random() * 3 + 1.5,
+          hue: 180 + Math.random() * 30, // Cyan to Marine Blue
+          alpha: Math.random() * 0.5 + 0.3,
+          phase: Math.random() * Math.PI * 2,
+        });
+      }
+    };
+
+    const resize = () => {
+      const parent = canvas.parentElement;
+      if (!parent) return;
+
+      const rect = parent.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      canvas.style.width = `${rect.width}px`;
+      canvas.style.height = `${rect.height}px`;
+
+      ctx.scale(dpr, dpr);
+
+      const isMobile = rect.width < 768;
+      setupParticles(rect.width, rect.height, isMobile);
+      mouse.radius = isMobile ? 120 : 180;
+    };
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.targetX = e.clientX - rect.left;
+      mouse.targetY = e.clientY - rect.top;
+      mouse.active = true;
+    };
+
+    const handleMouseLeave = () => {
+      mouse.active = false;
+      mouse.targetX = -1000;
+      mouse.targetY = -1000;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        const touch = e.touches[0];
+        const rect = canvas.getBoundingClientRect();
+        mouse.targetX = touch.clientX - rect.left;
+        mouse.targetY = touch.clientY - rect.top;
+        mouse.active = true;
+      }
+    };
+
+    const handleTouchEnd = () => {
+      mouse.active = false;
+      mouse.targetX = -1000;
+      mouse.targetY = -1000;
+    };
+
+    window.addEventListener('resize', resize);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseleave', handleMouseLeave);
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: true });
+    canvas.addEventListener('touchend', handleTouchEnd);
+
+    resize();
+
+    // Harmonic Sine Wave Equation
+    const getWaveY = (x: number, width: number, height: number, t: number) => {
+      const baseWave =
+        Math.sin(x * 0.008 + t * 1.2) * 28 +
+        Math.sin(x * 0.015 - t * 0.8) * 18 +
+        Math.cos(x * 0.004 + t * 0.5) * 35;
+
+      const centerY = height * 0.5;
+      let y = centerY + baseWave;
+
+      // Cursor Magnetosphere Displacement
+      if (mouse.active) {
+        const dx = x - mouse.x;
+        const dy = y - mouse.y;
+        const dist = Math.hypot(dx, dy);
+        if (dist < mouse.radius) {
+          const factor = Math.pow(1 - dist / mouse.radius, 2);
+          y += Math.sin(t * 3 + x * 0.02) * 25 * factor;
+        }
+      }
+
+      return y;
+    };
+
+    const render = (now: number) => {
+      const delta = now - lastTimestamp;
+      frameCount++;
+      if (delta >= 1000) {
+        fps = Math.round((frameCount * 1000) / delta);
+        frameCount = 0;
+        lastTimestamp = now;
+        if (fpsBadge) {
+          fpsBadge.textContent = `${fps} FPS`;
+        }
+      }
+
+      const displayWidth = parseFloat(canvas.style.width) || canvas.width;
+      const displayHeight = parseFloat(canvas.style.height) || canvas.height;
+
+      // Smooth magnetosphere movement interpolation
+      mouse.x += (mouse.targetX - mouse.x) * 0.1;
+      mouse.y += (mouse.targetY - mouse.y) * 0.1;
+
+      if (isRunning) {
+        time += 0.015;
+      }
+
+      // Clear Canvas with subtle marine dark backdrop
+      ctx.fillStyle = '#0a101d';
+      ctx.fillRect(0, 0, displayWidth, displayHeight);
+
+      // Render Aurora Wave Curtains
+      const step = displayWidth < 768 ? 10 : 5;
+      const waveColors = [
+        { hue: 190, alpha: 0.22, blur: 25 }, // Cyan
+        { hue: 215, alpha: 0.18, blur: 35 }, // Marine Blue
+        { hue: 160, alpha: 0.15, blur: 20 }, // Emerald Refraction
+      ];
+
+      waveColors.forEach((color, idx) => {
+        ctx.beginPath();
+        const phaseOffset = idx * 1.4;
+        const t = time + phaseOffset;
+
+        ctx.moveTo(0, displayHeight);
+        for (let x = 0; x <= displayWidth + step; x += step) {
+          const y = getWaveY(x, displayWidth, displayHeight, t);
+          ctx.lineTo(x, y);
+        }
+        ctx.lineTo(displayWidth, displayHeight);
+        ctx.closePath();
+
+        const gradient = ctx.createLinearGradient(0, 0, 0, displayHeight);
+        gradient.addColorStop(0, `hsla(${color.hue}, 100%, 65%, ${color.alpha})`);
+        gradient.addColorStop(0.5, `hsla(${color.hue + 15}, 90%, 45%, ${color.alpha * 0.6})`);
+        gradient.addColorStop(1, 'hsla(220, 60%, 8%, 0)');
+
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      });
+
+      // Render Floating Light Refraction Nodes
+      particles.forEach((p) => {
+        if (isRunning) {
+          p.x += p.vx;
+          p.y += p.vy;
+          p.phase += 0.02;
+
+          if (p.x < 0) p.x = displayWidth;
+          if (p.x > displayWidth) p.x = 0;
+          if (p.y < 0) p.y = displayHeight;
+          if (p.y > displayHeight) p.y = 0;
+        }
+
+        const pulseAlpha = p.alpha + Math.sin(p.phase) * 0.15;
+
+        // Particle attraction to cursor magnetosphere
+        let drawX = p.x;
+        let drawY = p.y;
+        if (mouse.active) {
+          const dx = mouse.x - p.x;
+          const dy = mouse.y - p.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist < mouse.radius) {
+            const pull = (1 - dist / mouse.radius) * 15;
+            drawX += (dx / dist) * pull;
+            drawY += (dy / dist) * pull;
+          }
+        }
+
+        ctx.beginPath();
+        ctx.arc(drawX, drawY, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${p.hue}, 100%, 75%, ${Math.max(0.1, pulseAlpha)})`;
+        ctx.shadowColor = `hsla(${p.hue}, 100%, 60%, 0.8)`;
+        ctx.shadowBlur = p.radius * 3;
+        ctx.fill();
+        ctx.shadowBlur = 0;
+      });
+
+      if (isRunning) {
+        animFrameId = requestAnimationFrame(render);
+      }
+    };
+
+    const toggleAnimation = () => {
+      isRunning = !isRunning;
+      if (toggleBtn) {
+        toggleBtn.setAttribute('aria-pressed', isRunning ? 'true' : 'false');
+        const textNode = toggleBtn.querySelector('.btn-text');
+        const iconNode = toggleBtn.querySelector('.btn-icon');
+        if (textNode) textNode.textContent = isRunning ? 'Pause Animation' : 'Play Animation';
+        if (iconNode) iconNode.textContent = isRunning ? '⏸' : '▶';
+      }
+
+      if (isRunning) {
+        lastTimestamp = performance.now();
+        animFrameId = requestAnimationFrame(render);
+      }
+    };
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', toggleAnimation);
+    }
+
+    // Initial Frame Trigger
+    animFrameId = requestAnimationFrame(render);
+
+    // Astro Lifecycle Teardown
+    const cleanup = () => {
+      cancelAnimationFrame(animFrameId);
+      window.removeEventListener('resize', resize);
+      canvas.removeEventListener('mousemove', handleMouseMove);
+      canvas.removeEventListener('mouseleave', handleMouseLeave);
+      canvas.removeEventListener('touchmove', handleTouchMove);
+      canvas.removeEventListener('touchend', handleTouchEnd);
+      if (toggleBtn) {
+        toggleBtn.removeEventListener('click', toggleAnimation);
+      }
+    };
+
+    document.addEventListener('astro:before-swap', cleanup, { once: true });
+    window.addEventListener('beforeunload', cleanup, { once: true });
+  };
+
+  document.addEventListener('astro:page-load', initAuroraLab);
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initAuroraLab();
+  }
+</script>
+
+<style>
+  .lab-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2.5rem;
+    width: 100%;
+  }
+
+  .canvas-wrapper {
+    position: relative;
+    width: 100%;
+    height: 420px;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid var(--gray-800);
+    background: #0a101d;
+    box-shadow: var(--shadow-md);
+  }
+
+  #aurora-lab-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  .controls-overlay {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    z-index: 10;
+  }
+
+  .control-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.4rem 0.85rem;
+    font-family: var(--font-brand);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    color: var(--gray-100);
+    background: hsla(220, 30%, 12%, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid hsla(210, 80%, 60%, 0.3);
+    border-radius: 999rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .control-btn:hover {
+    background: hsla(220, 30%, 18%, 0.9);
+    border-color: var(--accent-regular);
+  }
+
+  .control-btn:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 2px;
+  }
+
+  .fps-badge {
+    padding: 0.35rem 0.65rem;
+    font-family: var(--font-brand);
+    font-size: var(--text-xs);
+    color: var(--accent-light);
+    background: hsla(220, 30%, 10%, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid hsla(185, 80%, 50%, 0.25);
+    border-radius: 999rem;
+  }
+
+  .lab-details {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .lab-details h2 {
+    font-size: var(--text-lg);
+    color: var(--gray-100);
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 50em) {
+    .metrics-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .metric-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1.25rem;
+    background: var(--gray-999-baseline, hsla(220, 20%, 10%, 0.5));
+    border: 1px solid var(--gray-800);
+    border-radius: 0.75rem;
+  }
+
+  .metric-card h3 {
+    font-size: var(--text-md);
+    color: var(--accent-light);
+    margin: 0;
+  }
+
+  .metric-card p {
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .metric-card code {
+    font-family: monospace;
+    font-size: 0.85em;
+    padding: 0.15rem 0.35rem;
+    background: hsla(210, 50%, 20%, 0.5);
+    border-radius: 0.25rem;
+    color: var(--gray-100);
+  }
+</style>

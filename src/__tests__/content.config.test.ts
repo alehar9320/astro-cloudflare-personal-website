@@ -5,6 +5,10 @@ import { defineCollection } from 'astro:content';
 import { collections } from '../content.config';
 import flagsFixture from '../content/flags/config.json';
 
+interface ZodSchemaWithSafeParse {
+  safeParse(data: unknown): { success: boolean; data?: Record<string, unknown>; error?: unknown };
+}
+
 describe('content.config', () => {
   it('exercises infrastructure mocks', () => {
     const schema = z.object({ test: z.string() });
@@ -28,19 +32,21 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
-    expect(result.success).toBe(true);
+    const schema = collections.flags.schema;
+    if (typeof schema === 'object' && schema !== null && 'safeParse' in schema) {
+      const result = (schema as ZodSchemaWithSafeParse).safeParse(flagsFixture);
+      expect(result.success).toBe(true);
 
-    if (result.success) {
-      // Use toMatchObject to ensure all fixture properties are correctly validated
-      // while allowing for Zod-injected default values.
-      expect(result.data).toMatchObject(flagsFixture);
+      if (result.success) {
+        // Use toMatchObject to ensure all fixture properties are correctly validated
+        // while allowing for Zod-injected default values.
+        expect(result.data).toMatchObject(flagsFixture);
+      }
     }
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const schema = collections.work.schema;
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -49,11 +55,13 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.title).toBe(sampleWork.title);
-      expect(result.data.publishDate).toBeInstanceOf(Date);
+    if (typeof schema === 'object' && schema !== null && 'safeParse' in schema) {
+      const result = (schema as ZodSchemaWithSafeParse).safeParse(sampleWork);
+      expect(result.success).toBe(true);
+      if (result.success && result.data) {
+        expect(result.data.title).toBe(sampleWork.title);
+        expect(result.data.publishDate).toBeInstanceOf(Date);
+      }
     }
   });
 });
