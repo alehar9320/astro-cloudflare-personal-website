@@ -6,6 +6,7 @@
 | 2025-03-24 | worker-configuration.d.ts         | Removed 'the the' typos from documentation comments                                      | Validated   |
 | 2025-03-24 | context/author-linkedin.md        | Normalized Swedish terms (Produktchef, Produktledning) and removed duplicate text blocks | Validated   |
 | 2025-03-24 | src/content/work/master-thesis.md | Improved grammatical phrasing in the concluding paragraph                                | Validated   |
+| 2025-03-31 | context/author-linkedin.md        | Added missing space after sentence-ending period following 'H&M - leadership'            | Validated   |
 
 ## Spelling Exceptions
 
