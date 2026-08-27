@@ -1,0 +1,36 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Pill from '../../components/Pill.astro';
+import CallToAction from '../../components/CallToAction.astro';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_dx_stack) return Astro.redirect('/404/');
+
+const tools = ['TypeScript', 'Astro', 'Cloudflare Workers', 'Vitest', 'Zod', 'Playwright'];
+---
+
+<BaseLayout title="DX Stack" description="Developer Experience Tech Stack">
+  <main class="wrapper stack gap-8" style="margin-top: 4rem;">
+    <Hero title="DX Stack" tagline="Core tools powering Developer Experience." align="start" />
+    <div class="stack gap-4">
+      <div class="pills">
+        {tools.map((t) => <Pill>{t}</Pill>)}
+      </div>
+      <div style="margin-top: 1rem;">
+        <CallToAction href="https://github.com/alehar" target="_blank" rel="noopener noreferrer">
+          View GitHub
+        </CallToAction>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+</style>
