@@ -24,5 +24,5 @@ Recruiter keywords (not a fake title): Product Management, Developer Experience,
 - [User behavior analytics](https://me.alehar.workers.dev/work/user-behavior-analytics/): Telemetry narrative.
 - [Lidköping Stenhuggeri](https://me.alehar.workers.dev/work/lidkoping-stenhuggeri/): Early Android work. Demoted.
 - [Chalmers master's thesis](https://me.alehar.workers.dev/work/master-thesis/): Chalmers, 2017. Earlier work, not an equal card.
-- [Latest updates](https://me.alehar.workers.dev/whats-new/): Changelog.
+- [What's New](https://me.alehar.workers.dev/whats-new/): Changelog.
 - [GitHub](https://github.com/alehar9320/astro-cloudflare-personal-website): Source.
