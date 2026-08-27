@@ -791,6 +791,14 @@
 
   const messages = JSON.parse(sessionStorage.getItem('chat-history') || '[]');
 
+  const astroScopeAttr = chatMessages
+    ?.getAttributeNames()
+    .find((name) => name.startsWith('data-astro-cid-'));
+
+  function applyAstroScope(el: Element) {
+    if (astroScopeAttr) el.setAttribute(astroScopeAttr, '');
+  }
+
   function hideSuggestions() {
     chatSuggestions?.classList.add('hidden');
   }
@@ -818,10 +826,12 @@
     if (prompts.length === 0) return;
     const row = document.createElement('div');
     row.className = 'chat-followups';
+    applyAstroScope(row);
     for (const prompt of prompts) {
       const button = document.createElement('button');
       button.type = 'button';
       button.className = 'chat-suggestion chat-followup';
+      applyAstroScope(button);
       button.textContent = prompt;
       row.appendChild(button);
     }
@@ -875,6 +885,7 @@
   function appendMessage(role: string, content: string) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${role}-message`;
+    applyAstroScope(messageDiv);
     messageDiv.textContent = content;
 
     chatMessages?.appendChild(messageDiv);
@@ -886,18 +897,22 @@
     if (!chatMessages) return;
     const article = document.createElement('article');
     article.className = 'chat-explore-card';
+    applyAstroScope(article);
     article.setAttribute('aria-label', card.title);
 
     const title = document.createElement('p');
     title.className = 'chat-explore-card-title';
+    applyAstroScope(title);
     title.textContent = card.title;
 
     const line = document.createElement('p');
     line.className = 'chat-explore-card-line';
+    applyAstroScope(line);
     line.textContent = card.line;
 
     const open = document.createElement('a');
     open.className = 'chat-explore-card-open';
+    applyAstroScope(open);
     open.href = card.href;
     open.textContent = 'Open';
 
