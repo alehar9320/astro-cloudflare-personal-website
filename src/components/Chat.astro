@@ -297,6 +297,11 @@
     color: var(--gray-0);
   }
 
+  .chat-suggestion:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+  }
+
   .chat-window {
     position: relative;
     z-index: 1;
@@ -460,6 +465,12 @@
   .chat-close:hover,
   .chat-close:focus-visible {
     color: var(--gray-0);
+  }
+
+  .chat-clear:focus-visible,
+  .chat-close:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
   }
 
   .chat-close {
@@ -630,6 +641,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .chat-form input:focus-visible,
+  .chat-form button:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
   }
 </style>
 
