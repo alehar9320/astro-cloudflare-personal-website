@@ -4,13 +4,13 @@ import Hero from '../../components/Hero.astro';
 ---
 
 <BaseLayout
-  title="Interactive Canvas Lab | Alexander Härenstam"
-  description="Experimental Northern Lights digital art, wave superposition, and light refraction canvas."
+  title="Lab | Alexander Härenstam"
+  description="Northern lights on a canvas. Move your pointer and they bend."
 >
   <main id="main-content" class="wrapper stack gap-8">
     <Hero
-      title="Northern Lights Refraction Field"
-      tagline="Interactive digital art lab evaluating fluid wave superposition, cursor magnetosphere vectors, and light refractions."
+      title="Northern lights"
+      tagline="Move around the canvas. The lights follow."
       align="start"
     />
 
@@ -37,29 +37,19 @@ import Hero from '../../components/Hero.astro';
       </div>
 
       <div class="lab-details">
-        <h2>Mathematical Mechanics</h2>
+        <h2>How it works</h2>
         <div class="metrics-grid">
           <div class="metric-card">
-            <h3>Wave Superposition</h3>
-            <p>
-              Superimposes triple sine and cosine harmonic waves (<code
-                >y = ∑ A_i · sin(k_i · x + ω_i · t)</code
-              >) to model fluid auroral curtains.
-            </p>
+            <h3>Waves</h3>
+            <p>Three overlapping waves make the curtains.</p>
           </div>
           <div class="metric-card">
-            <h3>Magnetosphere Displacement</h3>
-            <p>
-              Interactive cursor and touch vectors perturb local particle matrices using an inverse
-              quadratic distance falloff function.
-            </p>
+            <h3>Pointer</h3>
+            <p>Your cursor pulls the lights. Touch works too.</p>
           </div>
           <div class="metric-card">
-            <h3>Adaptive Viewport Scaling</h3>
-            <p>
-              Automatically downscales sampling grid resolution and particle count on mobile devices
-              or low-power hardware to maintain 60fps.
-            </p>
+            <h3>Phone</h3>
+            <p>On a phone it draws a lighter grid so it stays smooth.</p>
           </div>
         </div>
       </div>
