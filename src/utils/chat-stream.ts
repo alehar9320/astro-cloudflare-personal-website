@@ -37,12 +37,13 @@ function looksLikeSsePayload(raw: string): boolean {
  * @returns The extracted 'response' field or an empty string.
  */
 function extractResponseFromPayload(payload: string): string {
-  if (!payload || payload === DONE_MARKER) {
+  const trimmed = payload ? payload.trim() : '';
+  if (!trimmed || trimmed === DONE_MARKER) {
     return '';
   }
 
   try {
-    const parsed: unknown = JSON.parse(payload);
+    const parsed: unknown = JSON.parse(trimmed);
 
     if (isRecord(parsed) && typeof parsed.response === 'string') {
       return parsed.response;

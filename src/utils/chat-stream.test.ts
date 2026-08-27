@@ -97,4 +97,21 @@ describe('chat stream parser', () => {
   it('falls back to plain text when the input is not SSE', () => {
     expect(extractAssistantTextFromSse('Hello world')).toBe('Hello world');
   });
+
+  it('safely handles non-string response fields like numbers, booleans, and objects', () => {
+    const raw =
+      'data: {"response":123}\n\n' +
+      'data: {"response":true}\n\n' +
+      'data: {"response":{"nested":"object"}}\n\n' +
+      'data: {"response":"Valid text"}\n\n';
+
+    expect(extractAssistantTextFromSse(raw)).toBe('Valid text');
+  });
+
+  it('ignores SSE comment lines like : heartbeat without failing', () => {
+    const parser = createChatStreamParser();
+
+    expect(parser.push(': heartbeat\n\ndata: {"response":"Alive"}\n\n')).toBe('Alive');
+    expect(parser.flush()).toBe('');
+  });
 });

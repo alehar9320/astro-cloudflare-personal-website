@@ -27,33 +27,56 @@ describe('content.config', () => {
     expect(collections.work).toHaveProperty('schema');
   });
 
+  interface ZodSchemaWithSafeParse {
+    safeParse: (data: unknown) => {
+      success: boolean;
+      data?: Record<string, unknown>;
+      error?: unknown;
+    };
+  }
+
+  function isSchemaWithSafeParse(schema: unknown): schema is ZodSchemaWithSafeParse {
+    return (
+      typeof schema === 'object' &&
+      schema !== null &&
+      'safeParse' in schema &&
+      typeof (schema as ZodSchemaWithSafeParse).safeParse === 'function'
+    );
+  }
+
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
-    expect(result.success).toBe(true);
+    expect(isSchemaWithSafeParse(schema)).toBe(true);
+    if (isSchemaWithSafeParse(schema)) {
+      const result = schema.safeParse(flagsFixture);
+      expect(result.success).toBe(true);
 
-    if (result.success) {
-      // Use toMatchObject to ensure all fixture properties are correctly validated
-      // while allowing for Zod-injected default values.
-      expect(result.data).toMatchObject(flagsFixture);
+      if (result.success && result.data) {
+        // Use toMatchObject to ensure all fixture properties are correctly validated
+        // while allowing for Zod-injected default values.
+        expect(result.data).toMatchObject(flagsFixture);
+      }
     }
   });
 
   it('validates work schema with sample data', () => {
     const { schema } = collections.work;
-    const sampleWork = {
-      title: 'Sample Work',
-      description: 'A sample description',
-      publishDate: '2025-01-01',
-      tags: ['tag1', 'tag2'],
-      img: '/assets/sample.jpg',
-      img_alt: 'Sample alt text',
-    };
-    const result = schema.safeParse(sampleWork);
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.title).toBe(sampleWork.title);
-      expect(result.data.publishDate).toBeInstanceOf(Date);
+    expect(isSchemaWithSafeParse(schema)).toBe(true);
+    if (isSchemaWithSafeParse(schema)) {
+      const sampleWork = {
+        title: 'Sample Work',
+        description: 'A sample description',
+        publishDate: '2025-01-01',
+        tags: ['tag1', 'tag2'],
+        img: '/assets/sample.jpg',
+        img_alt: 'Sample alt text',
+      };
+      const result = schema.safeParse(sampleWork);
+      expect(result.success).toBe(true);
+      if (result.success && result.data) {
+        expect(result.data.title).toBe(sampleWork.title);
+        expect(result.data.publishDate).toBeInstanceOf(Date);
+      }
     }
   });
 });
