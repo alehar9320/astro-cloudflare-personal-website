@@ -73,8 +73,7 @@ const schema = {
       <div class="hero-copy">
         <Hero title="Product Manager, Developer Experience at IFS" align="start">
           <p class="hero-dek">
-            Also hireable for product work across developer platforms, design systems, and
-            Industrial AI copilots, not only DevEx.
+            Design systems, developer platforms, and Industrial AI copilots.
           </p>
           <div class="hero-actions">
             <CallToAction
@@ -86,26 +85,25 @@ const schema = {
             >
               Get in touch
             </CallToAction>
-            <p class="cta-hint">LinkedIn · replies from me</p>
+            <p class="cta-hint">LinkedIn</p>
           </div>
         </Hero>
         <section class="proof" aria-label="Proof">
           <a class="proof-card" href="/work/ifs-design-system/">
             <p class="proof-eyebrow">IFS Design System</p>
-            <p class="proof-outcome">From the first version to IFS Cloud.</p>
+            <p class="proof-outcome">Took the design system from first version to IFS Cloud.</p>
             <p class="proof-chips">
               <span>Up to 2x faster delivery</span>
               <span aria-hidden="true">·</span>
               <span>Up to 30x ROI</span>
               <span aria-hidden="true">·</span>
-              <span>Zeroheight runner-up</span>
+              <span>Zeroheight Design System Awards, runner-up</span>
             </p>
             <p class="proof-affordance">Read the case</p>
           </a>
         </section>
         <p class="hero-bridge">
-          Chalmers software engineering and MEI, eight years at IFS, the IFS Design System, plus
-          copilots, analytics, and thesis work.
+          Chalmers software engineering. Eight years at IFS. Design system, copilots, and analytics.
         </p>
       </div>
     </header>
@@ -118,8 +116,8 @@ const schema = {
     min-height: 100svh;
     min-height: 100dvh;
     justify-content: flex-start;
-    gap: 1.5rem;
-    padding-block: 1rem var(--chat-fab-clearance);
+    gap: 1rem;
+    padding-block: 0.75rem var(--chat-fab-clearance);
     box-sizing: border-box;
   }
 
@@ -127,14 +125,14 @@ const schema = {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 1.25rem;
+    gap: 0.85rem;
     padding-bottom: 0;
   }
 
   .hero-copy {
     display: flex;
     flex-direction: column;
-    gap: 1.25rem;
+    gap: 0.85rem;
     width: 100%;
   }
 
@@ -157,7 +155,7 @@ const schema = {
   }
 
   .hero-actions {
-    margin-top: 0.75rem;
+    margin-top: 0.5rem;
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
@@ -194,15 +192,18 @@ const schema = {
   .proof-eyebrow {
     margin: 0;
     font-size: var(--text-sm);
-    color: var(--gray-300);
-    letter-spacing: 0.04em;
+    font-weight: 600;
+    color: var(--gray-200);
+    letter-spacing: 0.06em;
     text-transform: uppercase;
   }
 
   .proof-outcome {
     margin: 0;
     font-size: var(--text-xl);
+    font-weight: 650;
     color: var(--gray-0);
+    letter-spacing: -0.01em;
   }
 
   .proof-chips {
@@ -229,7 +230,7 @@ const schema = {
 
     .hero {
       padding-inline: 2.5rem;
-      gap: 3.75rem;
+      gap: 1.75rem;
       padding-bottom: 0;
     }
 
