@@ -561,6 +561,10 @@
     background-color: var(--gray-900);
   }
 
+  .chat-explore-card.is-linkedin {
+    padding: 1rem;
+  }
+
   .chat-explore-card-title {
     margin: 0;
     color: var(--gray-0);
@@ -587,6 +591,43 @@
   .chat-explore-card-open:focus-visible {
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
+  }
+
+  .chat-explore-card-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.15rem;
+    padding: 0.5rem 0.9rem;
+    border-radius: 0.5rem;
+    background-color: var(--accent-regular);
+    color: white;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+  }
+
+  .chat-explore-card-primary:hover,
+  .chat-explore-card-primary:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .chat-explore-card {
+      animation: chat-card-in 0.2s ease-out;
+    }
+  }
+
+  @keyframes chat-card-in {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
   }
 
   .thinking-indicator {
@@ -895,8 +936,13 @@
 
   function appendExploreCard(card: ExploreCard) {
     if (!chatMessages) return;
+    // Density: one stage card in the recent turn — archive prior cards.
+    chatMessages.querySelectorAll('.chat-explore-card').forEach((el) => el.remove());
+
+    const isLinkedIn = card.variant === 'linkedin';
     const article = document.createElement('article');
     article.className = 'chat-explore-card';
+    if (isLinkedIn) article.classList.add('is-linkedin');
     applyAstroScope(article);
     article.setAttribute('aria-label', card.title);
 
@@ -912,11 +958,22 @@
 
     const open = document.createElement('a');
     open.className = 'chat-explore-card-open';
+    if (isLinkedIn) open.className = 'chat-explore-card-primary';
     applyAstroScope(open);
     open.href = card.href;
     open.textContent = 'Open';
+    if (card.actionLabel) open.textContent = card.actionLabel;
+    if (isLinkedIn || card.href.startsWith('http')) {
+      open.target = '_blank';
+      open.rel = 'noopener noreferrer';
+    }
 
-    article.append(title, line, open);
+    // LinkedIn confirm is unstacked: title + one primary only (no quiet line).
+    if (isLinkedIn) {
+      article.append(title, open);
+    } else {
+      article.append(title, line, open);
+    }
     chatMessages.appendChild(article);
     chatMessages.scrollTo(0, chatMessages.scrollHeight);
   }
