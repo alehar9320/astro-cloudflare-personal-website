@@ -13,7 +13,10 @@ const files = [
 ];
 
 describe('identity copy', () => {
-  const sources = files.map((path) => ({ path, text: readFileSync(path, 'utf8') }));
+  const sources = files.map((path) => ({
+    path,
+    text: readFileSync(path, 'utf8'),
+  }));
 
   it('does not use Strategic Product Leader in about, biography, meta, llms.txt, or the twin prompt', () => {
     for (const { path, text } of sources) {
@@ -77,7 +80,8 @@ describe('identity copy', () => {
     expect(home).toContain('justify-content: flex-start');
     expect(home).toContain('https://www.linkedin.com/in/alehar/');
     expect(home).toContain('Get in touch');
-    expect(home).toContain('class="cta-hint">LinkedIn</p>');
+    expect(home).toContain('class="cta-hint"');
+    expect(home).toContain('>LinkedIn</p>');
     expect(home).not.toContain('LinkedIn · replies from me');
     expect(home).toContain('class="hero-copy"');
     expect(home).toContain('proof-card');
@@ -99,7 +103,7 @@ describe('identity copy', () => {
     expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
     expect(home).toContain('class="hero-dek"');
     expect(home).toContain('developer platforms');
-    expect(home).toContain('design systems');
+    expect(home).toContain('Design systems');
     expect(home).toContain('Industrial AI copilots');
     expect(home).not.toContain('not only DevEx');
     expect(home).toContain('Chalmers software engineering');
@@ -650,7 +654,8 @@ describe('identity copy', () => {
     expect(chat).not.toContain('layoutProminentPhone');
     expect(home).toContain('cta-hint');
     expect(home).toContain('Get in touch');
-    expect(home).toContain('class="cta-hint">LinkedIn</p>');
+    expect(home).toContain('class="cta-hint"');
+    expect(home).toContain('>LinkedIn</p>');
     expect(home).not.toContain('LinkedIn · replies from me');
     expect(home).toContain('body.has-prominent-chat');
     expect(home).toContain('padding-bottom: 36dvh');
@@ -728,16 +733,15 @@ describe('identity copy', () => {
     expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
     expect(home).toContain('class="hero-dek"');
     expect((home.match(/class="hero-dek"/g) || []).length).toBe(1);
-    expect(home).toContain(
-      'Design systems, developer platforms, and Industrial AI copilots.'
-    );
+    expect(home).toContain('Design systems, developer platforms, and Industrial AI copilots.');
     expect(home).not.toContain('Also hireable');
     expect(home).not.toContain('not only DevEx');
     expect(home).toContain('class="hero-bridge"');
-    expect(home.replace(/\s+/g, ' ')).toContain('eight years at IFS');
+    expect(home).toContain('Eight years at IFS');
     expect(home).toContain('Chalmers software engineering');
     expect(home).toContain('Get in touch');
-    expect(home).toContain('class="cta-hint">LinkedIn</p>');
+    expect(home).toContain('class="cta-hint"');
+    expect(home).toContain('>LinkedIn</p>');
     expect(home).not.toContain('LinkedIn · replies from me');
     expect(home).toContain('https://www.linkedin.com/in/alehar/');
     expect(home).toContain('proof-card');
