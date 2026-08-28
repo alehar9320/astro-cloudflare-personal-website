@@ -1,0 +1,71 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Icon from '../../components/Icon.astro';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_tech_stack) return Astro.redirect('/404/');
+
+const stack = [
+  {
+    category: 'Product & Strategy',
+    description: 'Roadmapping, JTBD analysis, metrics-driven feature prioritization.',
+    icon: 'rocket-launch' as const,
+  },
+  {
+    category: 'Developer Experience',
+    description: 'TypeScript, Astro, Cloudflare Workers, streamlined CLI tooling.',
+    icon: 'terminal-window' as const,
+  },
+];
+---
+
+<BaseLayout
+  title="Tech Stack | Product Manager, Developer Experience at IFS"
+  description="Core product and developer experience primitives."
+  robots="noindex"
+>
+  <main id="main-content" role="main" class="wrapper stack gap-8" style="margin-top: 4rem;">
+    <Hero
+      title="Tech Stack & Primitives"
+      tagline="Core tools and product frameworks backing developer experience."
+      align="start"
+    />
+    <div class="grid">
+      {
+        stack.map((item) => (
+          <section class="card">
+            <Icon icon={item.icon} color="var(--accent-regular)" size="2.5rem" gradient />
+            <h2>{item.category}</h2>
+            <p>{item.description}</p>
+          </section>
+        ))
+      }
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+  .card {
+    padding: 1.5rem;
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 0.75rem;
+  }
+  .card h2 {
+    font-size: var(--text-lg);
+    margin: 0.75rem 0 0.5rem;
+    color: var(--gray-0);
+  }
+  .card p {
+    color: var(--gray-300);
+    line-height: 1.5;
+    margin: 0;
+  }
+</style>
