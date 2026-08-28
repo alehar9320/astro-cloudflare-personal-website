@@ -3,6 +3,12 @@ import {
   pruneMessages,
   MAX_MESSAGES,
   MAX_TOTAL_CONTENT_LENGTH,
+  DESIGN_SYSTEM_CHIP,
+  DESIGN_SYSTEM_PROOF,
+  LINKEDIN_HIRE_REPLY,
+  groundedCannedAnswer,
+  groundedDesignSystemAnswer,
+  groundedLinkedInHireAnswer,
   type ChatMessage,
 } from './chat-logic';
 
@@ -112,6 +118,24 @@ describe('chat logic utilities', () => {
       const pruned = pruneMessages(messages);
       expect(pruned[0].role).toBe('user');
       expect(pruned[0].content).toBe('Final user question');
+    });
+  });
+
+  describe('grounded canned answers', () => {
+    it('returns the design-system proof for the live chip', () => {
+      expect(groundedDesignSystemAnswer(DESIGN_SYSTEM_CHIP)).toBe(DESIGN_SYSTEM_PROOF);
+      expect(groundedCannedAnswer(DESIGN_SYSTEM_CHIP)).toBe(DESIGN_SYSTEM_PROOF);
+    });
+
+    it('returns a visitor-facing LinkedIn hire line with no twin-mouth me/my/I', () => {
+      expect(groundedLinkedInHireAnswer('How do I get in touch on LinkedIn?')).toBe(
+        LINKEDIN_HIRE_REPLY
+      );
+      expect(groundedCannedAnswer('How do I get in touch?')).toBe(LINKEDIN_HIRE_REPLY);
+      expect(LINKEDIN_HIRE_REPLY).toBe('Continue on LinkedIn: https://www.linkedin.com/in/alehar/');
+      expect(LINKEDIN_HIRE_REPLY.toLowerCase()).not.toMatch(/\b(me|my|i)\b/);
+      expect(groundedLinkedInHireAnswer('What is your email?')).toBeNull();
+      expect(groundedLinkedInHireAnswer('Can I download a CV?')).toBeNull();
     });
   });
 });

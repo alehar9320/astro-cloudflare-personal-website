@@ -66,6 +66,36 @@ export function groundedDesignSystemAnswer(lastUserMessage: string): string | nu
   return null;
 }
 
+/** Visitor-facing hire line — no twin-mouth me/my/I. Card still carries the primary. */
+export const LINKEDIN_HIRE_REPLY = 'Continue on LinkedIn: https://www.linkedin.com/in/alehar/';
+
+export function groundedLinkedInHireAnswer(lastUserMessage: string): string | null {
+  const question = lastUserMessage.trim().toLowerCase();
+  if (!question) return null;
+  // Email / CV stay off the twin — no public email, no placeholder CV.
+  if (
+    question.includes('email') ||
+    question.includes('cv') ||
+    question.includes('résumé') ||
+    question.includes('resume')
+  ) {
+    return null;
+  }
+  if (
+    question.includes('linkedin') ||
+    question.includes('get in touch') ||
+    question.includes('hire') ||
+    /\bcontact\b/.test(question)
+  ) {
+    return LINKEDIN_HIRE_REPLY;
+  }
+  return null;
+}
+
+export function groundedCannedAnswer(lastUserMessage: string): string | null {
+  return groundedDesignSystemAnswer(lastUserMessage) ?? groundedLinkedInHireAnswer(lastUserMessage);
+}
+
 export function sseTextStream(text: string): ReadableStream<Uint8Array> {
   const body = `data: ${JSON.stringify({ response: text })}\n\ndata: [DONE]\n\n`;
   return new ReadableStream({
