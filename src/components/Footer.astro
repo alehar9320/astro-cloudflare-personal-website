@@ -118,7 +118,7 @@ const showUpcoming = UPCOMING.length > 0;
         last7d.textContent = '';
         first.textContent = '';
         visitStats.hidden = false;
-        document.body.append(panel);
+        document.body.appendChild(panel);
 
         const place = () => {
           const box = trigger.getBoundingClientRect();
@@ -147,7 +147,7 @@ const showUpcoming = UPCOMING.length > 0;
             return;
           }
           openedByHover = false;
-          setOpen(panel.hidden);
+          setOpen(panel.hidden === true);
         });
 
         trigger.addEventListener('focus', () => {
