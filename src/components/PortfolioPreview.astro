@@ -127,6 +127,33 @@ const isShimmerEnabled = flagsEntry?.data.portfolio_shimmer_v1 ?? false;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .card:hover img,
+  .card:focus-visible img {
+    transform: scale(1.04);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card,
+    img {
+      transition: none;
+    }
+
+    .card:hover,
+    .card:focus-visible {
+      transform: none;
+    }
+
+    .card:hover img,
+    .card:focus-visible img {
+      transform: none;
+    }
+
+    .card.shimmer:hover::after {
+      animation: none;
+    }
   }
 
   @media (min-width: 50em) {
