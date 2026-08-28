@@ -41,6 +41,11 @@ export function pruneMessages(messages: ChatMessage[]): ChatMessage[] {
     totalLength -= pruned.shift()!.content.length;
   }
 
+  while (pruned.length > 1 && pruned[0].role === 'assistant') {
+    // biome-ignore lint/style/noNonNullAssertion: loop guard ensures shift() returns an element
+    totalLength -= pruned.shift()!.content.length;
+  }
+
   return pruned;
 }
 

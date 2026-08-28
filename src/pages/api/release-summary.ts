@@ -100,7 +100,8 @@ async function summarize(request: Request) {
     }
 
     if (!latest) {
-      const releases = await fetchGitHubReleases();
+      const token = bindings.GITHUB_TOKEN?.trim();
+      const releases = await fetchGitHubReleases(fetch, undefined, token ? { token } : undefined);
       latest = releases[0] ?? null;
       if (latest) source = 'github';
     }
