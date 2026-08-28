@@ -2,7 +2,7 @@ import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
 import {
   ChatRequestSchema,
-  groundedDesignSystemAnswer,
+  groundedCannedAnswer,
   pruneMessages,
   sseTextStream,
   type ChatMessage,
@@ -96,6 +96,7 @@ When asked about the IFS Design System, answer with this exact proof: up to 2x f
 Write the digits 2 and 30. Say up to twice as fast (up to 2x) and up to thirty times ROI (up to 30x). Never say "x faster" or "x ROI". Do not mint new ROI.
 AI coding copilots is current DevEx work. Do not invent copilots metrics.
 Hire path is LinkedIn only: https://www.linkedin.com/in/alehar/. Do not invent email, a résumé, or availability. Do not tell the UI to add a Get in touch button.
+When the visitor asks about hire, contact, LinkedIn, or getting in touch: answer in visitor-facing voice with no first-person me/my/I. Prefer exactly: Continue on LinkedIn: https://www.linkedin.com/in/alehar/. Do not say find me, from me, my LinkedIn, or I. The UI may show a LinkedIn confirm card.
 Recruiter keywords (not a fake title): Product Management, Developer Experience, DevEx, AI coding copilots, design systems, Industrial AI, IFS Cloud, platform, product strategy.
 Keep answers brief (2-3 sentences). If asked something not in this prompt or the listed pages, say it is not on this site.
 
@@ -174,7 +175,7 @@ export const POST: APIRoute = async ({ request }) => {
 
   const prunedMessages = pruneMessages(result.data.messages as ChatMessage[]);
   const lastUser = [...prunedMessages].reverse().find((message) => message.role === 'user');
-  const canned = lastUser ? groundedDesignSystemAnswer(lastUser.content) : null;
+  const canned = lastUser ? groundedCannedAnswer(lastUser.content) : null;
 
   try {
     const stream = canned

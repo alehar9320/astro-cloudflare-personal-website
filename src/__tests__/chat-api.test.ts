@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 
 import { env as workerEnv } from 'cloudflare:workers';
 import { POST, type ChatEnv } from '../pages/api/chat';
-import { DESIGN_SYSTEM_CHIP, DESIGN_SYSTEM_PROOF } from '../utils/chat-logic';
+import { DESIGN_SYSTEM_CHIP, DESIGN_SYSTEM_PROOF, LINKEDIN_HIRE_REPLY } from '../utils/chat-logic';
 
 const endpoint = 'https://example.com/api/chat';
 
@@ -92,7 +92,7 @@ describe('chat API', () => {
   it('includes grounded system prompt directives in AI execution call', async () => {
     const ai = createAi();
 
-    await postChat({ messages: [{ role: 'user', content: 'How do I get in touch?' }] }, ai);
+    await postChat({ messages: [{ role: 'user', content: 'How do you work as a PM?' }] }, ai);
 
     const callArgs = ai.run.mock.calls[0];
     const systemMessage = callArgs[1].messages[0];
@@ -100,6 +100,7 @@ describe('chat API', () => {
     expect(systemMessage.content).toContain('Product Manager, Developer Experience');
     expect(systemMessage.content).toContain('linkedin.com/in/alehar');
     expect(systemMessage.content).toContain('Hire path is LinkedIn only');
+    expect(systemMessage.content).toContain('no first-person me/my/I');
     expect(systemMessage.content).toContain('Chalmers B.Sc. Software Engineering');
     expect(systemMessage.content).toContain(
       'Chalmers M.Sc. Management and Economics of Innovation'
@@ -130,6 +131,21 @@ describe('chat API', () => {
     expect(body).toContain('up to 30x ROI');
     expect(body).toContain('Zeroheight runner-up');
     expect(body).toContain(DESIGN_SYSTEM_PROOF);
+  });
+
+  it('returns a visitor-facing LinkedIn hire line without calling the model', async () => {
+    const ai = createAi();
+    const response = await postChat(
+      { messages: [{ role: 'user', content: 'How do I get in touch on LinkedIn?' }] },
+      ai
+    );
+
+    expect(response.status).toBe(200);
+    expect(ai.run).not.toHaveBeenCalled();
+    const body = await response.text();
+    expect(body).toContain(LINKEDIN_HIRE_REPLY);
+    expect(body.toLowerCase()).not.toMatch(/\bfind me\b/);
+    expect(body.toLowerCase()).not.toContain('from me');
   });
 
   it('returns the exact 2x/30x proof for any IFS design-system question', async () => {
