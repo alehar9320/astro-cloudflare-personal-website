@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - Pill Tactile Bounce | Signal: Competitive | Lean Implementation: Added subtle translateY(-2px) scale(1.03) hover micro-interaction to Pill.astro behind enable_pill_tactile_v1 flag.
+
+- Insight: Static pills and badges lack tactile feedback during user interaction; adding micro-scale elevation evokes playfulness and tactile comfort.
+- User Target: Playfulness / Comfort
+- Abort Triggers: None (verified via build and test pipelines).
+- User Reaction: Pending synthetic feedback.
