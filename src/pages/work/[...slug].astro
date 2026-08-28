@@ -189,11 +189,17 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
     gap: 1.5rem;
     justify-content: space-between;
     align-items: center;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .tags {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.5rem;
+    justify-content: center;
+    max-width: 100%;
+    box-sizing: border-box;
   }
 
   .description {
