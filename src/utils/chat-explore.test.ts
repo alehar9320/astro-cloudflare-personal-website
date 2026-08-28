@@ -1,7 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
 import { DESIGN_SYSTEM_CHIP } from './chat-logic';
-import { EXPLORE_CARDS, exploreCardForQuestion } from './chat-explore';
+import {
+  EXPLORE_CARDS,
+  LINKEDIN_CONFIRM,
+  LINKEDIN_HREF,
+  exploreCardForQuestion,
+} from './chat-explore';
 
 describe('exploreCardForQuestion', () => {
   it('offers the IFS Design System card for the live design-system chip', () => {
@@ -26,14 +31,16 @@ describe('exploreCardForQuestion', () => {
     );
   });
 
-  it('keeps Open as a route on the card, not a hire path', () => {
+  it('keeps action cards on published routes and LinkedIn confirm on the hire path', () => {
     expect(EXPLORE_CARDS.designSystem.href).toBe('/work/ifs-design-system/');
+    expect(EXPLORE_CARDS.designSystem.actionLabel).toBe('View the case');
     expect(EXPLORE_CARDS.copilots.href).toBe('/work/ai-coding-copilots/');
     expect(EXPLORE_CARDS.analytics.href).toBe('/work/user-behavior-analytics/');
     expect(EXPLORE_CARDS.thesis.href).toBe('/work/master-thesis/');
     expect(EXPLORE_CARDS.biography.href).toBe('/biography/');
     expect(EXPLORE_CARDS.work.href).toBe('/work/');
-    expect(exploreCardForQuestion('How do I get in touch on LinkedIn?')).toBeNull();
+    expect(exploreCardForQuestion('How do I get in touch on LinkedIn?')).toEqual(LINKEDIN_CONFIRM);
+    expect(exploreCardForQuestion('How do I get in touch on LinkedIn?')?.href).toBe(LINKEDIN_HREF);
     expect(exploreCardForQuestion('What is your email?')).toBeNull();
     expect(exploreCardForQuestion('Can I download a CV?')).toBeNull();
   });
@@ -53,5 +60,11 @@ describe('exploreCardForQuestion', () => {
     expect(EXPLORE_CARDS.biography.line).toBe('Product Manager, Developer Experience at IFS.');
     expect(EXPLORE_CARDS.work.title).toBe('Work');
     expect(EXPLORE_CARDS.work.line).toBe('The IFS Design System case, then earlier work.');
+    expect(LINKEDIN_CONFIRM.title).toBe('Continue the conversation on LinkedIn');
+    expect(LINKEDIN_CONFIRM.line).toBe('');
+    expect(LINKEDIN_CONFIRM.actionLabel).toBe('Continue on LinkedIn');
+    expect(LINKEDIN_CONFIRM.variant).toBe('linkedin');
+    expect(LINKEDIN_CONFIRM.line).not.toContain('from me');
+    expect(LINKEDIN_CONFIRM.title).not.toContain('from me');
   });
 });

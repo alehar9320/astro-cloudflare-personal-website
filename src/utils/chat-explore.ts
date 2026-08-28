@@ -2,6 +2,19 @@ export type ExploreCard = {
   title: string;
   line: string;
   href: string;
+  /** action = secondary soft card; linkedin = in-stream confirm with one primary */
+  variant?: 'action' | 'linkedin';
+  actionLabel?: string;
+};
+
+export const LINKEDIN_HREF = 'https://www.linkedin.com/in/alehar/';
+
+export const LINKEDIN_CONFIRM: ExploreCard = {
+  title: 'Continue the conversation on LinkedIn',
+  line: '',
+  href: LINKEDIN_HREF,
+  variant: 'linkedin',
+  actionLabel: 'Continue on LinkedIn',
 };
 
 export const EXPLORE_CARDS = {
@@ -9,31 +22,43 @@ export const EXPLORE_CARDS = {
     title: 'IFS Design System',
     line: 'From the first version to IFS Cloud.',
     href: '/work/ifs-design-system/',
+    variant: 'action',
+    actionLabel: 'View the case',
   },
   copilots: {
     title: 'Internal AI coding copilots',
     line: 'Internal AI coding copilots for IFS engineering teams.',
     href: '/work/ai-coding-copilots/',
+    variant: 'action',
+    actionLabel: 'Open',
   },
   analytics: {
     title: 'User behavior analytics',
     line: 'Usage telemetry for IFS Cloud roadmap decisions.',
     href: '/work/user-behavior-analytics/',
+    variant: 'action',
+    actionLabel: 'Open',
   },
   thesis: {
     title: "Chalmers master's thesis",
     line: "Chalmers master's thesis, 2017.",
     href: '/work/master-thesis/',
+    variant: 'action',
+    actionLabel: 'Open',
   },
   biography: {
     title: 'Biography',
     line: 'Product Manager, Developer Experience at IFS.',
     href: '/biography/',
+    variant: 'action',
+    actionLabel: 'Open',
   },
   work: {
     title: 'Work',
     line: 'The IFS Design System case, then earlier work.',
     href: '/work/',
+    variant: 'action',
+    actionLabel: 'Open',
   },
 } as const satisfies Record<string, ExploreCard>;
 
@@ -41,17 +66,24 @@ export function exploreCardForQuestion(lastUserMessage: string): ExploreCard | n
   const question = lastUserMessage.trim().toLowerCase();
   if (!question) return null;
 
+  // Email / CV stay off — no public email, no placeholder CV.
   if (
-    question.includes('linkedin') ||
-    question.includes('get in touch') ||
-    question.includes('hire') ||
-    /\bcontact\b/.test(question) ||
     question.includes('email') ||
     question.includes('cv') ||
     question.includes('résumé') ||
     question.includes('resume')
   ) {
     return null;
+  }
+
+  // Hire / LinkedIn / contact → in-stream LinkedIn confirm (one primary, unstacked).
+  if (
+    question.includes('linkedin') ||
+    question.includes('get in touch') ||
+    question.includes('hire') ||
+    /\bcontact\b/.test(question)
+  ) {
+    return LINKEDIN_CONFIRM;
   }
 
   if (
