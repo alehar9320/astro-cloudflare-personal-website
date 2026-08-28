@@ -1133,6 +1133,7 @@
     saveMessages();
     trackHireEvent('chat_message_sent', 'fab');
 
+    const thinkingStartedAt = performance.now();
     if (typingIndicator && chatMessages) {
       chatMessages.appendChild(typingIndicator);
       typingIndicator.classList.remove('hidden');
@@ -1166,6 +1167,10 @@
         } catch {
           // empty 500/body: keep the honest unavailable line
         }
+        {
+          const errWait = Math.max(0, 300 - (performance.now() - thinkingStartedAt));
+          if (errWait > 0) await new Promise((resolve) => setTimeout(resolve, errWait));
+        }
         typingIndicator?.classList.add('hidden');
         appendMessage('assistant', errorText);
         if (response.status === 429) {
@@ -1181,11 +1186,34 @@
       let aiMessageDiv: HTMLDivElement | undefined;
       let aiContent = '';
       const streamParser = createChatStreamParser();
+      const THINKING_MIN_MS = 300;
+      let thinkingBuffer = '';
+      let thinkingReleased = false;
+
+      const releaseThinking = async () => {
+        if (thinkingReleased) return;
+        const wait = Math.max(0, THINKING_MIN_MS - (performance.now() - thinkingStartedAt));
+        if (wait > 0) await new Promise((resolve) => setTimeout(resolve, wait));
+        thinkingReleased = true;
+        typingIndicator?.classList.add('hidden');
+        if (thinkingBuffer) {
+          aiMessageDiv = appendMessage('assistant', '');
+          aiContent = thinkingBuffer;
+          thinkingBuffer = '';
+          aiMessageDiv.textContent = aiContent;
+        }
+      };
 
       const revealAssistant = (piece: string) => {
         if (!piece) return;
+        if (!thinkingReleased) {
+          thinkingBuffer += piece;
+          void releaseThinking().then(() => {
+            chatMessages?.scrollTo(0, chatMessages.scrollHeight);
+          });
+          return;
+        }
         if (!aiMessageDiv) {
-          typingIndicator?.classList.add('hidden');
           aiMessageDiv = appendMessage('assistant', '');
         }
         aiContent += piece;
@@ -1206,7 +1234,7 @@
       }
 
       revealAssistant(streamParser.flush());
-      typingIndicator?.classList.add('hidden');
+      await releaseThinking();
       if (!aiMessageDiv) {
         aiMessageDiv = appendMessage('assistant', aiContent);
       }
@@ -1219,6 +1247,10 @@
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
       console.error({ event: 'chat_client_error', error: message });
+      {
+        const catchWait = Math.max(0, 300 - (performance.now() - thinkingStartedAt));
+        if (catchWait > 0) await new Promise((resolve) => setTimeout(resolve, catchWait));
+      }
       typingIndicator?.classList.add('hidden');
       appendMessage('assistant', 'Chat is currently unavailable. Please try again later.');
       setStatus('error');
