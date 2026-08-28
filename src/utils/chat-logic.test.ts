@@ -101,5 +101,17 @@ describe('chat logic utilities', () => {
       expect(pruned).toHaveLength(1);
       expect(pruned[0].content).toBe('short');
     });
+
+    it('drops leading assistant messages so pruned history begins with a user turn', () => {
+      const longContent = 'x'.repeat(MAX_TOTAL_CONTENT_LENGTH - 20);
+      const messages: ChatMessage[] = [
+        { role: 'user', content: longContent },
+        { role: 'assistant', content: 'Middle assistant reply' },
+        { role: 'user', content: 'Final user question' },
+      ];
+      const pruned = pruneMessages(messages);
+      expect(pruned[0].role).toBe('user');
+      expect(pruned[0].content).toBe('Final user question');
+    });
   });
 });

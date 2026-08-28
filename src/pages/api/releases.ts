@@ -2,7 +2,9 @@ import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
 import { LATEST_RELEASE_SNAPSHOT } from '../../data/latest-release';
 import { fetchGitHubReleases, type SiteRelease } from '../../utils/github-releases';
-import { toVisitorChangelogTitle, toVisitorRelease } from '../../utils/visitor-changelog';
+import { toVisitorRelease } from '../../utils/visitor-changelog';
+
+// toVisitorRelease formats each release using toVisitorChangelogTitle
 
 const jsonHeaders = {
   'content-type': 'application/json',
@@ -29,20 +31,7 @@ function readEnv(): ReleasesEnv {
 }
 
 function visitorReleases(releases: SiteRelease[]) {
-  return releases.map((release) => {
-    const visitor = toVisitorRelease(release);
-    return {
-      ...visitor,
-      body: visitor.body
-        .split('\n')
-        .map((line) => {
-          const bullet = line.match(/^([-*+]\s+)(.*)$/);
-          if (!bullet) return toVisitorChangelogTitle(line);
-          return `${bullet[1]}${toVisitorChangelogTitle(bullet[2])}`;
-        })
-        .join('\n'),
-    };
-  });
+  return releases.map(toVisitorRelease);
 }
 
 export const GET: APIRoute = async () => {
