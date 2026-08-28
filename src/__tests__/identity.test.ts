@@ -479,7 +479,11 @@ describe('identity copy', () => {
   it('drops Ask about the work from the twin chat input placeholder', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
     expect(chat).not.toContain('placeholder="Ask about the work"');
-    expect(chat).not.toContain('placeholder=');
+    expect(chat).toContain('placeholder="Message…"');
+    expect(chat).not.toMatch(/placeholder="(?!Message…)[^"]*"/);
+    expect(chat).toContain('id="chat-send"');
+    expect(chat).toContain('syncSendReadyState');
+    expect(chat).toContain('chatSend.disabled = !ready');
     expect(chat).not.toContain('Ask me something');
     expect(chat).not.toContain('chat-toggle-portrait');
     expect(chat).not.toContain('mailto:');
@@ -496,7 +500,8 @@ describe('identity copy', () => {
     expect(chat).toContain("idle: ''");
     expect(chat).not.toMatch(/statusTooltip\.textContent\s*=\s*['"]Ask about the work['"]/);
     expect(chat).not.toContain('placeholder="Ask about the work"');
-    expect(chat).not.toContain('placeholder=');
+    expect(chat).toContain('placeholder="Message…"');
+    expect(chat).not.toMatch(/placeholder="(?!Message…)[^"]*"/);
     expect(chat).not.toContain('Ask me something');
     expect(chat).not.toContain('Ask me anything');
     expect(chat).not.toContain('chat-toggle-portrait');
@@ -515,7 +520,8 @@ describe('identity copy', () => {
     expect(chat).toContain('id="status-tooltip" class="status-tooltip"></span>');
     expect(chat).toContain("idle: ''");
     expect(chat).not.toContain('placeholder="Ask about the work"');
-    expect(chat).not.toContain('placeholder=');
+    expect(chat).toContain('placeholder="Message…"');
+    expect(chat).not.toMatch(/placeholder="(?!Message…)[^"]*"/);
     expect(chat).not.toContain('Ask me something');
     expect(chat).not.toContain('Ask me anything');
     expect(chat).not.toContain('chat-toggle-portrait');
@@ -539,7 +545,8 @@ describe('identity copy', () => {
     expect(chat).toContain('id="status-tooltip" class="status-tooltip"></span>');
     expect(chat).toContain("idle: ''");
     expect(chat).not.toContain('placeholder="Ask about the work"');
-    expect(chat).not.toContain('placeholder=');
+    expect(chat).toContain('placeholder="Message…"');
+    expect(chat).not.toMatch(/placeholder="(?!Message…)[^"]*"/);
     expect(chat).not.toContain('Ask me something');
     expect(chat).not.toContain('Ask me anything');
     expect(chat).not.toContain('chat-toggle-portrait');
@@ -562,7 +569,8 @@ describe('identity copy', () => {
     expect(chat).toContain('id="status-tooltip" class="status-tooltip"></span>');
     expect(chat).toContain("idle: ''");
     expect(chat).not.toContain('placeholder="Ask about the work"');
-    expect(chat).not.toContain('placeholder=');
+    expect(chat).toContain('placeholder="Message…"');
+    expect(chat).not.toMatch(/placeholder="(?!Message…)[^"]*"/);
     expect(chat).not.toContain('Ask me something');
     expect(chat).not.toContain('Ask me anything');
     expect(chat).not.toContain('chat-toggle-portrait');
