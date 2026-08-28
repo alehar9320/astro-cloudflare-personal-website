@@ -1,0 +1,1 @@
+## 2026-08-28 - [Work Experience] | Signal: [Stale/Grammar] | Lean Update: Refined introductory punctuation and leadership phrasing in user-behavior-analytics.md (<1% delta) while preserving test assertions.
