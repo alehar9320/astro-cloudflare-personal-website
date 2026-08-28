@@ -91,8 +91,8 @@
   </div>
   <form id="chat-form" class="chat-form">
     <img src="/assets/portrait.png" alt="" class="chat-header-avatar" width="40" height="40" />
-    <input type="text" id="chat-input" required autocomplete="off" />
-    <button type="submit" aria-label="Send message">
+    <input type="text" id="chat-input" required autocomplete="off" placeholder="Message…" />
+    <button type="submit" id="chat-send" class="chat-send" aria-label="Send message" disabled>
       <svg
         xmlns="http://www.w3.org/2000/svg"
         width="20"
@@ -497,7 +497,7 @@
     overflow-y: auto;
     display: flex;
     flex-direction: column;
-    gap: 0.85rem;
+    gap: 0.65rem;
   }
 
   .user-message + .assistant-message,
@@ -745,21 +745,34 @@
     color: var(--gray-0);
   }
 
-  .chat-form button {
-    background-color: var(--accent-regular);
-    color: white;
+  .chat-form button.chat-send {
+    background-color: var(--gray-800);
+    color: var(--gray-400);
     border: none;
     border-radius: 0.75rem;
     padding: 0.5rem;
     min-width: 44px;
-    cursor: pointer;
+    cursor: not-allowed;
     display: flex;
     align-items: center;
     justify-content: center;
   }
 
+  .chat-form button.chat-send:not(:disabled),
+  .chat-form button.chat-send.is-ready {
+    background-color: var(--accent-regular);
+    color: white;
+    cursor: pointer;
+  }
+
+  .chat-form button.chat-send:disabled {
+    background-color: var(--gray-800);
+    color: var(--gray-400);
+    cursor: not-allowed;
+  }
+
   .chat-form input:focus-visible,
-  .chat-form button:focus-visible {
+  .chat-form button.chat-send:focus-visible {
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
   }
@@ -777,6 +790,7 @@
   const chatClear = document.getElementById('chat-clear');
   const chatForm = document.getElementById('chat-form');
   const chatInput = document.getElementById('chat-input') as HTMLInputElement;
+  const chatSend = document.getElementById('chat-send') as HTMLButtonElement | null;
   const chatMessages = document.getElementById('chat-messages');
   const typingIndicator = document.getElementById('typing-indicator');
   const chatSuggestions = document.getElementById('chat-suggestions');
@@ -830,6 +844,16 @@
 
   setStatus('idle');
 
+  function syncSendReadyState() {
+    if (!chatInput || !chatSend) return;
+    const ready = chatInput.value.trim().length > 0;
+    chatSend.disabled = !ready;
+    chatSend.classList.toggle('is-ready', ready);
+  }
+
+  chatInput?.addEventListener('input', syncSendReadyState);
+  syncSendReadyState();
+
   const messages = JSON.parse(sessionStorage.getItem('chat-history') || '[]');
 
   const astroScopeAttr = chatMessages
@@ -853,6 +877,7 @@
       button.addEventListener('click', () => {
         if (!(chatForm instanceof HTMLFormElement) || !chatInput) return;
         chatInput.value = button.textContent?.trim() ?? '';
+        syncSendReadyState();
         chatForm.requestSubmit();
       });
     });
@@ -1102,6 +1127,7 @@
     hideSuggestions();
     removeFollowUps();
     chatInput.value = '';
+    syncSendReadyState();
     appendMessage('user', content);
     messages.push({ role: 'user', content });
     saveMessages();
