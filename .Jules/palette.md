@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-20 - Nav External Link Security and Screen-Reader Affordance
+
+**Learning:** External social and reference links in main navigation components require `target="_blank"` and `rel="noopener noreferrer"` attributes to prevent tab-jacking security vectors and keep the user's active session intact. Furthermore, adding explicit "(opens in a new tab)" text in visually hidden elements (`.sr-only`) ensures screen reader users are alerted to context switches before navigating away.
+
+**Action:** Added `target="_blank"` and `rel="noopener noreferrer"` to external social and blog icon links in `Nav.astro`. Updated `.sr-only` screen reader text to announce "(opens in a new tab)" for all external icon links.
+
 ## 2026-05-17 - Enhancing Content Selection and Standardizing Focus Spatiality
 
 **Learning:** Using `user-select: none` on informational badges (like `Pill`) creates unnecessary friction for users trying to copy text for reference. Additionally, consistent `outline-offset: 4px` across all interactive elements (including theme toggles and cards) reinforces a predictable spatial model for keyboard users. Adding `target="_blank"` with `rel="noopener noreferrer"` to external informational links (like the Astro framework link in the footer) ensures a non-disruptive navigation experience that preserves the user's session.

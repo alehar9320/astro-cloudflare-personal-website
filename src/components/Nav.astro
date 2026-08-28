@@ -90,8 +90,15 @@ const isCurrentPage = (href: string) => {
       <div class="socials">
         {
           iconLinks.map(({ href, icon, label, event, surface }) => (
-            <a href={href} class="social" data-hire-event={event} data-hire-surface={surface}>
-              <span class="sr-only">{label}</span>
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social"
+              data-hire-event={event}
+              data-hire-surface={surface}
+            >
+              <span class="sr-only">{label} (opens in a new tab)</span>
               <Icon icon={icon} />
             </a>
           ))
@@ -121,8 +128,15 @@ const isCurrentPage = (href: string) => {
       <div class="socials">
         {
           iconLinks.map(({ href, icon, label, event, surface }) => (
-            <a href={href} class="social" data-hire-event={event} data-hire-surface={surface}>
-              <span class="sr-only">{label}</span>
+            <a
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="social"
+              data-hire-event={event}
+              data-hire-surface={surface}
+            >
+              <span class="sr-only">{label} (opens in a new tab)</span>
               <Icon icon={icon} />
             </a>
           ))
