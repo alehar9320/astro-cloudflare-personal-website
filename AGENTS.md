@@ -24,6 +24,7 @@
 - `src/data/`: Static data used across the site.
 - `context/`: Background information about the author.
 - `scripts/`: Build and release automation scripts.
+- `.Jules/`: Jules scheduled-agent journals only. Never create `.Aurora`, `.jules`, `.Pruning`, `.Janitor`, `.Nova`, `.FixtureRefresher`, `.GripTight`, `.ObservabilityClerk`, or `.StuntDouble` at repo root. If a prompt names one of those paths, write under `.Jules/` instead.
 
 ### Patterns
 
@@ -71,6 +72,7 @@ cp .dev.vars.example .dev.vars # Configure local environment variables
 - **NEVER** use deprecated Cloudflare Pages models; strictly follow the Workers + Assets binding pattern.
 - **NEVER** add or preserve a parallel manual production deploy step in CI when Cloudflare Git auto-deploy already owns production releases.
 - **NEVER** design automation that depends on direct writes back to protected `main` for release metadata.
+- **NEVER** create Jules agent journal folders at the repository root. Journals live only under `.Jules/`.
 
 ## 5. AI Agent Skills
 

@@ -36,3 +36,13 @@ conductor/
 #logs
 wrangler_dev.log
 dev_server.log
+# Recreated Jules journals at repo root (canonical path is .Jules/)
+/.Aurora/
+/.FixtureRefresher/
+/.GripTight/
+/.Janitor/
+/.Nova/
+/.ObservabilityClerk/
+/.Pruning/
+/.StuntDouble/
+/.jules/
