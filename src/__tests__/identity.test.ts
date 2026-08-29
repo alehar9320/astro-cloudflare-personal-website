@@ -164,7 +164,7 @@ describe('identity copy', () => {
     expect(page).toContain('What you can see on this site lately.');
   });
 
-  it('flattens the home proof affordance and hides empty Upcoming', () => {
+  it("flattens the home proof affordance and keeps What's next reachable", () => {
     expect(existsSync('src/pages/roadmap.astro')).toBe(true);
     expect(existsSync('src/data/upcoming.ts')).toBe(true);
     const page = readFileSync('src/pages/roadmap.astro', 'utf8');
@@ -182,20 +182,89 @@ describe('identity copy', () => {
     expect(home).not.toContain('border-radius: 1.5rem');
     expect(home).not.toContain('box-shadow: var(--shadow-sm)');
     expect(home).not.toContain('padding: 1.5rem');
+    expect(home).not.toContain('href="/roadmap/"');
+    expect(home).not.toContain('href="/okr/"');
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    expect(nav).not.toContain('href="/roadmap/"');
+    expect(nav).not.toContain('href="/okr/"');
+    expect(page).not.toContain('mailto:');
+    expect(page).toContain('ContactCTA');
+    expect(footer).toContain('https://www.linkedin.com/in/alehar/');
+    expect(footer).not.toContain('mailto:');
     expect(upcoming).toContain('export const UPCOMING: readonly string[] = []');
     expect(page).toContain("throw new Error('Roadmap still promises flatten.')");
-    expect(page).toContain("Astro.redirect('/')");
-    expect(footer).toContain('showUpcoming');
+    expect(page).not.toContain("Astro.redirect('/')");
+    expect(page).toContain('Hero title="What\'s next"');
+    expect(page).toContain(
+      "What's next on this site. Product Manager, Developer Experience at IFS — DevEx, design systems, and Industrial AI from work already published here."
+    );
+    expect(footer).not.toContain('showUpcoming');
     expect(footer).toContain('href="/whats-new/"');
     expect(footer).toContain('href="/this-site/"');
     expect(footer).toContain('This site');
+    expect(footer).toContain('href="/roadmap/"');
+    expect(footer).toContain("What's next");
+    expect(footer).toContain('href="/okr/"');
+    expect(footer).toContain('Site success');
     expect(footer).not.toContain("What's New</a>{' · '}<a href=\"/roadmap/\">Upcoming</a>");
     expect(sitemap).toContain("'/this-site/'");
-    expect(sitemap).toContain('UPCOMING.length > 0');
+    expect(sitemap).toContain("'/roadmap/'");
+    expect(sitemap).toContain("'/okr/'");
+    expect(sitemap).not.toContain('UPCOMING.length > 0');
     expect(whatsNew).toContain('What you can see on this site lately.');
   });
 
-  it('ships /this-site/ as the twin explainer and keeps Upcoming omitted', () => {
+  it('ships /okr/ site-success scoreboard from Nick H2 numbers', () => {
+    expect(existsSync('src/pages/okr.astro')).toBe(true);
+    expect(existsSync('src/data/okr-h2-2026.ts')).toBe(true);
+    const page = readFileSync('src/pages/okr.astro', 'utf8');
+    const data = readFileSync('src/data/okr-h2-2026.ts', 'utf8');
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(page).toContain('Hero title="Site success"');
+    expect(page).toContain('Site success | Product Manager, Developer Experience at IFS');
+    expect(page).toContain(
+      'How this site is measured through the end of 2026. Progress against real baselines.'
+    );
+    expect(page).toContain(
+      'How this site is measured through the end of 2026. Progress against baselines — not a career scoreboard.'
+    );
+    expect(page).toContain('ContactCTA');
+    expect(page).toContain('--chat-fab-clearance');
+    expect(data).toContain('297');
+    expect(data).toContain('400');
+    expect(data).toContain('82.5');
+    expect(data).toContain('70');
+    expect(data).toContain('0');
+    expect(data).toContain('5');
+    expect(data).toContain('25');
+    expect(data).toContain('LinkedIn');
+    expect(page).toContain('Baseline');
+    expect(page).toContain('Current');
+    expect(page).toContain('Target');
+    expect(page).toContain('H2 2026 · baselines frozen 29 Aug 2026 · current refreshed weekly');
+    expect(page).not.toContain('mailto:');
+    expect(page).not.toContain('Open-to');
+    expect(page).not.toContain('career OKR');
+    expect(data).toContain("baselineLabel: '297'");
+    expect(data).toContain("currentLabel: '297'");
+    expect(data).toContain("targetLabel: '400'");
+    expect(data).toContain("baselineLabel: '82.5%'");
+    expect(data).toContain("targetLabel: '≤ 70%'");
+    expect(data).toContain("baselineLabel: '0'");
+    expect(data).toContain("targetLabel: '5'");
+    expect(data).toContain("baselineLabel: '25'");
+    expect(data).toContain('median ≥ 8 / week through Dec');
+    expect(data).toContain('Hire tracking in PostHog — live by 30 Sep 2026');
+    expect(data).toContain('Hire path stays LinkedIn only');
+    expect(footer).toContain('href="/okr/"');
+    expect(footer).toContain('Site success');
+    expect(footer).toContain('https://www.linkedin.com/in/alehar/');
+    expect(home).not.toContain('href="/roadmap/"');
+    expect(home).not.toContain('href="/okr/"');
+  });
+
+  it('ships /this-site/ as the twin explainer and keeps Upcoming omitted from that page', () => {
     expect(existsSync('src/pages/this-site.astro')).toBe(true);
     const page = readFileSync('src/pages/this-site.astro', 'utf8').replace(/\s+/g, ' ');
     const home = readFileSync('src/pages/index.astro', 'utf8');
@@ -214,7 +283,7 @@ describe('identity copy', () => {
     expect(page).not.toMatch(/\\bVP\\b/);
     expect(footer).toContain('href="/this-site/"');
     expect(footer).toContain('href="/whats-new/"');
-    expect(footer).toContain('showUpcoming');
+    expect(footer).not.toContain('showUpcoming');
     expect(home).toContain('class="hero-dek"');
     expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
     expect(whatsNew).toContain('What you can see on this site lately.');
@@ -228,9 +297,9 @@ describe('identity copy', () => {
     expect(footer).toContain("What's New");
     expect(footer).toContain('data-visit-stats');
     expect(footer).toContain('hidden');
-    expect(footer).toContain('showUpcoming');
+    expect(footer).not.toContain('showUpcoming');
     expect(footer).toContain("What's New</a>");
-    // Space-middot-space as Astro text node so paint is What's New · N when Upcoming is hidden.
+    // Space-middot-space as Astro text node so paint is What's New · N.
     expect(footer).toContain("{' · '}");
     expect(footer.slice(footer.indexOf('data-visit-stats'))).toContain("{' · '}");
     // Fail the prior bug: newline/indent then middot (leading space collapsed in paint).
@@ -389,9 +458,12 @@ describe('identity copy', () => {
     expect([...socials.matchAll(/rel="noopener noreferrer"/g)]).toHaveLength(3);
     expect(socials).not.toContain('journal');
     expect(socials).not.toContain("What's New");
-    expect(footer).toContain('showUpcoming');
+    expect(footer).not.toContain('showUpcoming');
     expect(footer).toContain('href="/this-site/"');
     expect(footer).toContain('href="/whats-new/"');
+    expect(footer).toContain('href="/roadmap/"');
+    expect(footer).toContain("What's next");
+    expect(footer).toContain('href="/okr/"');
     expect(footer).not.toContain("What's New</a>{' · '}<a href=\"/roadmap/\">Upcoming</a>");
     expect(footer).not.toContain('mailto:');
   });
@@ -1887,7 +1959,9 @@ describe('identity copy', () => {
     expect(sitemap).toContain("'/biography/'");
     expect(sitemap).toContain("'/contact/'");
     expect(sitemap).toContain("'/this-site/'");
-    expect(sitemap).toContain('UPCOMING.length > 0');
+    expect(sitemap).toContain("'/roadmap/'");
+    expect(sitemap).toContain("'/okr/'");
+    expect(sitemap).not.toContain('UPCOMING.length > 0');
     expect(sitemap).toContain('ifs-design-system');
     expect(sitemap).not.toContain('/experimental/manifesto');
     expect(sitemap).not.toContain('/experimental/now');
