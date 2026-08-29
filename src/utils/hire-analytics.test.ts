@@ -116,12 +116,14 @@ describe('hire-analytics', () => {
       '<a id="evil3" href="https://notlinkedin.com/">x</a>',
       '<a id="rel" href="/linkedin.com">x</a>',
       '<a id="bad" href="not a url">x</a>',
+      '<a id="throwish" href="http://[">x</a>',
     ].join('');
     expect(matchesHireContactCard(document.getElementById('evil1')!)).toBe(false);
     expect(matchesHireContactCard(document.getElementById('evil2')!)).toBe(false);
     expect(matchesHireContactCard(document.getElementById('evil3')!)).toBe(false);
     expect(matchesHireContactCard(document.getElementById('rel')!)).toBe(false);
     expect(matchesHireContactCard(document.getElementById('bad')!)).toBe(false);
+    expect(matchesHireContactCard(document.getElementById('throwish')!)).toBe(false);
   });
 
   it('captures the named action on Get in touch / LinkedIn hire clicks', () => {
