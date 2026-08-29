@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-08-28 - Theme Toggle Spin | Signal: Competitive | Lean Implementation: Added subtle 15deg rotation and scale on hover to theme toggle icons in ThemeToggle.astro.
+
+- Insight: Micro-interactions on utility controls like theme toggles increase tactile delight and visual playfulness without disrupting primary navigation.
+- User Target: Joy
+- Abort Triggers: None (verified via test and build pipeline).
+- User Reaction: Pending synthetic feedback.
