@@ -804,6 +804,38 @@
   }
 </style>
 
+<style is:inline>
+  /* Desktop open = one sheet. Form is flush footer, not a second foldup.
+     is:inline so this beats later .chat-form { width: 100% } and LightningCSS. */
+  @media (min-width: 50em) {
+    .chat-container.is-open .chat-window,
+    .chat-container.is-prominent .chat-window {
+      width: min(52rem, calc(100vw - 3rem));
+      max-width: min(52rem, calc(100vw - 3rem));
+      border-radius: 1rem 1rem 0 0;
+      margin-bottom: 0;
+      box-shadow: none;
+      border-bottom-width: 0;
+    }
+
+    .chat-container.is-open .chat-form,
+    .chat-container.is-prominent .chat-form {
+      width: min(52rem, calc(100vw - 3rem));
+      max-width: min(52rem, calc(100vw - 3rem));
+      border-radius: 0;
+      box-shadow: none;
+      margin-top: 0;
+      border-left: 1px solid var(--gray-800);
+      border-right: 1px solid var(--gray-800);
+      border-bottom: 0;
+      border-top: 1px solid var(--gray-800);
+      background-color: hsla(var(--gray-999-basis), 0.7);
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+    }
+  }
+</style>
+
 <script>
   import { createChatStreamParser, extractAssistantTextFromSse } from '../utils/chat-stream';
   import { exploreCardForQuestion, type ExploreCard } from '../utils/chat-explore';

@@ -2525,4 +2525,25 @@ describe('identity copy', () => {
     expect(global).not.toContain('enter-soft');
     expect(global).not.toContain('animation-timeline');
   });
+
+  it('joins desktop open chat into one sheet, not bar + foldup (#781)', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    const desktopOpen = chat.slice(chat.indexOf('/* Desktop open = one sheet'));
+    expect(chat).toContain('<style is:inline>');
+    expect(desktopOpen).toContain('.chat-container.is-open .chat-form');
+    expect(desktopOpen).toContain('width: min(52rem, calc(100vw - 3rem))');
+    expect(desktopOpen).toContain('border-radius: 0');
+    expect(desktopOpen).toContain('box-shadow: none');
+    expect(desktopOpen).toContain('backdrop-filter: blur(16px) saturate(180%)');
+    expect(chat).toContain('.chat-form {\n    padding: 1rem;');
+    expect(chat).toContain('border-radius: 1rem 1rem 0 0');
+    expect(chat).toContain('.chat-container.is-docked:not(.is-open):not(.is-prominent)');
+    expect(chat).toContain('.chat-window.hidden');
+    const phone = chat.slice(chat.indexOf('@media (max-width: 49.99em)'));
+    expect(phone).toContain('.chat-container.is-open:not(.is-prominent) .chat-form');
+    expect(phone).toContain('border-radius: 0');
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+    expect(chat).not.toContain('mailto:');
+  });
 });
