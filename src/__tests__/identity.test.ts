@@ -2564,4 +2564,24 @@ describe('identity copy', () => {
     expect(contact).toContain('Get in touch');
     expect(contact).not.toContain('mailto:');
   });
+
+  it('puts IFS case proof chips before the essay on the first screen (#783)', () => {
+    const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    expect(ds.indexOf('## Metrics')).toBeGreaterThan(ds.indexOf('<strong>TL;DR:</strong>'));
+    expect(ds.indexOf('## Metrics')).toBeLessThan(ds.indexOf('## Problem'));
+    expect(ds.indexOf('**Up to 2x faster**')).toBeLessThan(ds.indexOf('## Problem'));
+    expect(ds.indexOf('**Up to 30x ROI**')).toBeLessThan(ds.indexOf('## Problem'));
+    expect(ds.indexOf('**Zeroheight Design System Awards**')).toBeLessThan(ds.indexOf('## Problem'));
+    expect(ds).toContain('up to 2x');
+    expect(ds).toContain('up to 30x');
+    expect(slug).toContain('ds-first');
+    expect(slug).toContain("entry.id !== 'ifs-design-system'");
+    expect(slug).toContain('.ds-proof :global(ul)');
+    expect(slug).toContain('flex-wrap: wrap');
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+    expect(home).not.toContain('ds-first');
+    expect(ds).not.toContain('mailto:');
+  });
 });
