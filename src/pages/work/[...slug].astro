@@ -125,7 +125,7 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
   {
     entry ? (
       <div class="stack gap-20">
-        <div class="stack gap-15">
+        <div class:list={['stack gap-15', { 'ds-first-page': entry.id === 'ifs-design-system' }]}>
           <header>
             <div class="wrapper stack gap-2">
               <a class="back-link" href="/work/">
@@ -320,6 +320,34 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
     border-radius: 0.25rem;
+  }
+
+  @media (max-width: 49.99em) {
+    .ds-first-page {
+      gap: 0.75rem;
+    }
+
+    .ds-first-page header {
+      padding-bottom: 0.75rem;
+    }
+
+    .ds-first-page .details {
+      gap: 0.75rem;
+      padding: 0.25rem;
+    }
+
+    .ds-first-page :global(.hero) {
+      gap: 0.5rem;
+    }
+
+    .ds-first :global(.tldr-box) {
+      margin-bottom: 0.5rem;
+      padding: 0.75rem 1rem;
+    }
+
+    .ds-proof :global(.tldr-box + ul) {
+      margin-top: 0.35rem;
+    }
   }
 
   @media (min-width: 50em) {

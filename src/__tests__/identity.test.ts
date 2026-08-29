@@ -2583,12 +2583,20 @@ describe('identity copy', () => {
     expect(ds).toContain('up to 2x');
     expect(ds).toContain('up to 30x');
     expect(ds).toContain('on the initial investment');
+    expect(slug).toContain('ds-first-page');
     expect(slug).toContain('ds-first');
+    expect(slug).toContain('@media (max-width: 49.99em)');
+    expect(slug).toContain('.ds-first-page header');
+    expect(slug).toContain('padding-bottom: 0.75rem');
+    expect(slug).toMatch(/\.ds-first-page\s*\{[\s\S]*?gap:\s*0\.75rem/);
     expect(slug).toContain("entry.id !== 'ifs-design-system'");
     expect(slug).toContain('.ds-proof :global(ul)');
     expect(slug).toContain('flex-wrap: wrap');
     expect(home).toContain('https://www.linkedin.com/in/alehar/');
     expect(home).not.toContain('ds-first');
     expect(ds).not.toContain('mailto:');
+    expect(ds).toContain(
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+    );
   });
 });
