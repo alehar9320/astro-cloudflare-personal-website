@@ -55,7 +55,8 @@ const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
     transition:
       background-color 0.2s ease,
       box-shadow 0.2s ease,
-      transform 0.15s ease;
+      transform 0.15s ease,
+      outline-offset 0.15s ease;
   }
 
   @media (min-width: 20em) {
@@ -73,6 +74,13 @@ const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
   a:focus-visible {
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    a:hover,
+    a:focus-visible {
+      transform: translateY(-2px);
+    }
   }
 
   a:active {
