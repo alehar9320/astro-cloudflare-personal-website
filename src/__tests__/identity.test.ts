@@ -2569,15 +2569,20 @@ describe('identity copy', () => {
     const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
     const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
     const home = readFileSync('src/pages/index.astro', 'utf8');
-    expect(ds.indexOf('## Metrics')).toBeGreaterThan(ds.indexOf('<strong>TL;DR:</strong>'));
-    expect(ds.indexOf('## Metrics')).toBeLessThan(ds.indexOf('## Problem'));
-    expect(ds.indexOf('**Up to 2x faster**')).toBeLessThan(ds.indexOf('## Problem'));
+    expect(ds).not.toContain('## Metrics');
+    expect(ds.indexOf('**Up to 2x faster** feature delivery')).toBeGreaterThan(
+      ds.indexOf('<strong>TL;DR:</strong>')
+    );
+    expect(ds.indexOf('**Up to 2x faster** feature delivery')).toBeLessThan(
+      ds.indexOf('## Problem')
+    );
     expect(ds.indexOf('**Up to 30x ROI**')).toBeLessThan(ds.indexOf('## Problem'));
-    expect(ds.indexOf('**Zeroheight Design System Awards**')).toBeLessThan(
+    expect(ds.indexOf('**Zeroheight Design System Awards, runner-up**')).toBeLessThan(
       ds.indexOf('## Problem')
     );
     expect(ds).toContain('up to 2x');
     expect(ds).toContain('up to 30x');
+    expect(ds).toContain('on the initial investment');
     expect(slug).toContain('ds-first');
     expect(slug).toContain("entry.id !== 'ifs-design-system'");
     expect(slug).toContain('.ds-proof :global(ul)');

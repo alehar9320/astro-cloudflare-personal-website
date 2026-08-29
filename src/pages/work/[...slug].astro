@@ -229,9 +229,6 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
   }
 
   .ds-proof :global(ul) {
-    /* Phone: when Metrics sits at the bottom of the viewport, not only page end. */
-    padding-bottom: var(--chat-fab-clearance);
-    padding-right: var(--chat-fab-clearance);
     display: flex;
     flex-wrap: wrap;
     gap: 0.5rem;
@@ -251,10 +248,6 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
 
   .ds-first :global(.tldr-box) {
     margin-bottom: 0.75rem;
-  }
-
-  .ds-proof :global(h2) {
-    margin-top: 0;
   }
 
   .earlier-case {
@@ -331,11 +324,6 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
 
   @media (min-width: 50em) {
     .ds-proof {
-      padding-bottom: 0;
-      padding-right: 0;
-    }
-
-    .ds-proof :global(ul) {
       padding-bottom: 0;
       padding-right: 0;
     }
