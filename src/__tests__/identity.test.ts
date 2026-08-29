@@ -2530,7 +2530,9 @@ describe('identity copy', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
     const home = readFileSync('src/pages/index.astro', 'utf8');
     const desktopOpen = chat.slice(chat.indexOf('/* Desktop open = one sheet'));
+    expect(chat).toContain('<style is:inline>');
     expect(desktopOpen).toContain('.chat-container.is-open .chat-form');
+    expect(desktopOpen).toContain('width: min(52rem, calc(100vw - 3rem))');
     expect(desktopOpen).toContain('border-radius: 0');
     expect(desktopOpen).toContain('box-shadow: none');
     expect(desktopOpen).toContain('backdrop-filter: blur(16px) saturate(180%)');
