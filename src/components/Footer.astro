@@ -1,8 +1,5 @@
 ---
-import { UPCOMING } from '../data/upcoming';
-
 const currentYear = new Date().getFullYear();
-const showUpcoming = UPCOMING.length > 0;
 ---
 
 <footer>
@@ -20,14 +17,9 @@ const showUpcoming = UPCOMING.length > 0;
     </p>
     <p>&copy; {currentYear} Alexander Härenstam</p>
     <div class="colophon">
-      <a href="/whats-new/">What's New</a>{' · '}<a href="/this-site/">This site</a>{
-        showUpcoming && (
-          <>
-            {' · '}
-            <a href="/roadmap/">Upcoming</a>
-          </>
-        )
-      }<span class="visit-stats" data-visit-stats hidden
+      <a href="/whats-new/">What's New</a>{' · '}<a href="/this-site/">This site</a>
+      {' · '}<a href="/roadmap/">What's next</a>
+      {' · '}<a href="/okr/">Site success</a><span class="visit-stats" data-visit-stats hidden
         >{' · '}<button
           type="button"
           class="visit-trigger"

@@ -4,16 +4,14 @@ import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
 import { UPCOMING, stillPromisesFlatten } from '../data/upcoming';
 
-const dek = 'What is coming next on this site.';
-const pageTitle = 'Upcoming | Product Manager, Developer Experience at IFS';
+const dek = "What's next on this site. Product Manager, Developer Experience at IFS.";
+const lede =
+  "What's next on this site. Product Manager, Developer Experience at IFS — DevEx, design systems, and Industrial AI from work already published here.";
+const pageTitle = "What's next | Product Manager, Developer Experience at IFS";
 const upcoming = UPCOMING;
 
 if (stillPromisesFlatten(upcoming)) {
   throw new Error('Roadmap still promises flatten.');
-}
-
-if (upcoming.length === 0) {
-  return Astro.redirect('/');
 }
 
 const schema = {
@@ -37,7 +35,7 @@ const schema = {
           {
             '@type': 'ListItem',
             position: 2,
-            name: 'Upcoming',
+            name: "What's next",
             item: 'https://me.alehar.workers.dev/roadmap/',
           },
         ],
@@ -52,15 +50,11 @@ const schema = {
 };
 ---
 
-<BaseLayout
-  title={pageTitle}
-  ogTitle={pageTitle}
-  description={`${dek} Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.`}
->
+<BaseLayout title={pageTitle} ogTitle={pageTitle} description={dek}>
   <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="stack gap-20">
     <main id="main-content" class="upcoming-page stack gap-8">
-      <Hero title="Upcoming" tagline={dek} align="start" />
+      <Hero title="What's next" tagline={lede} align="start" />
       {
         upcoming.length > 0 && (
           <ul class="upcoming-list">
@@ -70,6 +64,20 @@ const schema = {
           </ul>
         )
       }
+      <section class="proof" aria-label="Past proof">
+        <a class="proof-card" href="/work/ifs-design-system/">
+          <p class="proof-eyebrow">IFS Design System</p>
+          <p class="proof-outcome">Took the design system from first version to IFS Cloud.</p>
+          <p class="proof-chips">
+            <span>Up to 2x faster delivery</span>
+            <span aria-hidden="true">·</span>
+            <span>Up to 30x ROI</span>
+            <span aria-hidden="true">·</span>
+            <span>Zeroheight Design System Awards, runner-up</span>
+          </p>
+          <p class="proof-affordance">Read the case</p>
+        </a>
+      </section>
     </main>
     <ContactCTA />
   </div>
@@ -94,6 +102,59 @@ const schema = {
 
   .upcoming-list li {
     margin: 0;
+  }
+
+  .proof-card {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    padding: 0;
+    text-decoration: none;
+    color: inherit;
+    background: none;
+    border: 0;
+    box-shadow: none;
+    max-width: 46ch;
+  }
+
+  .proof-card:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+  }
+
+  .proof-eyebrow {
+    margin: 0;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--gray-200);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .proof-outcome {
+    margin: 0;
+    font-size: var(--text-xl);
+    font-weight: 650;
+    color: var(--gray-0);
+    letter-spacing: -0.01em;
+  }
+
+  .proof-chips {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem 0.5rem;
+    font-size: var(--text-sm);
+    color: var(--gray-200);
+  }
+
+  .proof-affordance {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
   }
 
   @media (min-width: 50em) {

@@ -1,6 +1,5 @@
 import type { APIRoute } from 'astro';
 import { getCollection } from 'astro:content';
-import { UPCOMING } from '../data/upcoming';
 
 export const prerender = true;
 
@@ -12,7 +11,8 @@ const staticPaths = [
   '/biography/',
   '/contact/',
   '/this-site/',
-  ...(UPCOMING.length > 0 ? ['/roadmap/'] : []),
+  '/roadmap/',
+  '/okr/',
 ];
 
 function loc(path: string) {
