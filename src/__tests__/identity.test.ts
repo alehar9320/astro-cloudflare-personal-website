@@ -2573,7 +2573,9 @@ describe('identity copy', () => {
     expect(ds.indexOf('## Metrics')).toBeLessThan(ds.indexOf('## Problem'));
     expect(ds.indexOf('**Up to 2x faster**')).toBeLessThan(ds.indexOf('## Problem'));
     expect(ds.indexOf('**Up to 30x ROI**')).toBeLessThan(ds.indexOf('## Problem'));
-    expect(ds.indexOf('**Zeroheight Design System Awards**')).toBeLessThan(ds.indexOf('## Problem'));
+    expect(ds.indexOf('**Zeroheight Design System Awards**')).toBeLessThan(
+      ds.indexOf('## Problem')
+    );
     expect(ds).toContain('up to 2x');
     expect(ds).toContain('up to 30x');
     expect(slug).toContain('ds-first');

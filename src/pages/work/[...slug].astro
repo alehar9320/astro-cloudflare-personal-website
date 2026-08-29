@@ -167,11 +167,7 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
                 {Content && <Content />}
               </div>
               {entry.data.img && entry.id === 'ifs-design-system' && (
-                <img
-                  src={entry.data.img}
-                  alt={entry.data.img_alt || ''}
-                  decoding="async"
-                />
+                <img src={entry.data.img} alt={entry.data.img_alt || ''} decoding="async" />
               )}
             </div>
           </main>
