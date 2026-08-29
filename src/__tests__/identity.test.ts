@@ -1063,7 +1063,7 @@ describe('identity copy', () => {
     expect(slug).toContain('padding-right: var(--chat-fab-clearance)');
     expect(ds).toContain('**Up to 2x faster**');
     expect(ds).toContain('**Up to 30x ROI**');
-    expect(ds).toContain('**Zeroheight Design System Awards**');
+    expect(ds).toContain('**Zeroheight Design System Awards, runner-up**');
     expect(ds).toContain('Product Manager, Developer Experience');
     expect(ds).not.toContain('This page is the proof');
     expect(ds).not.toContain('Decisions and tradeoffs');
@@ -1078,7 +1078,7 @@ describe('identity copy', () => {
     expect(ds).toContain('title: IFS Design System');
     expect(ds).toContain('**Up to 2x faster**');
     expect(ds).toContain('**Up to 30x ROI**');
-    expect(ds).toContain('**Zeroheight Design System Awards**');
+    expect(ds).toContain('**Zeroheight Design System Awards, runner-up**');
     expect(ds).not.toContain('mailto:');
   });
 
