@@ -2463,4 +2463,66 @@ describe('identity copy', () => {
       expect(toVisitorChangelogTitle(raw)).not.toMatch(/\(#\d+\)/);
     }
   });
+
+  it('strips unused Hero shine and adds view-timeline Work/Biography entrance (#778)', () => {
+    const hero = readFileSync('src/components/Hero.astro', 'utf8');
+    const hireCta = readFileSync('src/components/CallToAction.astro', 'utf8');
+    const contact = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    const work = readFileSync('src/pages/work.astro', 'utf8');
+    const bio = readFileSync('src/pages/biography.astro', 'utf8');
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    const global = readFileSync('src/styles/global.css', 'utf8');
+
+    expect(hero).not.toContain('@keyframes shine');
+    expect(hero).not.toContain('animation: shine');
+    expect(hero).not.toContain('.primary .title');
+    expect(hero).not.toContain('-webkit-text-fill-color');
+    expect(hero).not.toContain('background-clip: text');
+    expect(hero).toContain('color: var(--gray-0)');
+
+    expect(contact).toContain('https://www.linkedin.com/in/alehar/');
+    expect(contact).toContain('Get in touch');
+    expect(contact).not.toContain('mailto:');
+    expect(hireCta).not.toContain('@keyframes');
+    expect(hireCta).not.toContain('infinite');
+    expect(hireCta).not.toContain('linear-gradient');
+    expect(hireCta).toContain('enable_cta_tactile_v1');
+    expect(hireCta).toContain('prefers-reduced-motion: reduce');
+    expect(hireCta).toContain('transform: none');
+    expect(hireCta).toContain('box-shadow: var(--shadow-sm)');
+
+    expect(work).toContain('class="proof-card"');
+    expect(work).toContain('<style is:inline>');
+    expect(work).toContain('@supports (animation-timeline: view())');
+    expect(work).toContain('animation-timeline: view()');
+    expect(work).toContain('animation: enter-soft 400ms');
+    expect(work).toContain('translate: 0 12px');
+    expect(work).toContain('cubic-bezier(0.22, 1, 0.36, 1)');
+    expect(work).toContain('https://www.linkedin.com/in/alehar/');
+    const workGated = work.slice(work.indexOf('@supports (animation-timeline: view())'));
+    expect(workGated).toContain('animation: enter-soft 400ms');
+    expect(workGated).not.toContain('opacity: 0');
+    expect(work.indexOf('opacity: 0')).toBeGreaterThan(work.indexOf('@keyframes enter-soft'));
+    expect(work.indexOf('opacity: 0')).toBeLessThan(
+      work.indexOf('@supports (animation-timeline: view())')
+    );
+
+    expect(bio).toContain('class="timeline"');
+    expect(bio).toContain('<style is:inline>');
+    expect(bio).toContain('.timeline > li');
+    expect(bio).toContain('@supports (animation-timeline: view())');
+    expect(bio).toContain('animation-delay: 60ms');
+    expect(bio).toContain('.timeline > li:nth-child');
+    expect(bio).toContain('https://www.linkedin.com/in/alehar/');
+    const bioGated = bio.slice(bio.indexOf('@supports (animation-timeline: view())'));
+    expect(bioGated).toContain('animation: enter-soft 400ms');
+    expect(bioGated).not.toContain('opacity: 0');
+
+    expect(home).not.toContain('enter-soft');
+    expect(home).not.toContain('animation-timeline');
+    expect(home).toContain('class="proof-card"');
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+    expect(global).not.toContain('enter-soft');
+    expect(global).not.toContain('animation-timeline');
+  });
 });

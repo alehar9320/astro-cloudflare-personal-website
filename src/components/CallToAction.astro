@@ -47,7 +47,6 @@ const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
     text-decoration: none;
     line-height: 1.1;
     border-radius: 999rem;
-    overflow: hidden;
     background-color: var(--accent-regular);
     background-image: none;
     box-shadow: var(--shadow-sm);
@@ -68,7 +67,9 @@ const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
   a:hover,
   a:focus-visible {
     background-color: var(--accent-dark);
-    box-shadow: var(--shadow-md);
+    box-shadow:
+      var(--shadow-md),
+      0 10px 24px var(--accent-overlay);
   }
 
   a:focus-visible {
@@ -92,16 +93,6 @@ const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
     transform: translateY(2px) scale(0.98);
   }
 
-  /* Overlay for standard static hover effect no longer needed, using animated gradient */
-  a::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    pointer-events: none;
-    transition: background-color var(--theme-transition);
-    mix-blend-mode: overlay;
-  }
-
   @media (min-width: 50em) {
     a {
       padding: 1.125rem 2.5rem;
@@ -111,7 +102,7 @@ const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
 
   @media (prefers-reduced-motion: reduce) {
     a {
-      transition: none;
+      transition: background-color 0.2s ease;
     }
 
     a:hover,
@@ -119,6 +110,7 @@ const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
     a:active,
     a.tactile:active {
       transform: none;
+      box-shadow: var(--shadow-sm);
     }
   }
 </style>
