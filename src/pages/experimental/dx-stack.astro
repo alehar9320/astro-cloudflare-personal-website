@@ -1,0 +1,130 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_dx_stack) return Astro.redirect('/404/');
+
+const linkedinHref = 'https://www.linkedin.com/in/alehar/';
+
+const stack = [
+  {
+    category: 'Framework & Edge',
+    tool: 'Astro + Cloudflare Workers',
+    detail: 'Zero JS by default, instant global distribution.',
+  },
+  {
+    category: 'Testing & Quality',
+    tool: 'Vitest + Playwright',
+    detail: 'Fast unit coverage and automated E2E visual verification.',
+  },
+  {
+    category: 'Observability',
+    tool: 'Sentry + Cloudflare Analytics',
+    detail: 'Real-time telemetry for client and edge runtime stability.',
+  },
+];
+---
+
+<BaseLayout
+  title="DX Stack | Product Manager, Developer Experience at IFS"
+  ogTitle="DX Stack | Product Manager, Developer Experience at IFS"
+  description="Product Manager, Developer Experience at IFS. Core developer experience stack and tools."
+  robots="noindex"
+>
+  <main id="main-content" role="main" class="wrapper stack gap-10">
+    <Hero title="DX Stack" align="start">
+      <p class="lede">
+        Product Manager, Developer Experience at IFS. Core tooling behind modern DX platforms:
+        lightning-fast frameworks, robust test runners, and real-time observability.
+      </p>
+    </Hero>
+    <div class="grid">
+      {
+        stack.map(({ category, tool, detail }) => (
+          <div class="card">
+            <span class="category">{category}</span>
+            <strong>{tool}</strong>
+            <p class="detail">{detail}</p>
+          </div>
+        ))
+      }
+    </div>
+    <div class="actions">
+      <CallToAction
+        href={linkedinHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-hire-event="hire_cta_click"
+        data-hire-surface="dx-stack"
+      >
+        Get in touch
+      </CallToAction>
+      <p class="cta-hint">LinkedIn · replies from me</p>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .lede {
+    margin: 0;
+    color: var(--gray-200);
+    max-width: 46ch;
+  }
+
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
+  .card {
+    padding: 1rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+    background: var(--gradient-subtle);
+  }
+
+  .category {
+    display: block;
+    font-size: var(--text-sm);
+    color: var(--accent-regular);
+    margin-bottom: 0.25rem;
+  }
+
+  .card strong {
+    display: block;
+    color: var(--gray-0);
+  }
+
+  .card .detail {
+    margin: 0.35rem 0 0;
+    color: var(--gray-300);
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    padding-bottom: var(--chat-fab-clearance);
+    padding-right: var(--chat-fab-clearance);
+  }
+
+  .cta-hint {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    font-weight: 400;
+  }
+
+  @media (min-width: 50em) {
+    .actions {
+      padding-bottom: 0;
+      padding-right: 0;
+    }
+  }
+</style>
