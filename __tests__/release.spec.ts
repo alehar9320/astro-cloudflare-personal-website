@@ -62,7 +62,7 @@ describe('release script', () => {
 
   it('formats changelog output from commits since the last tag', async () => {
     process.env.GITHUB_OUTPUT = 'mock_github_output';
-    vi.mocked(child_process.execSync).mockImplementation((cmd) => {
+    vi.mocked(child_process.execSync).mockImplementation((cmd: string) => {
       if (typeof cmd === 'string' && cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
       if (typeof cmd === 'string' && cmd.includes('log'))
         return Buffer.from('feat: new feature\nfix: bug fix');
@@ -79,7 +79,7 @@ describe('release script', () => {
 
   it('skips [skip ci] commits and falls back to internal CI updates when needed', async () => {
     process.env.GITHUB_OUTPUT = 'mock_github_output';
-    vi.mocked(child_process.execSync).mockImplementation((cmd) => {
+    vi.mocked(child_process.execSync).mockImplementation((cmd: string) => {
       if (typeof cmd === 'string' && cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
       if (typeof cmd === 'string' && cmd.includes('log'))
         return Buffer.from('chore: refresh metadata [skip ci]');
@@ -96,7 +96,7 @@ describe('release script', () => {
 
   it('handles missing tags by using the full git log', async () => {
     process.env.GITHUB_OUTPUT = 'mock_github_output';
-    vi.mocked(child_process.execSync).mockImplementation((cmd) => {
+    vi.mocked(child_process.execSync).mockImplementation((cmd: string) => {
       if (typeof cmd === 'string' && cmd.includes('describe --tags')) throw new Error('No tags');
       return Buffer.from('feat: initial release');
     });
@@ -111,7 +111,7 @@ describe('release script', () => {
 
   it('falls back to no documented changes when git log is unavailable', async () => {
     process.env.GITHUB_OUTPUT = 'mock_github_output';
-    vi.mocked(child_process.execSync).mockImplementation((cmd) => {
+    vi.mocked(child_process.execSync).mockImplementation((cmd: string) => {
       if (typeof cmd === 'string' && cmd.includes('describe --tags')) return Buffer.from('v1.0.0');
       if (typeof cmd === 'string' && cmd.includes('log')) throw new Error('Git log failed');
       return Buffer.from('');

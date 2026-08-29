@@ -1,0 +1,424 @@
+---
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Northern Lights Interactive Canvas | Alexander Härenstam Lab"
+  description="Interactive mathematical aurora simulation using sine wave superposition, magnetosphere vector fields, and light refraction."
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <header class="hero-header">
+      <Hero
+        title="Northern Lights Lab"
+        tagline="Interactive math-driven aurora refraction and vector magnetosphere field."
+        align="start"
+      />
+    </header>
+
+    <section class="lab-card" aria-label="Interactive Northern Lights Canvas">
+      <div class="canvas-wrapper">
+        <canvas
+          id="aurora-canvas"
+          role="img"
+          aria-label="Interactive Northern Lights mathematical simulation"></canvas>
+        <div class="canvas-overlay">
+          <p class="overlay-hint">Move cursor or drag to warp the magnetic field</p>
+        </div>
+      </div>
+
+      <div class="controls-bar" role="toolbar" aria-label="Aurora animation controls">
+        <button
+          type="button"
+          id="toggle-btn"
+          class="control-btn"
+          aria-label="Pause animation"
+          aria-pressed="true"
+        >
+          <span id="toggle-label">Pause</span>
+        </button>
+
+        <div class="control-group">
+          <label for="speed-range" class="control-label">Wave Speed</label>
+          <input
+            type="range"
+            id="speed-range"
+            class="control-slider"
+            min="0.2"
+            max="2.5"
+            step="0.1"
+            value="1.0"
+            aria-label="Wave Animation Speed"
+          />
+        </div>
+
+        <div class="control-group">
+          <label for="density-range" class="control-label">Refraction Density</label>
+          <input
+            type="range"
+            id="density-range"
+            class="control-slider"
+            min="3"
+            max="12"
+            step="1"
+            value="6"
+            aria-label="Refraction Density"
+          />
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import {
+    calculateMagnetosphereDisplacement,
+    calculateWaveSuperposition,
+    formatRGBAColor,
+    interpolateAuroraColor,
+    type WaveLayer,
+  } from '../../utils/aurora-math';
+
+  function initAuroraLab() {
+    const canvas = document.getElementById('aurora-canvas') as HTMLCanvasElement | null;
+    const toggleBtn = document.getElementById('toggle-btn') as HTMLButtonElement | null;
+    const toggleLabel = document.getElementById('toggle-label');
+    const speedRange = document.getElementById('speed-range') as HTMLInputElement | null;
+    const densityRange = document.getElementById('density-range') as HTMLInputElement | null;
+
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animFrameId: number | null = null;
+    let isRunning = true;
+    let time = 0;
+    let speedFactor = 1.0;
+    let waveLayersCount = 6;
+
+    // Mouse / Touch magnetosphere tracking
+    let cursorX = -1000;
+    let cursorY = -1000;
+    let targetCursorX = -1000;
+    let targetCursorY = -1000;
+
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reducedMotionQuery.matches) {
+      isRunning = false;
+      if (toggleBtn) toggleBtn.setAttribute('aria-pressed', 'false');
+      if (toggleLabel) toggleLabel.textContent = 'Play';
+    }
+
+    const baseLayers: WaveLayer[] = [
+      { amplitude: 35, frequency: 0.006, speed: 0.015, phase: 0 },
+      { amplitude: 25, frequency: 0.012, speed: 0.022, phase: 1.2 },
+      { amplitude: 18, frequency: 0.018, speed: 0.031, phase: 2.5 },
+      { amplitude: 12, frequency: 0.025, speed: 0.042, phase: 3.8 },
+      { amplitude: 8, frequency: 0.035, speed: 0.055, phase: 4.9 },
+      { amplitude: 5, frequency: 0.048, speed: 0.07, phase: 5.7 },
+      { amplitude: 4, frequency: 0.06, speed: 0.085, phase: 0.5 },
+      { amplitude: 3, frequency: 0.075, speed: 0.098, phase: 1.8 },
+      { amplitude: 2, frequency: 0.09, speed: 0.11, phase: 3.1 },
+      { amplitude: 2, frequency: 0.105, speed: 0.125, phase: 4.2 },
+      { amplitude: 1, frequency: 0.12, speed: 0.14, phase: 5.1 },
+      { amplitude: 1, frequency: 0.14, speed: 0.16, phase: 2.0 },
+    ];
+
+    const resizeCanvas = () => {
+      if (!canvas.parentElement) return;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.floor(rect.width * dpr);
+      canvas.height = Math.floor(rect.height * dpr);
+      ctx.scale(dpr, dpr);
+      renderFrame();
+    };
+
+    const renderFrame = () => {
+      const width = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
+      const height = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Smooth cursor interpolation
+      cursorX += (targetCursorX - cursorX) * 0.1;
+      cursorY += (targetCursorY - cursorY) * 0.1;
+
+      // Dark glass background
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
+      bgGrad.addColorStop(0, 'rgba(10, 15, 28, 0.95)');
+      bgGrad.addColorStop(1, 'rgba(15, 23, 42, 0.98)');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      const layersToRender = baseLayers.slice(0, waveLayersCount);
+      const stepX = Math.max(4, Math.floor(width / 120));
+
+      // Render aurora waves
+      for (let l = 0; l < layersToRender.length; l++) {
+        const layerRatio = l / layersToRender.length;
+        const color = interpolateAuroraColor(layerRatio);
+        ctx.fillStyle = formatRGBAColor(color);
+
+        ctx.beginPath();
+        ctx.moveTo(0, height);
+
+        for (let x = 0; x <= width; x += stepX) {
+          const rawY =
+            height * 0.45 + calculateWaveSuperposition(x, time, layersToRender.slice(0, l + 1));
+
+          const disp = calculateMagnetosphereDisplacement(x, rawY, cursorX, cursorY, 180);
+          const finalX = x + disp.dx;
+          const finalY = rawY + disp.dy;
+
+          ctx.lineTo(finalX, finalY);
+        }
+
+        ctx.lineTo(width, height);
+        ctx.closePath();
+        ctx.fill();
+      }
+    };
+
+    const loop = () => {
+      if (!isRunning) return;
+      time += 0.02 * speedFactor;
+      renderFrame();
+      animFrameId = requestAnimationFrame(loop);
+    };
+
+    const toggleAnimation = () => {
+      isRunning = !isRunning;
+      if (toggleBtn) toggleBtn.setAttribute('aria-pressed', String(isRunning));
+      if (toggleLabel) toggleLabel.textContent = isRunning ? 'Pause' : 'Play';
+      if (isRunning) {
+        loop();
+      } else if (animFrameId !== null) {
+        cancelAnimationFrame(animFrameId);
+        animFrameId = null;
+      }
+    };
+
+    // Event Listeners
+    const handlePointerMove = (e: PointerEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      targetCursorX = e.clientX - rect.left;
+      targetCursorY = e.clientY - rect.top;
+      if (!isRunning) renderFrame();
+    };
+
+    const handlePointerLeave = () => {
+      targetCursorX = -1000;
+      targetCursorY = -1000;
+      if (!isRunning) renderFrame();
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space' && document.activeElement === toggleBtn) {
+        e.preventDefault();
+        toggleAnimation();
+      }
+    };
+
+    canvas.addEventListener('pointermove', handlePointerMove, { passive: true });
+    canvas.addEventListener('pointerleave', handlePointerLeave, { passive: true });
+    toggleBtn?.addEventListener('click', toggleAnimation);
+    toggleBtn?.addEventListener('keydown', handleKeyDown);
+
+    speedRange?.addEventListener('input', () => {
+      speedFactor = parseFloat(speedRange.value) || 1.0;
+      if (!isRunning) renderFrame();
+    });
+
+    densityRange?.addEventListener('input', () => {
+      waveLayersCount = parseInt(densityRange.value, 10) || 6;
+      if (!isRunning) renderFrame();
+    });
+
+    window.addEventListener('resize', resizeCanvas);
+
+    // Initial setup
+    resizeCanvas();
+    if (isRunning) {
+      loop();
+    }
+
+    // Astro lifecycle teardown to prevent memory leaks across page swaps
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        if (animFrameId !== null) cancelAnimationFrame(animFrameId);
+        window.removeEventListener('resize', resizeCanvas);
+        canvas.removeEventListener('pointermove', handlePointerMove);
+        canvas.removeEventListener('pointerleave', handlePointerLeave);
+      },
+      { once: true }
+    );
+  }
+
+  // Support Astro view transitions or direct page loads
+  document.addEventListener('astro:page-load', initAuroraLab);
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initAuroraLab();
+  }
+</script>
+
+<style>
+  .hero-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .lab-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 1rem;
+    background: hsla(var(--gray-999-basis), 0.5);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .canvas-wrapper {
+    position: relative;
+    width: 100%;
+    height: 380px;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid var(--gray-800);
+    touch-action: none;
+  }
+
+  #aurora-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+  }
+
+  .canvas-overlay {
+    position: absolute;
+    bottom: 0.75rem;
+    left: 0.75rem;
+    pointer-events: none;
+  }
+
+  .overlay-hint {
+    margin: 0;
+    padding: 0.25rem 0.625rem;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    background: hsla(var(--gray-999-basis), 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid var(--gray-800);
+    border-radius: 0.375rem;
+  }
+
+  .controls-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.75rem;
+    background: var(--gray-900);
+    border: 1px solid var(--gray-800);
+  }
+
+  .control-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1.25rem;
+    border: 1px solid var(--gray-700);
+    border-radius: 0.5rem;
+    background: var(--gray-800);
+    color: var(--gray-0);
+    font-family: inherit;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      border-color 0.15s ease;
+  }
+
+  .control-btn:hover,
+  .control-btn:focus-visible {
+    background: var(--gray-700);
+    border-color: var(--accent-regular);
+  }
+
+  .control-btn:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+  }
+
+  .control-group {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .control-label {
+    font-size: var(--text-sm);
+    color: var(--gray-200);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .control-slider {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 120px;
+    height: 6px;
+    border-radius: 3px;
+    background: var(--gray-700);
+    outline: none;
+    cursor: pointer;
+  }
+
+  .control-slider::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background: var(--accent-regular);
+    cursor: pointer;
+  }
+
+  .control-slider::-moz-range-thumb {
+    width: 16px;
+    height: 16px;
+    border: 0;
+    border-radius: 50%;
+    background: var(--accent-regular);
+    cursor: pointer;
+  }
+
+  .control-slider:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+  }
+
+  @media (max-width: 40em) {
+    .controls-bar {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .control-group {
+      justify-content: space-between;
+    }
+
+    .control-slider {
+      width: 140px;
+    }
+  }
+</style>
