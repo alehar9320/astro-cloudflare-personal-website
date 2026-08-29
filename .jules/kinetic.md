@@ -1,4 +1,16 @@
+# HARD ABORT — CallToAction glass farm
+
+Read this before scouting. If the idea is more glassmorphism, backdrop-filter, glow tokens, sheen, translateY hover, or micro-states on `CallToAction.astro` or the hire CTA, ABORT the cycle. Do not downscope into a sibling glass pass on the same button. Do not open a PR.
+
+Closed as farm: #772, #667.
+
+Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hire path is LinkedIn only. Do not invent a public email or CV.
+
+---
+
 # Kinetic Journal ⚡
+
+## 2026-08-29 - CTA glass abort | Signal: closed #772/#667 | Lean Implementation: HARD ABORT CallToAction glassmorphism and micro-states
 
 ## 2025-05-15 - Interactive Glassmorphism for Skills Section
 
