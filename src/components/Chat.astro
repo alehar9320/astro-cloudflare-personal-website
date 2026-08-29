@@ -90,14 +90,12 @@
     <p id="chat-remaining" class="chat-remaining" aria-live="polite" hidden></p>
   </div>
   <form id="chat-form" class="chat-form">
-    <!-- Optimization (⚡ Bolt): Lazy load avatar and decode asynchronously to avoid blocking initial render critical path -->
     <img
       src="/assets/portrait.png"
       alt=""
       class="chat-header-avatar"
       width="40"
       height="40"
-      loading="lazy"
       decoding="async"
     />
     <input type="text" id="chat-input" required autocomplete="off" placeholder="Message…" />
