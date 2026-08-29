@@ -1,29 +1,31 @@
 ---
+import CallToAction from '../../components/CallToAction.astro';
 import Hero from '../../components/Hero.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const linkedinHref = 'https://www.linkedin.com/in/alehar/';
 ---
 
 <BaseLayout
-  title="Northern Lights Interactive Canvas | Alexander Härenstam Lab"
-  description="Interactive mathematical aurora simulation using sine wave superposition, magnetosphere vector fields, and light refraction."
+  title="Northern Lights lab | Product Manager, Developer Experience at IFS"
+  ogTitle="Northern Lights lab | Product Manager, Developer Experience at IFS"
+  description="Move your pointer through an aurora canvas. Waves bend around it."
 >
-  <main id="main-content" class="wrapper stack gap-8">
+  <main id="main-content" role="main" class="wrapper stack gap-8">
     <header class="hero-header">
       <Hero
-        title="Northern Lights Lab"
-        tagline="Interactive math-driven aurora refraction and vector magnetosphere field."
+        title="Northern Lights lab"
+        tagline="Move your pointer through the aurora. The waves bend around it."
         align="start"
       />
     </header>
 
     <section class="lab-card" aria-label="Interactive Northern Lights Canvas">
       <div class="canvas-wrapper">
-        <canvas
-          id="aurora-canvas"
-          role="img"
-          aria-label="Interactive Northern Lights mathematical simulation"></canvas>
+        <canvas id="aurora-canvas" role="img" aria-label="Interactive Northern Lights simulation"
+        ></canvas>
         <div class="canvas-overlay">
-          <p class="overlay-hint">Move cursor or drag to warp the magnetic field</p>
+          <p class="overlay-hint">Move your pointer — the aurora bends around it.</p>
         </div>
       </div>
 
@@ -53,7 +55,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
         </div>
 
         <div class="control-group">
-          <label for="density-range" class="control-label">Refraction Density</label>
+          <label for="density-range" class="control-label">Detail</label>
           <input
             type="range"
             id="density-range"
@@ -62,11 +64,24 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
             max="12"
             step="1"
             value="6"
-            aria-label="Refraction Density"
+            aria-label="Detail"
           />
         </div>
       </div>
     </section>
+
+    <div class="actions">
+      <CallToAction
+        href={linkedinHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-hire-event="hire_cta_click"
+        data-hire-surface="lab_aurora"
+      >
+        Get in touch
+      </CallToAction>
+      <p class="cta-hint">LinkedIn · replies from me</p>
+    </div>
   </main>
 </BaseLayout>
 
@@ -405,6 +420,30 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
   .control-slider:focus-visible {
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    padding-bottom: var(--chat-fab-clearance);
+    padding-right: var(--chat-fab-clearance);
+  }
+
+  .cta-hint {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    font-weight: 400;
+  }
+
+  @media (min-width: 50em) {
+    .actions {
+      padding-bottom: 0;
+      padding-right: 0;
+    }
   }
 
   @media (max-width: 40em) {
