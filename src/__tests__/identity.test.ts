@@ -2546,4 +2546,22 @@ describe('identity copy', () => {
     expect(home).toContain('https://www.linkedin.com/in/alehar/');
     expect(chat).not.toContain('mailto:');
   });
+
+  it('wires the named PostHog hire action and keeps LinkedIn (#782)', () => {
+    const hire = readFileSync('src/utils/hire-analytics.ts', 'utf8');
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    const contact = readFileSync('src/pages/contact.astro', 'utf8');
+    expect(hire).toContain("'Contact card — Get in touch / LinkedIn hire'");
+    expect(hire).toContain('window.posthog?.capture?.');
+    expect(hire).toContain('Fail-open');
+    expect(hire).toContain('linkedin.com');
+    expect(hire).toContain('Get in touch');
+    expect(hire).not.toContain('mailto:');
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+    expect(home).toContain('Get in touch');
+    expect(home).toContain('data-hire-event="hire_cta_click"');
+    expect(contact).toContain('https://www.linkedin.com/in/alehar/');
+    expect(contact).toContain('Get in touch');
+    expect(contact).not.toContain('mailto:');
+  });
 });

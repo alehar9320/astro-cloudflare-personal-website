@@ -1,6 +1,11 @@
 /** @vitest-environment jsdom */
-import { beforeAll, beforeEach, describe, expect, it } from 'vitest';
-import { initHireAnalytics, trackHireEvent } from './hire-analytics';
+import { beforeAll, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  HIRE_CONTACT_ACTION,
+  initHireAnalytics,
+  matchesHireContactCard,
+  trackHireEvent,
+} from './hire-analytics';
 
 describe('hire-analytics', () => {
   beforeAll(() => {
@@ -11,6 +16,7 @@ describe('hire-analytics', () => {
   beforeEach(() => {
     window.dataLayer = [];
     document.body.innerHTML = '';
+    delete window.posthog;
   });
 
   it('dispatches a CustomEvent and pushes to dataLayer', () => {
@@ -84,5 +90,55 @@ describe('hire-analytics', () => {
     ].join('');
     document.querySelectorAll('button').forEach((el) => (el as HTMLElement).click());
     expect(window.dataLayer).toEqual([]);
+  });
+
+  it('exports the exact Nick KR2.1 action name', () => {
+    expect(HIRE_CONTACT_ACTION).toBe('Contact card — Get in touch / LinkedIn hire');
+  });
+
+  it('matches LinkedIn href or Get in touch text only', () => {
+    document.body.innerHTML = [
+      '<a id="li" href="https://www.linkedin.com/in/alehar/">LI</a>',
+      '<a id="git" href="/x">Get in touch</a>',
+      '<a id="nav" href="/contact/" data-hire-event="hire_cta_click" data-hire-surface="nav">Contact</a>',
+    ].join('');
+    expect(matchesHireContactCard(document.getElementById('li')!)).toBe(true);
+    expect(matchesHireContactCard(document.getElementById('git')!)).toBe(true);
+    expect(matchesHireContactCard(document.getElementById('nav')!)).toBe(false);
+  });
+
+  it('captures the named action on Get in touch / LinkedIn hire clicks', () => {
+    const capture = vi.fn();
+    window.posthog = { capture };
+    document.body.innerHTML =
+      '<a href="https://www.linkedin.com/in/alehar/" data-hire-event="hire_cta_click"' +
+      ' data-hire-surface="hero">Get in touch</a>';
+    document.querySelector('a')!.click();
+    expect(capture).toHaveBeenCalledWith(HIRE_CONTACT_ACTION, { surface: 'hero' });
+  });
+
+  it('does not capture the named action for nav Contact that is not LinkedIn', () => {
+    const capture = vi.fn();
+    window.posthog = { capture };
+    document.body.innerHTML =
+      '<a href="/contact/" data-hire-event="hire_cta_click" data-hire-surface="nav">Contact</a>';
+    document.querySelector('a')!.click();
+    expect(capture).not.toHaveBeenCalled();
+    expect(window.dataLayer).toEqual([{ event: 'hire_cta_click', surface: 'nav' }]);
+  });
+
+  it('fail-opens when PostHog is missing or throws', () => {
+    delete window.posthog;
+    document.body.innerHTML =
+      '<a href="https://www.linkedin.com/in/alehar/" data-hire-event="linkedin_click"' +
+      ' data-hire-surface="contact_page">Get in touch</a>';
+    expect(() => document.querySelector('a')!.click()).not.toThrow();
+
+    window.posthog = {
+      capture: () => {
+        throw new Error('posthog down');
+      },
+    };
+    expect(() => document.querySelector('a')!.click()).not.toThrow();
   });
 });

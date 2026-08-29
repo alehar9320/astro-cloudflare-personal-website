@@ -1,3 +1,5 @@
+export const HIRE_CONTACT_ACTION = 'Contact card — Get in touch / LinkedIn hire';
+
 export type HireEventName =
   | 'hire_cta_click'
   | 'contact_page_view'
@@ -12,6 +14,29 @@ declare global {
   interface Window {
     dataLayer?: Array<Record<string, string>>;
     __hireAnalyticsInit?: boolean;
+    posthog?: {
+      capture?: (event: string, properties?: Record<string, string>) => void;
+    };
+  }
+}
+
+/**
+ * Nick KR2.1 named action. Filter recipe (do not invent):
+ * host me.alehar.workers.dev, PostHog 171414 (eu), exclude $os = Linux,
+ * href contains linkedin.com OR text contains "Get in touch".
+ * Fail-open if PostHog is missing. Do not invent counts.
+ */
+export function matchesHireContactCard(el: Element): boolean {
+  const href = el.getAttribute('href') ?? '';
+  const text = (el.textContent ?? '').replace(/\s+/g, ' ').trim();
+  return href.includes('linkedin.com') || text.includes('Get in touch');
+}
+
+function captureHireContactAction(surface: HireSurface) {
+  try {
+    window.posthog?.capture?.(HIRE_CONTACT_ACTION, { surface });
+  } catch {
+    // Fail-open: hire click still works if PostHog is absent or throws.
   }
 }
 
@@ -34,5 +59,6 @@ export function initHireAnalytics() {
     // Chat open/send are fired from Chat.astro so toggle-close is not counted.
     if (event === 'chat_opened' || event === 'chat_message_sent') return;
     trackHireEvent(event, surface);
+    if (matchesHireContactCard(el)) captureHireContactAction(surface);
   });
 }
