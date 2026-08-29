@@ -20,3 +20,18 @@ declare module '*.txt?raw' {
   const content: string;
   export default content;
 }
+
+declare namespace NodeJS {
+  interface ProcessEnv {
+    [key: string]: string | undefined;
+  }
+  interface Process {
+    env: ProcessEnv;
+  }
+}
+
+declare const process: NodeJS.Process;
+
+declare module 'node:fs' {
+  export * from 'fs';
+}
