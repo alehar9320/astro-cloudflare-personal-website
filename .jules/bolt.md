@@ -5,3 +5,7 @@ Action: Added fetchpriority="high" and decoding="async" to the hero images in sr
 2026-05-30 - Icon Payload Pruning
 Learning: Inlined SVG icons in Astro components contribute directly to the HTML payload size. Commenting out unused icons in a shared IconPaths configuration reduces the bytes served per page and the memory footprint of the Cloudflare Worker.
 Action: Commented out unused icons in src/components/IconPaths.ts and updated related tests. Use grep -r to periodically audit icon usage across the codebase.
+
+2026-08-29 - Non-Critical Image Deferral & Icon Pruning
+Learning: Fixed overlay components like chat FABs loaded on every page via layouts include offscreen images (e.g., avatar portraits) that should not block the initial critical render path or CPU main thread image decoding. Explicitly marking these secondary/overlay images with loading="lazy" and decoding="async" avoids upfront decoding costs.
+Action: Added loading="lazy" and decoding="async" to chat avatar in src/components/Chat.astro and commented out remaining unused icon paths in src/components/IconPaths.ts.
