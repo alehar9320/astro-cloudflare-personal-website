@@ -99,12 +99,29 @@ describe('hire-analytics', () => {
   it('matches LinkedIn href or Get in touch text only', () => {
     document.body.innerHTML = [
       '<a id="li" href="https://www.linkedin.com/in/alehar/">LI</a>',
+      '<a id="apex" href="https://linkedin.com/in/alehar/">apex</a>',
       '<a id="git" href="/x">Get in touch</a>',
       '<a id="nav" href="/contact/" data-hire-event="hire_cta_click" data-hire-surface="nav">Contact</a>',
     ].join('');
     expect(matchesHireContactCard(document.getElementById('li')!)).toBe(true);
+    expect(matchesHireContactCard(document.getElementById('apex')!)).toBe(true);
     expect(matchesHireContactCard(document.getElementById('git')!)).toBe(true);
     expect(matchesHireContactCard(document.getElementById('nav')!)).toBe(false);
+  });
+
+  it('rejects spoofed LinkedIn substring hosts', () => {
+    document.body.innerHTML = [
+      '<a id="evil1" href="https://evil.com/linkedin.com">x</a>',
+      '<a id="evil2" href="https://linkedin.com.evil.com/">x</a>',
+      '<a id="evil3" href="https://notlinkedin.com/">x</a>',
+      '<a id="rel" href="/linkedin.com">x</a>',
+      '<a id="bad" href="not a url">x</a>',
+    ].join('');
+    expect(matchesHireContactCard(document.getElementById('evil1')!)).toBe(false);
+    expect(matchesHireContactCard(document.getElementById('evil2')!)).toBe(false);
+    expect(matchesHireContactCard(document.getElementById('evil3')!)).toBe(false);
+    expect(matchesHireContactCard(document.getElementById('rel')!)).toBe(false);
+    expect(matchesHireContactCard(document.getElementById('bad')!)).toBe(false);
   });
 
   it('captures the named action on Get in touch / LinkedIn hire clicks', () => {

@@ -25,11 +25,23 @@ declare global {
  * host me.alehar.workers.dev, PostHog 171414 (eu), exclude $os = Linux,
  * href contains linkedin.com OR text contains "Get in touch".
  * Fail-open if PostHog is missing. Do not invent counts.
+ *
+ * Code check uses hostname parsing (not substring) so spoofed hosts cannot match.
  */
+function isLinkedInHref(href: string): boolean {
+  try {
+    if (!/^https?:\/\//i.test(href.trim())) return false;
+    const host = new URL(href).hostname.toLowerCase();
+    return host === 'linkedin.com' || host.endsWith('.linkedin.com');
+  } catch {
+    return false;
+  }
+}
+
 export function matchesHireContactCard(el: Element): boolean {
   const href = el.getAttribute('href') ?? '';
   const text = (el.textContent ?? '').replace(/\s+/g, ' ').trim();
-  return href.includes('linkedin.com') || text.includes('Get in touch');
+  return isLinkedInHref(href) || text.includes('Get in touch');
 }
 
 function captureHireContactAction(surface: HireSurface) {
