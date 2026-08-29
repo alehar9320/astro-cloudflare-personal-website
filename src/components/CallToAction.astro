@@ -54,7 +54,8 @@ const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
     white-space: nowrap;
     transition:
       background-color 0.2s ease,
-      box-shadow 0.2s ease;
+      box-shadow 0.2s ease,
+      transform 0.15s ease;
   }
 
   @media (min-width: 20em) {
@@ -81,7 +82,6 @@ const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
 
   a.tactile:active {
     transform: translateY(2px) scale(0.98);
-    transition: transform 0.15s ease;
   }
 
   /* Overlay for standard static hover effect no longer needed, using animated gradient */
@@ -108,7 +108,8 @@ const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
 
     a:hover,
     a:focus-visible,
-    a:active {
+    a:active,
+    a.tactile:active {
       transform: none;
     }
   }
