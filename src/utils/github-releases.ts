@@ -186,8 +186,8 @@ export function formatReleaseDate(dateString: string | null): string {
  */
 export function parseReleaseItem(line: string): ReleaseItem {
   const cleaned = line.trim();
-  // Matches a 7-character hex hash at the beginning
-  const hashMatch = cleaned.match(/^([a-f0-9]{7})\s+(.*)/);
+  // Matches a 7 to 40-character hex hash at the beginning
+  const hashMatch = cleaned.match(/^([a-f0-9]{7,40})\s+(.*)/i);
 
   if (hashMatch) {
     const hash = hashMatch[1];
@@ -213,17 +213,26 @@ export function isPublicChangelogItem(item: ReleaseItem): boolean {
  * Splits a release body into individual, formatted ReleaseItem objects.
  * Filters for lines starting with list markers (-, *, +).
  * Drops Jules, agent-farm, and Johan-nits internals from the public list.
+ * Single-pass implementation to minimize allocations on edge runtimes.
  * @param {string} body - The full Markdown body of a GitHub release.
  * @returns {ReleaseItem[]} An array of parsed release items.
  */
 export function splitReleaseBody(body: string): ReleaseItem[] {
-  return body
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => /^[-*+]\s+/.test(line))
-    .map((line) => line.replace(/^[-*+]\s+/, ''))
-    .map(parseReleaseItem)
-    .filter(isPublicChangelogItem);
+  const lines = body.split('\n');
+  const items: ReleaseItem[] = [];
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!/^[-*+]\s+/.test(trimmed)) continue;
+
+    const rawMessage = trimmed.replace(/^[-*+]\s+/, '');
+    const item = parseReleaseItem(rawMessage);
+    if (isPublicChangelogItem(item)) {
+      items.push(item);
+    }
+  }
+
+  return items;
 }
 
 export { RELEASES_PAGE_URL };

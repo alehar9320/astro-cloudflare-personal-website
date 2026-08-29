@@ -161,9 +161,9 @@ describe('github releases utility', () => {
     );
   });
 
-  it('parses commit hashes from release items with various markers', () => {
+  it('parses commit hashes from release items with various markers and variable hash lengths', () => {
     const body =
-      '* 8acc628 ✍️ Scribe: Strategic Copy Optimization\n+ 1234567 fix: some issue\n- plain message';
+      '* 8acc628 ✍️ Scribe: Strategic Copy Optimization\n+ 12345678 fix: 8-char hash issue\n- 40481fa790b8d54d7e2c040d1a49826354fb2206 feat: 40-char full sha\n- plain message';
     const items = splitReleaseBody(body);
 
     expect(items).toEqual([
@@ -173,9 +173,14 @@ describe('github releases utility', () => {
         url: 'https://github.com/alehar9320/astro-cloudflare-personal-website/commit/8acc628',
       },
       {
-        hash: '1234567',
-        message: 'fix: some issue',
-        url: 'https://github.com/alehar9320/astro-cloudflare-personal-website/commit/1234567',
+        hash: '12345678',
+        message: 'fix: 8-char hash issue',
+        url: 'https://github.com/alehar9320/astro-cloudflare-personal-website/commit/12345678',
+      },
+      {
+        hash: '40481fa790b8d54d7e2c040d1a49826354fb2206',
+        message: 'feat: 40-char full sha',
+        url: 'https://github.com/alehar9320/astro-cloudflare-personal-website/commit/40481fa790b8d54d7e2c040d1a49826354fb2206',
       },
       {
         message: 'plain message',

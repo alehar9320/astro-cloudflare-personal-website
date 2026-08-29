@@ -33,20 +33,23 @@ export const ChatRequestSchema = z.object({
  * @returns A pruned array of messages that satisfies all constraints.
  */
 export function pruneMessages(messages: ChatMessage[]): ChatMessage[] {
-  const pruned = messages.slice(-MAX_MESSAGES);
-  let totalLength = pruned.reduce((acc, msg) => acc + msg.content.length, 0);
+  const windowed = messages.slice(-MAX_MESSAGES);
+  if (windowed.length <= 1) return windowed;
 
-  while (pruned.length > 1 && totalLength > MAX_TOTAL_CONTENT_LENGTH) {
-    // biome-ignore lint/style/noNonNullAssertion: loop guard ensures shift() returns an element
-    totalLength -= pruned.shift()!.content.length;
+  let start = 0;
+  let totalLength = windowed.reduce((acc, msg) => acc + msg.content.length, 0);
+
+  while (start < windowed.length - 1 && totalLength > MAX_TOTAL_CONTENT_LENGTH) {
+    totalLength -= windowed[start].content.length;
+    start += 1;
   }
 
-  while (pruned.length > 1 && pruned[0].role === 'assistant') {
-    // biome-ignore lint/style/noNonNullAssertion: loop guard ensures shift() returns an element
-    totalLength -= pruned.shift()!.content.length;
+  while (start < windowed.length - 1 && windowed[start].role === 'assistant') {
+    totalLength -= windowed[start].content.length;
+    start += 1;
   }
 
-  return pruned;
+  return start > 0 ? windowed.slice(start) : windowed;
 }
 
 export const DESIGN_SYSTEM_CHIP = 'What did the IFS design system change?';
