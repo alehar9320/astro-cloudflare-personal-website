@@ -37,6 +37,9 @@ const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
 
 <style>
   a {
+    --cta-glow-color: hsla(210, 100%, 45%, 0.35);
+    --cta-border-color: hsla(var(--gray-999-basis), 0.2);
+
     position: relative;
     display: flex;
     place-content: center;
@@ -47,15 +50,18 @@ const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
     text-decoration: none;
     line-height: 1.1;
     border-radius: 999rem;
+    border: 1px solid var(--cta-border-color);
     overflow: hidden;
     background-color: var(--accent-regular);
-    background-image: none;
+    backdrop-filter: blur(12px) saturate(140%);
+    -webkit-backdrop-filter: blur(12px) saturate(140%);
     box-shadow: var(--shadow-sm);
     white-space: nowrap;
     transition:
-      background-color 0.2s ease,
-      box-shadow 0.2s ease,
-      transform 0.15s ease;
+      background-color 0.25s ease,
+      box-shadow 0.25s ease,
+      border-color 0.25s ease,
+      transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   @media (min-width: 20em) {
@@ -64,13 +70,21 @@ const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
     }
   }
 
-  a:hover,
-  a:focus-visible {
+  a:hover {
     background-color: var(--accent-dark);
-    box-shadow: var(--shadow-md);
+    border-color: hsla(var(--gray-999-basis), 0.4);
+    box-shadow:
+      0 10px 25px -4px var(--cta-glow-color),
+      var(--shadow-md);
+    transform: translateY(-2px);
   }
 
   a:focus-visible {
+    background-color: var(--accent-dark);
+    border-color: hsla(var(--gray-999-basis), 0.4);
+    box-shadow:
+      0 10px 25px -4px var(--cta-glow-color),
+      var(--shadow-md);
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
   }
@@ -78,6 +92,7 @@ const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
   a:active {
     background-color: var(--accent-dark);
     box-shadow: var(--shadow-sm);
+    transform: translateY(0);
   }
 
   a.tactile:active {
