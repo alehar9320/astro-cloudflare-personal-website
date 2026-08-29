@@ -15,3 +15,9 @@
 - [Insight 1: Adding instant hardware-accelerated press feedback (`transform: translateY(2px) scale(0.98)`) on CTA buttons eliminates perceived press latency.]
 - [Insight 2: Scoping tactile feedback behind feature flags (`enable_cta_tactile_v1`) allows isolated deployment without global layout risk.]
 - [Delta: 12 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-09 - Skills Card Focus-Within | Signal: Competitive/Technical | Lean Implementation: Flagged CSS :focus-within
+
+- [Insight 1: Keyboard users tabbing through links nested inside Skills card components benefit from card elevation and border highlight feedback.]
+- [Insight 2: Scoping card focus-within states behind feature flags (`enable_skills_card_focus`) prevents global layout risks and allows isolated verification.]
+- [Delta: 15 lines. Guardrails: All passed autonomously.]

@@ -2,9 +2,12 @@
 import Icon from './Icon.astro';
 import { getEntry } from 'astro:content';
 const flagsEntry = await getEntry('flags', 'config');
+const isCardFocusEnabled = flagsEntry?.data.enable_skills_card_focus ?? false;
 ---
 
-<section class={`box skills ${flagsEntry?.data.enable_skills_pulse_v1 ? 'pulse-enabled' : ''}`}>
+<section
+  class={`box skills ${flagsEntry?.data.enable_skills_pulse_v1 ? 'pulse-enabled' : ''} ${isCardFocusEnabled ? 'card-focus-enabled' : ''}`}
+>
   <div class="stack gap-2 lg:gap-4">
     <Icon icon="rocket-launch" color="var(--accent-regular)" size="2.5rem" gradient />
     <h2>Driving Growth & ROI</h2>
@@ -55,7 +58,8 @@ const flagsEntry = await getEntry('flags', 'config');
       border-color var(--theme-transition);
   }
 
-  .box:hover {
+  .box:hover,
+  .box.card-focus-enabled:focus-within {
     transform: translateY(-4px);
     border-color: var(--accent-regular);
     box-shadow:
@@ -67,7 +71,8 @@ const flagsEntry = await getEntry('flags', 'config');
     .box {
       transition: none;
     }
-    .box:hover {
+    .box:hover,
+    .box.card-focus-enabled:focus-within {
       transform: none;
     }
   }
