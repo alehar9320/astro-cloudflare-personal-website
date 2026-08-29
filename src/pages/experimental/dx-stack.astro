@@ -13,17 +13,18 @@ const stack = [
   {
     category: 'Framework & Edge',
     tool: 'Astro + Cloudflare Workers',
-    detail: 'Zero JS by default, instant global distribution.',
+    detail: 'Ships with almost no client JS, and Cloudflare puts it close to the visitor.',
   },
   {
     category: 'Testing & Quality',
     tool: 'Vitest + Playwright',
-    detail: 'Fast unit coverage and automated E2E visual verification.',
+    detail: 'Unit tests that stay fast, plus Playwright for the screens that have to look right.',
   },
   {
     category: 'Observability',
     tool: 'Sentry + Cloudflare Analytics',
-    detail: 'Real-time telemetry for client and edge runtime stability.',
+    detail:
+      'Sentry catches runtime errors; Cloudflare Analytics shows edge traffic without another dashboard.',
   },
 ];
 ---
@@ -31,14 +32,14 @@ const stack = [
 <BaseLayout
   title="DX Stack | Product Manager, Developer Experience at IFS"
   ogTitle="DX Stack | Product Manager, Developer Experience at IFS"
-  description="Product Manager, Developer Experience at IFS. Core developer experience stack and tools."
+  description="Product Manager, Developer Experience at IFS. Tools behind the developer platforms I work on."
   robots="noindex"
 >
   <main id="main-content" role="main" class="wrapper stack gap-10">
     <Hero title="DX Stack" align="start">
       <p class="lede">
-        Product Manager, Developer Experience at IFS. Core tooling behind modern DX platforms:
-        lightning-fast frameworks, robust test runners, and real-time observability.
+        Product Manager, Developer Experience at IFS. The stack I lean on for DX work: Astro on the
+        edge, Vitest and Playwright for quality, Sentry for what breaks in production.
       </p>
     </Hero>
     <div class="grid">
