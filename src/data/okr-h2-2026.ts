@@ -86,7 +86,7 @@ export const OBJECTIVES: readonly Objective[] = [
         direction: 'up',
       },
     ],
-    supporting: ['Hire tracking in PostHog — live by 30 Sep 2026', 'Hire path stays LinkedIn only'],
+    supporting: ['Hire tracking in PostHog — live', 'Hire path stays LinkedIn only'],
   },
   {
     id: 'O3',
