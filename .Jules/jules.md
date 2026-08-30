@@ -15,3 +15,9 @@
 - [Insight 1: Adding instant hardware-accelerated press feedback (`transform: translateY(2px) scale(0.98)`) on CTA buttons eliminates perceived press latency.]
 - [Insight 2: Scoping tactile feedback behind feature flags (`enable_cta_tactile_v1`) allows isolated deployment without global layout risk.]
 - [Delta: 12 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-09 - Pill Tactile Micro-Interaction | Signal: Competitive/Technical | Lean Implementation: Flagged CSS Gradient Shift
+
+- [Insight 1: Animating gradient background-position on Pill hover provides fluid tactile feedback for tag metadata.]
+- [Insight 2: Gating hover state behind `enable_pill_tactile_v1` and `@media (prefers-reduced-motion: no-preference)` guarantees zero regression risk for accessibility and non-flagged builds.]
+- [Delta: 21 lines. Guardrails: All passed autonomously.]

@@ -1,4 +1,11 @@
-<div class="pill"><slot /></div>
+---
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+const isPillTactileEnabled = flagsEntry?.data.enable_pill_tactile_v1 ?? false;
+---
+
+<div class:list={['pill', { tactile: isPillTactileEnabled }]}><slot /></div>
 
 <style>
   .pill {
@@ -23,5 +30,14 @@
     background-size: 250% 100%;
     background-position: 0% 50%;
     box-shadow: var(--shadow-sm);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pill.tactile {
+      transition: background-position var(--theme-transition);
+    }
+    .pill.tactile:hover {
+      background-position: 100% 50%;
+    }
   }
 </style>
