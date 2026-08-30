@@ -167,7 +167,13 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
                 {Content && <Content />}
               </div>
               {entry.data.img && entry.id === 'ifs-design-system' && (
-                <img src={entry.data.img} alt={entry.data.img_alt || ''} decoding="async" />
+                /* Optimization (⚡ Bolt): Below-the-fold case study image is lazy loaded to defer payload fetching and offload main-thread decoding on initial load. */
+                <img
+                  src={entry.data.img}
+                  alt={entry.data.img_alt || ''}
+                  loading="lazy"
+                  decoding="async"
+                />
               )}
             </div>
           </main>

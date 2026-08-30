@@ -9,3 +9,7 @@ Action: Commented out unused icons in src/components/IconPaths.ts and updated re
 2026-08-29 - In-Viewport Decoding & Icon Pruning
 Learning: Docked composer avatars on first paint sit in-viewport inside the bottom chat bar. Using loading="lazy" on in-viewport images can cause blank flashes; using decoding="async" offloads image decoding from the main thread without deferring fetch. Unused SVG icon paths in IconPaths.ts can be safely commented out to prune bundle size.
 Action: Retained decoding="async" on the chat avatar image in src/components/Chat.astro (omitting loading="lazy") and commented out unused instagram-logo and facebook-logo paths in src/components/IconPaths.ts.
+
+2026-08-30 - Lazy Loading Below-the-Fold Case Study Image
+Learning: Case study hero/proof images positioned at the bottom of the page (below the fold) consume network bandwidth and decoding resources during initial page paint if un-lazy. Adding loading="lazy" defers fetching and decoding until scrolled into view.
+Action: Added loading="lazy" to the below-the-fold IFS Design System image in src/pages/work/[...slug].astro.
