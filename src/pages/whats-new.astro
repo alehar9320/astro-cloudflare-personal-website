@@ -185,12 +185,41 @@ const schema = {
       display: flex;
       flex-direction: row;
       align-items: flex-start;
-      gap: 1.25rem;
+      gap: 0.65rem;
     }
 
     .last-30 .group {
       flex: 1 1 0;
       min-width: 0;
+    }
+
+    /* #813: denser desktop Last-30 so every outcome line clears dock at 1280×800 */
+    .glance {
+      gap: 0.65rem;
+    }
+
+    .this-week,
+    .last-30 {
+      padding: 0.75rem 1.15rem;
+    }
+
+    .this-week h2,
+    .last-30 h2 {
+      margin-bottom: 0.3rem;
+    }
+
+    .group h3 {
+      margin-bottom: 0.2rem;
+    }
+
+    .this-week li,
+    .last-30 li {
+      margin-bottom: 0.1rem;
+      line-height: 1.3;
+    }
+
+    .history {
+      margin-top: 0.25rem;
     }
   }
 
