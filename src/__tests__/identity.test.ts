@@ -2646,7 +2646,7 @@ describe('identity copy', () => {
     expect(home).not.toContain('mailto:');
   });
 
-  it('keeps home proof continue clear of the docked composer on short desktop (#812)', () => {
+  it('keeps home proof continue clear of the docked composer on short desktop (#812)', () => { // tip sync
     const home = readFileSync('src/pages/index.astro', 'utf8');
     expect(home).toContain('class="proof-affordance"');
     expect(home).toContain('Read the case');
