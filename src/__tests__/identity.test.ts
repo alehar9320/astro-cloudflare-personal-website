@@ -2761,7 +2761,31 @@ describe('identity copy', () => {
     expect(work).toContain('class="proof-card"');
     expect(work).toContain('href="/work/ifs-design-system/"');
     expect(work).toContain('Read the case');
+    expect(work).toContain('proof-affordance');
+    expect(work).toContain('work-first');
+    expect(work).toContain('min-height: 44px');
+    expect(work).toContain('min-width: 44px');
+    expect(work).toContain('@media (max-width: 49.99em)');
+    expect(work).toMatch(
+      /@media \(max-width: 49\.99em\)[\s\S]*?\.work-first\s*\{[\s\S]*?gap:\s*0\.5rem/
+    );
+    expect(work).toMatch(
+      /@media \(max-width: 49\.99em\)[\s\S]*?\.tldr-box\s*\{[\s\S]*?padding:\s*0\.5rem 0\.75rem/
+    );
+    expect(work).toMatch(
+      /@media \(max-width: 49\.99em\)[\s\S]*?\.proof-card\s*\{[\s\S]*?padding:\s*0\.85rem/
+    );
+    expect(work).toContain('@media (min-width: 50em) and (max-height: 52em)');
+    expect(work).toMatch(
+      /@media \(min-width: 50em\) and \(max-height: 52em\)[\s\S]*?\.work-first\s*\{[\s\S]*?gap:\s*0\.5rem/
+    );
+    expect(work).toMatch(
+      /@media \(min-width: 50em\) and \(max-height: 52em\)[\s\S]*?\.proof-card\s*\{[\s\S]*?padding:\s*1\.25rem/
+    );
+    expect(work).toMatch(/@media \(min-width: 50em\)[\s\S]*?\.proof-card\s*\{[\s\S]*?padding:\s*1\.5rem/);
+    expect(work).not.toContain('padding: 2.5rem');
     expect(work).toContain('https://www.linkedin.com/in/alehar/');
     expect(work).not.toContain('mailto:');
+    expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
   });
 });
