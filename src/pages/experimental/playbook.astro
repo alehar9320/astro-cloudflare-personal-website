@@ -1,0 +1,72 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_product_playbook) return Astro.redirect('/404/');
+
+const plays = [
+  {
+    title: 'Continuous Discovery',
+    summary: 'Daily user interaction cycles to validate assumptions early.',
+  },
+  {
+    title: 'Extreme Minimalism',
+    summary: 'Strip 80% of scope to ship primitive MVPs and get fast feedback.',
+  },
+  {
+    title: 'Developer Empowerment',
+    summary: 'Build automated internal tooling that multiplies team velocity.',
+  },
+];
+---
+
+<BaseLayout
+  title="Product Playbook | Alexander Härenstam"
+  description="Operational product leadership plays."
+  robots="noindex"
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero
+      title="Product Playbook"
+      tagline="Core operational frameworks for DevEx and Product Management."
+      align="start"
+    />
+    <div class="grid">
+      {
+        plays.map((p) => (
+          <article class="card">
+            <h2>{p.title}</h2>
+            <p>{p.summary}</p>
+          </article>
+        ))
+      }
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .card {
+    padding: 1.25rem;
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+  }
+  .card h2 {
+    font-size: var(--text-md);
+    color: var(--gray-0);
+    margin: 0 0 0.5rem;
+  }
+  .card p {
+    margin: 0;
+    color: var(--gray-300);
+    font-size: var(--text-sm);
+    line-height: 1.45;
+  }
+</style>
