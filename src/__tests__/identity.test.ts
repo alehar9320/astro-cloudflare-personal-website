@@ -2603,6 +2603,30 @@ describe('identity copy', () => {
     );
   });
 
+  it('tightens IFS case-local spacing on short desktop so chips clear the composer (#801)', () => {
+    const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(slug).toContain('@media (min-width: 50em) and (max-height: 45em)');
+    expect(slug).toMatch(
+      /@media \(min-width: 50em\) and \(max-height: 45em\)[\s\S]*?\.ds-first-page\s*\{[\s\S]*?gap:\s*0\.35rem/
+    );
+    expect(slug).toMatch(
+      /@media \(min-width: 50em\) and \(max-height: 45em\)[\s\S]*?\.ds-first-page header[\s\S]*?padding-bottom:\s*0\.35rem/
+    );
+    expect(slug).toMatch(
+      /@media \(min-width: 50em\) and \(max-height: 45em\)[\s\S]*?\.ds-first :global\(\.tldr-box\)[\s\S]*?margin-bottom:\s*0\.25rem/
+    );
+    expect(slug).toMatch(
+      /@media \(min-width: 50em\) and \(max-height: 45em\)[\s\S]*?\.ds-proof :global\(\.tldr-box \+ ul\)[\s\S]*?margin-top:\s*0\.25rem/
+    );
+    expect(ds).toContain('**Up to 2x faster** feature delivery');
+    expect(ds).toContain('**Up to 30x ROI**');
+    expect(ds).toContain('**Zeroheight Design System Awards, runner-up**');
+    expect(slug).toContain('@media (max-width: 49.99em)');
+    expect(slug).toMatch(/\.ds-first-page\s*\{[\s\S]*?gap:\s*0\.35rem/);
+    expect(slug).toContain('padding-bottom: 0.35rem');
+  });
+
   it('keeps What’s New This week / Last 30 days visitor glance and drops farm noise (#784)', () => {
     const page = readFileSync('src/pages/whats-new.astro', 'utf8');
     const glance = readFileSync('src/utils/whats-new-glance.ts', 'utf8');
