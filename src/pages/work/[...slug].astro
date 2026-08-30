@@ -388,4 +388,33 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
       font-size: var(--text-2xl);
     }
   }
+
+  /* Short laptop (1280×656): compress case-local rhythm above chips so 2x/30x/Zeroheight clear the docked composer. */
+  @media (min-width: 50em) and (max-height: 45em) {
+    .ds-first-page {
+      gap: 0.35rem;
+    }
+
+    .ds-first-page header {
+      padding-bottom: 0.35rem;
+    }
+
+    .ds-first-page .details {
+      gap: 0.35rem;
+      padding: 0.15rem;
+    }
+
+    .ds-first-page :global(.hero) {
+      gap: 0.25rem;
+    }
+
+    .ds-first :global(.tldr-box) {
+      margin-bottom: 0.25rem;
+      padding: 0.5rem 0.75rem;
+    }
+
+    .ds-proof :global(.tldr-box + ul) {
+      margin-top: 0.25rem;
+    }
+  }
 </style>
