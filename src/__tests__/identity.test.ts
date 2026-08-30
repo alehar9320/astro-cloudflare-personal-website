@@ -2782,7 +2782,9 @@ describe('identity copy', () => {
     expect(work).toMatch(
       /@media \(min-width: 50em\) and \(max-height: 52em\)[\s\S]*?\.proof-card\s*\{[\s\S]*?padding:\s*1\.25rem/
     );
-    expect(work).toMatch(/@media \(min-width: 50em\)[\s\S]*?\.proof-card\s*\{[\s\S]*?padding:\s*1\.5rem/);
+    expect(work).toMatch(
+      /@media \(min-width: 50em\)[\s\S]*?\.proof-card\s*\{[\s\S]*?padding:\s*1\.5rem/
+    );
     expect(work).not.toContain('padding: 2.5rem');
     expect(work).toContain('https://www.linkedin.com/in/alehar/');
     expect(work).not.toContain('mailto:');
