@@ -1,0 +1,125 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Icon from '../../components/Icon.astro';
+
+const experiments = [
+  {
+    title: 'Northern Lights Refraction Field',
+    description:
+      'Math-driven wave harmonics and particle refraction canvas exploring fluid cyan/marine gradients.',
+    path: '/lab/aurora-refraction/',
+    icon: 'terminal-window' as const,
+    badge: 'Canvas 2D / Vector Math',
+  },
+];
+---
+
+<BaseLayout
+  title="Interactive Laboratory"
+  description="Experimental creative coding canvas and visual experiments."
+>
+  <main class="wrapper stack gap-8" style="margin-top: 4rem;">
+    <Hero
+      title="Interactive Laboratory"
+      tagline="Creative coding, mathematical animations, and visual experiments."
+      align="start"
+    />
+
+    <div class="experiments-grid">
+      {
+        experiments.map((exp) => (
+          <article class="lab-card">
+            <div class="card-header">
+              <Icon icon={exp.icon} color="var(--accent-regular)" size="2rem" gradient />
+              <span class="badge">{exp.badge}</span>
+            </div>
+            <h2>{exp.title}</h2>
+            <p>{exp.description}</p>
+            <a href={exp.path} class="card-link">
+              Launch Experiment <span aria-hidden="true">&rarr;</span>
+            </a>
+          </article>
+        ))
+      }
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .experiments-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  }
+
+  .lab-card {
+    display: flex;
+    flex-direction: column;
+    padding: 2rem;
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 1rem;
+    position: relative;
+    transition:
+      border-color var(--theme-transition),
+      box-shadow var(--theme-transition);
+  }
+
+  .lab-card:hover,
+  .lab-card:focus-within {
+    border-color: var(--accent-regular);
+    box-shadow: var(--shadow-md);
+  }
+
+  .card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .badge {
+    font-size: var(--text-sm);
+    padding: 0.25rem 0.75rem;
+    border-radius: 999rem;
+    background: var(--accent-subtle-overlay, rgba(79, 172, 254, 0.15));
+    color: var(--accent-light);
+    border: 1px solid var(--accent-regular);
+    font-family: var(--font-brand);
+  }
+
+  .lab-card h2 {
+    font-size: var(--text-2xl);
+    margin: 0.5rem 0;
+    color: var(--gray-0);
+  }
+
+  .lab-card p {
+    color: var(--gray-300);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    flex-grow: 1;
+  }
+
+  .card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    color: var(--accent-light);
+    font-weight: 600;
+    text-decoration: none;
+    border-radius: 0.25rem;
+  }
+
+  .card-link:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+  }
+
+  .card-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+</style>
