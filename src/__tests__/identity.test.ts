@@ -2646,6 +2646,38 @@ describe('identity copy', () => {
     expect(home).not.toContain('mailto:');
   });
 
+  it('keeps home proof continue clear of the docked composer on short desktop (#812)', () => {
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    expect(home).toContain('class="proof-affordance"');
+    expect(home).toContain('Read the case');
+    expect(home).toContain('min-height: 44px');
+    expect(home).toContain('min-width: 44px');
+    expect(home).toContain('text-decoration: underline');
+    expect(home).toContain('@media (min-width: 50em) and (max-height: 52em)');
+    expect(home).toMatch(
+      /@media \(min-width: 50em\) and \(max-height: 52em\)[\s\S]*?\.hero-copy\s*\{[\s\S]*?gap:\s*0\.35rem/
+    );
+    expect(home).toMatch(
+      /@media \(min-width: 50em\) and \(max-height: 52em\)[\s\S]*?\.proof-card\s*\{[\s\S]*?gap:\s*0\.2rem/
+    );
+    expect(home).toMatch(
+      /@media \(min-width: 50em\)[\s\S]*?\.hero-copy :global\(\.stack\.gap-4\)[\s\S]*?gap:\s*0\.5rem/
+    );
+    expect(home).toContain('padding-bottom: 36dvh');
+    expect(home).toContain('class="cta-hint">LinkedIn</p>');
+    expect(home).not.toContain('LinkedIn · replies from me');
+    expect(home).not.toContain('mailto:');
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+    expect(home).toContain('Get in touch');
+    expect(home).toContain('Up to 2x faster delivery');
+    expect(home).toContain('Took the design system from first version to IFS Cloud.');
+    expect(home).not.toContain('Explore');
+    expect(home).not.toContain('See my work');
+    expect(home).not.toContain('padding: 1.5rem');
+    expect(home).not.toContain('border-radius: 1.5rem');
+    expect(home).not.toContain('box-shadow: var(--shadow-sm)');
+  });
+
   it('tightens What’s New narrow-viewport spacing so Last-30 lines clear the composer (#802)', () => {
     const page = readFileSync('src/pages/whats-new.astro', 'utf8');
     const glance = readFileSync('src/utils/whats-new-glance.ts', 'utf8');
