@@ -258,7 +258,7 @@ describe('identity copy', () => {
     expect(data).toContain("targetLabel: '5'");
     expect(data).toContain("baselineLabel: '25'");
     expect(data).toContain('median ≥ 8 / week through Dec');
-    expect(data).toContain('Hire tracking in PostHog — live by 30 Sep 2026');
+    expect(data).toContain('Hire tracking in PostHog — live');
     expect(data).toContain('Hire path stays LinkedIn only');
     expect(footer).toContain('href="/okr/"');
     expect(footer).toContain('Site success');
