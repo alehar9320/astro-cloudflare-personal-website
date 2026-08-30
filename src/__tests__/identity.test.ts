@@ -2736,4 +2736,27 @@ describe('identity copy', () => {
     expect(glance).toContain('WEEK_MS');
     expect(glance).toContain('MONTH_MS');
   });
+
+  it('shows a tappable Work back-link on phone so a case cold land can continue (#822)', () => {
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    const work = readFileSync('src/pages/work.astro', 'utf8');
+    expect(slug).toContain('class="back-link"');
+    expect(slug).toContain('href="/work/"');
+    expect(slug).toContain('<Icon icon="arrow-left" /> Work');
+    expect(slug).toContain('display: inline-flex');
+    expect(slug).toContain('min-height: 44px');
+    expect(slug).toContain('min-width: 44px');
+    expect(slug).not.toMatch(/\.back-link\s*\{[^}]*display:\s*none/);
+    expect(slug).toContain('@media (min-width: 50em) and (max-height: 45em)');
+    expect(slug).toMatch(
+      /@media \(min-width: 50em\) and \(max-height: 45em\)[\s\S]*?\.ds-first-page\s*\{[\s\S]*?gap:\s*0\.35rem/
+    );
+    expect(slug).toContain('https://www.linkedin.com/in/alehar/');
+    expect(slug).not.toContain('mailto:');
+    expect(work).toContain('class="proof-card"');
+    expect(work).toContain('href="/work/ifs-design-system/"');
+    expect(work).toContain('Read the case');
+    expect(work).toContain('https://www.linkedin.com/in/alehar/');
+    expect(work).not.toContain('mailto:');
+  });
 });
