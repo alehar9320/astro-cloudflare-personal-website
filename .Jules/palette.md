@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-20 - Card Focus-Within Spatial Feedback
+
+**Learning:** When interactive links are nested within container cards (e.g., `Skills.astro`), applying `:focus-within` alongside `:hover` ensures keyboard users tabbing through inner links receive identical spatial feedback (elevation, border color, and glassmorphic shadow) as mouse hover states, providing a consistent visual mental model across input methods.
+
+**Action:** Added `:focus-within` selector to `.box` in `Skills.astro` and gated `transform` under `prefers-reduced-motion` to maintain full accessibility parity between mouse and keyboard interaction modes.
+
 ## 2026-05-17 - Enhancing Content Selection and Standardizing Focus Spatiality
 
 **Learning:** Using `user-select: none` on informational badges (like `Pill`) creates unnecessary friction for users trying to copy text for reference. Additionally, consistent `outline-offset: 4px` across all interactive elements (including theme toggles and cards) reinforces a predictable spatial model for keyboard users. Adding `target="_blank"` with `rel="noopener noreferrer"` to external informational links (like the Astro framework link in the footer) ensures a non-disruptive navigation experience that preserves the user's session.
