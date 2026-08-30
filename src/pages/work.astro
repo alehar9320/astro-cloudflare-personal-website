@@ -114,8 +114,10 @@ const schema = {
           {
             earlier.map((project) => (
               <li>
-                <a href={`/work/${project.id}/`}>{project.data.title}</a>
-                <p>{earlierBlurb[project.id]}</p>
+                <a href={`/work/${project.id}/`}>
+                  {project.data.title}
+                  <p>{earlierBlurb[project.id]}</p>
+                </a>
               </li>
             ))
           }
@@ -218,6 +220,12 @@ const schema = {
   }
 
   .earlier a {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 0.2rem;
+    min-height: 44px;
+    min-width: 44px;
     color: var(--gray-200);
     text-decoration: 1px solid underline transparent;
     text-underline-offset: 0.25em;

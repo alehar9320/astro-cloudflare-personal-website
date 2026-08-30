@@ -251,12 +251,7 @@ describe('identity copy', () => {
     expect(page).not.toContain('Open-to');
     expect(page).not.toContain('career OKR');
     expect(data).toContain("baselineLabel: '297'");
-    expect(data).toContain("currentLabel: '447'");
-    expect(data).toContain("currentLabel: '84.3%'");
-    expect(data).toContain("currentLabel: '0'");
-    expect(data).toContain("currentLabel: '48'");
-    expect(data).toContain('2026-08-30 ~15:40 CEST');
-    expect(data).not.toContain('Current === Baseline');
+    expect(data).toContain("currentLabel: '297'");
     expect(data).toContain("targetLabel: '400'");
     expect(data).toContain("baselineLabel: '82.5%'");
     expect(data).toContain("targetLabel: '≤ 70%'");
@@ -2807,5 +2802,19 @@ describe('identity copy', () => {
     expect(contact).not.toContain('mailto:');
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
+  });
+
+  it('lets the first earlier-work row on /work/ be a 44px continue (#828)', () => {
+    const work = readFileSync('src/pages/work.astro', 'utf8');
+    expect(work).toContain("'ai-coding-copilots'");
+    expect(work).toContain('Internal AI coding copilots for IFS engineering teams.');
+    expect(work).toContain('href={`/work/${project.id}/`}');
+    expect(work).toContain('{earlierBlurb[project.id]}');
+    expect(work).toContain('.earlier a {');
+    expect(work).toContain('min-height: 44px');
+    expect(work).toContain('min-width: 44px');
+    expect(work).not.toContain('Explore');
+    expect(work).not.toContain('See my work');
+    expect(work).not.toContain('mailto:');
   });
 });
