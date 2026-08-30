@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - Theme Toggle Rotation | Signal: Competitive | Lean Implementation: Added 20deg icon rotation on hover to theme-toggle button gated behind enable_theme_rotate_v1 feature flag.
+
+- Insight: Interactive utility components in high-craft developer portfolios respond dynamically to pointer events, increasing tactile satisfaction and perceived polish.
+- User Target: Joy
+- Abort Triggers: None (verified via test and build pipeline).
+- User Reaction: Pending synthetic feedback.

@@ -1,9 +1,17 @@
 ---
 import Icon from './Icon.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+const isRotateEnabled = flagsEntry?.data.enable_theme_rotate_v1 ?? false;
 ---
 
 <theme-toggle>
-  <button type="button" aria-label="Toggle theme">
+  <button
+    type="button"
+    aria-label="Toggle theme"
+    class:list={[{ 'theme-rotate': isRotateEnabled }]}
+  >
     <span class="icon light"><Icon icon="sun" /></span>
     <span class="icon dark"><Icon icon="moon-stars" /></span>
   </button>
@@ -77,6 +85,10 @@ import Icon from './Icon.astro';
         color var(--theme-transition),
         background-color var(--theme-transition),
         box-shadow var(--theme-transition);
+    }
+
+    button.theme-rotate:hover .icon {
+      transform: rotate(20deg);
     }
   }
 
