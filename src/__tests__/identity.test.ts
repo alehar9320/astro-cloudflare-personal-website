@@ -1061,6 +1061,9 @@ describe('identity copy', () => {
     expect(slug).toContain('.ds-proof :global(ul)');
     expect(slug).toContain('padding-bottom: var(--chat-fab-clearance)');
     expect(slug).toContain('padding-right: var(--chat-fab-clearance)');
+    expect(slug).toMatch(
+      /@media \(max-width: 49\.99em\)[\s\S]*?\.ds-proof\s*\{[\s\S]*?padding-right:\s*0;[\s\S]*?padding-bottom:\s*0;/
+    );
     expect(ds).toContain('**Up to 2x faster**');
     expect(ds).toContain('**Up to 30x ROI**');
     expect(ds).toContain('**Zeroheight Design System Awards, runner-up**');
@@ -2587,8 +2590,8 @@ describe('identity copy', () => {
     expect(slug).toContain('ds-first');
     expect(slug).toContain('@media (max-width: 49.99em)');
     expect(slug).toContain('.ds-first-page header');
-    expect(slug).toContain('padding-bottom: 0.75rem');
-    expect(slug).toMatch(/\.ds-first-page\s*\{[\s\S]*?gap:\s*0\.75rem/);
+    expect(slug).toContain('padding-bottom: 0.35rem');
+    expect(slug).toMatch(/\.ds-first-page\s*\{[\s\S]*?gap:\s*0\.35rem/);
     expect(slug).toContain("entry.id !== 'ifs-design-system'");
     expect(slug).toContain('.ds-proof :global(ul)');
     expect(slug).toContain('flex-wrap: wrap');
