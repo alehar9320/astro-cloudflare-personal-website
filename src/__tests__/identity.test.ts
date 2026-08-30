@@ -2811,6 +2811,9 @@ describe('identity copy', () => {
     expect(work).toContain('href={`/work/${project.id}/`}');
     expect(work).toContain('{earlierBlurb[project.id]}');
     expect(work).toContain('.earlier a {');
+    expect(work).toMatch(
+      /@media \(max-width: 49\.99em\)[\s\S]*?\.earlier\s*\{[\s\S]*?gap:\s*0\.15rem/
+    );
     expect(work).toContain('min-height: 44px');
     expect(work).toContain('min-width: 44px');
     expect(work).not.toContain('Explore');
