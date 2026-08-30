@@ -251,7 +251,12 @@ describe('identity copy', () => {
     expect(page).not.toContain('Open-to');
     expect(page).not.toContain('career OKR');
     expect(data).toContain("baselineLabel: '297'");
-    expect(data).toContain("currentLabel: '297'");
+    expect(data).toContain("currentLabel: '447'");
+    expect(data).toContain("currentLabel: '84.3%'");
+    expect(data).toContain("currentLabel: '0'");
+    expect(data).toContain("currentLabel: '48'");
+    expect(data).toContain('2026-08-30 ~15:40 CEST');
+    expect(data).not.toContain('Current === Baseline');
     expect(data).toContain("targetLabel: '400'");
     expect(data).toContain("baselineLabel: '82.5%'");
     expect(data).toContain("targetLabel: '≤ 70%'");
