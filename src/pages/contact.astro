@@ -23,7 +23,7 @@ const linkedinHref = 'https://www.linkedin.com/in/alehar/';
         >
           Get in touch
         </CallToAction>
-        <p class="cta-hint">LinkedIn · replies from me</p>
+        <p class="cta-hint">LinkedIn</p>
       </div>
     </Hero>
   </main>
@@ -49,6 +49,11 @@ const linkedinHref = 'https://www.linkedin.com/in/alehar/';
     /* Phone: keep the LinkedIn hire CTA out of the fixed chat FAB band. */
     padding-bottom: var(--chat-fab-clearance);
     padding-right: var(--chat-fab-clearance);
+  }
+
+  .actions :global(a) {
+    min-height: 44px;
+    min-width: 44px;
   }
 
   .cta-hint {
