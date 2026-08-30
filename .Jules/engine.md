@@ -11,3 +11,8 @@
 
 - **Performance & Edge Memory:** Refactored `pruneMessages` sliding-window logic in `src/utils/chat-logic.ts` to use pointer bounds slicing instead of repeated `.shift()` calls, eliminating $O(N^2)$ array re-indexing overhead during context window trimming.
 - **Changelog Parsing:** Updated `parseReleaseItem` commit hash regex in `src/utils/github-releases.ts` to support 7 to 40-character hex commit SHAs. Refactored `splitReleaseBody` from a multi-stage array chain into a single-pass `for...of` loop to eliminate intermediate array allocations on Cloudflare Workers edge runtimes.
+
+## 2025-05-28 - Pointer-Based SSE Stream Parsing
+
+- **Performance & Edge Memory:** Refactored `processBufferedText` stream parsing in `src/utils/chat-stream.ts` from array splitting (`combined.split('\n')`) to single-pass pointer traversal (`indexOf('\n', startPos)`), eliminating intermediate array allocations per pushed chunk during Cloudflare Workers AI SSE streaming.
+- **Edge Boundary Safety:** Hardened stream termination processing to ensure un-terminated trailing line buffers are parsed before event flushing.
