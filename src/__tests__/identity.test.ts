@@ -2661,7 +2661,7 @@ describe('identity copy', () => {
       /@media \(min-width: 50em\) and \(max-height: 52em\)[\s\S]*?\.proof-card\s*\{[\s\S]*?gap:\s*0\.15rem/
     );
     expect(home).toMatch(
-      /@media \(min-width: 50em\) and \(max-height: 52em\)[\s\S]*?\.proof-affordance\s*\{[\s\S]*?margin-top:\s*-0\.7rem/
+      /@media \(min-width: 50em\) and \(max-height: 52em\)[\s\S]*?\.proof-affordance\s*\{[\s\S]*?margin-top:\s*-0\.95rem/
     );
     expect(home).toMatch(
       /@media \(min-width: 50em\)[\s\S]*?\.hero-copy :global\(\.stack\.gap-4\)[\s\S]*?gap:\s*0\.4rem/
