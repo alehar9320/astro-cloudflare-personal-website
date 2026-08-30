@@ -2602,4 +2602,20 @@ describe('identity copy', () => {
       '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
     );
   });
+
+  it('keeps What’s New This week / Last 30 days visitor glance and drops farm noise (#784)', () => {
+    const page = readFileSync('src/pages/whats-new.astro', 'utf8');
+    const glance = readFileSync('src/utils/whats-new-glance.ts', 'utf8');
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    expect(page).toContain('This week');
+    expect(page).toContain('Last 30 days');
+    expect(page).toContain('What you can see on this site lately.');
+    expect(page).toContain('Full history on GitHub');
+    expect(page).not.toContain('mailto:');
+    expect(glance).toContain('DROP_PATTERN');
+    expect(glance).toMatch(/\\bengine\\b/);
+    expect(glance).toMatch(/\\bjules\\b/);
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+    expect(home).not.toContain('mailto:');
+  });
 });
