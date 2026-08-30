@@ -186,8 +186,15 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
     border-bottom: 1px solid var(--gray-800);
   }
 
+  /* Cold land (#822): Work continue stays tappable on phone and desktop, clear of the dock. */
   .back-link {
-    display: none;
+    display: inline-flex;
+    align-items: center;
+    align-self: flex-start;
+    gap: 0.25rem;
+    min-height: 44px;
+    min-width: 44px;
+    box-sizing: border-box;
   }
 
   .details {
@@ -375,7 +382,7 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
     }
 
     .back-link {
-      display: block;
+      display: inline-flex;
       align-self: flex-start;
     }
 

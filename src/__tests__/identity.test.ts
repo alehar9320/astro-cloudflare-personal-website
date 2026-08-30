@@ -2736,4 +2736,58 @@ describe('identity copy', () => {
     expect(glance).toContain('WEEK_MS');
     expect(glance).toContain('MONTH_MS');
   });
+
+  it('shows a tappable Work back-link on phone so a case cold land can continue (#822)', () => {
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    const work = readFileSync('src/pages/work.astro', 'utf8');
+    const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
+    expect(slug).toContain('class="back-link"');
+    expect(slug).toContain('href="/work/"');
+    expect(slug).toContain('<Icon icon="arrow-left" /> Work');
+    expect(slug).toContain('display: inline-flex');
+    expect(slug).toContain('min-height: 44px');
+    expect(slug).toContain('min-width: 44px');
+    expect(slug).not.toMatch(/\.back-link\s*\{[^}]*display:\s*none/);
+    expect(slug).toContain('@media (min-width: 50em) and (max-height: 45em)');
+    expect(slug).toMatch(
+      /@media \(min-width: 50em\) and \(max-height: 45em\)[\s\S]*?\.ds-first-page\s*\{[\s\S]*?gap:\s*0\.35rem/
+    );
+    expect(slug).toContain("import ContactCTA from '../../components/ContactCTA.astro';");
+    expect(slug).not.toContain('mailto:');
+    expect(ds).toContain(
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+    );
+    expect(ds).not.toContain('mailto:');
+    expect(work).toContain('class="proof-card"');
+    expect(work).toContain('href="/work/ifs-design-system/"');
+    expect(work).toContain('Read the case');
+    expect(work).toContain('proof-affordance');
+    expect(work).toContain('work-first');
+    expect(work).toContain('min-height: 44px');
+    expect(work).toContain('min-width: 44px');
+    expect(work).toContain('@media (max-width: 49.99em)');
+    expect(work).toMatch(
+      /@media \(max-width: 49\.99em\)[\s\S]*?\.work-first\s*\{[\s\S]*?gap:\s*0\.5rem/
+    );
+    expect(work).toMatch(
+      /@media \(max-width: 49\.99em\)[\s\S]*?\.tldr-box\s*\{[\s\S]*?padding:\s*0\.5rem 0\.75rem/
+    );
+    expect(work).toMatch(
+      /@media \(max-width: 49\.99em\)[\s\S]*?\.proof-card\s*\{[\s\S]*?padding:\s*0\.85rem/
+    );
+    expect(work).toContain('@media (min-width: 50em) and (max-height: 52em)');
+    expect(work).toMatch(
+      /@media \(min-width: 50em\) and \(max-height: 52em\)[\s\S]*?\.work-first\s*\{[\s\S]*?gap:\s*0\.5rem/
+    );
+    expect(work).toMatch(
+      /@media \(min-width: 50em\) and \(max-height: 52em\)[\s\S]*?\.proof-card\s*\{[\s\S]*?padding:\s*1\.25rem/
+    );
+    expect(work).toMatch(
+      /@media \(min-width: 50em\)[\s\S]*?\.proof-card\s*\{[\s\S]*?padding:\s*1\.5rem/
+    );
+    expect(work).not.toContain('padding: 2.5rem');
+    expect(work).toContain('https://www.linkedin.com/in/alehar/');
+    expect(work).not.toContain('mailto:');
+    expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
+  });
 });
