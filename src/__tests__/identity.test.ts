@@ -2698,7 +2698,9 @@ describe('identity copy', () => {
       /@media \(min-width: 50em\)[\s\S]*?\.this-week li,\s*\.last-30 li[\s\S]*?line-height:\s*1\.3/
     );
     expect(page).toContain('@media (max-width: 30em)');
-    expect(page).toMatch(/@media \(max-width: 30em\)[\s\S]*?\.last-30 \.clusters[\s\S]*?gap:\s*0\.25rem/);
+    expect(page).toMatch(
+      /@media \(max-width: 30em\)[\s\S]*?\.last-30 \.clusters[\s\S]*?gap:\s*0\.25rem/
+    );
     expect(page).toContain('This week');
     expect(page).toContain('Last 30 days');
     expect(page).toContain('What you can see on this site lately.');
