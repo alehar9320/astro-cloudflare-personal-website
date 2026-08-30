@@ -197,7 +197,8 @@ function titleCaseFirst(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-const INTERNAL_CHANGELOG_ITEM = /\bjules\b|\bagent[- ]farm\b|\bjohan nits\b/i;
+const INTERNAL_CHANGELOG_ITEM =
+  /\bjules\b|\bagent[- ]farm\b|\bjohan nits\b|\bengine\b|\bbolt\b|\bgoogle-labs-jules\b|\bprune\b|\bparser\b/i;
 
 /**
  * Visitor sentence for a changelog item. Lookup known shipped PRs, else sanitize.

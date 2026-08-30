@@ -15,7 +15,9 @@ const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 const MONTH_MS = 30 * 24 * 60 * 60 * 1000;
 
 const DROP_PATTERN =
-  /\bjson-ld\b|\bgithub[_-]?token\b|\btwin[- ]context\b|\bauthor linkedin context\b|\bno documented changes\b|latest banner from the first card|github links by release version/i;
+  /\bjson-ld\b|\bgithub[_-]?token\b|\btwin[- ]context\b|\bauthor linkedin context\b|\bno documented changes\b|latest banner from the first card|github links by release version|\bengine\b|\bbolt\b|\bjules\b|\bgoogle-labs-jules\b|\bagent[- ]farm\b|\bprune\b|\bparser\b/i;
+
+const SHA_OR_VERSION_ONLY = /^(?:[a-f0-9]{7,40}|\d{4}\.\d{2}\.\d{2}\.\d{4})$/i;
 
 const VISIBLE_SURFACE =
   /what[’']s new|\bchat\b|\bcomposer\b|\btwin\b|\boverlay\b|\bmenu\b|\blayout\b|\bdock\b|\bbottom sheet\b|\bbubble|\bwork\b|\bbiograph|\banalytics\b|\boutcome\b|\blinkedin\b|\bhire\b|\bget in touch\b|\bglance\b|\bvisitor|\bhome\b|\bcontact\b|\bportrait\b|\bheadshot\b|\brss\b/i;
@@ -59,6 +61,7 @@ const THEMES: Theme[] = [
 export function isKeptVisitorLine(raw: string, visitorTitle: string): boolean {
   const title = visitorTitle.trim();
   if (!title) return false;
+  if (SHA_OR_VERSION_ONLY.test(title) || SHA_OR_VERSION_ONLY.test(raw.trim())) return false;
   if (DROP_PATTERN.test(raw) || DROP_PATTERN.test(title)) return false;
   if (isVisitorFacingBullet(title) || isVisitorFacingBullet(raw.trim())) return true;
   return VISIBLE_SURFACE.test(title) || VISIBLE_SURFACE.test(raw);

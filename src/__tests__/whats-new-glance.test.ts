@@ -40,6 +40,50 @@ describe('whats-new glance', () => {
     expect(kept('open the visit glance on tap at 375 (#461)')).toBe(true);
   });
 
+  it('drops Engine / Bolt / Jules farm, prune, and parser noise', () => {
+    expect(kept('feat: Engine prune of the overlay parser work (#812)')).toBe(false);
+    expect(kept('9ef3e5b feat: Bolt layout tweak for the agent farm (#813)')).toBe(false);
+    expect(kept('abc1234 Jules google-labs-jules overlay frost (#814)')).toBe(false);
+    expect(kept('chore: prune google-labs-jules parser dumps')).toBe(false);
+    expect(kept('Stop auto-merge for Jules and agent-farm PRs (#447)')).toBe(false);
+    expect(kept('9ef3e5b')).toBe(false);
+    expect(isKeptVisitorLine('2026.08.20.0900', '2026.08.20.0900')).toBe(false);
+    expect(kept('feat: dock chat composer to the bottom edge and use the stage (#618)')).toBe(true);
+    expect(kept('feat: restore What’s New in the main menu')).toBe(true);
+    expect(kept('open the visit glance on tap at 375 (#461)')).toBe(true);
+  });
+
+  it('omits SHA-first farm dumps from This week while keeping composer and menu', () => {
+    const glance = buildWhatsNewGlance(
+      [
+        release({
+          body: '- 9ef3e5b feat: Engine prune of Jules parser work (#812)',
+          publishedAt: '2026-08-20T08:34:54Z',
+        }),
+        release({
+          body: '- abc1234 feat: Bolt agent-farm overlay layout (#813)',
+          publishedAt: '2026-08-20T07:00:00Z',
+        }),
+        release({
+          body: '- 3a39e72 feat: dock chat composer to the bottom edge and use the stage (#618)',
+          publishedAt: '2026-08-19T22:32:23Z',
+        }),
+        release({
+          body: '- feat: restore What’s New in the main menu',
+          publishedAt: '2026-08-19T12:00:00Z',
+        }),
+      ],
+      now
+    );
+    const painted = [...glance.thisWeek, ...glance.groups.flatMap((group) => group.lines)].join(
+      '\n'
+    );
+    expect(painted).not.toMatch(/Engine|Bolt|Jules|agent-farm|prune|parser/i);
+    expect(painted).not.toMatch(/9ef3e5b|abc1234|2026\./);
+    expect(glance.thisWeek.join('\n')).toMatch(/composer/i);
+    expect(painted).toMatch(/What’s New|What's New/i);
+  });
+
   it('builds a This week strip and ≤4 theme groups from real notes', () => {
     const glance = buildWhatsNewGlance(
       [
