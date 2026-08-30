@@ -13,7 +13,10 @@ const files = [
 ];
 
 describe('identity copy', () => {
-  const sources = files.map((path) => ({ path, text: readFileSync(path, 'utf8') }));
+  const sources = files.map((path) => ({
+    path,
+    text: readFileSync(path, 'utf8'),
+  }));
 
   it('does not use Strategic Product Leader in about, biography, meta, llms.txt, or the twin prompt', () => {
     for (const { path, text } of sources) {
@@ -2641,5 +2644,29 @@ describe('identity copy', () => {
     expect(glance).toMatch(/\\bjules\\b/);
     expect(home).toContain('https://www.linkedin.com/in/alehar/');
     expect(home).not.toContain('mailto:');
+  });
+
+  it('tightens What’s New narrow-viewport spacing so Last-30 lines clear the composer (#802)', () => {
+    const page = readFileSync('src/pages/whats-new.astro', 'utf8');
+    const glance = readFileSync('src/utils/whats-new-glance.ts', 'utf8');
+    expect(page).toContain('@media (max-width: 30em)');
+    expect(page).toMatch(/@media \(max-width: 30em\)[\s\S]*?\.glance\s*\{[\s\S]*?gap:\s*0\.5rem/);
+    expect(page).toMatch(
+      /@media \(max-width: 30em\)[\s\S]*?\.this-week,\s*\.last-30[\s\S]*?padding:\s*0\.6rem 1rem/
+    );
+    expect(page).toMatch(
+      /@media \(max-width: 30em\)[\s\S]*?\.last-30 \.clusters[\s\S]*?gap:\s*0\.45rem/
+    );
+    expect(page).toContain('This week');
+    expect(page).toContain('Last 30 days');
+    expect(page).toContain('What you can see on this site lately.');
+    expect(page).toContain('Full history on GitHub');
+    expect(page).toContain('@media (min-width: 50em)');
+    expect(page).toContain('flex-direction: row');
+    expect(glance).toContain('DROP_PATTERN');
+    expect(glance).toMatch(/\\bengine\\b/);
+    expect(glance).toMatch(/\\bjules\\b/);
+    expect(glance).toContain('WEEK_MS');
+    expect(glance).toContain('MONTH_MS');
   });
 });
