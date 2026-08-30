@@ -10,6 +10,18 @@ Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hi
 
 # Kinetic Journal ⚡
 
+## 2026-08-30 - ThemeToggle Icon Micro-Interactions | Signal: Synthetic UX Polish | Lean Implementation: Hardware-accelerated rotation & scale on hover/active states
+
+- **Signal:** Theme toggle icon lacked tactile spatial feedback on hover/active interactions.
+- **Action:**
+  - Added hardware-accelerated icon transforms (`rotate(12deg) scale(1.1)`) on `button:hover .icon` in `src/components/ThemeToggle.astro`.
+  - Added tactile compression (`scale(0.92)`) on `button:active .icon`.
+  - Gated motion effects strictly inside `@media (prefers-reduced-motion: no-preference)` for accessibility compliance.
+- **Tokens Added:**
+  - Icon Hover Rotation: `rotate(12deg)`
+  - Icon Hover Scale: `scale(1.1)`
+  - Icon Active Compression: `scale(0.92)`
+
 ## 2026-08-29 - CTA glass abort | Signal: closed #772/#667 | Lean Implementation: HARD ABORT CallToAction glassmorphism and micro-states
 
 ## 2025-05-15 - Interactive Glassmorphism for Skills Section

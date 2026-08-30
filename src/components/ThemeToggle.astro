@@ -78,6 +78,14 @@ import Icon from './Icon.astro';
         background-color var(--theme-transition),
         box-shadow var(--theme-transition);
     }
+
+    button:hover .icon {
+      transform: rotate(12deg) scale(1.1);
+    }
+
+    button:active .icon {
+      transform: scale(0.92);
+    }
   }
 
   @media (forced-colors: active) {
