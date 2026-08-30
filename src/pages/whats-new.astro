@@ -223,4 +223,38 @@ const schema = {
     outline-offset: 4px;
     border-radius: 0.25rem;
   }
+
+  /* Narrow phone (375): compress glance rhythm so Last-30 outcome lines clear the docked composer. */
+  @media (max-width: 30em) {
+    .glance {
+      gap: 0.5rem;
+    }
+
+    .this-week,
+    .last-30 {
+      padding: 0.6rem 1rem;
+    }
+
+    .this-week h2,
+    .last-30 h2 {
+      margin-bottom: 0.35rem;
+    }
+
+    .last-30 .clusters {
+      gap: 0.45rem;
+    }
+
+    .group h3 {
+      margin-bottom: 0.25rem;
+    }
+
+    .this-week li,
+    .last-30 li {
+      margin-bottom: 0.15rem;
+    }
+
+    .history {
+      margin-top: 0.25rem;
+    }
+  }
 </style>
