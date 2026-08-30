@@ -125,7 +125,7 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
   {
     entry ? (
       <div class="stack gap-20">
-        <div class="stack gap-15">
+        <div class:list={['stack gap-15', { 'ds-first-page': entry.id === 'ifs-design-system' }]}>
           <header>
             <div class="wrapper stack gap-2">
               <a class="back-link" href="/work/">
@@ -144,8 +144,13 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
             </div>
           </header>
           <main id="main-content" class="wrapper">
-            <div class="stack gap-10 content">
-              {entry.data.img && (
+            <div
+              class:list={[
+                'stack gap-10 content',
+                { 'ds-first': entry.id === 'ifs-design-system' },
+              ]}
+            >
+              {entry.data.img && entry.id !== 'ifs-design-system' && (
                 <img
                   src={entry.data.img}
                   alt={entry.data.img_alt || ''}
@@ -161,6 +166,9 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
               >
                 {Content && <Content />}
               </div>
+              {entry.data.img && entry.id === 'ifs-design-system' && (
+                <img src={entry.data.img} alt={entry.data.img_alt || ''} decoding="async" />
+              )}
             </div>
           </main>
         </div>
@@ -221,9 +229,25 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
   }
 
   .ds-proof :global(ul) {
-    /* Phone: when Metrics sits at the bottom of the viewport, not only page end. */
-    padding-bottom: var(--chat-fab-clearance);
-    padding-right: var(--chat-fab-clearance);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    list-style: none;
+    margin: 0;
+    padding-left: 0;
+  }
+
+  .ds-proof :global(li) {
+    border: 1px solid var(--gray-800);
+    border-radius: 999rem;
+    padding: 0.35rem 0.75rem;
+    font-size: var(--text-sm);
+    line-height: 1.3;
+    background-color: hsla(var(--gray-999-basis), 0.55);
+  }
+
+  .ds-first :global(.tldr-box) {
+    margin-bottom: 0.75rem;
   }
 
   .earlier-case {
@@ -298,13 +322,42 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
     border-radius: 0.25rem;
   }
 
-  @media (min-width: 50em) {
-    .ds-proof {
-      padding-bottom: 0;
-      padding-right: 0;
+  @media (max-width: 49.99em) {
+    .ds-first-page {
+      gap: 0.35rem;
     }
 
-    .ds-proof :global(ul) {
+    .ds-first-page header {
+      padding-bottom: 0.35rem;
+    }
+
+    .ds-first-page .details {
+      gap: 0.35rem;
+      padding: 0.15rem;
+    }
+
+    .ds-first-page :global(.hero) {
+      gap: 0.25rem;
+    }
+
+    .ds-first :global(.tldr-box) {
+      margin-bottom: 0.25rem;
+      padding: 0.5rem 0.75rem;
+    }
+
+    .ds-proof {
+      /* Phone: wrap chips 2+1; drop FAB right/bottom reserve so proof clears composer. */
+      padding-right: 0;
+      padding-bottom: 0;
+    }
+
+    .ds-proof :global(.tldr-box + ul) {
+      margin-top: 0.25rem;
+    }
+  }
+
+  @media (min-width: 50em) {
+    .ds-proof {
       padding-bottom: 0;
       padding-right: 0;
     }
