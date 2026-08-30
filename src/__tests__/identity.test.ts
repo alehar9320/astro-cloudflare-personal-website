@@ -2740,6 +2740,7 @@ describe('identity copy', () => {
   it('shows a tappable Work back-link on phone so a case cold land can continue (#822)', () => {
     const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
     const work = readFileSync('src/pages/work.astro', 'utf8');
+    const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
     expect(slug).toContain('class="back-link"');
     expect(slug).toContain('href="/work/"');
     expect(slug).toContain('<Icon icon="arrow-left" /> Work');
@@ -2751,8 +2752,12 @@ describe('identity copy', () => {
     expect(slug).toMatch(
       /@media \(min-width: 50em\) and \(max-height: 45em\)[\s\S]*?\.ds-first-page\s*\{[\s\S]*?gap:\s*0\.35rem/
     );
-    expect(slug).toContain('https://www.linkedin.com/in/alehar/');
+    expect(slug).toContain("import ContactCTA from '../../components/ContactCTA.astro';");
     expect(slug).not.toContain('mailto:');
+    expect(ds).toContain(
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+    );
+    expect(ds).not.toContain('mailto:');
     expect(work).toContain('class="proof-card"');
     expect(work).toContain('href="/work/ifs-design-system/"');
     expect(work).toContain('Read the case');
