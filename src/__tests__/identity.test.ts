@@ -2650,12 +2650,15 @@ describe('identity copy', () => {
     const page = readFileSync('src/pages/whats-new.astro', 'utf8');
     const glance = readFileSync('src/utils/whats-new-glance.ts', 'utf8');
     expect(page).toContain('@media (max-width: 30em)');
-    expect(page).toMatch(/@media \(max-width: 30em\)[\s\S]*?\.glance\s*\{[\s\S]*?gap:\s*0\.5rem/);
+    expect(page).toMatch(/@media \(max-width: 30em\)[\s\S]*?\.glance\s*\{[\s\S]*?gap:\s*0\.3rem/);
     expect(page).toMatch(
-      /@media \(max-width: 30em\)[\s\S]*?\.this-week,\s*\.last-30[\s\S]*?padding:\s*0\.6rem 1rem/
+      /@media \(max-width: 30em\)[\s\S]*?\.this-week,\s*\.last-30[\s\S]*?padding:\s*0\.4rem 0\.85rem/
     );
     expect(page).toMatch(
-      /@media \(max-width: 30em\)[\s\S]*?\.last-30 \.clusters[\s\S]*?gap:\s*0\.45rem/
+      /@media \(max-width: 30em\)[\s\S]*?\.last-30 \.clusters[\s\S]*?gap:\s*0\.25rem/
+    );
+    expect(page).toMatch(
+      /@media \(max-width: 30em\)[\s\S]*?\.this-week li,\s*\.last-30 li[\s\S]*?line-height:\s*1\.25/
     );
     expect(page).toContain('This week');
     expect(page).toContain('Last 30 days');
