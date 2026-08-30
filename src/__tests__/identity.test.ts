@@ -2655,10 +2655,13 @@ describe('identity copy', () => {
     expect(home).toContain('text-decoration: underline');
     expect(home).toContain('@media (min-width: 50em) and (max-height: 52em)');
     expect(home).toMatch(
-      /@media \(min-width: 50em\) and \(max-height: 52em\)[\s\S]*?\.hero-copy\s*\{[\s\S]*?gap:\s*0\.35rem/
+      /@media \(min-width: 50em\) and \(max-height: 52em\)[\s\S]*?\.hero-copy\s*\{[\s\S]*?gap:\s*0\.2rem/
     );
     expect(home).toMatch(
-      /@media \(min-width: 50em\) and \(max-height: 52em\)[\s\S]*?\.proof-card\s*\{[\s\S]*?gap:\s*0\.2rem/
+      /@media \(min-width: 50em\) and \(max-height: 52em\)[\s\S]*?\.proof-card\s*\{[\s\S]*?gap:\s*0\.15rem/
+    );
+    expect(home).toMatch(
+      /@media \(min-width: 50em\) and \(max-height: 52em\)[\s\S]*?\.hero-copy :global\(\.title\)[\s\S]*?font-size:\s*var\(--text-4xl\)/
     );
     expect(home).toMatch(
       /@media \(min-width: 50em\)[\s\S]*?\.hero-copy :global\(\.stack\.gap-4\)[\s\S]*?gap:\s*0\.5rem/
