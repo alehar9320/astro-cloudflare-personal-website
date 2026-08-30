@@ -142,7 +142,8 @@ describe('identity copy', () => {
     expect(contact).not.toContain('mailto:');
     expect(contact).toContain('Product Manager, Developer Experience');
     expect(contact).not.toContain('Open to conversations');
-    expect(contact).toContain('LinkedIn · replies from me');
+    expect(contact).toContain('<p class="cta-hint">LinkedIn</p>');
+    expect(contact).not.toContain('LinkedIn · replies from me');
     expect(footer).toContain('padding: 3rem 2rem var(--chat-fab-clearance)');
   });
 
@@ -2789,5 +2790,17 @@ describe('identity copy', () => {
     expect(work).toContain('https://www.linkedin.com/in/alehar/');
     expect(work).not.toContain('mailto:');
     expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
+  });
+
+  it('keeps Contact quiet hire as exact LinkedIn, no twin-mouth (#824)', () => {
+    const contact = readFileSync('src/pages/contact.astro', 'utf8');
+    expect(contact).toContain('<p class="cta-hint">LinkedIn</p>');
+    expect(contact).not.toContain('LinkedIn · replies from me');
+    expect(contact).not.toContain('replies from me');
+    expect(contact).toContain('https://www.linkedin.com/in/alehar/');
+    expect(contact).toContain('Get in touch');
+    expect(contact).not.toContain('mailto:');
+    expect(contact).toContain('min-height: 44px');
+    expect(contact).toContain('min-width: 44px');
   });
 });
