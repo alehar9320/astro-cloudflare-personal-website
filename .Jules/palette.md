@@ -42,6 +42,12 @@
 
 **Action:** Standardized `outline-offset: 4px` and tactile scaling across `Nav.astro`, `Footer.astro`, and global link styles. Refined `global.css` to gate smooth scrolling behind `prefers-reduced-motion: no-preference`. Ensured site-wide "Skip to Content" functionality by adding `id="main-content"` to all primary page layouts and components.
 
+## 2026-05-20 - Container Focus-Within Feedback for Card-Nested Links
+
+**Learning:** When interactive links (such as Wikipedia reference links) are nested inside card or section containers (e.g., `Skills.astro`), keyboard users tabbing through those links should receive container-level spatial feedback. Applying `:focus-within` styles alongside `:hover` ensures the outer container elevates (`translateY(-4px)`) and displays accent border highlights, aligning the keyboard experience with the mouse hover state.
+
+**Action:** Added `.box:focus-within` styling to `Skills.astro` alongside `.box:hover`, and ensured `@media (prefers-reduced-motion: reduce)` safely disables `transform` during focus-within interactions.
+
 ## 2026-05-19 - Optimizing LCP for Portfolio Galleries and Hero Assets
 
 **Learning:** To optimize Largest Contentful Paint (LCP) in Astro projects, primary visual assets (like hero images) and the first items in repeated galleries should be prioritised by the browser. Applying `loading="eager"` and `fetchpriority="high"` to these elements prevents the browser from delaying their loading, ensuring a faster perceived performance for users.
