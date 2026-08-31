@@ -97,4 +97,13 @@ describe('chat stream parser', () => {
   it('falls back to plain text when the input is not SSE', () => {
     expect(extractAssistantTextFromSse('Hello world')).toBe('Hello world');
   });
+
+  it('handles multi-chunk streaming with trailing line remainders and CRLF endings', () => {
+    const parser = createChatStreamParser();
+
+    expect(parser.push('data: {"res')).toBe('');
+    expect(parser.push('ponse":"Chunk 1"}\r\n\r\ndata: {"res')).toBe('Chunk 1');
+    expect(parser.push('ponse":"Chunk 2"}\r\n\r\n')).toBe('Chunk 2');
+    expect(parser.flush()).toBe('');
+  });
 });
