@@ -438,21 +438,26 @@ const isCurrentPage = (href: string) => {
     color: var(--accent-dark);
     transition:
       color var(--theme-transition),
+      background-color var(--theme-transition),
+      box-shadow var(--theme-transition),
       transform var(--theme-transition),
       outline-offset var(--theme-transition);
     border-radius: 0.5rem;
   }
 
-  .social:active {
-    transform: scale(0.97);
+  .social:hover {
+    color: var(--accent-text-over);
+    background-color: var(--accent-subtle-overlay);
+    box-shadow: 0 0 12px hsla(210, 100%, 45%, 0.25);
+    transform: translateY(-2px) scale(1.04);
   }
 
-  .social:hover,
+  .social:active {
+    transform: translateY(0) scale(0.97);
+  }
+
   .social:focus-visible {
     color: var(--accent-text-over);
-  }
-
-  .social:focus-visible {
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
   }
@@ -597,6 +602,7 @@ const isCurrentPage = (href: string) => {
     .site-title:active,
     .site-title:focus-visible,
     .link:active,
+    .social:hover,
     .social:active {
       transform: none;
     }

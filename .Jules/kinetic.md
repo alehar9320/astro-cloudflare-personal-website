@@ -10,6 +10,17 @@ Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hi
 
 # Kinetic Journal ⚡
 
+## 2026-08-31 - Nav Social Links Micro-Interaction & Focus Polish | Signal: Visual consistency and micro-state affordance pass | Lean Implementation: Added scoped hover/active micro-interactions and Northern Lights subtle glow on Nav social links in Nav.astro
+
+- **Signal:** Nav social icon links lacked subtle hover feedback and glow affordance compared to interactive navigation components.
+- **Action:**
+  - Added scoped hover state with hardware-accelerated `translateY(-2px) scale(1.04)` transform and subtle background overlay (`var(--accent-subtle-overlay)`).
+  - Integrated Northern Lights cyan glow on hover using `box-shadow: 0 0 12px hsla(210, 100%, 45%, 0.25)`.
+  - Maintained accessible focus-visible outlines (`outline: 2px solid var(--accent-regular)`, `outline-offset: 4px`) and `@media (prefers-reduced-motion: reduce)` safety.
+- **Tokens Added/Applied:**
+  - Glow: `0 0 12px hsla(210, 100%, 45%, 0.25)`
+  - Hover Affordance: `translateY(-2px) scale(1.04)`
+
 ## 2026-08-29 - CTA glass abort | Signal: closed #772/#667 | Lean Implementation: HARD ABORT CallToAction glassmorphism and micro-states
 
 ## 2025-05-15 - Interactive Glassmorphism for Skills Section
