@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-08-31 - Pill Gradient Shift | Signal: Competitive | Lean Implementation: Smooth background-position transition on hover for Pill tags behind feature flag enable_pill_shift_v1.
+
+- Insight: Micro-interactions on tag pills elevate visual delight and tactile feedback for users exploring project topics.
+- User Target: Joy
+- Abort Triggers: None (verified via format, lint, test, astro check, and build pipelines).
+- User Reaction: Pending synthetic feedback.
