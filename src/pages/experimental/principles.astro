@@ -1,0 +1,71 @@
+---
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_engineering_principles) return Astro.redirect('/404/');
+
+const principles = [
+  {
+    name: 'Developer Velocity',
+    text: 'Fast feedback loops and zero-friction developer ergonomics.',
+  },
+  { name: 'Autonomous Quality', text: 'Automated guardrails that catch issues before production.' },
+  {
+    name: 'Pragmatic Minimalism',
+    text: 'Solving core product problems with simple, zero-overhead primitives.',
+  },
+];
+---
+
+<BaseLayout
+  title="Engineering Principles | Alexander Härenstam"
+  description="Core engineering principles."
+  robots="noindex"
+>
+  <main id="main-content" role="main" class="wrapper stack gap-10">
+    <Hero title="Engineering principles" align="start">
+      <p class="lede">
+        Product Manager, Developer Experience at IFS. Guiding tenets behind technical leadership.
+      </p>
+    </Hero>
+    <div class="grid">
+      {
+        principles.map(({ name, text }) => (
+          <div class="card">
+            <strong>{name}</strong>
+            <p>{text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .lede {
+    margin: 0;
+    color: var(--gray-200);
+    max-width: 46ch;
+  }
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .card {
+    padding: 1rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+    background: var(--gradient-subtle);
+  }
+  .card strong {
+    display: block;
+    color: var(--gray-0);
+  }
+  .card p {
+    margin: 0.35rem 0 0;
+    color: var(--gray-300);
+  }
+</style>
