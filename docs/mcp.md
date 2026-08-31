@@ -2,6 +2,21 @@
 
 This project supports MCP servers to provide AI agents with real-time context and tools for development and deployment.
 
+## Live sources (start a task)
+
+- **Live tickets:** GitHub issues on [`alehar9320/astro-cloudflare-personal-website`](https://github.com/alehar9320/astro-cloudflare-personal-website). Use `gh` and the GitHub MCP/plugin. Do not invent scope off-issue.
+- **Production errors:** PostHog first, then Sentry (`sentry.client.config.ts`, `sentry.server.config.ts`).
+- **Render is not required.** Production is Cloudflare Workers. The `render` key in `mcp_config.json` is an optional leftover.
+
+### Later remotes (not this change)
+
+Official remotes for a later PR. Do **not** add them to `mcp_config.json` now. Live keys stay `astro-docs`, `render`, `context7`. No secrets in the repo.
+
+- github: `https://api.githubcopilot.com/mcp/`
+- posthog: `https://mcp.posthog.com/mcp`
+- sentry: `https://mcp.sentry.dev/mcp`
+
+
 ## Render MCP Server
 
 The Render MCP server allows AI agents to manage Cloud Services and debug applications directly from your editor.
