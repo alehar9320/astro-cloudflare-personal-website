@@ -15,3 +15,9 @@
 - [Insight 1: Adding instant hardware-accelerated press feedback (`transform: translateY(2px) scale(0.98)`) on CTA buttons eliminates perceived press latency.]
 - [Insight 2: Scoping tactile feedback behind feature flags (`enable_cta_tactile_v1`) allows isolated deployment without global layout risk.]
 - [Delta: 12 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-09 - Theme Toggle Tactile & Focus | Signal: Technical/Accessibility | Lean Implementation: Flagged CSS Motion Gate + Focus Alignment
+
+- [Insight 1: Tighter focus ring outline-offsets (2px) prevent focus ring overflow clipping on compact overlay toggles.]
+- [Insight 2: Gating active press scale transitions behind prefers-reduced-motion media queries respects accessibility preferences while preserving tactile visual feedback.]
+- [Delta: 17 lines. Guardrails: All passed autonomously.]
