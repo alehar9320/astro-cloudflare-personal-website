@@ -1,3 +1,24 @@
+# HARD ABORT — Product Frameworks / Engineering Principles MVP pages
+
+Read this before scouting. If the idea is one of these, ABORT the cycle. Do not downscope into a sibling with the same job. Do not open a PR.
+
+If the idea is a Product Frameworks MVP, Engineering Principles MVP, Product Playbook MVP, or a sibling experimental manifesto/frameworks page with the same job, ABORT.
+
+Do NOT recreate:
+
+- Product Frameworks MVP
+- Engineering Principles MVP
+- Product Playbook MVP
+- any sibling experimental frameworks/principles/playbook page
+
+Already closed as farm: #872, #858, #808.
+
+Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
+
+---
+
+## 2026-09-01 - Farm abort | Signal: Nick close-reason split | Lean Implementation: HARD ABORT Product Frameworks / Engineering Principles MVP pages
+
 # HARD ABORT — farmed experimental stack/uses pages
 
 Read this before scouting. If the idea is one of these, ABORT the cycle. Do not downscope into a sibling route with the same job. Do not open a PR.

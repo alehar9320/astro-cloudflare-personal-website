@@ -1,3 +1,23 @@
+# HARD ABORT — Pill fluid gradient / inert pill hover / nav social micro-interaction
+
+Read this before scouting. If the idea is one of these, ABORT the cycle. Do not downscope into a sibling with the same job. Do not open a PR.
+
+If the idea is a fluid gradient on `Pill`, inert-pill hover, pill tactile micro-UX, or nav social-link micro-interaction, ABORT. Do not downscope into a sibling hover/gradient pass on the same badge or nav icons.
+
+Do NOT recreate:
+
+- Pill fluid gradient / gradient-shift micro-interaction
+- inert pill hover / tactile pill micro-UX
+- nav social-link micro-interaction
+
+Already closed as farm: #875, #860, #856, #851.
+
+Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
+
+---
+
+## 2026-09-01 - Farm abort | Signal: Nick close-reason split | Lean Implementation: HARD ABORT Pill fluid gradient / inert pill hover / nav social micro-interaction
+
 # HARD ABORT — CallToAction glass farm
 
 Read this before scouting. If the idea is more glassmorphism, backdrop-filter, glow tokens, sheen, translateY hover, or micro-states on `CallToAction.astro` or the hire CTA, ABORT the cycle. Do not downscope into a sibling glass pass on the same button. Do not open a PR.

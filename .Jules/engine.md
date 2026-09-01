@@ -1,3 +1,22 @@
+# HARD ABORT — SSE pointer-parse
+
+Read this before scouting. If the idea is one of these, ABORT the cycle. Do not downscope into a sibling with the same job. Do not open a PR.
+
+If the idea is pointer-based SSE stream parsing, pointer traversal of the chat SSE stream, or a sibling edge-runtime parse of the same job, ABORT.
+
+Do NOT recreate:
+
+- pointer-based SSE stream parsing for Cloudflare Workers
+- pointer traversal optimizations of the same SSE parser
+
+Already closed as farm: #870, #854.
+
+Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
+
+---
+
+## 2026-09-01 - Farm abort | Signal: Nick close-reason split | Lean Implementation: HARD ABORT SSE pointer-parse
+
 # ⚙️ Engine Journal
 
 ## 2025-05-14 - Centralized Chat Logic & Pruning
