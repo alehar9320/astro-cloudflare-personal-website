@@ -11,7 +11,7 @@ Do NOT recreate:
 - ThemeToggle bounce micro-interaction
 - ThemeToggle spin / rotation micro-interaction
 
-Already closed as farm: #873, #809.
+Already closed as farm: #873.
 
 Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
 
