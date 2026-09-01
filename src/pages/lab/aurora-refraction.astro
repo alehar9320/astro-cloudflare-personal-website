@@ -1,0 +1,366 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Northern Lights Refraction — Interactive Canvas Lab | Alexander Härenstam"
+  description="An interactive mathematical canvas experiment rendering real-time sine-wave light refractions in marine blue and cyan gradients."
+  robots="noindex"
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <header class="lab-header stack gap-2">
+      <nav class="lab-nav">
+        <a href="/lab/" class="back-link">← Laboratory Index</a>
+      </nav>
+      <h1 class="title">Northern Lights Refraction</h1>
+      <p class="dek">
+        Real-time mathematical sine-wave light refractions responding to pointer dynamics and
+        harmonic wave interference.
+      </p>
+    </header>
+
+    <section class="canvas-card" aria-label="Interactive Canvas Surface">
+      <div class="canvas-viewport">
+        <canvas id="aurora-refraction-canvas" aria-label="Interactive light refraction canvas"
+        ></canvas>
+        <div class="canvas-controls" role="toolbar" aria-label="Canvas animation controls">
+          <button
+            id="canvas-toggle-btn"
+            type="button"
+            class="control-btn"
+            aria-pressed="false"
+            aria-label="Pause light refraction animation"
+          >
+            <span class="btn-icon" aria-hidden="true">⏸</span>
+            <span class="btn-label">Pause</span>
+          </button>
+          <div class="status-badge" id="canvas-status" aria-live="polite">
+            <span class="status-dot"></span>
+            <span id="status-text">60 FPS Active</span>
+          </div>
+        </div>
+        <div class="hint-overlay" aria-hidden="true">
+          <span>Move pointer across canvas to refract wave ribbons</span>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import {
+    calculateWaveY,
+    getAuroraColorStops,
+    lerp,
+    type WaveParameters,
+  } from '../../utils/aurora-math';
+
+  const canvas = document.getElementById('aurora-refraction-canvas') as HTMLCanvasElement | null;
+  const toggleBtn = document.getElementById('canvas-toggle-btn') as HTMLButtonElement | null;
+  const statusText = document.getElementById('status-text');
+  const statusDot = document.querySelector('.status-dot') as HTMLElement | null;
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let animationFrameId: number;
+    let isPaused = false;
+    let time = 0;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    // Pointer dynamics state
+    const pointer = {
+      currentX: -1000,
+      currentY: -1000,
+      targetX: -1000,
+      targetY: -1000,
+      active: false,
+    };
+
+    const waveLayers: WaveParameters[] = [
+      { amplitude: 35, frequency: 0.006, phase: 0, speed: 0.018 },
+      { amplitude: 28, frequency: 0.008, phase: Math.PI * 0.4, speed: 0.014 },
+      { amplitude: 22, frequency: 0.005, phase: Math.PI * 0.8, speed: 0.022 },
+    ];
+
+    const resizeCanvas = () => {
+      if (!canvas || !canvas.parentElement) return;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.floor(rect.width * dpr);
+      canvas.height = Math.floor(rect.height * dpr);
+      if (ctx) ctx.scale(dpr, dpr);
+    };
+
+    const updatePointerTarget = (e: PointerEvent) => {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      pointer.targetX = e.clientX - rect.left;
+      pointer.targetY = e.clientY - rect.top;
+      pointer.active = true;
+    };
+
+    const handlePointerLeave = () => {
+      pointer.targetX = -1000;
+      pointer.targetY = -1000;
+      pointer.active = false;
+    };
+
+    canvas.addEventListener('pointermove', updatePointerTarget);
+    canvas.addEventListener('pointerleave', handlePointerLeave);
+
+    const renderFrame = () => {
+      if (!ctx || !canvas || !canvas.parentElement) return;
+
+      const displayWidth = canvas.parentElement.clientWidth;
+      const displayHeight = canvas.parentElement.clientHeight;
+
+      ctx.clearRect(0, 0, displayWidth, displayHeight);
+
+      // Interpolate pointer towards target
+      pointer.currentX = lerp(pointer.currentX, pointer.targetX, 0.08);
+      pointer.currentY = lerp(pointer.currentY, pointer.targetY, 0.08);
+
+      if (!isPaused && !prefersReducedMotion) {
+        time += 1;
+      }
+
+      // Base Y positions for 3 aurora ribbons
+      const baseHeights = [displayHeight * 0.4, displayHeight * 0.5, displayHeight * 0.6];
+
+      waveLayers.forEach((params, layerIndex) => {
+        const baseY = baseHeights[layerIndex];
+        const stops = getAuroraColorStops(layerIndex);
+
+        const gradient = ctx.createLinearGradient(0, baseY - 80, 0, baseY + 120);
+        stops.forEach((s) => gradient.addColorStop(s.stop, s.color));
+
+        ctx.beginPath();
+        ctx.moveTo(0, displayHeight);
+
+        const step = Math.max(4, Math.floor(displayWidth / 120));
+        for (let x = 0; x <= displayWidth + step; x += step) {
+          const y = calculateWaveY(
+            x,
+            baseY,
+            time,
+            params,
+            pointer.active ? pointer.currentX : undefined,
+            pointer.active ? pointer.currentY : undefined,
+            180
+          );
+          if (x === 0) {
+            ctx.lineTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+
+        ctx.lineTo(displayWidth, displayHeight);
+        ctx.closePath();
+
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      });
+
+      if (!isPaused && !prefersReducedMotion) {
+        animationFrameId = requestAnimationFrame(renderFrame);
+      }
+    };
+
+    const setPauseState = (paused: boolean) => {
+      isPaused = paused;
+      if (toggleBtn) {
+        toggleBtn.setAttribute('aria-pressed', paused ? 'true' : 'false');
+        toggleBtn.setAttribute(
+          'aria-label',
+          paused ? 'Play light refraction animation' : 'Pause light refraction animation'
+        );
+        const icon = toggleBtn.querySelector('.btn-icon');
+        const label = toggleBtn.querySelector('.btn-label');
+        if (icon) icon.textContent = paused ? '▶' : '⏸';
+        if (label) label.textContent = paused ? 'Play' : 'Pause';
+      }
+      if (statusText) {
+        statusText.textContent = paused ? 'Animation Paused' : '60 FPS Active';
+      }
+      if (statusDot) {
+        statusDot.style.background = paused ? 'var(--gray-400)' : '#30d158';
+      }
+
+      if (!paused && !prefersReducedMotion) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = requestAnimationFrame(renderFrame);
+      }
+    };
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => setPauseState(!isPaused));
+    }
+
+    if (prefersReducedMotion) {
+      setPauseState(true);
+      if (statusText) statusText.textContent = 'Reduced Motion Mode';
+      if (statusDot) statusDot.style.background = 'var(--accent-regular)';
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    renderFrame();
+
+    // Astro lifecycle teardown listener
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resizeCanvas);
+        canvas.removeEventListener('pointermove', updatePointerTarget);
+        canvas.removeEventListener('pointerleave', handlePointerLeave);
+      },
+      { once: true }
+    );
+  }
+</script>
+
+<style>
+  .lab-header {
+    margin-top: 2rem;
+  }
+
+  .back-link {
+    font-size: var(--text-sm);
+    color: var(--accent-regular);
+    text-decoration: none;
+    font-weight: 500;
+  }
+
+  .back-link:hover,
+  .back-link:focus-visible {
+    text-decoration: underline;
+  }
+
+  .back-link:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+    border-radius: 0.25rem;
+  }
+
+  .title {
+    font-size: var(--text-3xl);
+    color: var(--gray-0);
+  }
+
+  .dek {
+    max-width: 50ch;
+    font-size: var(--text-md);
+    color: var(--gray-300);
+    line-height: 1.5;
+  }
+
+  .canvas-card {
+    position: relative;
+    border-radius: 1rem;
+    overflow: hidden;
+    background: hsla(var(--gray-999-basis), 0.5);
+    border: 1px solid var(--gray-800);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+
+  .canvas-viewport {
+    position: relative;
+    width: 100%;
+    height: 480px;
+    display: block;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  .canvas-controls {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.35rem 0.65rem;
+    background: hsla(var(--gray-999-basis), 0.75);
+    border: 1px solid var(--gray-800);
+    border-radius: 999rem;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    z-index: 10;
+  }
+
+  .control-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    appearance: none;
+    border: none;
+    background: var(--gray-800);
+    color: var(--gray-100);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    padding: 0.3rem 0.65rem;
+    border-radius: 999rem;
+    cursor: pointer;
+    transition:
+      background var(--theme-transition),
+      transform var(--theme-transition);
+  }
+
+  .control-btn:hover {
+    background: var(--gray-700);
+  }
+
+  .control-btn:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 2px;
+  }
+
+  .status-badge {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: var(--text-xs);
+    color: var(--gray-300);
+    font-weight: 500;
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #30d158;
+    box-shadow: 0 0 8px #30d158;
+  }
+
+  .hint-overlay {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    font-size: var(--text-xs);
+    color: var(--gray-400);
+    background: hsla(var(--gray-999-basis), 0.6);
+    padding: 0.35rem 0.75rem;
+    border-radius: 999rem;
+    border: 1px solid var(--gray-800);
+    pointer-events: none;
+  }
+
+  @media (max-width: 40em) {
+    .canvas-viewport {
+      height: 360px;
+    }
+
+    .hint-overlay {
+      display: none;
+    }
+  }
+</style>
