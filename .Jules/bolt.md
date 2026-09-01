@@ -13,3 +13,7 @@ Action: Retained decoding="async" on the chat avatar image in src/components/Cha
 2026-08-31 - Lazy Loading Below-The-Fold Case Study Image
 Learning: Case study content images rendered below the fold (such as the main image in ifs-design-system) do not block initial LCP or first paint. Adding loading="lazy" allows the browser to defer network fetching until the user scrolls near the element, conserving bandwidth and offloading decoding during page load.
 Action: Added loading="lazy" and decoding="async" to the below-the-fold case study image in src/pages/work/[...slug].astro.
+
+2026-09-01 - Explicit Image Dimensions for Zero CLS
+Learning: Adding explicit width and height attributes to non-responsive / fixed-ratio content images allows browsers to compute intrinsic aspect ratio boxes before image data arrives, completely eliminating Cumulative Layout Shift (CLS=0) during lazy loading.
+Action: Added width="1472" and height="871" attributes to the case study image in src/pages/work/[...slug].astro.

@@ -167,10 +167,12 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
                 {Content && <Content />}
               </div>
               {entry.data.img && entry.id === 'ifs-design-system' && (
-                /* Optimization (⚡ Bolt): Below-the-fold image uses loading="lazy" to defer fetch until scrolled into view. Benchmark: Defers 20KB fetch on initial page load. */
+                /* Optimization (⚡ Bolt): Below-the-fold image uses loading="lazy" to defer fetch until scrolled into view, and explicit width/height to eliminate CLS. Benchmark: Defers 20KB fetch on load & reserve aspect ratio box (CLS=0). */
                 <img
                   src={entry.data.img}
                   alt={entry.data.img_alt || ''}
+                  width="1472"
+                  height="871"
                   loading="lazy"
                   decoding="async"
                 />
