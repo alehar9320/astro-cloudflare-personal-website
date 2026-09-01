@@ -90,23 +90,37 @@ function consumeLine(state: SseParserState, line: string): string {
  */
 function processBufferedText(state: SseParserState, input: string, isFinalChunk: boolean): string {
   const combined = state.partialLine + input;
-  const lines = combined.split('\n');
-  const lastIndex = isFinalChunk ? lines.length : Math.max(lines.length - 1, 0);
   let parsedText = '';
+  let startPos = 0;
 
-  for (let index = 0; index < lastIndex; index += 1) {
-    let line = lines[index];
+  while (startPos <= combined.length) {
+    const newlinePos = combined.indexOf('\n', startPos);
+
+    if (newlinePos === -1) {
+      if (isFinalChunk) {
+        let line = combined.slice(startPos);
+        if (line.endsWith('\r')) {
+          line = line.slice(0, -1);
+        }
+        parsedText += consumeLine(state, line);
+        state.partialLine = '';
+      } else {
+        let remaining = combined.slice(startPos);
+        if (remaining.endsWith('\r')) {
+          remaining = remaining.slice(0, -1);
+        }
+        state.partialLine = remaining;
+      }
+      break;
+    }
+
+    let line = combined.slice(startPos, newlinePos);
     if (line.endsWith('\r')) {
       line = line.slice(0, -1);
     }
     parsedText += consumeLine(state, line);
+    startPos = newlinePos + 1;
   }
-
-  let remaining = isFinalChunk ? '' : lines[lines.length - 1];
-  if (remaining.endsWith('\r')) {
-    remaining = remaining.slice(0, -1);
-  }
-  state.partialLine = remaining;
 
   if (isFinalChunk && state.currentEventLines.length > 0) {
     const payload =

@@ -97,4 +97,29 @@ describe('chat stream parser', () => {
   it('falls back to plain text when the input is not SSE', () => {
     expect(extractAssistantTextFromSse('Hello world')).toBe('Hello world');
   });
+
+  it('handles token-by-token streaming across multiple small pushes', () => {
+    const parser = createChatStreamParser();
+    let result = '';
+
+    const payload = 'data: {"response":"Pointer"}\n\ndata: {"response":"-based"}\n\n';
+    for (const char of payload) {
+      result += parser.push(char);
+    }
+    result += parser.flush();
+
+    expect(result).toBe('Pointer-based');
+  });
+
+  it('handles multi-line SSE payloads split across chunk boundaries', () => {
+    const parser = createChatStreamParser();
+    let result = '';
+
+    result += parser.push('data: {\n');
+    result += parser.push('data: "response": "Multi-line"\n');
+    result += parser.push('data: }\n\n');
+    result += parser.flush();
+
+    expect(result).toBe('Multi-line');
+  });
 });
