@@ -12,6 +12,20 @@ Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hi
 
 ## 2026-08-29 - CTA glass abort | Signal: closed #772/#667 | Lean Implementation: HARD ABORT CallToAction glassmorphism and micro-states
 
+## 2026-08-30 - Fluid Gradient Motion & Glassmorphism for Pill Component
+
+- **Signal:** Tag badges (`Pill.astro`) across portfolio case studies lacked interactive depth and motion craft.
+- **Action:**
+  - Added hardware-accelerated fluid gradient position transition (`background-position: 100% 50%`) on hover for `Pill.astro`.
+  - Added subtle `backdrop-filter: blur(8px)` glassmorphism.
+  - Added subtle `translateY(-1px)` elevation and `hsla(210, 100%, 45%, 0.35)` glow on hover.
+  - Gated motion transitions behind `@media (prefers-reduced-motion: no-preference)`.
+- **Tokens & Performance:**
+  - Glass Blur: `8px`
+  - Affordance: `translateY(-1px)`
+  - Glow: `hsla(210, 100%, 45%, 0.35)`
+  - Transition: `0.4s cubic-bezier(0.22, 1, 0.36, 1)`
+
 ## 2025-05-15 - Interactive Glassmorphism for Skills Section
 
 - **Signal:** Standardized skills box lacked interactive affordance and depth.

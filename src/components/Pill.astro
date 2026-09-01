@@ -13,15 +13,37 @@
     line-height: 1.35;
     white-space: nowrap;
 
-    /* Interactive state base styles */
+    /* Northern Lights glassmorphism & background */
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+
+    /* Dynamic gradient background */
     background-image: linear-gradient(
       110deg,
       var(--accent-regular) 0%,
       var(--gradient-stop-1) 50%,
       var(--gradient-stop-3) 100%
     );
-    background-size: 250% 100%;
+    background-size: 200% 100%;
     background-position: 0% 50%;
     box-shadow: var(--shadow-sm);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pill {
+      transition:
+        background-position 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+        box-shadow 0.3s ease,
+        border-color 0.3s ease,
+        transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .pill:hover {
+      background-position: 100% 50%;
+      box-shadow:
+        0 4px 14px hsla(210, 100%, 45%, 0.35),
+        var(--shadow-md);
+      transform: translateY(-1px);
+    }
   }
 </style>
