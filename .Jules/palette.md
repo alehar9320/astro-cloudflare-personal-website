@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-21 - Standardizing Focus-Visible Indicators & Card Radius Alignment
+
+**Learning:** Scoped link selectors inside markdown content containers (such as `.content :global(a)`) and list sections (`.earlier a`) must use `:focus-visible` with site-standard outline indicators (`outline: 2px solid var(--accent-regular)`, `outline-offset: 4px`, `border-radius: 0.25rem`) rather than raw `:focus` text-decoration properties. Replacing raw `:focus` prevents sticky focus underlines on mouse clicks, while adding explicit `:focus-visible` outlines and rounded corner alignment ensures a high-visibility, visually clean experience for keyboard navigation.
+
+**Action:** Added `:focus-visible` 2px accent outlines with 4px offset and 0.25rem border-radius for `.earlier a` in `work.astro`, `.proof-card` in `index.astro` and `roadmap.astro`, and scoped content links (`.content :global(a:focus-visible)`) in `biography.astro` and `work/[...slug].astro`.
+
 ## 2026-05-17 - Enhancing Content Selection and Standardizing Focus Spatiality
 
 **Learning:** Using `user-select: none` on informational badges (like `Pill`) creates unnecessary friction for users trying to copy text for reference. Additionally, consistent `outline-offset: 4px` across all interactive elements (including theme toggles and cards) reinforces a predictable spatial model for keyboard users. Adding `target="_blank"` with `rel="noopener noreferrer"` to external informational links (like the Astro framework link in the footer) ensures a non-disruptive navigation experience that preserves the user's session.
