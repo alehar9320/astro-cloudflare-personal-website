@@ -7,12 +7,12 @@ If the idea is `loading="lazy"` on the below-the-fold IFS / case-study image, re
 Do NOT recreate:
 
 - lazy load on the below-the-fold case-study image (`ifs-design-system` / `work/[...slug]`)
-- a restack of #800 / #852
-- re-doing merged image width/height (#868 is done)
+- a restack of merged lazy-IFS / case-study image work
+- re-doing merged image width/height
 
-Stay off #800 restack. Merged #868 image dims is done; do not re-do.
+Merged #852/#868 done. Do not restack #868 (KEEP Dual CLOSED).
 
-Already closed as farm: #852.
+Already closed as farm / merged done: #852, #868.
 
 Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
 
