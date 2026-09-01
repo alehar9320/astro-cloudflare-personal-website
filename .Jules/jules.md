@@ -1,25 +1,24 @@
-# HARD ABORT — tactile / pill / CTA micro restacks
+# HARD ABORT — do not restack Dual / copy-this / Kinetic Pill farms
 
 Read this before scouting. If the idea is one of these, ABORT the cycle. Do not downscope into a sibling with the same job. Do not open a PR.
 
-If the idea is restacking CallToAction tactile, ThemeToggle tactile, Pill fluid gradient / inert hover, or CTA/pill micro-states as a new cycle, ABORT.
+Tonight's Jules feature-enhancement reads this file from main after Dual merge.
 
-Keep the merged work. Do not restack:
-- #867 ThemeToggle tactile & focus (copy-this)
-- #763 CallToAction tactile
-- #868 Bolt image dims (KEEP Dual CLOSED)
-- #869 Palette focus-visible (KEEP Dual FAIL)
+Do NOT restack:
 
-Do NOT recreate:
-- enable_cta_tactile_v1 / CallToAction :active restack
-- ThemeToggle tactile / press-scale restack of #867
-- Pill fluid gradient / inert pill hover / pill tactile micro-UX
+- #867 ThemeToggle tactile (copy-this)
+- #763 CTA tactile
+- #868 (KEEP Dual CLOSED)
+- #869 (KEEP Dual FAIL)
+- Kinetic Pill farms (#875, #860, #856, #851)
 
-Prefer distinct visitor-facing craft on a live surface that is not CTA/pill/ThemeToggle micro restack. Hire path is LinkedIn only. Do not invent a public email or CV.
+Do not downscope into a sibling tactile, focus, image-dimension, or Pill-gradient pass of those jobs. Do not open a PR.
+
+Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
 
 ---
 
-## 2026-09-01 - Farm abort | Signal: Nick close-reason split | Lean Implementation: HARD ABORT tactile/pill/CTA micro restacks; keep #867/#763
+## 2026-09-01 - Farm abort | Signal: Dual merge + scheduled farm classes | Lean Implementation: HARD ABORT restack of #867/#763/#868/#869 and Kinetic Pill farms
 
 ## 2026-05-19 - Tactile & Portability | Signal: Technical | Lean Implementation: Flagged CSS + Locals Fallback
 
