@@ -9,7 +9,7 @@ Do NOT recreate:
 - pointer-based SSE stream parsing for Cloudflare Workers
 - pointer traversal optimizations of the same SSE parser
 
-Already closed as farm: #870, #854.
+Already closed as farm: #870, #854, #807.
 
 Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
 
