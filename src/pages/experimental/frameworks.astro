@@ -1,0 +1,73 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_product_frameworks) return Astro.redirect('/404/');
+
+const linkedinHref = 'https://www.linkedin.com/in/alehar/';
+
+const frameworks = [
+  { name: 'Jobs-to-be-Done', summary: 'Focusing on customer outcomes and functional goals.' },
+  { name: 'RICE Scoring', summary: 'Prioritizing features by Reach, Impact, Confidence, Effort.' },
+  { name: 'North Star Metric', summary: 'Aligning team focus on a single key value driver.' },
+];
+---
+
+<BaseLayout
+  title="Product Frameworks | Product Manager, Developer Experience at IFS"
+  description="Core product frameworks applied to developer experience."
+  robots="noindex"
+>
+  <main id="main-content" class="wrapper stack gap-8" style="margin-top: 4rem;">
+    <Hero
+      title="Product Frameworks"
+      tagline="Pragmatic mental models for building software."
+      align="start"
+    />
+    <div class="grid">
+      {
+        frameworks.map(({ name, summary }) => (
+          <div class="card">
+            <strong>{name}</strong>
+            <p>{summary}</p>
+          </div>
+        ))
+      }
+    </div>
+    <div>
+      <CallToAction
+        href={linkedinHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-hire-surface="frameworks"
+      >
+        Discuss Frameworks
+      </CallToAction>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+  .card {
+    padding: 1.5rem;
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+  }
+  .card strong {
+    display: block;
+    color: var(--gray-0);
+  }
+  .card p {
+    margin: 0.5rem 0 0;
+    color: var(--gray-300);
+  }
+</style>

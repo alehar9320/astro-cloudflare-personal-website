@@ -26,6 +26,7 @@ export const collections = {
       enable_reading_list: z.boolean().default(false),
       enable_logo_wobble_v1: z.boolean().default(false),
       enable_cta_tactile_v1: z.boolean().default(false),
+      enable_product_frameworks: z.boolean().default(false),
     }),
   }),
 };
