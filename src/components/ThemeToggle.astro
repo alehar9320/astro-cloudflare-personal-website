@@ -1,8 +1,12 @@
 ---
 import Icon from './Icon.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+const isBounceEnabled = flagsEntry?.data.enable_theme_toggle_bounce_v1 ?? false;
 ---
 
-<theme-toggle>
+<theme-toggle class:list={[{ 'bounce-enabled': isBounceEnabled }]}>
   <button type="button" aria-label="Toggle theme">
     <span class="icon light"><Icon icon="sun" /></span>
     <span class="icon dark"><Icon icon="moon-stars" /></span>
@@ -77,6 +81,10 @@ import Icon from './Icon.astro';
         color var(--theme-transition),
         background-color var(--theme-transition),
         box-shadow var(--theme-transition);
+    }
+
+    .bounce-enabled button:hover .icon {
+      transform: scale(1.15);
     }
   }
 

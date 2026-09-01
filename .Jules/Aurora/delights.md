@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - Theme Toggle Bounce | Signal: Behavioral | Lean Implementation: Added subtle 1.15x scale micro-bounce on icon hover inside ThemeToggle.astro when feature flag enable_theme_toggle_bounce_v1 is active.
+
+- Insight: User interaction logs and modern UI feedback patterns show that tactile micro-feedback on theme mode toggles increases user delight and interaction satisfaction.
+- User Target: Joy & Comfort
+- Abort Triggers: None (verified via build and test pipeline).
+- User Reaction: Pending synthetic feedback.
