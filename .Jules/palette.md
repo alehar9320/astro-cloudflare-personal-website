@@ -6,6 +6,8 @@ If the idea is `:focus-within` on Skills cards, restacking that focus-within, or
 
 Dual SOFT CLOSE = do not restack the orphan.
 
+Do not restack #869 (KEEP Dual FAIL).
+
 Do NOT recreate:
 
 - Skills card `:focus-within` restacks
