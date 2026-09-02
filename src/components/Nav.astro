@@ -6,6 +6,7 @@ import ThemeToggle from './ThemeToggle.astro';
 
 const flagsEntry = await getEntry('flags', 'config');
 const isLogoWobbleEnabled = flagsEntry?.data.enable_logo_wobble_v1 ?? false;
+const isSocialBounceEnabled = flagsEntry?.data.enable_social_bounce_v1 ?? false;
 
 /** Main menu items */
 const textLinks: { label: string; href: string; event?: string; surface?: string }[] = [
@@ -90,7 +91,12 @@ const isCurrentPage = (href: string) => {
       <div class="socials">
         {
           iconLinks.map(({ href, icon, label, event, surface }) => (
-            <a href={href} class="social" data-hire-event={event} data-hire-surface={surface}>
+            <a
+              href={href}
+              class:list={['social', { 'social-bounce': isSocialBounceEnabled }]}
+              data-hire-event={event}
+              data-hire-surface={surface}
+            >
               <span class="sr-only">{label}</span>
               <Icon icon={icon} />
             </a>
@@ -121,7 +127,12 @@ const isCurrentPage = (href: string) => {
       <div class="socials">
         {
           iconLinks.map(({ href, icon, label, event, surface }) => (
-            <a href={href} class="social" data-hire-event={event} data-hire-surface={surface}>
+            <a
+              href={href}
+              class:list={['social', { 'social-bounce': isSocialBounceEnabled }]}
+              data-hire-event={event}
+              data-hire-surface={surface}
+            >
               <span class="sr-only">{label}</span>
               <Icon icon={icon} />
             </a>
@@ -567,6 +578,10 @@ const isCurrentPage = (href: string) => {
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    .social-bounce:hover {
+      transform: translateY(-2px) scale(1.08);
+    }
+
     .logo-wobble:hover :global(svg) {
       animation: wobble 0.5s ease-in-out;
     }
