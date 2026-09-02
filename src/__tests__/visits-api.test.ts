@@ -37,4 +37,18 @@ describe('visits API', () => {
     const response = await GET({} as Parameters<typeof GET>[0]);
     expect(response.status).toBe(204);
   });
+
+  it('logs structured telemetry on query failure', async () => {
+    const bindings = workerEnv as VisitEnv;
+    bindings.POSTHOG_PERSONAL_API_KEY = 'test-key';
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    vi.spyOn(globalThis, 'fetch').mockRejectedValueOnce(new Error('Network failure'));
+
+    const response = await GET({} as Parameters<typeof GET>[0]);
+    expect(response.status).toBe(204);
+    expect(errorSpy).toHaveBeenCalledWith({
+      event: 'visits_query_failed',
+      error: 'Error: Network failure',
+    });
+  });
 });
