@@ -719,7 +719,7 @@ describe('identity copy', () => {
     expect(home).not.toContain('mailto:');
     expect(chat).toContain('has-prominent-chat');
     expect(chat).toContain('border-radius: 1rem 1rem 0 0');
-    expect(chat).toContain('width: min(52rem, calc(100vw - 3rem))');
+    expect(chat).toContain('width: calc(100vw - 3rem)');
     expect(chat).toContain('max-height: 36dvh');
     expect(chat).not.toContain('max-width: 36rem');
     expect(chat).not.toContain('height: 62dvh');
@@ -745,7 +745,7 @@ describe('identity copy', () => {
     const home = readFileSync('src/pages/index.astro', 'utf8');
     const nav = readFileSync('src/components/Nav.astro', 'utf8');
     expect(chat).toContain('border-radius: 1rem 1rem 0 0');
-    expect(chat).toContain('width: min(52rem, calc(100vw - 3rem))');
+    expect(chat).toContain('width: calc(100vw - 3rem)');
     expect(chat).toContain('max-height: 36dvh');
     expect(chat).not.toContain('max-width: 36rem');
     expect(chat).not.toContain('height: 62dvh');
@@ -845,7 +845,7 @@ describe('identity copy', () => {
     expect(chat).toContain('overflow: hidden');
     // Desktop locks stay in source for ≥50em / identity keep-list.
     expect(chat).toContain('max-height: 36dvh');
-    expect(chat).toContain('width: min(52rem, calc(100vw - 3rem))');
+    expect(chat).toContain('width: calc(100vw - 3rem)');
     expect(chat).toContain('border-radius: 1rem 1rem 0 0');
     expect(chat).not.toContain('height: 62dvh');
     expect(chat).not.toContain('Get in touch');
@@ -886,7 +886,7 @@ describe('identity copy', () => {
     expect(chat).not.toContain('--prominent-phone-top');
     expect(chat).not.toContain('layoutProminentPhone');
     expect(chat).toContain('border-radius: 1rem 1rem 0 0');
-    expect(chat).toContain('width: min(52rem, calc(100vw - 3rem))');
+    expect(chat).toContain('width: calc(100vw - 3rem)');
     expect(chat).toContain('max-height: 36dvh');
     expect(chat).not.toContain('max-width: 36rem');
     expect(chat).not.toContain('height: 62dvh');
@@ -925,7 +925,7 @@ describe('identity copy', () => {
     expect(stageBlock).not.toContain('<form');
     expect(chat).toMatch(/<\/div>\s*<form id="chat-form"/);
     expect(chat).toContain('env(safe-area-inset-bottom');
-    expect(chat).toContain('width: min(52rem, calc(100vw - 3rem))');
+    expect(chat).toContain('width: calc(100vw - 3rem)');
     expect(chat).toContain('max-height: 36dvh');
     expect(home).toContain('padding-bottom: 36dvh');
     expect(chat).not.toContain('height: 62dvh');
@@ -1038,7 +1038,7 @@ describe('identity copy', () => {
     expect(work).toContain('The IFS Design System case, then earlier work.');
     expect(bio).toContain('Product Manager, Developer Experience at IFS.');
     expect(chat).toContain('border-radius: 1rem 1rem 0 0');
-    expect(chat).toContain('width: min(52rem, calc(100vw - 3rem))');
+    expect(chat).toContain('width: calc(100vw - 3rem)');
     expect(chat).toContain('max-height: 36dvh');
     expect(chat).not.toContain('id="chat-dock"');
     expect(chat).not.toContain('id="chat-scrim"');
@@ -2544,7 +2544,9 @@ describe('identity copy', () => {
     const desktopOpen = chat.slice(chat.indexOf('/* Desktop open = one sheet'));
     expect(chat).toContain('<style is:inline>');
     expect(desktopOpen).toContain('.chat-container.is-open .chat-form');
-    expect(desktopOpen).toContain('width: min(52rem, calc(100vw - 3rem))');
+    expect(desktopOpen).toContain('.chat-container.is-docked .chat-form');
+    expect(desktopOpen).toContain('width: calc(100vw - 3rem)');
+    expect(desktopOpen).toContain('max-width: none');
     expect(desktopOpen).toContain('border-radius: 0');
     expect(desktopOpen).toContain('box-shadow: none');
     expect(desktopOpen).toContain('backdrop-filter: blur(16px) saturate(180%)');
@@ -2807,5 +2809,20 @@ describe('identity copy', () => {
     expect(contact).not.toContain('mailto:');
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
+  });
+
+  it('keeps one desktop chat width docked and open (#832)', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    const desktopOpen = chat.slice(chat.indexOf('/* Desktop open = one sheet'));
+    expect(desktopOpen).toContain('.chat-container.is-docked .chat-form');
+    expect(desktopOpen).toContain('.chat-container.is-open .chat-form');
+    expect(desktopOpen).toContain('.chat-container.is-open .chat-window');
+    expect(desktopOpen).toContain('width: calc(100vw - 3rem)');
+    expect(desktopOpen).toContain('max-width: none');
+    expect(desktopOpen).not.toContain('width: min(52rem, calc(100vw - 3rem))');
+    expect(chat).not.toContain('transition:\n        width');
+    expect(chat).toContain('max-height: 36dvh');
+    expect(chat).not.toContain('height: 62dvh');
+    expect(chat).not.toContain('mailto:');
   });
 });
