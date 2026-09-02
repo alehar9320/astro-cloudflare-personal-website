@@ -2523,7 +2523,11 @@ describe('identity copy', () => {
     expect(bio).toContain('<style is:inline>');
     expect(bio).toContain('.timeline > li');
     expect(bio).toContain('@supports (animation-timeline: view())');
-    expect(bio).toContain('animation-delay: 60ms');
+    expect(bio).not.toContain('animation-delay');
+    expect(bio).toContain('animation-range: entry 0% entry 40%');
+    expect(bio).toContain('animation-range: entry 5% entry 45%');
+    expect(bio).toContain('animation-range: entry 10% entry 50%');
+    expect(bio).toContain('animation-range: entry 15% entry 55%');
     expect(bio).toContain('.timeline > li:nth-child');
     expect(bio).toContain('https://www.linkedin.com/in/alehar/');
     const bioGated = bio.slice(bio.indexOf('@supports (animation-timeline: view())'));
@@ -2808,4 +2812,18 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('cascades Biography timeline rows via per-item animation-range, not animation-delay (#892)', () => {
+    const bio = readFileSync('src/pages/biography.astro', 'utf8');
+    const gated = bio.slice(bio.indexOf('@supports (animation-timeline: view())'));
+    expect(gated).toContain('animation: enter-soft 400ms cubic-bezier(0.22, 1, 0.36, 1) both');
+    expect(gated).toContain('animation-timeline: view()');
+    expect(gated).not.toContain('animation-delay');
+    expect(gated).toContain('animation-range: entry 0% entry 40%');
+    expect(gated).toContain('animation-range: entry 5% entry 45%');
+    expect(gated).toContain('animation-range: entry 10% entry 50%');
+    expect(gated).toContain('animation-range: entry 15% entry 55%');
+    expect(bio).toContain('https://www.linkedin.com/in/alehar/');
+  });
+
 });
