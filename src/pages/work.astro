@@ -108,7 +108,9 @@ const schema = {
             </section>
           ))
       }
-      <ContactCTA />
+      <div class="work-hire">
+        <ContactCTA />
+      </div>
       <section class="earlier" aria-labelledby="earlier-work-heading">
         <h2 id="earlier-work-heading">Earlier work</h2>
         <ul>
@@ -253,6 +255,22 @@ const schema = {
     }
   }
 
+  /* Work-only: compact ContactCTA so Get in touch clears the dock in first view. */
+  .work-hire :global(aside) {
+    gap: 0.35rem;
+    padding: 0.35rem 0 calc(var(--chat-fab-clearance) + 0.5rem);
+    border: 0;
+    box-shadow: none;
+    background: none;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+
+  .work-hire :global(aside h2) {
+    font-size: var(--text-sm);
+    max-width: none;
+  }
+
   /* Work-first: keep Read the case / proof-card above the docked composer. */
   @media (max-width: 49.99em) {
     .work-first {
@@ -279,6 +297,11 @@ const schema = {
   }
 
   @media (min-width: 50em) {
+    .work-hire :global(aside) {
+      padding: 0.35rem 0 calc(var(--chat-fab-clearance) + 0.5rem);
+      gap: 0.5rem;
+    }
+
     .proof-card {
       padding: 1.5rem;
     }
