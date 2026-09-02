@@ -427,15 +427,11 @@
 
   @media (min-width: 50em) {
     .chat-window {
-      width: calc(100vw - 3rem);
-      max-width: none;
-      margin-inline: auto;
+      width: min(52rem, calc(100vw - 3rem));
     }
 
     .chat-form {
-      width: calc(100vw - 3rem);
-      max-width: none;
-      margin-inline: auto;
+      width: min(52rem, calc(100vw - 3rem));
     }
   }
 
@@ -817,8 +813,8 @@
     .chat-container.is-prominent .chat-window,
     .chat-container.is-open .chat-form,
     .chat-container.is-prominent .chat-form {
-      width: calc(100vw - 3rem);
-      max-width: none;
+      width: min(52rem, calc(100vw - 3rem));
+      max-width: min(52rem, calc(100vw - 3rem));
       margin-inline: auto;
     }
 
