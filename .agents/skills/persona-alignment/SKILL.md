@@ -10,7 +10,7 @@ Deep understanding and application of the author's professional profile, ensurin
 ## When to use this skill
 
 - Updating the `context/` directory or `README.md`.
-- Modifying biographical sections in `src/pages/about.astro`.
+- Modifying biographical sections in `src/pages/biography.astro` (visitor route `/biography/`; there is no `about.astro`).
 - Writing or updating work experience in `src/content/work/`.
 - Adding professional links or skills that must be SEO-optimized.
 
@@ -18,5 +18,6 @@ Deep understanding and application of the author's professional profile, ensurin
 
 1. **Context-Driven Updates:** Always consult the files in `context/` and `README.md` before generating author-specific content.
 2. **Professional Profile:** Align all professional updates with Alexander Härenstam's expertise as a Product Manager in Developer Experience.
-3. **SEO & Authority:** Link professional terms and skills to relevant external authority sources like Wikipedia for SEO enhancement.
-4. **Consistency:** Ensure consistent naming and linking, particularly for 'Chalmers University of Technology'.
+3. **Hire path:** LinkedIn only — https://www.linkedin.com/in/alehar/. No public email, no mailto hire, no placeholder CV PDF.
+4. **SEO & Authority:** Link professional terms and skills to relevant external authority sources like Wikipedia for SEO enhancement.
+5. **Consistency:** Ensure consistent naming and linking, particularly for 'Chalmers University of Technology'.
