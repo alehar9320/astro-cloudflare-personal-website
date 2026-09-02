@@ -17,3 +17,7 @@ Action: Added loading="lazy" and decoding="async" to the below-the-fold case stu
 2026-09-01 - Explicit Image Dimensions for Zero CLS
 Learning: Adding explicit width and height attributes to non-responsive / fixed-ratio content images allows browsers to compute intrinsic aspect ratio boxes before image data arrives, completely eliminating Cumulative Layout Shift (CLS=0) during lazy loading.
 Action: Added width="1472" and height="871" attributes to the case study image in src/pages/work/[...slug].astro.
+
+2026-09-15 - Icon Pruning & Direct Inlining in ContactCTA
+Learning: Inlining single-use icon paths directly into component templates (such as paper-plane-tilt in ContactCTA.astro) allows removing the path string from IconPaths.ts, pruning unnecessary dictionary lookup overhead and reducing bundle size across all pages that import IconPaths.ts.
+Action: Inlined paper-plane-tilt SVG directly in src/components/ContactCTA.astro and commented out paper-plane-tilt in src/components/IconPaths.ts.
