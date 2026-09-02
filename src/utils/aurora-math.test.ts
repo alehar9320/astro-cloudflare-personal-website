@@ -59,7 +59,10 @@ describe('aurora-math utilities', () => {
     expect(updated.x).toBe(97); // 2-5+100 = 97
     expect(updated.y).toBe(98); // 1-3+100 = 98
 
-    const noBounds = updateParticle({ x: 10, y: 20, vx: 2, vy: 3, alpha: 1 }, { width: 0, height: 0 });
+    const noBounds = updateParticle(
+      { x: 10, y: 20, vx: 2, vy: 3, alpha: 1 },
+      { width: 0, height: 0 }
+    );
     expect(noBounds.x).toBe(12);
     expect(noBounds.y).toBe(23);
   });
