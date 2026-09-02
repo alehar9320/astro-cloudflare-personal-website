@@ -70,7 +70,8 @@ export function updateParticle(
   particle: ParticleState,
   bounds: { width: number; height: number }
 ): ParticleState {
-  let { x, y, vx, vy, alpha } = particle;
+  const { vx, vy, alpha } = particle;
+  let { x, y } = particle;
 
   if (bounds.width > 0) {
     x = (x + vx + bounds.width) % bounds.width;

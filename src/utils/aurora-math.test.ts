@@ -50,4 +50,17 @@ describe('aurora-math utilities', () => {
     expect(updated.x).toBe(4); // 99+5 = 104 -> wrapped to 4
     expect(updated.y).toBe(8); // 10-2 = 8
   });
+
+  it('handles negative movement and zero bounds fallback gracefully', () => {
+    const initial = { x: 2, y: 1, vx: -5, vy: -3, alpha: 0.5 };
+    const bounds = { width: 100, height: 100 };
+
+    const updated = updateParticle(initial, bounds);
+    expect(updated.x).toBe(97); // 2-5+100 = 97
+    expect(updated.y).toBe(98); // 1-3+100 = 98
+
+    const noBounds = updateParticle({ x: 10, y: 20, vx: 2, vy: 3, alpha: 1 }, { width: 0, height: 0 });
+    expect(noBounds.x).toBe(12);
+    expect(noBounds.y).toBe(23);
+  });
 });

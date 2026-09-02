@@ -10,7 +10,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     <header class="lab-header">
       <h1>Northern Lights Canvas Lab</h1>
       <p class="lab-description">
-        A math-driven interactive refraction canvas using pure TypeScript wave superposition and particle physics.
+        A math-driven interactive refraction canvas using pure TypeScript wave superposition and
+        particle physics.
       </p>
       <div class="lab-controls-hint">
         <span class="badge">Keyboard: Space to Pause / Play</span>
@@ -19,9 +20,15 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     </header>
 
     <div class="canvas-wrapper">
-      <canvas id="aurora-lab-canvas" aria-label="Interactive Northern Lights canvas animation"></canvas>
+      <canvas id="aurora-lab-canvas" aria-label="Interactive Northern Lights canvas animation"
+      ></canvas>
       <div class="canvas-overlay">
-        <button id="toggle-motion-btn" type="button" class="motion-toggle" aria-label="Toggle animation state">
+        <button
+          id="toggle-motion-btn"
+          type="button"
+          class="motion-toggle"
+          aria-label="Toggle animation state"
+        >
           Pause Motion
         </button>
       </div>
@@ -30,7 +37,12 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 </BaseLayout>
 
 <script>
-  import { superimposeWaves, updateParticle, type WaveConfig, type ParticleState } from '../../utils/aurora-math';
+  import {
+    superimposeWaves,
+    updateParticle,
+    type WaveConfig,
+    type ParticleState,
+  } from '../../utils/aurora-math';
 
   const canvas = document.getElementById('aurora-lab-canvas') as HTMLCanvasElement | null;
   const toggleBtn = document.getElementById('toggle-motion-btn') as HTMLButtonElement | null;
@@ -49,7 +61,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     }
 
     // Cursor interaction state
-    let pointer = { x: -1000, y: -1000, active: false };
+    const pointer = { x: -1000, y: -1000, active: false };
 
     // Waves definition
     const waves: WaveConfig[] = [
@@ -96,8 +108,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
     const render = () => {
       if (!ctx || !canvas) return;
 
-      const width = canvas.width / (Math.min(window.devicePixelRatio || 1, 2));
-      const height = canvas.height / (Math.min(window.devicePixelRatio || 1, 2));
+      const width = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
+      const height = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
 
       ctx.clearRect(0, 0, width, height);
 
