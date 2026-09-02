@@ -5,6 +5,41 @@ import Hero from '../components/Hero.astro';
 
 const dek = 'What this site is, and what the chat in the corner is.';
 const pageTitle = 'This site | Product Manager, Developer Experience at IFS';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebPage',
+      '@id': 'https://me.alehar.workers.dev/this-site/#webpage',
+      url: 'https://me.alehar.workers.dev/this-site/',
+      name: pageTitle,
+      description: `${dek} Product Manager, Developer Experience at IFS.`,
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://me.alehar.workers.dev/',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'This site',
+            item: 'https://me.alehar.workers.dev/this-site/',
+          },
+        ],
+      },
+      publisher: {
+        '@type': 'Person',
+        '@id': 'https://me.alehar.workers.dev/#person',
+        name: 'Alexander Härenstam',
+      },
+    },
+  ],
+};
 ---
 
 <BaseLayout
@@ -12,9 +47,17 @@ const pageTitle = 'This site | Product Manager, Developer Experience at IFS';
   ogTitle={pageTitle}
   description={`${dek} Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.`}
 >
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <div class="stack gap-20">
     <main id="main-content" class="this-site stack gap-8">
       <Hero title="This site" tagline={dek} align="start" />
+      <div class="tldr-box">
+        <p>
+          <strong>TL;DR:</strong> This is Alexander Härenstam's personal site. The chat assistant in the
+          corner is an AI digital twin trained on Alexander's professional background as Product Manager,
+          Developer Experience at IFS.
+        </p>
+      </div>
       <div class="copy stack gap-4">
         <p>
           This is Alexander Härenstam's personal site. He is a Product Manager, Developer Experience
