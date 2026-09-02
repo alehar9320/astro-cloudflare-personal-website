@@ -423,6 +423,11 @@
     :global(body:has(.chat-container.is-open)) {
       overflow: hidden;
     }
+
+    .chat-container.is-open #chat-live,
+    .chat-container.is-prominent #chat-live {
+      display: none;
+    }
   }
 
   @media (min-width: 50em) {
