@@ -2808,4 +2808,30 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('reserves IFS case study image width/height so lazy load cannot CLS', () => {
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    const md = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
+    expect(md).toContain('img: /assets/stock-2.jpg');
+    expect(md).toContain('img_alt: Design components');
+    const otherAt = slug.indexOf("entry.data.img && entry.id !== 'ifs-design-system'");
+    const ifsAt = slug.indexOf("entry.data.img && entry.id === 'ifs-design-system'");
+    expect(otherAt).toBeGreaterThan(0);
+    expect(ifsAt).toBeGreaterThan(otherAt);
+    const other = slug.slice(otherAt, ifsAt);
+    expect(other).toContain('fetchpriority="high"');
+    expect(other).toContain('decoding="async"');
+    expect(other).not.toContain('loading="lazy"');
+    expect(other).not.toContain('width="1472"');
+    expect(other).not.toContain('height="871"');
+    const ifs = slug.slice(ifsAt, ifsAt + 600);
+    expect(ifs).toContain('width="1472"');
+    expect(ifs).toContain('height="871"');
+    expect(ifs).toContain('loading="lazy"');
+    expect(ifs).toContain('decoding="async"');
+    expect(ifs).toContain("alt={entry.data.img_alt || ''}");
+    expect(slug).toContain('https://www.linkedin.com/in/alehar/');
+    expect(slug).not.toContain('mailto:');
+  });
+
 });
