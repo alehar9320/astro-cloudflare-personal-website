@@ -2808,4 +2808,20 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('gives lint-and-test CI contents:read and keeps release contents:write', () => {
+    const yaml = readFileSync('.github/workflows/ci.yml', 'utf8');
+    const jobsAt = yaml.indexOf('\njobs:');
+    expect(jobsAt).toBeGreaterThan(0);
+    const root = yaml.slice(0, jobsAt);
+    expect(root).toContain('\nconcurrency:\n');
+    expect(root).toMatch(/\npermissions:\n  contents: read\n/);
+    expect(root).not.toMatch(/contents:\s*write/);
+    const releaseAt = yaml.indexOf('\n  release:');
+    expect(releaseAt).toBeGreaterThan(jobsAt);
+    const release = yaml.slice(releaseAt);
+    expect(release).toContain('\n    name: Release Metadata\n');
+    expect(release).toMatch(/\n    permissions:\n      contents: write\n/);
+  });
+
 });
