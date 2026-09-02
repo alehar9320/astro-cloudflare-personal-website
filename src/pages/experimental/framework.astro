@@ -1,0 +1,82 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_product_framework) return Astro.redirect('/404/');
+
+const pillars = [
+  { t: 'Continuous Discovery', d: 'Validate user outcomes early via feedback loops.' },
+  { t: 'Developer Velocity', d: 'Eliminate friction and standardize design systems.' },
+  { t: 'Systemic Quality', d: 'Embed performance, accessibility, and type safety.' },
+];
+---
+
+<BaseLayout
+  title="Operating Framework | PM, DevEx"
+  description="Product Manager, Developer Experience at IFS. Operating framework."
+  robots="noindex"
+>
+  <main id="main-content" class="wrapper stack gap-8" style="margin-top: 4rem;">
+    <Hero
+      title="Product Operating Model"
+      tagline="Aligning product discovery with execution."
+      align="start"
+    />
+    <div class="grid">
+      {
+        pillars.map((p) => (
+          <div class="card">
+            <strong>{p.t}</strong>
+            <p>{p.d}</p>
+          </div>
+        ))
+      }
+    </div>
+    <div class="actions">
+      <CallToAction
+        href="https://www.linkedin.com/in/alehar/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        Get in touch
+      </CallToAction>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .card {
+    padding: 1.25rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+    background: var(--gradient-subtle);
+  }
+  .card strong {
+    display: block;
+    color: var(--gray-0);
+    margin-bottom: 0.25rem;
+  }
+  .card p {
+    margin: 0;
+    color: var(--gray-300);
+    font-size: var(--text-sm);
+  }
+  .actions {
+    display: flex;
+    margin-top: 0.5rem;
+    padding-bottom: var(--chat-fab-clearance);
+  }
+  @media (min-width: 50em) {
+    .actions {
+      padding-bottom: 0;
+    }
+  }
+</style>
