@@ -129,6 +129,8 @@ const { title, description, ogTitle, shareUrl, canonicalUrl, robots } = Astro.pr
         height: 100dvh;
         pointer-events: none;
         overflow: hidden;
+        mask-image: linear-gradient(to bottom, #000 0%, #000 85%, transparent 100%);
+        -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 85%, transparent 100%);
       }
 
       .backgrounds > :not(.aurora) {
@@ -165,20 +167,20 @@ const { title, description, ogTitle, shareUrl, canonicalUrl, robots } = Astro.pr
       }
 
       :root.theme-dark .aurora-wash-a {
-        opacity: 0.28;
+        opacity: 0.16;
       }
 
       :root.theme-dark .aurora-wash-b {
-        opacity: 0.22;
+        opacity: 0.12;
       }
 
       @media (prefers-reduced-motion: no-preference) {
         .aurora-wash-a {
-          animation: aurora-drift-a 12s ease-in-out infinite alternate;
+          animation: aurora-drift-a 12s ease-in-out infinite;
         }
 
         .aurora-wash-b {
-          animation: aurora-drift-b 20s ease-in-out infinite alternate;
+          animation: aurora-drift-b 20s ease-in-out infinite;
         }
       }
 
@@ -190,20 +192,26 @@ const { title, description, ogTitle, shareUrl, canonicalUrl, robots } = Astro.pr
       }
 
       @keyframes aurora-drift-a {
-        from {
-          transform: translate3d(-10%, -8%, 0);
+        0% {
+          transform: translate3d(-2%, -1%, 0);
         }
-        to {
-          transform: translate3d(16%, 12%, 0);
+        50% {
+          transform: translate3d(5%, 2%, 0);
+        }
+        100% {
+          transform: translate3d(-2%, -1%, 0);
         }
       }
 
       @keyframes aurora-drift-b {
-        from {
-          transform: translate3d(8%, 0, 0);
+        0% {
+          transform: translate3d(2%, 1%, 0);
         }
-        to {
-          transform: translate3d(-14%, 10%, 0);
+        50% {
+          transform: translate3d(-4%, -1%, 0);
+        }
+        100% {
+          transform: translate3d(2%, 1%, 0);
         }
       }
 
