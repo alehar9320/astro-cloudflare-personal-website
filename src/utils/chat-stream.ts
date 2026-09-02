@@ -83,6 +83,8 @@ function consumeLine(state: SseParserState, line: string): string {
 
 /**
  * Processes a chunk of text, handling partial lines and buffering.
+ * Uses iterative indexOf pointer traversal to eliminate string array allocations
+ * per chunk on edge runtimes (e.g. Cloudflare Workers V8 isolates).
  * @param state - The parser state.
  * @param input - The new chunk of text.
  * @param isFinalChunk - Whether this is the last chunk.
@@ -90,31 +92,44 @@ function consumeLine(state: SseParserState, line: string): string {
  */
 function processBufferedText(state: SseParserState, input: string, isFinalChunk: boolean): string {
   const combined = state.partialLine + input;
-  const lines = combined.split('\n');
-  const lastIndex = isFinalChunk ? lines.length : Math.max(lines.length - 1, 0);
   let parsedText = '';
+  let startPos = 0;
+  let newlineIndex = combined.indexOf('\n', startPos);
 
-  for (let index = 0; index < lastIndex; index += 1) {
-    let line = lines[index];
+  while (newlineIndex !== -1) {
+    let line = combined.substring(startPos, newlineIndex);
     if (line.endsWith('\r')) {
       line = line.slice(0, -1);
     }
     parsedText += consumeLine(state, line);
+    startPos = newlineIndex + 1;
+    newlineIndex = combined.indexOf('\n', startPos);
   }
 
-  let remaining = isFinalChunk ? '' : lines[lines.length - 1];
-  if (remaining.endsWith('\r')) {
-    remaining = remaining.slice(0, -1);
-  }
-  state.partialLine = remaining;
+  let remaining = combined.substring(startPos);
 
-  if (isFinalChunk && state.currentEventLines.length > 0) {
-    const payload =
-      state.currentEventLines.length === 1
-        ? state.currentEventLines[0].trim()
-        : state.currentEventLines.join('\n').trim();
-    parsedText += extractResponseFromPayload(payload);
-    state.currentEventLines = [];
+  if (isFinalChunk) {
+    if (remaining.length > 0) {
+      if (remaining.endsWith('\r')) {
+        remaining = remaining.slice(0, -1);
+      }
+      parsedText += consumeLine(state, remaining);
+    }
+    state.partialLine = '';
+
+    if (state.currentEventLines.length > 0) {
+      const payload =
+        state.currentEventLines.length === 1
+          ? state.currentEventLines[0].trim()
+          : state.currentEventLines.join('\n').trim();
+      parsedText += extractResponseFromPayload(payload);
+      state.currentEventLines = [];
+    }
+  } else {
+    if (remaining.endsWith('\r')) {
+      remaining = remaining.slice(0, -1);
+    }
+    state.partialLine = remaining;
   }
 
   return parsedText;

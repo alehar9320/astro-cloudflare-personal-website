@@ -97,4 +97,17 @@ describe('chat stream parser', () => {
   it('falls back to plain text when the input is not SSE', () => {
     expect(extractAssistantTextFromSse('Hello world')).toBe('Hello world');
   });
+
+  it('correctly processes micro-chunks pushed 1 byte at a time using pointer traversal', () => {
+    const raw = `${event('Byte')}${event('-by-')}${event('byte')}\ndata: [DONE]\n\n`;
+    const parser = createChatStreamParser();
+    let accumulated = '';
+
+    for (const char of raw) {
+      accumulated += parser.push(char);
+    }
+    accumulated += parser.flush();
+
+    expect(accumulated).toBe('Byte-by-byte');
+  });
 });
