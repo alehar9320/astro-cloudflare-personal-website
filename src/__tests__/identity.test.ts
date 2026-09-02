@@ -2808,4 +2808,35 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('self-hosts Public Sans + Rubik woff2 with no Google Fonts (#889)', () => {
+    const head = readFileSync('src/components/MainHead.astro', 'utf8');
+    const css = readFileSync('src/styles/global.css', 'utf8');
+    expect(head).not.toContain('fonts.googleapis.com');
+    expect(head).not.toContain('fonts.gstatic.com');
+    expect(head).toContain('rel="preload"');
+    expect(head).toContain('as="font"');
+    expect(head).toContain('type="font/woff2"');
+    expect(head).toContain('href="/fonts/public-sans-400.woff2"');
+    expect(head).toContain('href="/fonts/rubik-600.woff2"');
+    expect(head).not.toContain('public-sans-400-italic');
+    expect(head).not.toContain('public-sans-700');
+    expect(head).not.toContain('rubik-500');
+    expect(css).toContain('@font-face');
+    expect(css).toContain("url('/fonts/public-sans-400.woff2')");
+    expect(css).toContain("url('/fonts/public-sans-400-italic.woff2')");
+    expect(css).toContain("url('/fonts/public-sans-700.woff2')");
+    expect(css).toContain("url('/fonts/rubik-500.woff2')");
+    expect(css).toContain("url('/fonts/rubik-600.woff2')");
+    expect(css).toContain('font-display: swap');
+    expect(css).toContain('size-adjust: 100%');
+    expect(css).toContain("--font-body: 'Public Sans', var(--font-system);");
+    expect(css).toContain('--font-brand: Rubik, var(--font-system);');
+    expect(existsSync('public/fonts/public-sans-400.woff2')).toBe(true);
+    expect(existsSync('public/fonts/public-sans-400-italic.woff2')).toBe(true);
+    expect(existsSync('public/fonts/public-sans-700.woff2')).toBe(true);
+    expect(existsSync('public/fonts/rubik-500.woff2')).toBe(true);
+    expect(existsSync('public/fonts/rubik-600.woff2')).toBe(true);
+  });
+
 });
