@@ -2808,4 +2808,16 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('uses GH_WORKFLOW_PAT so auto-merge can trigger ci.yml Release Metadata (#893)', () => {
+    const enable = readFileSync('.github/workflows/enable-automerge.yml', 'utf8');
+    const dependabot = readFileSync('.github/workflows/dependabot-automerge.yml', 'utf8');
+    expect(enable).toContain('Enable squash auto-merge');
+    expect(enable).toContain('GH_TOKEN: ${{ secrets.GH_WORKFLOW_PAT }}');
+    expect(dependabot).toContain('Enable auto-merge for Patches and Minors');
+    expect(dependabot).toContain('GH_TOKEN: ${{ secrets.GH_WORKFLOW_PAT }}');
+    expect(dependabot).not.toContain('GH_TOKEN: ${{secrets.GITHUB_TOKEN}}');
+    expect(dependabot).not.toContain('GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}');
+  });
+
 });
