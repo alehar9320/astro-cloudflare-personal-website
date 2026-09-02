@@ -130,14 +130,14 @@ export const GET: APIRoute = async () => {
         status: 200,
         headers: jsonHeaders,
       });
-    } catch {
-      console.error({ event: 'visits_query_failed' });
+    } catch (error: unknown) {
+      console.error({ event: 'visits_query_failed', error: String(error) });
       return empty204();
     } finally {
       clearTimeout(timeout);
     }
-  } catch {
-    console.error({ event: 'visits_query_failed' });
+  } catch (error: unknown) {
+    console.error({ event: 'visits_query_failed', error: String(error) });
     return empty204();
   }
 };
