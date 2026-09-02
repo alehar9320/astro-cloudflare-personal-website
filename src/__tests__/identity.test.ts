@@ -2808,4 +2808,13 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('hides Live badge in open chat on mobile (quieter Live)', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    expect(chat).toContain('id="chat-live"');
+    expect(chat).toContain('id="chat-live-label"');
+    expect(chat).toMatch(/@media\s*\(\s*max-width:\s*49\.99em\s*\)[\s\S]*#chat-live[\s\S]*display:\s*none/);
+    expect(chat).toContain('id="status-announcer"');
+    expect(chat).not.toContain('mailto:');
+  });
 });
