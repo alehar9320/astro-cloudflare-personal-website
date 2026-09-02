@@ -2808,4 +2808,18 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it("lets What's New in the this-site sentence open /whats-new/ same tab", () => {
+    const page = readFileSync('src/pages/this-site.astro', 'utf8');
+    expect(page).toContain('<a href="/whats-new/">What\'s New</a>');
+    expect(page).toContain('is what you can see on this site lately.');
+    const linkAt = page.indexOf('<a href="/whats-new/">What\'s New</a>');
+    expect(linkAt).toBeGreaterThanOrEqual(0);
+    const near = page.slice(Math.max(0, linkAt - 120), linkAt + 160);
+    expect(near).not.toContain('min-height: 44px');
+    expect(near).not.toContain('min-width: 44px');
+    expect(near).not.toContain('target="_blank"');
+    expect(page).toContain('https://www.linkedin.com/in/alehar/');
+  });
+
 });
