@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-22 - Forced-Colors Mode High Contrast Progress Bars & Proof Card Affordances
+
+**Learning:** When using custom progress bars or metric fill elements (such as `.kr-bar` and `.kr-bar-fill` in `okr.astro`), translucent or gradient backgrounds disappear or become invisible in Windows High Contrast Mode / forced-colors active mode. Adding explicit system color fallbacks (`border: 1px solid CanvasText;` and `background-color: Highlight;`) inside `@media (forced-colors: active)` ensures data visualization components remain fully readable. Additionally, standardizing interactive card affordances (such as `.proof-affordance`) with WCAG touch target dimensions (`min-height: 44px; min-width: 44px;`) and clear hover/focus-visible color feedback (`color: var(--gray-0)`) ensures accessible touch and keyboard interactions.
+
+**Action:** Added `@media (forced-colors: active)` support for `.kr-bar` and `.kr-bar-fill` in `src/pages/okr.astro`. Enhanced `.proof-card` in `src/pages/roadmap.astro` and `src/pages/index.astro` with hover and `:focus-visible` color transitions on `.proof-affordance`, and enforced minimum 44x44px touch targets.
+
 ## 2026-05-21 - Standardizing Focus-Visible Indicators & Card Radius Alignment
 
 **Learning:** Scoped link selectors inside markdown content containers (such as `.content :global(a)`) and list sections (`.earlier a`) must use `:focus-visible` with site-standard outline indicators (`outline: 2px solid var(--accent-regular)`, `outline-offset: 4px`, `border-radius: 0.25rem`) rather than raw `:focus` text-decoration properties. Replacing raw `:focus` prevents sticky focus underlines on mouse clicks, while adding explicit `:focus-visible` outlines and rounded corner alignment ensures a high-visibility, visually clean experience for keyboard navigation.
