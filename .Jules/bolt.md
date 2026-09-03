@@ -17,3 +17,7 @@ Action: Added loading="lazy" and decoding="async" to the below-the-fold case stu
 2026-09-01 - Explicit Image Dimensions for Zero CLS
 Learning: Adding explicit width and height attributes to non-responsive / fixed-ratio content images allows browsers to compute intrinsic aspect ratio boxes before image data arrives, completely eliminating Cumulative Layout Shift (CLS=0) during lazy loading.
 Action: Added width="1472" and height="871" attributes to the case study image in src/pages/work/[...slug].astro.
+
+2026-09-03 - Dynamic Import for Analytics Code-Splitting
+Learning: Top-level static imports of third-party libraries (e.g. posthog-js) force Vite to include them in the entry client bundle on all page renders, even when activation conditions (e.g. API keys) are absent. Using dynamic import (`await import(...)`) behind conditional runtime checks isolates heavy analytics dependencies into deferred chunks, preventing main-thread parse/execution overhead on critical page loads.
+Action: Updated src/components/PostHog.astro to dynamically import posthog-js only when PUBLIC_POSTHOG_KEY is present, reducing initial PostHog script payload from 240.6KB to 2.1KB (~238.5KB savings).
