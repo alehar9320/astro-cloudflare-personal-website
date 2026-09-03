@@ -21,3 +21,9 @@
 - [Insight 1: Tighter focus ring outline-offsets (2px) prevent focus ring overflow clipping on compact overlay toggles.]
 - [Insight 2: Gating active press scale transitions behind prefers-reduced-motion media queries respects accessibility preferences while preserving tactile visual feedback.]
 - [Delta: 17 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-16 - Pill Tactile Feedback | Signal: Competitive/Technical | Lean Implementation: Flagged CSS Hover Transform + Gradient Shift
+
+- [Insight 1: Subtle hover position shift (`transform: translateY(-1px)`) combined with gradient position shift enhances visual depth on interactive tag pills without triggering layout re-flows.]
+- [Insight 2: Feature-flagging pill micro-interactions (`enable_pill_tactile_v1`) guarantees zero impact on existing tag render passes if flags are disabled.]
+- [Delta: 24 lines across 3 files. Guardrails: All passed autonomously.]
