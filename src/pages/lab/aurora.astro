@@ -1,0 +1,459 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Northern Lights Aurora Canvas | Laboratory | Alexander Härenstam"
+  description="Interactive Northern Lights wave interference simulation with reactive particle dynamics."
+>
+  <main id="main-content" class="wrapper stack gap-6">
+    <nav class="back-nav">
+      <a href="/lab/" class="nav-link">&larr; Back to Laboratory</a>
+    </nav>
+
+    <header class="lab-header">
+      <h1 class="title">Northern Lights Aurora Canvas</h1>
+      <p class="dek">
+        A math-driven generative wave simulation combining harmonic sine functions, reactive
+        particle velocity fields, and glassmorphic micro-interactions.
+      </p>
+    </header>
+
+    <section class="canvas-card">
+      <div class="interactive-container">
+        <canvas id="aurora-canvas" aria-label="Interactive Northern Lights aurora animation canvas"
+        ></canvas>
+
+        <div class="controls-overlay" role="region" aria-label="Canvas animation controls">
+          <button
+            type="button"
+            id="toggle-btn"
+            class="ctrl-btn"
+            aria-label="Pause animation"
+            title="Pause animation (Space)"
+          >
+            <span id="toggle-icon" aria-hidden="true">⏸</span>
+            <span id="toggle-label">Pause</span>
+          </button>
+
+          <button
+            type="button"
+            id="reset-btn"
+            class="ctrl-btn"
+            aria-label="Reset particle field"
+            title="Reset particles"
+          >
+            <span aria-hidden="true">🔄</span>
+            <span>Reset</span>
+          </button>
+
+          <div class="speed-toggle">
+            <button
+              type="button"
+              id="speed-btn"
+              class="ctrl-btn"
+              aria-label="Toggle wave speed"
+              title="Toggle wave speed"
+            >
+              <span aria-hidden="true">⚡</span>
+              <span id="speed-label">Speed: 1x</span>
+            </button>
+          </div>
+        </div>
+      </div>
+      <p class="interaction-hint">
+        💡 Move cursor or tap canvas to interact with particle vector fields. Press <kbd>Space</kbd> to
+        toggle animation.
+      </p>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import {
+    calculateAuroraWave,
+    createAuroraParticles,
+    getAuroraColor,
+    updateParticle,
+    type MouseState,
+    type Particle,
+  } from '../../utils/aurora-math';
+
+  const canvas = document.getElementById('aurora-canvas') as HTMLCanvasElement | null;
+  const toggleBtn = document.getElementById('toggle-btn') as HTMLButtonElement | null;
+  const toggleIcon = document.getElementById('toggle-icon') as HTMLElement | null;
+  const toggleLabel = document.getElementById('toggle-label') as HTMLElement | null;
+  const resetBtn = document.getElementById('reset-btn') as HTMLButtonElement | null;
+  const speedBtn = document.getElementById('speed-btn') as HTMLButtonElement | null;
+  const speedLabel = document.getElementById('speed-label') as HTMLElement | null;
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let animationFrameId: number;
+    let time = 0;
+    let isPlaying = true;
+    let speedMultiplier = 1.0;
+    let particles: Particle[] = [];
+
+    const mouse: MouseState = {
+      x: -1000,
+      y: -1000,
+      active: false,
+    };
+
+    // Accessibility check
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      isPlaying = false;
+    }
+
+    const updateControlsUI = () => {
+      if (toggleIcon) toggleIcon.textContent = isPlaying ? '⏸' : '▶';
+      if (toggleLabel) toggleLabel.textContent = isPlaying ? 'Pause' : 'Play';
+      if (toggleBtn)
+        toggleBtn.setAttribute('aria-label', isPlaying ? 'Pause animation' : 'Play animation');
+    };
+
+    updateControlsUI();
+
+    const resize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const displayWidth = canvas.parentElement.clientWidth;
+      const displayHeight = Math.max(360, Math.min(520, window.innerHeight * 0.5));
+
+      canvas.width = Math.floor(displayWidth * dpr);
+      canvas.height = Math.floor(displayHeight * dpr);
+      canvas.style.width = `${displayWidth}px`;
+      canvas.style.height = `${displayHeight}px`;
+
+      if (ctx) {
+        ctx.scale(dpr, dpr);
+      }
+
+      const particleCount = displayWidth < 600 ? 30 : 60;
+      particles = createAuroraParticles(particleCount, displayWidth, displayHeight);
+    };
+
+    const drawStaticFrame = () => {
+      if (!ctx || !canvas) return;
+      const width = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
+      const height = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Deep marine background gradient
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
+      bgGrad.addColorStop(0, '#0a1628');
+      bgGrad.addColorStop(1, '#050c18');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      // Draw static aurora waves
+      const layers = 3;
+      for (let l = 0; l < layers; l++) {
+        ctx.beginPath();
+        const baseHeight = height * (0.4 + l * 0.15);
+        ctx.moveTo(0, height);
+
+        for (let x = 0; x <= width; x += 10) {
+          const waveOffset = calculateAuroraWave(x, width, 1.0, l * 1.5);
+          const y = baseHeight + waveOffset * 35;
+          ctx.lineTo(x, y);
+        }
+
+        ctx.lineTo(width, height);
+        ctx.closePath();
+
+        const colorRatio = (l + 1) / layers;
+        ctx.fillStyle = getAuroraColor(colorRatio, 0.18 - l * 0.04);
+        ctx.fill();
+      }
+    };
+
+    const draw = () => {
+      if (!ctx || !canvas) return;
+      const width = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
+      const height = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Background gradient
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
+      bgGrad.addColorStop(0, '#0a182b');
+      bgGrad.addColorStop(1, '#040b15');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      if (isPlaying) {
+        time += 0.015 * speedMultiplier;
+      }
+
+      // Render 3 generative aurora wave ribbons
+      const layers = 3;
+      for (let l = 0; l < layers; l++) {
+        ctx.beginPath();
+        const baseHeight = height * (0.35 + l * 0.15);
+        ctx.moveTo(0, height);
+
+        for (let x = 0; x <= width; x += 8) {
+          const waveOffset = calculateAuroraWave(x, width, time, l * 1.8);
+          const y = baseHeight + waveOffset * (30 + l * 10);
+          ctx.lineTo(x, y);
+        }
+
+        ctx.lineTo(width, height);
+        ctx.closePath();
+
+        const colorRatio = (l / (layers - 1) + (Math.sin(time * 0.2) + 1) * 0.2) % 1;
+        ctx.fillStyle = getAuroraColor(colorRatio, 0.22 - l * 0.05);
+        ctx.fill();
+      }
+
+      // Update & render particles
+      for (const p of particles) {
+        if (isPlaying) {
+          updateParticle(p, width, height, mouse);
+        }
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${p.hue}, 85%, 65%, ${p.alpha.toFixed(2)})`;
+        ctx.shadowColor = `hsla(${p.hue}, 90%, 70%, 0.5)`;
+        ctx.shadowBlur = 6;
+        ctx.fill();
+        ctx.shadowBlur = 0; // Reset blur for performance
+      }
+
+      if (isPlaying) {
+        animationFrameId = requestAnimationFrame(draw);
+      }
+    };
+
+    // Event handlers
+    const handlePointerMove = (e: PointerEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      mouse.x = e.clientX - rect.left;
+      mouse.y = e.clientY - rect.top;
+      mouse.active = true;
+    };
+
+    const handlePointerLeave = () => {
+      mouse.active = false;
+    };
+
+    const togglePlay = () => {
+      isPlaying = !isPlaying;
+      updateControlsUI();
+      if (isPlaying) {
+        draw();
+      } else {
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
+
+    const resetParticles = () => {
+      const width = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
+      const height = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
+      particles = createAuroraParticles(particles.length, width, height);
+      if (!isPlaying) drawStaticFrame();
+    };
+
+    const cycleSpeed = () => {
+      if (speedMultiplier === 1.0) speedMultiplier = 1.8;
+      else if (speedMultiplier === 1.8) speedMultiplier = 0.5;
+      else speedMultiplier = 1.0;
+
+      if (speedLabel) {
+        const speedText =
+          speedMultiplier === 1.8 ? '1.8x' : speedMultiplier === 0.5 ? '0.5x' : '1x';
+        speedLabel.textContent = `Speed: ${speedText}`;
+      }
+    };
+
+    const handleKeydown = (e: KeyboardEvent) => {
+      if (e.key === ' ' || e.code === 'Space') {
+        const active = document.activeElement;
+        // Don't intercept space if focused on interactive control
+        if (active && (active.tagName === 'BUTTON' || active.tagName === 'A')) return;
+        e.preventDefault();
+        togglePlay();
+      }
+    };
+
+    // Event Listeners
+    window.addEventListener('resize', resize);
+    window.addEventListener('keydown', handleKeydown);
+    canvas.addEventListener('pointermove', handlePointerMove);
+    canvas.addEventListener('pointerleave', handlePointerLeave);
+    toggleBtn?.addEventListener('click', togglePlay);
+    resetBtn?.addEventListener('click', resetParticles);
+    speedBtn?.addEventListener('click', cycleSpeed);
+
+    // Initial setup
+    resize();
+    if (prefersReducedMotion) {
+      drawStaticFrame();
+    } else {
+      draw();
+    }
+
+    // Teardown listener for Astro client transitions and unloads
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+        window.removeEventListener('keydown', handleKeydown);
+        canvas.removeEventListener('pointermove', handlePointerMove);
+        canvas.removeEventListener('pointerleave', handlePointerLeave);
+        toggleBtn?.removeEventListener('click', togglePlay);
+        resetBtn?.removeEventListener('click', resetParticles);
+        speedBtn?.removeEventListener('click', cycleSpeed);
+      },
+      { once: true }
+    );
+  }
+</script>
+
+<style>
+  .back-nav {
+    padding-top: 1rem;
+  }
+
+  .nav-link {
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    text-decoration: none;
+    transition: color var(--theme-transition);
+  }
+
+  .nav-link:hover,
+  .nav-link:focus-visible {
+    color: var(--gray-0);
+  }
+
+  .nav-link:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+    border-radius: 0.25rem;
+  }
+
+  .lab-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .title {
+    font-size: var(--text-2xl);
+    color: var(--gray-0);
+  }
+
+  .dek {
+    font-size: var(--text-md);
+    color: var(--gray-300);
+    max-width: 50ch;
+    line-height: 1.5;
+  }
+
+  .canvas-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .interactive-container {
+    position: relative;
+    width: 100%;
+    min-height: 360px;
+    border-radius: 0.875rem;
+    overflow: hidden;
+    background: #040b15;
+    border: 1px solid var(--gray-800);
+    box-shadow: var(--shadow-md);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  .controls-overlay {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    background: rgba(13, 22, 38, 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 0.5rem;
+    padding: 0.4rem;
+  }
+
+  .ctrl-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.4rem 0.75rem;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.375rem;
+    color: var(--gray-100);
+    font-size: var(--text-sm);
+    font-family: inherit;
+    cursor: pointer;
+    transition:
+      background var(--theme-transition),
+      border-color var(--theme-transition);
+  }
+
+  .ctrl-btn:hover,
+  .ctrl-btn:focus-visible {
+    background: rgba(255, 255, 255, 0.14);
+    border-color: var(--accent-regular);
+  }
+
+  .ctrl-btn:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 2px;
+  }
+
+  .interaction-hint {
+    font-size: var(--text-xs);
+    color: var(--gray-400);
+    margin: 0;
+  }
+
+  kbd {
+    padding: 0.1rem 0.35rem;
+    background: var(--gray-800);
+    border: 1px solid var(--gray-700);
+    border-radius: 0.25rem;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.85em;
+    color: var(--gray-200);
+  }
+
+  @media (max-width: 30em) {
+    .controls-overlay {
+      bottom: 0.5rem;
+      right: 0.5rem;
+      left: 0.5rem;
+      justify-content: space-around;
+      padding: 0.25rem;
+    }
+
+    .ctrl-btn {
+      padding: 0.3rem 0.5rem;
+      font-size: var(--text-xs);
+    }
+  }
+</style>

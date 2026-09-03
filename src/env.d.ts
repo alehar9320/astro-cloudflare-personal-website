@@ -20,3 +20,19 @@ declare module '*.txt?raw' {
   const content: string;
   export default content;
 }
+
+interface Element {
+  append(...nodes: (string | Node)[]): void;
+  prepend(...nodes: (string | Node)[]): void;
+}
+
+declare global {
+  namespace NodeJS {
+    interface ProcessEnv {
+      [key: string]: string | undefined;
+    }
+  }
+  var process: {
+    env: NodeJS.ProcessEnv;
+  };
+}

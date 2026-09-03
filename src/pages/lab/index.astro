@@ -1,0 +1,123 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Digital Art & Interactive Canvas Lab | Alexander Härenstam"
+  description="Experimental digital art, fluid micro-interactions, and canvas experiences."
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <header class="hero">
+      <h1 class="title">Interactive Canvas Laboratory</h1>
+      <p class="tagline">
+        Experimental digital art, generative mathematical waves, and fluid micro-interactions.
+      </p>
+    </header>
+
+    <section class="lab-grid">
+      <a href="/lab/aurora/" class="lab-card">
+        <div class="card-header">
+          <span class="badge">Canvas 2D</span>
+          <p class="card-title">Northern Lights Aurora Wave</p>
+        </div>
+        <p class="card-desc">
+          Math-driven organic wave interference simulation with reactive particle field and
+          glassmorphic controls.
+        </p>
+        <span class="card-link">Launch Experiment &rarr;</span>
+      </a>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .hero {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top: 2rem;
+  }
+
+  .title {
+    font-size: var(--text-3xl);
+    color: var(--gray-0);
+  }
+
+  .tagline {
+    font-size: var(--text-md);
+    color: var(--gray-300);
+    max-width: 45ch;
+  }
+
+  .lab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .lab-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    background: var(--gray-999_40);
+    border: 1px solid var(--gray-800);
+    border-radius: 0.75rem;
+    text-decoration: none;
+    color: var(--gray-200);
+    transition:
+      transform var(--theme-transition),
+      border-color var(--theme-transition);
+  }
+
+  .lab-card:hover,
+  .lab-card:focus-visible {
+    transform: translateY(-2px);
+    border-color: var(--accent-regular);
+  }
+
+  .lab-card:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+    border-radius: 0.75rem;
+  }
+
+  .card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .badge {
+    align-self: flex-start;
+    font-size: var(--text-xs);
+    padding: 0.2rem 0.5rem;
+    background: var(--accent-subtle_20);
+    color: var(--accent-light);
+    border: 1px solid var(--accent-regular);
+    border-radius: 0.25rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .card-title {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--gray-0);
+    margin: 0;
+  }
+
+  .card-desc {
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  .card-link {
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--accent-light);
+    margin-top: auto;
+  }
+</style>
