@@ -2,20 +2,25 @@
 
 Read this before scouting. If the idea is one of these, ABORT the cycle. Do not downscope into a sibling with the same job. Do not open a PR.
 
-If the idea is a Product Frameworks MVP, Engineering Principles MVP, Product Playbook MVP, or a sibling experimental manifesto/frameworks page with the same job, ABORT.
+If the idea is a Product Frameworks MVP, Engineering Principles MVP, Product Playbook MVP, Product Decision Frameworks MVP, or a sibling experimental manifesto/frameworks page with the same job, ABORT.
 
 Do NOT recreate:
 
 - Product Frameworks MVP
 - Engineering Principles MVP
 - Product Playbook MVP
-- any sibling experimental frameworks/principles/playbook page
+- Product Decision Frameworks MVP
+- any sibling experimental frameworks/principles/playbook/decision-frameworks page
 
-Already closed as farm: #872, #858, #808.
+Already closed as farm: #957, #906, #872, #858, #808.
+
+Leftover quota stays off this class. Do not reopen as Jules.
 
 Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
 
 ---
+
+## 2026-09-03 - Farm abort | Signal: Nick Dual OWN FAIL #957 | Lean Implementation: HARD ABORT Product Decision Frameworks MVP restack of #906/#872/#858/#808
 
 ## 2026-09-01 - Farm abort | Signal: Nick close-reason split | Lean Implementation: HARD ABORT Product Frameworks / Engineering Principles MVP pages
 
