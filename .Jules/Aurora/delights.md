@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - Pill Tactile Feedback | Signal: Competitive | Lean Implementation: Added subtle active scale(0.97) feedback to Pill tags in Pill.astro gated by enable_pill_tactile_v1.
+
+- Insight: Tactile feedback on interactive pill chips increases tactile responsiveness and perceived UI quality.
+- User Target: Comfort
+- Abort Triggers: None.
+- User Reaction: Pending synthetic feedback.
