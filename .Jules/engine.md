@@ -8,12 +8,17 @@ Do NOT recreate:
 
 - pointer-based SSE stream parsing for Cloudflare Workers
 - pointer traversal optimizations of the same SSE parser
+- overnight restacks of Engine SSE pointer-parse
 
-Already closed as farm: #870, #854, #807.
+Already closed as farm: #956, #903, #870, #854, #807, #714.
+
+Leftover quota stays off this class. Do not reopen as Jules.
 
 Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
 
 ---
+
+## 2026-09-03 - Farm abort | Signal: Nick Dual FAIL CLOSE #956 | Lean Implementation: HARD ABORT SSE pointer-parse restack of #903/#870/#854/#807/#714
 
 ## 2026-09-01 - Farm abort | Signal: Nick close-reason split | Lean Implementation: HARD ABORT SSE pointer-parse
 
