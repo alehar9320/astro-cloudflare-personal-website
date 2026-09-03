@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-23 - Compact Overlay Control Focus Containment & Touch Target Standard
+
+**Learning:** Compact overlay controls inside constrained components (such as `.chat-clear`, `.chat-close`, and suggestion chips in `Chat.astro`) require tight focus ring containment (`outline-offset: 2px`) to prevent focus outlines from overflowing overlay bounds or clipping against scroll container edges. Furthermore, ensuring all action controls maintain WCAG touch target dimensions (`min-height: 44px; min-width: 44px`) with `display: inline-flex; align-items: center; justify-content: center;` and gated tactile feedback (`transform: scale(0.96)`) under `@media (prefers-reduced-motion: no-preference)` delivers an accessible, highly responsive experience across touch and keyboard interactions.
+
+**Action:** Updated `.chat-clear`, `.chat-close`, `.chat-suggestion`, and explore card links in `src/components/Chat.astro` to enforce 44x44px minimum touch targets and contained `outline-offset: 2px` focus outlines with tactile `:active` scaling.
+
 ## 2026-05-22 - Forced-Colors Mode High Contrast Progress Bars & Proof Card Affordances
 
 **Learning:** When using custom progress bars or metric fill elements (such as `.kr-bar` and `.kr-bar-fill` in `okr.astro`), translucent or gradient backgrounds disappear or become invisible in Windows High Contrast Mode / forced-colors active mode. Adding explicit system color fallbacks (`border: 1px solid CanvasText;` and `background-color: Highlight;`) inside `@media (forced-colors: active)` ensures data visualization components remain fully readable. Additionally, standardizing interactive card affordances (such as `.proof-affordance`) with WCAG touch target dimensions (`min-height: 44px; min-width: 44px;`) and clear hover/focus-visible color feedback (`color: var(--gray-0)`) ensures accessible touch and keyboard interactions.
