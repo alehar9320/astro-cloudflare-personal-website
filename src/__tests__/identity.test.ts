@@ -2813,13 +2813,14 @@ describe('identity copy', () => {
     const thesis = readFileSync('src/content/work/master-thesis.md', 'utf8');
     const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
     expect(thesis).toContain('class="tldr-box"');
-    expect(thesis).toContain('[IFS Design System](/work/ifs-design-system/)');
-    expect((thesis.match(/\[IFS Design System\]\(\/work\/ifs-design-system\/\)/g) || []).length).toBe(1);
+    expect(thesis).toContain('<a href="/work/ifs-design-system/">IFS Design System</a>');
+    expect((thesis.match(/<a href=\"\/work\/ifs-design-system\/\">IFS Design System<\/a>/g) || []).length).toBe(1);
     expect((thesis.match(/\/work\/ifs-design-system\//g) || []).length).toBe(1);
+    expect(thesis).not.toContain('[IFS Design System](/work/ifs-design-system/)');
     const tldrStart = thesis.indexOf('class="tldr-box"');
     const tldrEnd = thesis.indexOf('</div>', tldrStart);
     const tldr = thesis.slice(tldrStart, tldrEnd);
-    expect(tldr).toContain('[IFS Design System](/work/ifs-design-system/)');
+    expect(tldr).toContain('<a href="/work/ifs-design-system/">IFS Design System</a>');
     expect(thesis).not.toContain('Explore');
     expect(thesis).not.toContain('Lidköping');
     expect(slug).toContain('min-height: calc(100svh - var(--chat-fab-clearance))');
