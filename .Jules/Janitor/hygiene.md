@@ -10,11 +10,15 @@ Do NOT recreate:
 - daily-title restacks
 - sibling copy-hygiene of the same farm
 
-Already closed as farm: #862, #821.
+Already closed as farm: #968, #919, #862, #821.
+
+Leftover quota stays off this class. Do not reopen as Jules.
 
 Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
 
 ---
+
+## 2026-09-03 - Farm abort | Signal: Nick CLOSE #968 | Lean Implementation: HARD ABORT Janitor typo/terminology restack
 
 ## 2026-09-01 - Farm abort | Signal: Nick close-reason split | Lean Implementation: HARD ABORT typos / terminology / daily-title
 
