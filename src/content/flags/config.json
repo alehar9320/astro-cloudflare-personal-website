@@ -5,6 +5,7 @@
   "enable_product_manifesto": true,
   "enable_skills_pulse_v1": true,
   "enable_reading_list": true,
+  "enable_decision_frameworks": true,
   "enable_logo_wobble_v1": true,
   "enable_cta_tactile_v1": true,
   "enable_theme_toggle_tactile_v1": true
