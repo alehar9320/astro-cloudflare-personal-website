@@ -2824,9 +2824,11 @@ describe('identity copy', () => {
     expect(thesis).not.toContain('Lidköping');
     expect(slug).toContain('min-height: calc(100svh - var(--chat-fab-clearance))');
     expect(slug).toContain('.earlier-case :global(.tldr-box)');
-    expect(slug).toContain('a[href="/work/ifs-design-system/"]');
+    expect(slug).toContain('.earlier-case :global(a[href="/work/ifs-design-system/"])');
+    expect(slug).toContain('display: inline-block');
     expect(slug).toContain('min-height: 44px');
     expect(slug).toContain('min-width: 44px');
+    expect(slug).toContain('box-sizing: border-box');
     expect(slug).toContain('class="back-link"');
     expect(slug).toContain('https://www.linkedin.com/in/alehar/');
     expect(slug).not.toContain('mailto:');

@@ -10,10 +10,7 @@ tags:
 ---
 
 <div class="tldr-box">
-  <p><strong>TL;DR:</strong> <strong>Chalmers</strong> master's thesis, 2017, on business model innovation and digitalization.</p>
-
-The featured case is the [IFS Design System](/work/ifs-design-system/).
-
+  <p><strong>TL;DR:</strong> <strong>Chalmers</strong> master's thesis, 2017, on business model innovation and digitalization. The featured case is the [IFS Design System](/work/ifs-design-system/).</p>
 </div>
 
 This is earlier work. Master's thesis at [Chalmers University of Technology](https://www.chalmers.se/en/) in 2017. It mapped what digitalization does to business models, studied one case, and compared that to the literature.
