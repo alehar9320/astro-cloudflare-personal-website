@@ -10,13 +10,15 @@ Do NOT restack:
 - #763 CTA tactile
 - #868 (KEEP Dual CLOSED)
 - #869 (KEEP Dual FAIL)
-- Kinetic Pill farms (#875, #860, #856, #851)
+- Kinetic/Aurora/Jules Pill tactile farms (#959, #953, #899, #875, #860, #856, #851, #750)
 
 Do not downscope into a sibling tactile, focus, image-dimension, or Pill-gradient pass of those jobs. Do not open a PR.
 
 Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
 
 ---
+
+## 2026-09-03 - Farm abort | Signal: Nick Eng FAIL #959 | Lean Implementation: HARD ABORT Pill tactile restack of #953/#899/#750
 
 ## 2026-09-01 - Farm abort | Signal: Dual merge + scheduled farm classes | Lean Implementation: HARD ABORT restack of #867/#763/#868/#869 and Kinetic Pill farms
 
