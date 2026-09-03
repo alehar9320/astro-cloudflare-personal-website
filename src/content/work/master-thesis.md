@@ -11,6 +11,9 @@ tags:
 
 <div class="tldr-box">
   <p><strong>TL;DR:</strong> <strong>Chalmers</strong> master's thesis, 2017, on business model innovation and digitalization.</p>
+
+The featured case is the [IFS Design System](/work/ifs-design-system/).
+
 </div>
 
 This is earlier work. Master's thesis at [Chalmers University of Technology](https://www.chalmers.se/en/) in 2017. It mapped what digitalization does to business models, studied one case, and compared that to the literature.
@@ -19,7 +22,7 @@ This is earlier work. Master's thesis at [Chalmers University of Technology](htt
 2. A case where digitalization was part of changing the model.
 3. Where that case differed from the literature.
 
-Opportunities showed up as reach, scale, and data for decisions. Barriers were mostly organizational. The featured case is the [IFS Design System](/work/ifs-design-system/).
+Opportunities showed up as reach, scale, and data for decisions. Barriers were mostly organizational.
 
 ## Problem
 

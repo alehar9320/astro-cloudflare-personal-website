@@ -2808,4 +2808,28 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('keeps one thesis IFS Design System continue first-view-ready (#848)', () => {
+    const thesis = readFileSync('src/content/work/master-thesis.md', 'utf8');
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(thesis).toContain('class="tldr-box"');
+    expect(thesis).toContain('[IFS Design System](/work/ifs-design-system/)');
+    expect((thesis.match(/\[IFS Design System\]\(\/work\/ifs-design-system\/\)/g) || []).length).toBe(1);
+    expect((thesis.match(/\/work\/ifs-design-system\//g) || []).length).toBe(1);
+    const tldrStart = thesis.indexOf('class="tldr-box"');
+    const tldrEnd = thesis.indexOf('</div>', tldrStart);
+    const tldr = thesis.slice(tldrStart, tldrEnd);
+    expect(tldr).toContain('[IFS Design System](/work/ifs-design-system/)');
+    expect(thesis).not.toContain('Explore');
+    expect(thesis).not.toContain('Lidköping');
+    expect(slug).toContain('min-height: calc(100svh - var(--chat-fab-clearance))');
+    expect(slug).toContain('.earlier-case :global(.tldr-box)');
+    expect(slug).toContain('a[href="/work/ifs-design-system/"]');
+    expect(slug).toContain('min-height: 44px');
+    expect(slug).toContain('min-width: 44px');
+    expect(slug).toContain('class="back-link"');
+    expect(slug).toContain('https://www.linkedin.com/in/alehar/');
+    expect(slug).not.toContain('mailto:');
+  });
+
 });
