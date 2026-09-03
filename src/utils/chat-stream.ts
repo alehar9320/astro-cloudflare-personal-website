@@ -83,6 +83,7 @@ function consumeLine(state: SseParserState, line: string): string {
 
 /**
  * Processes a chunk of text, handling partial lines and buffering.
+ * Uses pointer-based traversal to eliminate dynamic string array allocations on Cloudflare Workers edge runtimes.
  * @param state - The parser state.
  * @param input - The new chunk of text.
  * @param isFinalChunk - Whether this is the last chunk.
@@ -90,31 +91,41 @@ function consumeLine(state: SseParserState, line: string): string {
  */
 function processBufferedText(state: SseParserState, input: string, isFinalChunk: boolean): string {
   const combined = state.partialLine + input;
-  const lines = combined.split('\n');
-  const lastIndex = isFinalChunk ? lines.length : Math.max(lines.length - 1, 0);
   let parsedText = '';
+  let startPos = 0;
+  let newlinePos = combined.indexOf('\n', startPos);
 
-  for (let index = 0; index < lastIndex; index += 1) {
-    let line = lines[index];
+  while (newlinePos !== -1) {
+    let line = combined.slice(startPos, newlinePos);
     if (line.endsWith('\r')) {
       line = line.slice(0, -1);
     }
     parsedText += consumeLine(state, line);
+    startPos = newlinePos + 1;
+    newlinePos = combined.indexOf('\n', startPos);
   }
 
-  let remaining = isFinalChunk ? '' : lines[lines.length - 1];
+  let remaining = combined.slice(startPos);
   if (remaining.endsWith('\r')) {
     remaining = remaining.slice(0, -1);
   }
-  state.partialLine = remaining;
 
-  if (isFinalChunk && state.currentEventLines.length > 0) {
-    const payload =
-      state.currentEventLines.length === 1
-        ? state.currentEventLines[0].trim()
-        : state.currentEventLines.join('\n').trim();
-    parsedText += extractResponseFromPayload(payload);
-    state.currentEventLines = [];
+  if (isFinalChunk) {
+    if (remaining.length > 0) {
+      parsedText += consumeLine(state, remaining);
+    }
+    state.partialLine = '';
+
+    if (state.currentEventLines.length > 0) {
+      const payload =
+        state.currentEventLines.length === 1
+          ? state.currentEventLines[0].trim()
+          : state.currentEventLines.join('\n').trim();
+      parsedText += extractResponseFromPayload(payload);
+      state.currentEventLines = [];
+    }
+  } else {
+    state.partialLine = remaining;
   }
 
   return parsedText;
