@@ -13,4 +13,9 @@ describe('cloudflare:workers Node stub', () => {
     expect(env.AI).toBeUndefined();
     expect(env.CHAT_STORE).toBeUndefined();
   });
+
+  it('returns undefined when accessing non-string symbol properties on the proxy', () => {
+    const sym = Symbol('test');
+    expect(env[sym as unknown as string]).toBeUndefined();
+  });
 });
