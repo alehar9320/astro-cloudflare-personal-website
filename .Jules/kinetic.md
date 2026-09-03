@@ -32,13 +32,15 @@ Do NOT recreate:
 - inert pill hover / tactile pill micro-UX
 - nav social-link micro-interaction
 
-Already closed as farm: #959, #953, #899, #875, #860, #856, #851, #750.
+Already closed as farm: #981, #959, #953, #899, #875, #860, #856, #851, #750.
 
 Leftover quota stays off this class. Do not reopen as Jules.
 
 Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
 
 ---
+
+## 2026-09-03 - Farm abort | Signal: Nick Dual FAIL #981 | Lean Implementation: HARD ABORT Jules Pill tactile restack of #959/#953/#899/#750
 
 ## 2026-09-03 - Farm abort | Signal: Nick Eng FAIL #959 | Lean Implementation: HARD ABORT Pill tactile restack of #953/#899/#750
 
