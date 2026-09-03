@@ -1506,7 +1506,7 @@ interface ErrorEventErrorEventInit {
 declare class MessageEvent extends Event {
   constructor(type: string, initializer: MessageEventInit);
   /**
-   * The **`data`** read-only property of the The data sent by the message emitter; this can be any data type, depending on what originated this event.
+   * The **`data`** read-only property of the MessageEvent; contains the data sent by the message emitter; this can be any data type, depending on what originated this event.
    *
    * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessageEvent/data)
    */
@@ -10304,7 +10304,7 @@ interface IncomingRequestCfPropertiesTLSClientAuth {
    * @example "FAILED:self signed certificate"
    */
   certVerified: Exclude<CertVerificationStatus, 'NONE'>;
-  /** The presented certificate's revokation status.
+  /** The presented certificate's revocation status.
    *
    * - A value of `"1"` indicates the certificate has been revoked
    * - A value of `"0"` indicates the certificate has not been revoked
@@ -11598,7 +11598,7 @@ declare namespace Cloudflare {
   //       mainModule: typeof import("my-main-module");
   //
   //       // Declares which of the main module's exports are configured with durable storage, and
-  //       // thus should behave as Durable Object namsepace bindings.
+  //       // thus should behave as Durable Object namespace bindings.
   //       durableNamespaces: "MyDurableObject" | "AnotherDurableObject";
   //     }
   //
