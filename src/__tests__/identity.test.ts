@@ -639,7 +639,7 @@ describe('identity copy', () => {
 
   it('drops Ask Alexander from the twin chat header', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
-    expect(chat).toContain('<span class="chat-header-name"></span>');
+    expect(chat).toContain('<span class="chat-header-name">AI twin</span>');
     expect(chat).not.toContain('Ask Alexander');
     expect(chat).not.toContain('Ask about the work');
     expect(chat).toContain("const statusLabels = {\n    idle: 'Live',");
@@ -2808,4 +2808,15 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('names open-chat header AI twin (#1055)', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    expect(chat).toContain('<span class="chat-header-name">AI twin</span>');
+    expect(chat).not.toContain('<span class="chat-header-name"></span>');
+    expect(chat).toContain('id="chat-live-label"');
+    expect(chat).toContain('>Live</');
+    expect(chat).not.toContain('Ask Alexander');
+    expect(chat).not.toContain('mailto:');
+  });
+
 });
