@@ -2808,4 +2808,14 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('reserves desktop /work/ proof-card min-height so Public Sans cannot CLS the IFS card (#888)', () => {
+    const work = readFileSync('src/pages/work.astro', 'utf8');
+    expect(work).toContain('href="/work/ifs-design-system/"');
+    expect(work).toContain('class="proof-card"');
+    expect(work).toMatch(/@media\s*\(min-width:\s*50em\)\s*\{[\s\S]*?\.proof-card\s*\{[\s\S]*?min-height:\s*188px;/);
+    expect(work).not.toMatch(/@media\s*\(max-width:\s*49\.99em\)\s*\{[\s\S]*?min-height:\s*188px;/);
+    expect(work).not.toMatch(/@media\s*\(min-width:\s*50em\)\s*and\s*\(max-height:\s*52em\)\s*\{[\s\S]*?min-height:\s*188px;/);
+  });
+
 });
