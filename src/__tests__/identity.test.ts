@@ -1094,12 +1094,27 @@ describe('identity copy', () => {
     expect(ds).not.toContain('mailto:');
   });
 
-  it('lets the IFS Design System case include a visible Get in touch on LinkedIn CTA', () => {
+  it('keeps IFS case body free of in-body Get in touch; hire stays chrome', () => {
     const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
-    expect(ds).toContain(
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    expect(ds).not.toContain(
       '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
     );
     expect(ds).not.toContain('mailto:');
+    expect(ds).toContain('## Problem');
+    expect(ds).toContain('## Approach');
+    expect(ds).toContain('## Outcome');
+    const headerStart = slug.indexOf('<header>');
+    const headerEnd = slug.indexOf('</header>');
+    const mainEnd = slug.indexOf('</main>');
+    const ctaAt = slug.indexOf('<ContactCTA />');
+    expect(headerStart).toBeGreaterThan(-1);
+    expect(headerEnd).toBeGreaterThan(headerStart);
+    expect(slug.slice(headerStart, headerEnd)).not.toContain('<ContactCTA');
+    expect(ctaAt).toBeGreaterThan(mainEnd);
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(cta).not.toContain('mailto:');
 
     const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
     const work = readFileSync('src/pages/work.astro', 'utf8');
@@ -1120,9 +1135,6 @@ describe('identity copy', () => {
     expect(ds).toContain('up to 2x');
     expect(ds).toContain('up to 30x');
     expect(ds).toContain('Zeroheight');
-    expect(ds).toContain(
-      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
-    );
     expect(ds).not.toContain('mailto:');
   });
 
