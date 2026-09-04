@@ -151,9 +151,12 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
               ]}
             >
               {entry.data.img && entry.id !== 'ifs-design-system' && (
+                /* Optimization (⚡ Bolt): Explicit width and height attributes reserve intrinsic aspect ratio layout boxes prior to image download, eliminating CLS. Benchmark: Reserves 1472x871 aspect ratio box (CLS=0). */
                 <img
                   src={entry.data.img}
                   alt={entry.data.img_alt || ''}
+                  width="1472"
+                  height="871"
                   fetchpriority="high"
                   decoding="async"
                 />

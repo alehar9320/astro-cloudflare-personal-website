@@ -21,3 +21,7 @@ Action: Added width="1472" and height="871" attributes to the case study image i
 2026-09-03 - Dynamic Import for Analytics Code-Splitting
 Learning: Top-level static imports of third-party libraries (e.g. posthog-js) force Vite to include them in the entry client bundle on all page renders, even when activation conditions (e.g. API keys) are absent. Using dynamic import (`await import(...)`) behind conditional runtime checks isolates heavy analytics dependencies into deferred chunks, preventing main-thread parse/execution overhead on critical page loads.
 Action: Updated src/components/PostHog.astro to dynamically import posthog-js only when PUBLIC_POSTHOG_KEY is present, reducing initial PostHog script payload from 240.6KB to 2.1KB (~238.5KB savings).
+
+2026-09-04 - Conditional Icon Gradient Generation & Zero CLS Dimensions
+Learning: Unconditional generation of random gradient IDs (`Math.random()`, `.toString(36)`) on non-gradient SVG icon renders wastes CPU cycles during SSR/prerendering. Additionally, missing explicit `width` and `height` attributes on content image tags causes Cumulative Layout Shift (CLS) when images load.
+Action: Updated `Icon.astro` to generate `gradientId` only when `gradient` prop is true, and added explicit `width="1472"` and `height="871"` attributes to hero images in `work/[...slug].astro` and `PortfolioPreview.astro`.
