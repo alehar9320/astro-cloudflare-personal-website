@@ -2808,4 +2808,18 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('densifies copilots case with Remy published window and Approach; no invented metrics (#1059)', () => {
+    const md = readFileSync('src/content/work/ai-coding-copilots.md', 'utf8');
+    expect(md).toContain('Internal AI coding copilots for IFS engineering teams. Feb 2025 – present · Product Manager, Developer Experience · Greater Stockholm');
+    expect(md).toContain('Feb 2025 – present · Product Manager, Developer Experience · Greater Stockholm');
+    expect(md).toContain('As Product Manager for Developer Experience at IFS, I set the strategy for the tools and platforms that empower internal engineering teams, global partners, and customers.');
+    expect(md).toContain('One key pillar has been the rollout of AI coding copilots for IFS engineering teams.');
+    expect(md).toContain('## Problem');
+    expect(md).toContain('## Approach');
+    expect(md).toContain('## Outcome');
+    expect(md).not.toContain('mailto:');
+    expect(md).not.toMatch(/several millions/i);
+  });
+
 });
