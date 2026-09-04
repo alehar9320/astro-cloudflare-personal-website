@@ -2808,4 +2808,18 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('gives thesis case a continue to IFS Design System after Outcome (#1022)', () => {
+    const md = readFileSync('src/content/work/master-thesis.md', 'utf8');
+    expect(md).toContain('<p class="case-continue"><a href="/work/ifs-design-system/">Continue to the IFS Design System case</a></p>');
+    expect(md).toContain('linkedin.com/in/alehar');
+    const outcomeIdx = md.indexOf('## Outcome');
+    const continueIdx = md.indexOf('class="case-continue"');
+    const linkedInIdx = md.indexOf('linkedin.com/in/alehar');
+    expect(outcomeIdx).toBeGreaterThan(-1);
+    expect(continueIdx).toBeGreaterThan(outcomeIdx);
+    expect(linkedInIdx).toBeGreaterThan(continueIdx);
+    expect(md).not.toContain('mailto:');
+  });
+
 });
