@@ -2797,6 +2797,18 @@ describe('identity copy', () => {
     expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
   });
 
+
+  it('keeps site-title home link keyboard focus-visible outline', () => {
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    expect(nav).toMatch(
+      /\.site-title:focus-visible\s*\{[\s\S]*?outline:\s*2px\s+solid\s+var\(--accent-regular\);[\s\S]*?outline-offset:\s*4px;/
+    );
+    expect(nav).toContain('href="/"');
+    expect(nav).toContain('site-title');
+    expect(nav).toContain('Alexander Härenstam');
+    expect(nav).not.toContain('mailto:');
+  });
+
   it('keeps Contact quiet hire as exact LinkedIn, no twin-mouth (#824)', () => {
     const contact = readFileSync('src/pages/contact.astro', 'utf8');
     expect(contact).toContain('<p class="cta-hint">LinkedIn</p>');
