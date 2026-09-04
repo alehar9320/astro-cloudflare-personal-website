@@ -2808,4 +2808,16 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('wraps earlier-work title and dek in one continue (#1026)', () => {
+    const page = readFileSync('src/pages/work.astro', 'utf8');
+    // Title + blurb must share one anchor in the earlier map (not sibling <p> outside <a>).
+    expect(page).toMatch(
+      /earlier\.map[\s\S]*?<a[\s\S]*?\{project\.data\.title\}[\s\S]*?\{earlierBlurb\[project\.id\]\}[\s\S]*?<\/a>/
+    );
+    expect(page).toContain('ai-coding-copilots');
+    expect(page).toContain('linkedin.com/in/alehar');
+    expect(page).toContain('proof-card');
+  });
+
 });
