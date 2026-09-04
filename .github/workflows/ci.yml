@@ -18,6 +18,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
+permissions:
+  contents: read
+
 jobs:
   # ─── Quality ──────────────────────────────────────────────────────────
   # Fast checks that give early feedback without needing a full build.
