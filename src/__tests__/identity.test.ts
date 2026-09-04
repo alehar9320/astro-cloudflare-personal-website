@@ -103,7 +103,8 @@ describe('identity copy', () => {
     expect(home).toContain('class="hero-dek"');
     expect(home).toContain('developer platforms');
     expect(home).toContain('Design systems');
-    expect(home).toContain('Industrial AI copilots');
+    expect(home).toContain('Industrial AI.');
+    expect(home).not.toContain('Industrial AI copilots');
     expect(home).not.toContain('not only DevEx');
     expect(home).toContain('Chalmers software engineering');
     expect(home).not.toContain('MEI');
@@ -809,7 +810,8 @@ describe('identity copy', () => {
     expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
     expect(home).toContain('class="hero-dek"');
     expect((home.match(/class="hero-dek"/g) || []).length).toBe(1);
-    expect(home).toContain('Design systems, developer platforms, and Industrial AI copilots.');
+    expect(home).toContain('Design systems, developer platforms, and Industrial AI.');
+    expect(home).not.toContain('Design systems, developer platforms, and Industrial AI copilots.');
     expect(home).not.toContain('Also hireable');
     expect(home).not.toContain('not only DevEx');
     expect(home).toContain('class="hero-bridge"');
@@ -2808,4 +2810,14 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('home hero dek drops Industrial AI copilots trust tax (#1044)', () => {
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    expect(home).toContain('<p class="hero-dek">Design systems, developer platforms, and Industrial AI.</p>');
+    expect(home).not.toContain('<p class="hero-dek">Design systems, developer platforms, and Industrial AI copilots.</p>');
+    expect(home).toContain('Design system, copilots, and analytics.');
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+    expect(home).not.toContain('mailto:');
+  });
+
 });
