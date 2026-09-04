@@ -2808,4 +2808,13 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('gives Biography copilots mention a continue to the copilots case', () => {
+    const bio = readFileSync('src/pages/biography.astro', 'utf8');
+    expect(bio).toContain('<a href="/work/ai-coding-copilots/">internal AI coding copilots</a>');
+    expect(bio).toContain('href="/work/ifs-design-system/"');
+    expect(bio).toContain('linkedin.com/in/alehar');
+    expect(bio).not.toContain('mailto:');
+  });
+
 });
