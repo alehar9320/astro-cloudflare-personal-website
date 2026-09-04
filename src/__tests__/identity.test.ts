@@ -2808,4 +2808,20 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('densifies IFS case with published program window; fixes role attribution; keeps up to chips (#1000)', () => {
+    const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
+    expect(ds).toContain('Apr 2022 – Feb 2025 · Product Manager, Product Experience (Design System) · Gothenburg');
+    expect(ds).toContain('While Product Manager for the IFS Design System (Apr 2022 – Feb 2025)');
+    expect(ds).toContain('empowered internal engineering teams, global partners, and customers');
+    expect(ds).toContain('**Up to 2x faster**');
+    expect(ds).toContain('**Up to 30x ROI**');
+    expect(ds).toContain('**Zeroheight Design System Awards, runner-up**');
+    expect(ds).toContain('## Problem');
+    expect(ds).toContain('## Approach');
+    expect(ds).toContain('## Outcome');
+    expect(ds).not.toContain('mailto:');
+    expect(ds).not.toMatch(/As Product Manager, Developer Experience at IFS, I took the design system/);
+    expect(ds).not.toContain('Product Manager, Developer Experience</strong> at IFS');
+  });
 });
