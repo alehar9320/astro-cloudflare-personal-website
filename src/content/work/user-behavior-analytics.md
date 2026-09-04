@@ -21,10 +21,12 @@ Product teams need to see what customers actually do so IFS Cloud roadmap decisi
 
 ## Approach
 
-As Product Manager, Developer Experience at IFS, I worked on user behavior analytics for IFS Cloud: capturing usage so product teams can see what customers actually do.
+As Product Manager, Developer Experience at IFS, I worked on capturing usage so product teams can see what customers actually do.
 
 ## Outcome
 
 Usage telemetry so IFS Cloud roadmap decisions rest on how people actually use the product.
+
+<p class="case-continue"><a href="/work/ifs-design-system/">Continue to the IFS Design System case</a></p>
 
 <a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>

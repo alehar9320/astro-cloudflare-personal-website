@@ -2808,4 +2808,15 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('gives analytics case a continue to IFS Design System (#1021)', () => {
+    const md = readFileSync('src/content/work/user-behavior-analytics.md', 'utf8');
+    expect(md).toContain('<p class="case-continue"><a href="/work/ifs-design-system/">Continue to the IFS Design System case</a></p>');
+    expect(md).toContain('linkedin.com/in/alehar');
+    expect((md.match(/## Problem/g) || []).length).toBe(1);
+    expect((md.match(/## Approach/g) || []).length).toBe(1);
+    expect((md.match(/## Outcome/g) || []).length).toBe(1);
+    expect(md).not.toContain('mailto:');
+  });
+
 });
