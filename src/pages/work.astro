@@ -114,8 +114,10 @@ const schema = {
           {
             earlier.map((project) => (
               <li>
-                <a href={`/work/${project.id}/`}>{project.data.title}</a>
-                <p>{earlierBlurb[project.id]}</p>
+                <a class="earlier-continue" href={`/work/${project.id}/`}>
+                  {project.data.title}
+                  <span class="earlier-dek">{earlierBlurb[project.id]}</span>
+                </a>
               </li>
             ))
           }
@@ -217,26 +219,37 @@ const schema = {
     gap: 0.2rem;
   }
 
-  .earlier a {
+  .earlier a,
+  .earlier-continue {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    min-width: 44px;
+    min-height: 44px;
     color: var(--gray-200);
     text-decoration: 1px solid underline transparent;
     text-underline-offset: 0.25em;
   }
 
   .earlier a:hover,
-  .earlier a:focus-visible {
+  .earlier a:focus-visible,
+  .earlier-continue:hover,
+  .earlier-continue:focus-visible {
     text-decoration-color: currentColor;
   }
 
-  .earlier a:focus-visible {
+  .earlier a:focus-visible,
+  .earlier-continue:focus-visible {
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
     border-radius: 0.25rem;
   }
 
-  .earlier p {
+  .earlier-dek {
     margin: 0;
     font-size: var(--text-sm);
+    color: var(--gray-300);
+    text-decoration: none;
   }
 
   .hire-cta {
