@@ -2808,4 +2808,30 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('stages desktop open chat below the header with inset 5rem (#937)', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    expect(chat).toContain('.chat-container.is-open:not(.is-prominent)');
+    expect(chat).toContain('id="chat-form"');
+    expect(chat).toMatch(
+      /@media\s*\(\s*min-width:\s*50em\s*\)[\s\S]*?\.chat-container\.is-open:not\(\.is-prominent\)\s*\{[\s\S]*?inset:\s*5rem\s+0\s+0\s+0/
+    );
+    expect(chat).toMatch(
+      /@media\s*\(\s*min-width:\s*50em\s*\)[\s\S]*?\.chat-container\.is-open:not\(\.is-prominent\)\s*\{[\s\S]*?padding-top:\s*0/
+    );
+    expect(chat).not.toMatch(
+      /@media\s*\(\s*min-width:\s*50em\s*\)[\s\S]*?\.chat-container\.is-open:not\(\.is-prominent\)\s*\{[^}]*padding-top:\s*5rem/
+    );
+    expect(chat).toMatch(
+      /@media\s*\(\s*max-width:\s*49\.99em\s*\)[\s\S]*?\.chat-container\.is-open:not\(\.is-prominent\)\s*\{[\s\S]*?inset:\s*0/
+    );
+    expect(chat).toContain('height: 100dvh');
+    expect(chat).toContain('.chat-container.is-open:not(.is-prominent) .chat-window');
+    expect(chat).toContain('flex: 1 1 auto');
+    expect(chat).toContain('min-height: 0');
+    expect(chat).toContain('width: min(52rem, calc(100vw - 3rem))');
+    expect(chat).toContain('max-width: min(52rem, calc(100vw - 3rem))');
+    expect(chat).not.toContain('mailto:');
+  });
+
 });
