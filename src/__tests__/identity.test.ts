@@ -2797,6 +2797,27 @@ describe('identity copy', () => {
     expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
   });
 
+
+  it('keeps Clear and Close chat 44px targets and focus-visible outline', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    expect(chat).toContain('id="chat-clear"');
+    expect(chat).toContain('aria-label="Clear conversation"');
+    expect(chat).toContain('id="chat-close"');
+    expect(chat).toContain('aria-label="Close chat"');
+    expect(chat).toMatch(
+      /\.chat-clear\s*\{[\s\S]*?min-height:\s*44px[\s\S]*?min-width:\s*44px/
+    );
+    expect(chat).toMatch(
+      /\.chat-close\s*\{[\s\S]*?min-height:\s*44px[\s\S]*?min-width:\s*44px/
+    );
+    expect(chat).toMatch(
+      /\.chat-clear:focus-visible,\s*\n\s*\.chat-close:focus-visible\s*\{[\s\S]*?outline:\s*2px solid var\(--accent-regular\)/
+    );
+    expect(chat).toMatch(
+      /\.chat-clear:focus-visible,\s*\n\s*\.chat-close:focus-visible\s*\{[\s\S]*?outline-offset:\s*2px/
+    );
+  });
+
   it('keeps Contact quiet hire as exact LinkedIn, no twin-mouth (#824)', () => {
     const contact = readFileSync('src/pages/contact.astro', 'utf8');
     expect(contact).toContain('<p class="cta-hint">LinkedIn</p>');
