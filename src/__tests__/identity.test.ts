@@ -2808,4 +2808,32 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('shows PR velocity windows on /okr/ from Nick-locked GitHub counts (#936)', () => {
+    const data = readFileSync('src/data/okr-h2-2026.ts', 'utf8');
+    const page = readFileSync('src/pages/okr.astro', 'utf8');
+    expect(data).toContain('export const PR_VELOCITY');
+    expect(data).toContain("id: 'pv-day'");
+    expect(data).toContain("id: 'pv-week'");
+    expect(data).toContain("id: 'pv-month'");
+    expect(data).toContain("id: 'pv-quarter'");
+    expect(data).toContain("id: 'pv-year'");
+    expect(data).toContain('Today vs yesterday');
+    expect(data).toContain('This week vs last week');
+    expect(data).toContain('This month vs last month');
+    expect(data).toContain('This quarter vs last quarter');
+    expect(data).toContain('This year vs last year');
+    expect(data).toContain("direction: 'none'");
+    expect(data).toMatch(/id:\s*'pv-day'[\s\S]*?baselineLabel:\s*'—'/);
+    expect(data).toMatch(/id:\s*'pv-day'[\s\S]*?targetLabel:\s*'—'/);
+    expect(data).toMatch(/id:\s*'pv-day'[\s\S]*?currentLabel:\s*'[^']+ vs [^']+'/);
+    expect(page).toContain('PR_VELOCITY');
+    expect(page).toContain('aria-labelledby="pr-velocity"');
+    expect(page).toContain('id="pr-velocity"');
+    expect(page).toContain('PR velocity');
+    expect(page).toContain('Merged PRs to main. Human and AI changes.');
+    expect(page).toContain('OBJECTIVES');
+    expect(page).not.toContain('mailto:');
+  });
+
 });
