@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - Pill Tactile | Signal: Competitive | Lean Implementation: Added subtle scale transition on hover to tag pills in Pill.astro.
+
+- Insight: Micro-interactions on content tag pills improve tactile feel and perceived responsiveness without distracting from reading content.
+- User Target: Joy
+- Abort Triggers: None
+- User Reaction: Pending synthetic feedback.
