@@ -2808,4 +2808,19 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+
+  it('keeps persistent AI cue on collapsed chat (#1008)', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    expect(chat).toContain('aria-label="Open AI chat"');
+    expect(chat).toContain('id="chat-ai-cue"');
+    expect(chat).toContain('class="chat-ai-cue"');
+    expect(chat).toMatch(/id="chat-ai-cue"[^>]*>AI</);
+    expect(chat).toContain('placeholder="Message…"');
+    expect(chat).not.toContain('placeholder="Message AI…"');
+    expect(chat).toMatch(/id="chat-input"[^>]*aria-label="Message"|aria-label="Message"[^>]*id="chat-input"/);
+    expect(chat).toContain('id="chat-live-label"');
+    expect(chat).toContain('>Live</');
+    expect(chat).not.toContain('mailto:');
+  });
 });
