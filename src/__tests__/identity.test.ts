@@ -2544,7 +2544,9 @@ describe('identity copy', () => {
     const desktopOpen = chat.slice(chat.indexOf('/* Desktop open = one sheet'));
     expect(chat).toContain('<style is:inline>');
     expect(desktopOpen).toContain('.chat-container.is-open .chat-form');
+    expect(desktopOpen).toContain('.chat-container.is-docked .chat-form');
     expect(desktopOpen).toContain('width: min(52rem, calc(100vw - 3rem))');
+    expect(desktopOpen).toContain('max-width: min(52rem, calc(100vw - 3rem))');
     expect(desktopOpen).toContain('border-radius: 0');
     expect(desktopOpen).toContain('box-shadow: none');
     expect(desktopOpen).toContain('backdrop-filter: blur(16px) saturate(180%)');
@@ -2807,5 +2809,20 @@ describe('identity copy', () => {
     expect(contact).not.toContain('mailto:');
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
+  });
+
+  it('keeps one desktop chat width docked and open (#832)', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    const desktopOpen = chat.slice(chat.indexOf('/* Desktop open = one sheet'));
+    expect(desktopOpen).toContain('.chat-container.is-docked .chat-form');
+    expect(desktopOpen).toContain('.chat-container.is-open .chat-form');
+    expect(desktopOpen).toContain('.chat-container.is-open .chat-window');
+    expect(desktopOpen).toContain('width: min(52rem, calc(100vw - 3rem))');
+    expect(desktopOpen).toContain('max-width: min(52rem, calc(100vw - 3rem))');
+    expect(chat).not.toContain('max-width: none');
+    expect(chat).not.toContain('transition:\n        width');
+    expect(chat).toContain('max-height: 36dvh');
+    expect(chat).not.toContain('height: 62dvh');
+    expect(chat).not.toContain('mailto:');
   });
 });
