@@ -1183,10 +1183,9 @@ describe('identity copy', () => {
     expect(analytics).toContain('## Problem');
     expect(analytics).toContain('## Approach');
     expect(analytics).toContain('## Outcome');
-    expect(analytics).toContain('Product Manager, Developer Experience');
-    expect(analytics).toContain('capturing usage');
-    expect(analytics).toContain('product teams can see what customers actually do');
-    expect(analytics).toContain('Roadmap decisions rest on that usage');
+    expect(analytics).toContain('Product Manager, Product Experience (Design System)');
+    expect(analytics).toContain('User Behavior Analytics Platform for IFS Cloud');
+    expect(analytics).toContain('Usage telemetry so IFS Cloud roadmap decisions rest on how people actually use the product.');
     expect(analytics).toContain(
       '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
     );
@@ -1251,10 +1250,11 @@ describe('identity copy', () => {
   it('lets the user behavior analytics work-case TL;DR include at IFS', () => {
     const analytics = readFileSync('src/content/work/user-behavior-analytics.md', 'utf8');
     expect(analytics).toContain(
-      'I am <strong>Product Manager, Developer Experience</strong> at IFS.'
+      'User behavior analytics for IFS Cloud. Apr 2022 – Feb 2025 · Product Manager, Product Experience (Design System) · Gothenburg'
     );
     expect(analytics).toContain('<strong>TL;DR:</strong>');
     expect(analytics).toContain('title: User behavior analytics');
+    expect(analytics).not.toContain('I am <strong>Product Manager, Developer Experience</strong> at IFS.');
     expect(analytics).not.toContain('mailto:');
   });
 
@@ -1380,9 +1380,10 @@ describe('identity copy', () => {
     expect(copilots).not.toContain('multi-million');
     expect(analytics).toContain('Usage telemetry so');
     expect(analytics).not.toContain('not a standalone platform product');
-    expect(analytics).not.toContain('User Behavior Analytics Platform');
+    expect(analytics).not.toContain('title: User Behavior Analytics Platform');
     expect(analytics).not.toContain('Strategic Leadership');
-    expect(analytics).toContain('Product Manager, Developer Experience');
+    expect(analytics).toContain('Product Manager, Product Experience (Design System)');
+    expect(analytics).not.toContain('I am <strong>Product Manager, Developer Experience</strong> at IFS.');
     expect(analytics).not.toContain('mailto:');
     expect(analytics).not.toContain('No new numbered');
     expect(thesis).toContain("Chalmers</strong> master's thesis, 2017");
@@ -2808,4 +2809,19 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('densifies analytics case with Remy published window and Approach; no invented metrics (#1064)', () => {
+    const md = readFileSync('src/content/work/user-behavior-analytics.md', 'utf8');
+    expect(md).toContain('User behavior analytics for IFS Cloud. Apr 2022 – Feb 2025 · Product Manager, Product Experience (Design System) · Gothenburg');
+    expect(md).toContain('Apr 2022 – Feb 2025 · Product Manager, Product Experience (Design System) · Gothenburg');
+    expect(md).toContain('While Product Manager for the IFS Design System (Apr 2022 – Feb 2025), I spearheaded the User Behavior Analytics Platform for IFS Cloud — so features are grounded in genuine customer needs, preventing over-engineering and optimizing development resources.');
+    expect(md).toContain('Usage telemetry so IFS Cloud roadmap decisions rest on how people actually use the product.');
+    expect(md).toContain('## Problem');
+    expect(md).toContain('## Approach');
+    expect(md).toContain('## Outcome');
+    expect(md).not.toContain('mailto:');
+    expect(md).not.toContain('I am <strong>Product Manager, Developer Experience</strong> at IFS.');
+    expect(md).not.toMatch(/invented metrics/i);
+  });
+
 });
