@@ -2808,4 +2808,18 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('queues Dual CLOSE via Mergify comment + GH_WORKFLOW_PAT, not GITHUB_TOKEN auto-merge (#895)', () => {
+    const mergify = readFileSync('.mergify.yml', 'utf8');
+    const enable = readFileSync('.github/workflows/enable-automerge.yml', 'utf8');
+    expect(mergify).toContain('queue_rules:');
+    expect(mergify).toContain('name: default');
+    expect(mergify).toContain('merge_method: squash');
+    expect(mergify).not.toContain('name: Automatic merge');
+    expect(enable).toContain('Enable squash auto-merge');
+    expect(enable).toContain('gh pr comment "$PR_URL" --body "@mergifyio queue"');
+    expect(enable).not.toContain('gh pr merge --auto --squash');
+    expect(enable).toContain('GH_TOKEN: ${{ secrets.GH_WORKFLOW_PAT }}');
+    expect(enable).not.toContain('GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}');
+  });
 });
