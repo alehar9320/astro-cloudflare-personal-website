@@ -93,7 +93,8 @@ describe('identity copy', () => {
     expect(cta).toContain('https://www.linkedin.com/in/alehar/');
     expect(cta).toContain('Get in touch');
     expect(cta).not.toContain('mailto:');
-    expect(cta).toContain('LinkedIn · replies from me');
+    expect(cta).toContain('class="cta-hint">LinkedIn</p>');
+    expect(cta).not.toContain('LinkedIn · replies from me');
     expect(cta).not.toContain('high-impact');
   });
 
@@ -313,7 +314,8 @@ describe('identity copy', () => {
     expect(footer.slice(footer.indexOf('data-visit-stats'))).toContain("{' · '}");
     // Fail the prior bug: newline/indent then middot (leading space collapsed in paint).
     expect(footer).not.toMatch(/>\s*\n\s+·\s/);
-    expect(cta).toContain('LinkedIn · replies from me');
+    expect(cta).toContain('class="cta-hint">LinkedIn</p>');
+    expect(cta).not.toContain('LinkedIn · replies from me');
   });
 
   it('keeps Footer .visit-stats display:inline only when not [hidden]', () => {
@@ -1229,13 +1231,30 @@ describe('identity copy', () => {
     expect(thesis).not.toContain('mailto:');
   });
 
-  it('lets the Work index include a visible Get in touch on LinkedIn CTA', () => {
+  it('lets the Work index offer quiet Get in touch via ContactCTA after IFS proof (#838)', () => {
     const work = readFileSync('src/pages/work.astro', 'utf8');
-    expect(work).toContain('href="https://www.linkedin.com/in/alehar/"');
-    expect(work).toContain('target="_blank"');
-    expect(work).toContain('rel="noopener noreferrer"');
-    expect(work).toMatch(/>Get in touch on LinkedIn<\/a/);
-    expect(work).not.toContain('mailto:');
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    expect(cta).toContain('<h2>Get in touch</h2>');
+    expect(cta).not.toContain('<h2>Get in touch on LinkedIn</h2>');
+    expect(cta).toContain('<p class="cta-hint">LinkedIn</p>');
+    expect(cta).not.toContain('LinkedIn · replies from me');
+    expect(cta).not.toContain('replies from me');
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(cta).toContain('Get in touch');
+    expect(cta).not.toContain('mailto:');
+    expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
+    expect(work).toContain('<ContactCTA />');
+    expect(work).not.toContain('class="hire-cta"');
+    expect(work).not.toMatch(/>Get in touch on LinkedIn<\/a/);
+    const proofAt = work.indexOf('aria-label="IFS Design System"');
+    expect(proofAt).toBeGreaterThan(-1);
+    const afterProof = work.slice(proofAt);
+    const ctaAt = afterProof.indexOf('<ContactCTA />');
+    const earlierAt = afterProof.indexOf('class="earlier"');
+    expect(ctaAt).toBeGreaterThan(-1);
+    expect(earlierAt).toBeGreaterThan(-1);
+    expect(ctaAt).toBeLessThan(earlierAt);
+    expect(work).toContain('href="/work/ai-coding-copilots/"');
   });
 
   it('lets the AI coding copilots work-case TL;DR include at IFS', () => {
@@ -2358,7 +2377,8 @@ describe('identity copy', () => {
     expect(robots).toContain('Disallow: /whats-new/');
     expect(cta).toContain('https://www.linkedin.com/in/alehar/');
     expect(cta).toContain('Get in touch');
-    expect(cta).toContain('LinkedIn · replies from me');
+    expect(cta).toContain('class="cta-hint">LinkedIn</p>');
+    expect(cta).not.toContain('LinkedIn · replies from me');
     expect(cta).not.toContain('mailto:');
     expect(
       toVisitorChangelogTitle('41fe7ae feat: rewrite /experimental/now/ for visitors (#523)')
