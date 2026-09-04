@@ -2797,6 +2797,18 @@ describe('identity copy', () => {
     expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
   });
 
+
+  it('keeps /roadmap/ proof-affordance Read the case at 44px', () => {
+    const roadmap = readFileSync('src/pages/roadmap.astro', 'utf8');
+    expect(roadmap).toContain('class="proof-card"');
+    expect(roadmap).toContain('href="/work/ifs-design-system/"');
+    expect(roadmap).toContain('class="proof-affordance"');
+    expect(roadmap).toContain('Read the case');
+    expect(roadmap).toMatch(
+      /\.proof-affordance\s*\{[\s\S]*?min-height:\s*44px[\s\S]*?min-width:\s*44px/
+    );
+  });
+
   it('keeps Contact quiet hire as exact LinkedIn, no twin-mouth (#824)', () => {
     const contact = readFileSync('src/pages/contact.astro', 'utf8');
     expect(contact).toContain('<p class="cta-hint">LinkedIn</p>');
