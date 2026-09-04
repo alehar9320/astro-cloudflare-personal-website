@@ -2808,4 +2808,23 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('ships KR3.2 PR Success with tooltip wired on /okr/ labels', () => {
+    const data = readFileSync('src/data/okr-h2-2026.ts', 'utf8');
+    const page = readFileSync('src/pages/okr.astro', 'utf8');
+    expect(data).toContain('tooltip?: string');
+    expect(data).toContain("id: 'KR3.2'");
+    expect(data).toContain("label: 'PR Success'");
+    expect(data).toContain("window: '7 days'");
+    expect(data).toContain("tooltip: 'Opened PRs that merged. Human and AI changes.'");
+    expect(data).toContain("direction: 'none'");
+    expect(data).toContain("id: 'KR3.1'");
+    expect(data).toContain("label: 'PRs merged to main'");
+    expect(data).toContain("currentLabel: '48'");
+    expect(data).toContain('median ≥ 8 / week through Dec');
+    expect(page).toContain('id={`${kr.id}-label`}');
+    expect(page).toContain('title={kr.tooltip}');
+    expect(data).not.toContain('AI-PR');
+    expect(page).not.toContain('mailto:');
+  });
 });
