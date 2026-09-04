@@ -2808,4 +2808,16 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('keeps default third starter chip on Developer Experience not Industrial AI bet (#1056)', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    expect(chat).toContain('id="chat-suggestions"');
+    expect(chat).toContain("What's Developer Experience at IFS?");
+    expect(chat).not.toContain("What's the Industrial AI bet?");
+    expect(chat).toContain('What did the IFS design system change?');
+    expect(chat).toContain('How do you work as a PM?');
+    expect(chat).toContain('How do I get in touch on LinkedIn?');
+    expect(chat).not.toContain('mailto:');
+  });
+
 });
