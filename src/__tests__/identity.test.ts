@@ -301,40 +301,32 @@ describe('identity copy', () => {
 
   it('puts a middot inside the hidden footer visit-stats span', () => {
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
-    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
     expect(footer).toContain('class="colophon"');
     expect(footer).toContain("What's New");
-    expect(footer).toContain('data-visit-stats');
-    expect(footer).toContain('hidden');
+    expect(footer).not.toContain('data-visit-stats');
+    expect(footer).not.toContain('data-visit-count');
     expect(footer).not.toContain('showUpcoming');
     expect(footer).toContain("What's New</a>");
-    // Space-middot-space as Astro text node so paint is What's New · N.
     expect(footer).toContain("{' · '}");
-    expect(footer.slice(footer.indexOf('data-visit-stats'))).toContain("{' · '}");
-    // Fail the prior bug: newline/indent then middot (leading space collapsed in paint).
     expect(footer).not.toMatch(/>\s*\n\s+·\s/);
-    expect(cta).toContain('LinkedIn · replies from me');
+    expect(footer).toContain('https://www.linkedin.com/in/alehar/');
   });
 
   it('keeps Footer .visit-stats display:inline only when not [hidden]', () => {
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
-    expect(footer).toContain('.visit-stats:not([hidden])');
-    expect(footer).toContain('display: inline');
-    // Bare .visit-stats { display: inline } overrides UA [hidden]{display:none}.
-    expect(footer).not.toMatch(/\.visit-stats\s*\{\s*display:\s*inline/);
+    expect(footer).not.toContain('.visit-stats');
+    expect(footer).not.toContain('data-visit-stats');
     expect(footer).toContain("{' · '}");
     expect(footer).toContain('https://www.linkedin.com/in/alehar/');
   });
 
   it('leads the colophon visit trigger with unique visitors and names PostHog', () => {
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
-    expect(footer).toContain('formatColophonVisits');
-    expect(footer).toContain('formatColophonVisitsTitle');
-    expect(footer).toContain("trigger.addEventListener('focus'");
-    expect(footer).toContain('shouldShowVisitCount(row.uniqueVisitors)');
-    expect(footer).not.toContain('formatPageviewCount(data.pageviews)');
-    expect(footer).not.toContain('white-space: nowrap');
-    expect(footer).toContain('.visit-stats:not([hidden])');
+    expect(footer).not.toContain('formatColophonVisits');
+    expect(footer).not.toContain('formatColophonVisitsTitle');
+    expect(footer).not.toContain('/api/visits');
+    expect(footer).not.toContain('data-visit-count');
+    expect(footer).not.toContain('.visit-stats');
     expect(footer).toContain("{' · '}");
     expect(footer).toContain('https://www.linkedin.com/in/alehar/');
     expect(footer).not.toContain('mailto:');
@@ -2808,4 +2800,20 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('footer colophon has no visitor visit-count control (#1045)', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(footer).toContain('class="colophon"');
+    expect(footer).toContain("What's New");
+    expect(footer).toContain('This site');
+    expect(footer).toContain("What's next");
+    expect(footer).toContain('Site success');
+    expect(footer).not.toContain('data-visit-stats');
+    expect(footer).not.toContain('data-visit-count');
+    expect(footer).not.toContain('visit-glance-panel');
+    expect(footer).not.toContain('/api/visits');
+    expect(footer).toContain('https://www.linkedin.com/in/alehar/');
+    expect(footer).not.toContain('mailto:');
+  });
+
 });
