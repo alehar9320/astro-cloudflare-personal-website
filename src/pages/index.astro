@@ -268,32 +268,39 @@ const schema = {
     }
   }
 
-  /* ~800px-tall desktop: 44×44 Read the case clears dock ≥16 (#812 restack) */
+  /* ~800–900px-tall desktop: hire + proof clear docked FAB ≥16 (#1058 / #812) */
   @media (min-width: 50em) and (max-height: 52em) {
+    .first-screen {
+      /* Pack from top so centered layout cannot push proof into FAB band */
+      justify-content: flex-start;
+      padding-top: 0.5rem;
+      gap: 0.35rem;
+    }
+
     :global(body.has-prominent-chat) .first-screen {
       padding-top: 0;
       gap: 0.25rem;
     }
 
     .hero {
-      gap: 0.4rem;
+      gap: 0.35rem;
     }
 
     .hero-copy {
-      gap: 0.2rem;
+      gap: 0.15rem;
     }
 
     .hero-actions {
       margin-top: 0;
-      gap: 0.15rem;
+      gap: 0.1rem;
     }
 
     .hero-copy :global(.stack.gap-4) {
-      gap: 0.2rem;
+      gap: 0.15rem;
     }
 
     .hero-copy :global(.stack.gap-2) {
-      gap: 0.15rem;
+      gap: 0.1rem;
     }
 
     /* Home-only: step H1 down so proof hit-box clears dock (Hero stays 5xl elsewhere) */
@@ -303,11 +310,16 @@ const schema = {
     }
 
     .proof-card {
-      gap: 0.15rem;
+      gap: 0.1rem;
     }
 
     .proof-outcome {
       font-size: var(--text-lg);
+    }
+
+    /* Defer bridge on short first view — hire + proof stay above --chat-fab-clearance */
+    .hero-bridge {
+      display: none;
     }
   }
 
