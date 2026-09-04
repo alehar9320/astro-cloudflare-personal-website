@@ -1,13 +1,9 @@
 ---
 import Icon from './Icon.astro';
-import { getEntry } from 'astro:content';
-
-const flagsEntry = await getEntry('flags', 'config');
-const isTactileEnabled = flagsEntry?.data.enable_theme_toggle_tactile_v1 ?? false;
 ---
 
 <theme-toggle>
-  <button type="button" class={isTactileEnabled ? 'tactile-v1' : ''} aria-label="Toggle theme">
+  <button type="button" aria-label="Toggle theme">
     <span class="icon light"><Icon icon="sun" /></span>
     <span class="icon dark"><Icon icon="moon-stars" /></span>
   </button>
@@ -82,9 +78,6 @@ const isTactileEnabled = flagsEntry?.data.enable_theme_toggle_tactile_v1 ?? fals
         box-shadow var(--theme-transition);
     }
 
-    button.tactile-v1:active {
-      transform: scale(0.96);
-    }
   }
 
   @media (forced-colors: active) {

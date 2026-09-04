@@ -2808,4 +2808,15 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('keeps theme toggle free of tactile press scale', () => {
+    const toggle = readFileSync('src/components/ThemeToggle.astro', 'utf8');
+    const flags = readFileSync('src/content/flags/config.json', 'utf8');
+    expect(toggle).not.toContain('enable_theme_toggle_tactile_v1');
+    expect(toggle).not.toContain('isTactileEnabled');
+    expect(toggle).not.toContain('tactile-v1');
+    expect(toggle).not.toContain('scale(0.96)');
+    expect(flags).not.toContain('enable_theme_toggle_tactile_v1');
+  });
+
 });
