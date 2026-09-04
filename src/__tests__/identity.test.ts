@@ -2808,4 +2808,18 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('gives #chat-input accessible name Message and keeps Send message', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    const inputAt = chat.indexOf('id="chat-input"');
+    expect(inputAt).toBeGreaterThanOrEqual(0);
+    const near = chat.slice(Math.max(0, inputAt - 80), inputAt + 200);
+    expect(near).toContain('<input');
+    expect(near).toContain('type="text"');
+    expect(near).toContain('placeholder="Message…"');
+    expect(near).toContain('aria-label="Message"');
+    expect(chat).toContain('id="chat-send"');
+    expect(chat).toContain('aria-label="Send message"');
+  });
+
 });
