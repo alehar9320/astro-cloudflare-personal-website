@@ -2797,6 +2797,20 @@ describe('identity copy', () => {
     expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
   });
 
+
+  it('keeps /okr/ kr-bar forced-colors CanvasText and Highlight', () => {
+    const okr = readFileSync('src/pages/okr.astro', 'utf8');
+    expect(okr).toContain('@media (forced-colors: active)');
+    expect(okr).toContain('.kr-bar');
+    expect(okr).toContain('.kr-bar-fill');
+    expect(okr).toMatch(
+      /@media\s*\(forced-colors:\s*active\)\s*\{[\s\S]*?\.kr-bar\s*\{[\s\S]*?border:\s*1px solid CanvasText/
+    );
+    expect(okr).toMatch(
+      /@media\s*\(forced-colors:\s*active\)\s*\{[\s\S]*?\.kr-bar-fill\s*\{[\s\S]*?background-color:\s*Highlight/
+    );
+  });
+
   it('keeps Contact quiet hire as exact LinkedIn, no twin-mouth (#824)', () => {
     const contact = readFileSync('src/pages/contact.astro', 'utf8');
     expect(contact).toContain('<p class="cta-hint">LinkedIn</p>');
