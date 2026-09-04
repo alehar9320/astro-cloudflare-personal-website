@@ -1,6 +1,17 @@
 /// <reference types="astro/client" />
+/// <reference types="node" />
 
 type Runtime = import('@astrojs/cloudflare').Runtime<Env>;
+
+interface Element {
+  append(...nodes: (string | Node)[]): void;
+  prepend(...nodes: (string | Node)[]): void;
+}
+
+interface ParentNode {
+  append(...nodes: (string | Node)[]): void;
+  prepend(...nodes: (string | Node)[]): void;
+}
 
 declare namespace App {
   interface Locals extends Runtime {
