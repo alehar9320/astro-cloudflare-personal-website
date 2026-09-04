@@ -2808,4 +2808,17 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('keeps aurora on home only via showAurora (#1009)', () => {
+    const layout = readFileSync('src/layouts/BaseLayout.astro', 'utf8');
+    const index = readFileSync('src/pages/index.astro', 'utf8');
+    const work = readFileSync('src/pages/work.astro', 'utf8');
+    expect(layout).toContain('showAurora');
+    expect(layout).toMatch(/showAurora\s*=\s*false/);
+    expect(layout).toMatch(/showAurora[\s\S]*class="aurora"|\{showAurora &&[\s\S]*aurora/);
+    expect(index).toContain('showAurora={true}');
+    expect(work).not.toContain('showAurora');
+    expect(layout).toContain('prefers-reduced-motion');
+    expect(layout).not.toContain('mailto:');
+  });
 });
