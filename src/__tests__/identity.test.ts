@@ -2808,4 +2808,18 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('sets page-aware starter chips from pathname map (#1012)', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    const suggestionButtons = chat.match(/class="chat-suggestion"/g) || [];
+    expect(suggestionButtons.length).toBeGreaterThanOrEqual(3);
+    expect(chat).toContain('What did the IFS design system change?');
+    expect(chat).toContain('How do you work as a PM?');
+    expect(chat).toContain("What's the Industrial AI bet?");
+    expect(chat).toContain('location.pathname');
+    expect(chat).toContain("What's your path to DevEx at IFS?");
+    expect(chat).toContain('How do I get in touch on LinkedIn?');
+    expect(chat).not.toContain('mailto:');
+  });
+
 });
