@@ -52,7 +52,7 @@ export function pruneMessages(messages: ChatMessage[]): ChatMessage[] {
   return start > 0 ? windowed.slice(start) : windowed;
 }
 
-export const DESIGN_SYSTEM_CHIP = 'What did the IFS design system change?';
+export const DESIGN_SYSTEM_CHIP = 'What did the IFS Design System change?';
 
 export const DESIGN_SYSTEM_PROOF =
   'The IFS Design System delivered up to 2x faster delivery and up to 30x ROI, and was a Zeroheight runner-up.';
