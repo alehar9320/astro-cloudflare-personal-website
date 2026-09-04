@@ -12,13 +12,15 @@ Do NOT recreate:
 - high-contrast / focus support on dead `PortfolioPreview`
 - restacking this farm onto live `.proof-card` until an Eng-clean tip mounts a real visitor surface
 
-Already closed as farm: #987, #960.
+Already closed as farm: #994, #987, #960.
 
 Leftover quota stays off this class (Riley ≥80 only elsewhere). Do not reopen as Jules.
 
 Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
 
 ---
+
+## 2026-09-04 - Farm abort | Signal: Nick CLOSED #994 | Lean Implementation: HARD ABORT Kinetic PortfolioPreview image-zoom restack of #987/#960
 
 ## 2026-09-04 - Farm abort | Signal: Nick Eng FAIL #987 | Lean Implementation: HARD ABORT Palette PortfolioPreview dead / zero imports; do not restack onto live .proof-card
 
