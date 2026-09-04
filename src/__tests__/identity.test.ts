@@ -779,7 +779,7 @@ describe('identity copy', () => {
     expect(chat).toContain('id="chat-clear"');
     expect(chat).toContain('chat-followups');
     expect(chat).toContain('How do I get in touch on LinkedIn?');
-    expect(chat).toContain('What did the IFS design system change?');
+    expect(chat).toContain('What did the IFS Design System change?');
     expect(chat).toContain("I'm an AI with his context.");
     expect(chat).not.toContain('Ask about the work');
     expect(chat).toContain('prefers-reduced-motion: reduce');
@@ -901,7 +901,7 @@ describe('identity copy', () => {
     expect(chat).toContain('id="chat-clear"');
     expect(chat).toContain('chat-followups');
     expect(chat).toContain('How do I get in touch on LinkedIn?');
-    expect(chat).toContain('What did the IFS design system change?');
+    expect(chat).toContain('What did the IFS Design System change?');
     expect(chat).toContain("I'm an AI with his context.");
     expect(nav).toContain('hsla(var(--gray-999-basis), 0.9)');
     expect(nav).toContain('backdrop-filter: blur(40px) saturate(140%)');
@@ -1051,7 +1051,7 @@ describe('identity copy', () => {
     expect(chat).toContain('id="chat-clear"');
     expect(chat).toContain('chat-followups');
     expect(chat).toContain('How do I get in touch on LinkedIn?');
-    expect(chat).toContain('What did the IFS design system change?');
+    expect(chat).toContain('What did the IFS Design System change?');
     expect(chat).toContain("I'm an AI with his context.");
     expect(nav).toContain('hsla(var(--gray-999-basis), 0.9)');
     expect(nav).toContain('backdrop-filter: blur(40px) saturate(140%)');
