@@ -596,7 +596,7 @@ describe('identity copy', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
     expect(chat).not.toContain('Ask about the work, DevEx, Industrial AI, or background.');
     expect(chat).not.toMatch(/<p>\s*Ask about the work/);
-    expect(chat).toContain('DevEx, Industrial AI, or background.');
+    expect(chat).not.toContain('DevEx, Industrial AI, or background.');
     expect(chat).toContain("I'm an AI with his context.");
     expect(chat).not.toContain('class="status-tooltip">Ask about the work</span>');
     expect(chat).toContain('id="status-tooltip" class="status-tooltip"></span>');
@@ -621,7 +621,7 @@ describe('identity copy', () => {
     expect(chat).toContain("const statusLabels = {\n    idle: 'Live',");
     expect(chat).not.toContain('Ask about the work, DevEx, Industrial AI, or background.');
     expect(chat).not.toMatch(/<p>\s*Ask about the work/);
-    expect(chat).toContain('DevEx, Industrial AI, or background.');
+    expect(chat).not.toContain('DevEx, Industrial AI, or background.');
     expect(chat).toContain("I'm an AI with his context.");
     expect(chat).not.toContain('class="status-tooltip">Ask about the work</span>');
     expect(chat).toContain('id="status-tooltip" class="status-tooltip"></span>');
@@ -645,7 +645,7 @@ describe('identity copy', () => {
     expect(chat).toContain("const statusLabels = {\n    idle: 'Live',");
     expect(chat).not.toContain('Ask about the work, DevEx, Industrial AI, or background.');
     expect(chat).not.toMatch(/<p>\s*Ask about the work/);
-    expect(chat).toContain('DevEx, Industrial AI, or background.');
+    expect(chat).not.toContain('DevEx, Industrial AI, or background.');
     expect(chat).toContain("I'm an AI with his context.");
     expect(chat).not.toContain('class="status-tooltip">Ask about the work</span>');
     expect(chat).toContain('id="status-tooltip" class="status-tooltip"></span>');
@@ -2808,4 +2808,15 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('quiets open-chat welcome p to AI honesty only (#1043)', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    expect(chat).toContain('class="welcome-message"');
+    expect(chat).toContain("I'm an AI with his context. I can get things wrong.");
+    expect(chat).not.toContain('DevEx, Industrial AI, or background.');
+    expect(chat).not.toMatch(/<p>\s*DevEx,/);
+    expect(chat).toContain('id="chat-suggestions"');
+    expect(chat).not.toContain('mailto:');
+  });
+
 });
