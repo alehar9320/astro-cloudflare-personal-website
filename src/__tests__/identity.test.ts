@@ -2808,4 +2808,21 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('lets the first earlier-work row on /work/ be a 44px continue (#828)', () => {
+    const work = readFileSync('src/pages/work.astro', 'utf8');
+    expect(work).toContain("'ai-coding-copilots'");
+    expect(work).toContain('Internal AI coding copilots for IFS engineering teams.');
+    expect(work).toContain('href={`/work/${project.id}/`}');
+    expect(work).toContain('{earlierBlurb[project.id]}');
+    expect(work).toContain('.earlier a {');
+    expect(work).toMatch(
+      /@media \(max-width: 49\.99em\)[\s\S]*?\.earlier\s*\{[\s\S]*?gap:\s*0\.15rem/
+    );
+    expect(work).toContain('min-height: 44px');
+    expect(work).toContain('min-width: 44px');
+    expect(work).not.toContain('Explore');
+    expect(work).not.toContain('See my work');
+    expect(work).not.toContain('mailto:');
+  });
 });
