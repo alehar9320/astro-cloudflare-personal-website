@@ -2162,7 +2162,13 @@ describe('identity copy', () => {
     expect(notFound).toContain('https://www.linkedin.com/in/alehar/');
     expect(notFound).toContain('Get in touch');
     expect(notFound).toContain('Return to Homepage');
-    expect(notFound).toContain('LinkedIn · replies from me');
+    expect(content).toContain('<p class="cta-hint">LinkedIn</p>');
+    expect(content).not.toContain('LinkedIn · replies from me');
+    expect(content).not.toContain('replies from me');
+    expect(content).toContain('Get in touch');
+    expect(content).toContain('https://www.linkedin.com/in/alehar/');
+    expect(content).toContain('data-hire-surface="404"');
+    expect(content).not.toContain('mailto:');
     expect(notFound).toContain('data-hire-event="hire_cta_click"');
     expect(notFound).toContain('data-hire-surface="404"');
     expect(content).toContain('title="Page not found"');
