@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-24 - Forced-Colors Mode High Contrast Keyboard Focus on Portfolio Cards
+
+**Learning:** Keyboard focus states on glassmorphic card containers (`.card:focus-visible`) can become invisible or lose contrast when operating in Windows High Contrast Mode / forced-colors active mode if background colors or subtle box-shadows are overridden by the system. Declaring explicit system color fallbacks (`outline: 2px solid Highlight;`) inside `@media (forced-colors: active)` ensures interactive cards maintain high-visibility focus borders for keyboard users in high contrast accessibility modes.
+
+**Action:** Added `@media (forced-colors: active) { .card:focus-visible { outline: 2px solid Highlight; } }` support in `src/components/PortfolioPreview.astro`.
+
 ## 2026-05-23 - Compact Overlay Control Focus Containment & Touch Target Standard
 
 **Learning:** Compact overlay controls inside constrained components (such as `.chat-clear`, `.chat-close`, and suggestion chips in `Chat.astro`) require tight focus ring containment (`outline-offset: 2px`) to prevent focus outlines from overflowing overlay bounds or clipping against scroll container edges. Furthermore, ensuring all action controls maintain WCAG touch target dimensions (`min-height: 44px; min-width: 44px`) with `display: inline-flex; align-items: center; justify-content: center;` and gated tactile feedback (`transform: scale(0.96)`) under `@media (prefers-reduced-motion: no-preference)` delivers an accessible, highly responsive experience across touch and keyboard interactions.

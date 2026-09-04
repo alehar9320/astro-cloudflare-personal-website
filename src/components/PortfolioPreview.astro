@@ -142,4 +142,10 @@ const isShimmerEnabled = flagsEntry?.data.portfolio_shimmer_v1 ?? false;
       border-radius: 0.9375rem;
     }
   }
+
+  @media (forced-colors: active) {
+    .card:focus-visible {
+      outline: 2px solid Highlight;
+    }
+  }
 </style>
