@@ -2808,4 +2808,14 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('keeps MainHead default title as Alexander Härenstam | Product Manager, Developer Experience at IFS', () => {
+    const head = readFileSync('src/components/MainHead.astro', 'utf8');
+    expect(head).toContain(
+      "title = 'Alexander Härenstam | Product Manager, Developer Experience at IFS'"
+    );
+    expect(head).toContain('<title>{title}</title>');
+    expect(head).not.toContain('mailto:');
+  });
+
 });
