@@ -2808,4 +2808,13 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('quiets open-chat twin title to AI twin (#1016)', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    expect(chat).toContain('class="welcome-message"');
+    expect(chat).toMatch(/<h2>AI twin<\/h2>/);
+    expect(chat).not.toContain("<h2>Alexander's digital twin</h2>");
+    expect(chat).toContain('id="chat-live-label"');
+  });
+
 });
