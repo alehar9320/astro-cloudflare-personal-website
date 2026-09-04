@@ -2808,4 +2808,12 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('keeps mobile Menu button keyboard focus-visible and Menu label', () => {
+    const src = readFileSync('src/components/Nav.astro', 'utf8');
+    expect(src).toMatch(/\.menu-button:focus-visible[\s\S]*?outline:\s*2px\s+solid\s+var\(--accent-regular\)/);
+    expect(src).toMatch(/\.menu-button:focus-visible[\s\S]*?outline-offset:\s*2px/);
+    expect(src).toMatch(/<span class="sr-only">Menu<\/span>/);
+  });
+
 });
