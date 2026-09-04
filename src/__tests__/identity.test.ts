@@ -2808,4 +2808,13 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('quiets this-site digital twin wording to AI (#1025)', () => {
+    const page = readFileSync('src/pages/this-site.astro', 'utf8');
+    expect(page).not.toMatch(/digital twin/i);
+    expect(page).toContain(
+      'The chat at the bottom is AI with his context. It can get things wrong. It is not him.'
+    );
+  });
+
 });
