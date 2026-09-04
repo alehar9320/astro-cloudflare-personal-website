@@ -1,3 +1,11 @@
+queue_rules:
+  - name: default
+    merge_method: squash
+    queue_conditions:
+      - -closed
+      - -draft
+      - base = main
+    merge_method: squash
 pull_request_rules:
   - name: Label conflicting pull requests
     description: Add a label to a pull request with conflict to spot it easily
@@ -8,12 +16,6 @@ pull_request_rules:
       label:
         toggle:
           - conflict
-  - name: Automatic merge
-    description: Merge when PR passes all branch protection and has label automerge
-    conditions:
-      - label = automerge
-    actions:
-      merge:
   - name: Make sure PR are update before merging with rebase
     description: Rebase automerge-labeled PRs that are far behind. Restricted so
       the rest of the open-PR pile is not constantly rebased.
