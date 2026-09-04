@@ -2808,4 +2808,27 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('shows How shipping holds up DORA metrics on /okr/ (#883)', () => {
+    const data = readFileSync('src/data/okr-h2-2026.ts', 'utf8');
+    const page = readFileSync('src/pages/okr.astro', 'utf8');
+    expect(data).toContain('export const DORA_METRICS');
+    expect(data).toContain("id: 'dora-deploy'");
+    expect(data).toContain("id: 'dora-lead'");
+    expect(data).toContain("id: 'dora-cfr'");
+    expect(data).toContain("id: 'dora-restore'");
+    expect(data).toContain("label: 'Ships to production (deployment frequency)'");
+    expect(data).toContain("label: 'Time from PR open to merge (lead time for changes)'");
+    expect(data).toContain("label: 'Failed production CI / production ships (change failure rate)'");
+    expect(data).toContain("label: 'Time from failed main CI to next green main CI (time to restore)'");
+    expect(data).toContain("targetLabel: '—'");
+    expect(data).toContain("direction: 'none'");
+    expect(data).not.toContain("currentLabel: 'TODO'");
+    expect(data).not.toContain("baselineLabel: 'TODO'");
+    expect(data).toContain("currentLabel: '48'");
+    expect(page).toContain('DORA_METRICS');
+    expect(page).toContain('aria-labelledby="dora"');
+    expect(page).toContain('<h2 id="dora">How shipping holds up</h2>');
+    expect(page).not.toContain('mailto:');
+  });
 });
