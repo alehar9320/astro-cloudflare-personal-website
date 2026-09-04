@@ -2808,4 +2808,22 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('keeps home hire and proof clear of docked FAB clearance contract (#1070)', () => {
+    const index = readFileSync('src/pages/index.astro', 'utf8');
+    const global = readFileSync('src/styles/global.css', 'utf8');
+    expect(index).toContain("const linkedinHref = 'https://www.linkedin.com/in/alehar/';");
+    expect(index).toContain('href={linkedinHref}');
+    expect(index).toContain('class="proof-card"');
+    expect(index).toContain('href="/work/ifs-design-system/"');
+    expect(index).toContain('proof-affordance');
+    expect(index).toContain('hero-actions');
+    expect(index).toContain('justify-content: flex-start');
+    expect(index).toContain('.hero-bridge');
+    expect(global).toContain('--chat-fab-clearance');
+    expect(global).toContain('--chat-fab-size');
+    expect(global).toContain('--chat-fab-offset');
+    expect(index).not.toContain('mailto:');
+  });
+
 });
