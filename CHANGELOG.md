@@ -1,7 +1,7 @@
 # Changelog
 
-All notable changes to this project will be documented in this file.
+Release history lives in **[GitHub Releases](https://github.com/alehar9320/astro-cloudflare-personal-website/releases)**.
 
-## [2026.04.06.1400] - 2026-04-06
+This file is intentionally not a second changelog. Tags and release notes created on `main` by CI (`scripts/release.js`) are the source of truth for versions, the footer version link, and `/whats-new`.
 
-- No documented changes.
+If you need what shipped, open Releases — do not invent entries here.
