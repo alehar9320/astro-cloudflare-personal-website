@@ -21,7 +21,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           <div class="canvas-header">
             <div class="status-badge" id="status-badge">
               <span class="status-dot"></span>
-              <span class="status-text">60 FPS · Active Field</span>
+              <span class="status-text">Active Field</span>
             </div>
 
             <div class="controls-group">
@@ -110,6 +110,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
       canvas.style.height = `${height}px`;
 
       if (ctx) {
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
         ctx.scale(dpr, dpr);
       }
 
@@ -260,7 +261,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
           toggleIcon.textContent = '⏸';
           toggleLabel.textContent = 'Pause';
           statusBadge.classList.remove('paused');
-          statusBadge.querySelector('.status-text')!.textContent = '60 FPS · Active Field';
+          statusBadge.querySelector('.status-text')!.textContent = 'Active Field';
         } else {
           toggleIcon.textContent = '▶';
           toggleLabel.textContent = 'Play';
