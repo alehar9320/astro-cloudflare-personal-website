@@ -2,7 +2,7 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
-import { OBJECTIVES, progressTowardTarget } from '../data/okr-h2-2026';
+import { OBJECTIVES, DORA_METRICS, progressTowardTarget } from '../data/okr-h2-2026';
 
 const pageTitle = 'Site success | Product Manager, Developer Experience at IFS';
 const dek = 'How this site is measured through the end of 2026. Progress against real baselines.';
@@ -64,6 +64,49 @@ const meta = 'H2 2026 · baselines frozen 29 Aug 2026 · current refreshed weekl
           </section>
         ))
       }
+      <section class="objective" aria-labelledby="dora">
+        <h2 id="dora">How shipping holds up</h2>
+        {
+          DORA_METRICS.map((kr) => {
+            const pct = progressTowardTarget(kr);
+            return (
+              <article class="kr" aria-labelledby={`${kr.id}-label`}>
+                <p class="kr-head">
+                  <span id={`${kr.id}-label`}>{kr.label}</span>
+                  <span class="kr-window">{kr.window}</span>
+                </p>
+                <dl class="kr-cols">
+                  <div>
+                    <dt>Baseline</dt>
+                    <dd>{kr.baselineLabel}</dd>
+                  </div>
+                  <div>
+                    <dt>Current</dt>
+                    <dd>{kr.currentLabel}</dd>
+                  </div>
+                  <div>
+                    <dt>Target</dt>
+                    <dd>{kr.targetLabel}</dd>
+                  </div>
+                </dl>
+                {pct !== null && (
+                  <div
+                    class="kr-bar"
+                    role="progressbar"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    aria-valuenow={Math.round(pct)}
+                    aria-label={`${kr.label} progress`}
+                  >
+                    <span class="kr-bar-fill" style={`width: ${Math.min(100, pct)}%`} />
+                  </div>
+                )}
+                {kr.note && <p class="kr-note">{kr.note}</p>}
+              </article>
+            );
+          })
+        }
+      </section>
     </main>
     <ContactCTA />
   </div>
