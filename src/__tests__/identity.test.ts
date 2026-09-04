@@ -2797,6 +2797,16 @@ describe('identity copy', () => {
     expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
   });
 
+
+  it('code-splits posthog-js behind idle and key gate', () => {
+    const ph = readFileSync('src/components/PostHog.astro', 'utf8');
+    expect(ph).toContain("await import('posthog-js')");
+    expect(ph).toContain('requestIdleCallback');
+    expect(ph).toContain('PUBLIC_POSTHOG_KEY');
+    expect(ph).toMatch(/if\s*\(\s*!posthogKey\s*\)\s*return/);
+    expect(ph).not.toMatch(/from\s+['"]posthog-js['"]/);
+  });
+
   it('keeps Contact quiet hire as exact LinkedIn, no twin-mouth (#824)', () => {
     const contact = readFileSync('src/pages/contact.astro', 'utf8');
     expect(contact).toContain('<p class="cta-hint">LinkedIn</p>');
