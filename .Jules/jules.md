@@ -21,3 +21,9 @@
 - [Insight 1: Tighter focus ring outline-offsets (2px) prevent focus ring overflow clipping on compact overlay toggles.]
 - [Insight 2: Gating active press scale transitions behind prefers-reduced-motion media queries respects accessibility preferences while preserving tactile visual feedback.]
 - [Delta: 17 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-16 - Pill Micro-Interaction | Signal: Technical/UX | Lean Implementation: Flagged Scoped CSS Hover Transition
+
+- [Insight 1: Adding subtle hardware-accelerated translateY(-1px) hover feedback on Pill tags elevates visual depth without introducing layout shifts.]
+- [Insight 2: Respecting prefers-reduced-motion media query ensures WCAG compliance for micro-interactions.]
+- [Delta: 24 lines across 3 files. Guardrails: All passed autonomously.]
