@@ -1,22 +1,26 @@
-# HARD ABORT — Portfolio Card Zoom / orphaned PortfolioPreview
+# HARD ABORT — Portfolio Card Zoom / orphaned PortfolioPreview / dead .proof-card
 
 Read this before scouting. If the idea is one of these, ABORT the cycle. Do not downscope into a sibling with the same job. Do not open a PR.
 
-If the idea is portfolio card image zoom, title micro-interaction on an unmounted `PortfolioPreview`, or any motion on a component with no visitor surface, ABORT.
+If the idea is portfolio card image zoom, title micro-interaction on an unmounted `PortfolioPreview`, focus/contrast on dead `PortfolioPreview`, restacks onto live `.proof-card` via that orphan, or any motion/a11y pass on a component with no visitor surface, ABORT.
 
 Do NOT recreate:
 
 - Portfolio card image zoom
 - Portfolio card title micro-interaction with no live visitor surface
-- orphaned `PortfolioPreview` restacks
+- orphaned `PortfolioPreview` restacks (zero imports)
+- high-contrast / focus support on dead `PortfolioPreview`
+- restacking this farm onto live `.proof-card` until an Eng-clean tip mounts a real visitor surface
 
-Already closed as farm: #960.
+Already closed as farm: #987, #960.
 
-Leftover quota stays off this class. Do not reopen as Jules.
+Leftover quota stays off this class (Riley ≥80 only elsewhere). Do not reopen as Jules.
 
 Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
 
 ---
+
+## 2026-09-04 - Farm abort | Signal: Nick Eng FAIL #987 | Lean Implementation: HARD ABORT Palette PortfolioPreview dead / zero imports; do not restack onto live .proof-card
 
 ## 2026-09-03 - Farm abort | Signal: Nick Dual OWN FAIL #960 | Lean Implementation: HARD ABORT Kinetic Portfolio Card Zoom / orphaned PortfolioPreview
 
