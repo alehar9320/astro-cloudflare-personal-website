@@ -2808,4 +2808,26 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('keeps theme toggle keyboard focus-visible and Toggle theme label', () => {
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    const toggle = readFileSync('src/components/ThemeToggle.astro', 'utf8');
+    expect(nav).toContain("import ThemeToggle from './ThemeToggle.astro';");
+    expect(nav).toContain('<ThemeToggle />');
+    expect(nav).toContain('https://www.linkedin.com/in/alehar');
+    expect(nav).not.toContain('mailto:');
+    expect(toggle).toContain('aria-label="Toggle theme"');
+    expect(toggle).toContain('<button type="button"');
+    expect(toggle).toContain('button:focus-visible {');
+    const focusAt = toggle.indexOf('button:focus-visible {');
+    expect(focusAt).toBeGreaterThan(0);
+    const focusBlock = toggle.slice(focusAt, toggle.indexOf('}', focusAt));
+    expect(focusBlock).toContain('outline: 2px solid var(--accent-regular)');
+    expect(focusBlock).toContain('outline-offset: 2px');
+    expect(toggle).toContain("button.setAttribute('aria-pressed', String(dark))");
+    expect(toggle).toContain(
+      "button.setAttribute('aria-label', `Switch to ${dark ? 'light' : 'dark'} theme`)"
+    );
+  });
+
 });
