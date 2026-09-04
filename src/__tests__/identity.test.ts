@@ -2808,4 +2808,35 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('keeps home H1 readable: aurora washes loop without alternate yoyo (#884)', () => {
+    const layout = readFileSync('src/layouts/BaseLayout.astro', 'utf8');
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    expect(layout).toContain('class="aurora"');
+    expect(layout).toContain('aurora-wash aurora-wash-a');
+    expect(layout).toContain('aurora-wash aurora-wash-b');
+    expect(layout).not.toContain('aurora-wash-c');
+    expect(layout).toContain('animation: aurora-drift-a 12s ease-in-out infinite;');
+    expect(layout).toContain('animation: aurora-drift-b 20s ease-in-out infinite;');
+    expect(layout).not.toContain('infinite alternate');
+    expect(layout).toContain('transform: translate3d(-2%, -1%, 0)');
+    expect(layout).toContain('transform: translate3d(5%, 2%, 0)');
+    expect(layout).toContain('transform: translate3d(2%, 1%, 0)');
+    expect(layout).toContain('transform: translate3d(-4%, -1%, 0)');
+    expect(layout).not.toContain('translate3d(-10%, -8%, 0)');
+    expect(layout).toContain(
+      'mask-image: linear-gradient(to bottom, #000 0%, #000 85%, transparent 100%)'
+    );
+    expect(layout).toContain(
+      '-webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 85%, transparent 100%)'
+    );
+    expect(layout).toContain('opacity: 0.16');
+    expect(layout).toContain('opacity: 0.12');
+    expect(layout).not.toContain('opacity: 0.28');
+    expect(layout).not.toContain('opacity: 0.22');
+    expect(layout).toContain('prefers-reduced-motion: reduce');
+    expect(layout).toContain('animation: none');
+    expect(layout).not.toContain('<canvas');
+    expect(home).toContain('https://www.linkedin.com/in/alehar/');
+  });
 });
