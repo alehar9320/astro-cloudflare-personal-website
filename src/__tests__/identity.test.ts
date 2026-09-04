@@ -1196,8 +1196,10 @@ describe('identity copy', () => {
   it("lets the Chalmers master's thesis case include a visible Get in touch on LinkedIn CTA", () => {
     const thesis = readFileSync('src/content/work/master-thesis.md', 'utf8');
     expect(thesis).toContain(
-      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch</a>'
     );
+    expect(thesis).toMatch(/>Get in touch<\/a>/);
+    expect(thesis).not.toContain('Get in touch on LinkedIn');
     expect(thesis).not.toContain('mailto:');
 
     const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
@@ -1224,8 +1226,10 @@ describe('identity copy', () => {
     expect(thesis).toContain('Opportunities showed up as reach, scale, and data for decisions');
     expect(thesis).toContain('Barriers were mostly organizational');
     expect(thesis).toContain(
-      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch</a>'
     );
+    expect(thesis).toMatch(/>Get in touch<\/a>/);
+    expect(thesis).not.toContain('Get in touch on LinkedIn');
     expect(thesis).not.toContain('mailto:');
   });
 
@@ -2795,6 +2799,15 @@ describe('identity copy', () => {
     expect(work).toContain('https://www.linkedin.com/in/alehar/');
     expect(work).not.toContain('mailto:');
     expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
+  });
+
+
+  it('keeps thesis case body hire quiet Get in touch (#1071)', () => {
+    const md = readFileSync('src/content/work/master-thesis.md', 'utf8');
+    expect(md).toContain('href="https://www.linkedin.com/in/alehar/"');
+    expect(md).toMatch(/>Get in touch<\/a>/);
+    expect(md).not.toContain('Get in touch on LinkedIn');
+    expect(md).not.toContain('mailto:');
   });
 
   it('keeps Contact quiet hire as exact LinkedIn, no twin-mouth (#824)', () => {
