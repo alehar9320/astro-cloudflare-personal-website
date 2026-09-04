@@ -2808,4 +2808,14 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('keeps site-title free of logo wobble chrome', () => {
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    expect(nav).not.toContain('enable_logo_wobble_v1');
+    expect(nav).not.toContain('isLogoWobbleEnabled');
+    expect(nav).not.toContain('logo-wobble');
+    expect(nav).not.toContain('keyframes wobble');
+    expect(nav).toContain('class="site-title"');
+  });
+
 });
