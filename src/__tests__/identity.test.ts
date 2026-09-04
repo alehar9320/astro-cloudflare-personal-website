@@ -684,7 +684,7 @@ describe('identity copy', () => {
     expect(home).toContain('Get in touch');
     expect(home).not.toContain('mailto:');
     expect(chat).toContain('chat-header-avatar');
-    expect(chat).toContain('/assets/portrait.png');
+    expect(chat).toContain('/assets/chat-avatar.webp');
     expect(chat).toContain('class="chat-header-avatar"');
     expect(chat).toContain('width="40"');
     expect(chat).toContain('height="40"');
@@ -699,7 +699,7 @@ describe('identity copy', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
     const home = readFileSync('src/pages/index.astro', 'utf8');
     expect(chat).not.toContain('chat-welcome-portrait');
-    expect(chat).toContain('/assets/portrait.png');
+    expect(chat).toContain('/assets/chat-avatar.webp');
     expect(chat).toContain('class="chat-header-avatar"');
     expect(chat).toContain('width="40"');
     expect(chat).toContain('height="40"');
@@ -849,7 +849,7 @@ describe('identity copy', () => {
     expect(chat).toContain('border-radius: 1rem 1rem 0 0');
     expect(chat).not.toContain('height: 62dvh');
     expect(chat).not.toContain('Get in touch');
-    expect(chat).toContain('/assets/portrait.png');
+    expect(chat).toContain('/assets/chat-avatar.webp');
     expect((chat.match(/class="chat-header-avatar"/g) || []).length).toBe(1);
     expect(home).toContain('padding-bottom: 36dvh');
     expect(home).toContain('padding-bottom: 0');
@@ -943,7 +943,7 @@ describe('identity copy', () => {
     expect(chat).not.toContain('--prominent-phone-top');
     expect(chat).not.toContain('layoutProminentPhone');
     expect((chat.match(/class="chat-header-avatar"/g) || []).length).toBe(1);
-    expect(chat).toContain('/assets/portrait.png');
+    expect(chat).toContain('/assets/chat-avatar.webp');
     expect(chat).toContain('width="40"');
     expect(chat).toContain('height="40"');
     expect(chat).toContain('alt=""');
@@ -2808,4 +2808,24 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('loads a tiny chat avatar instead of portrait.png in the composer', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    const head = readFileSync('src/components/MainHead.astro', 'utf8');
+    expect(chat).toContain('id="chat-form"');
+    expect(chat).toContain('class="chat-header-avatar"');
+    expect(chat).toContain('src="/assets/chat-avatar.webp"');
+    expect(chat).toContain('width="40"');
+    expect(chat).toContain('height="40"');
+    expect(chat).toContain('alt=""');
+    expect(chat).toContain('decoding="async"');
+    expect(chat).not.toContain('src="/assets/portrait.png"');
+    expect(chat).not.toContain('.avif');
+    expect(chat).not.toMatch(/chat-header-avatar[\s\S]*loading="lazy"/);
+    expect(existsSync('public/assets/chat-avatar.webp')).toBe(true);
+    expect(readFileSync('public/assets/chat-avatar.webp').byteLength).toBeLessThanOrEqual(8192);
+    expect(existsSync('public/assets/portrait.png')).toBe(true);
+    expect(head).toContain("shareImage = 'https://me.alehar.workers.dev/assets/portrait.png'");
+  });
+
 });
