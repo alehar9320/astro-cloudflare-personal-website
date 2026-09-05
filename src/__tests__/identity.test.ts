@@ -2797,6 +2797,16 @@ describe('identity copy', () => {
     expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
   });
 
+
+  it('hides Live badge in open chat on desktop and mobile (quieter Live)', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    expect(chat).toContain('id="chat-live"');
+    expect(chat).toContain('id="chat-live-label"');
+    expect(chat).toMatch(/is-open[\s\S]*#chat-live[\s\S]*display:\s*none/);
+    expect(chat).toContain('id="status-announcer"');
+    expect(chat).not.toContain('mailto:');
+  });
+
   it('keeps Contact quiet hire as exact LinkedIn, no twin-mouth (#824)', () => {
     const contact = readFileSync('src/pages/contact.astro', 'utf8');
     expect(contact).toContain('<p class="cta-hint">LinkedIn</p>');
