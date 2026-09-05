@@ -178,6 +178,8 @@ const SHA_PREFIX = /^[a-f0-9]{7,40}\s+/i;
 const CONVENTIONAL_PREFIX =
   /^(feat|fix|chore|docs|refactor|test|style|perf|build|ci)(\([^)]+\))?:\s*/i;
 const PR_SUFFIX = /\s*\(#(\d+)\)\s*$/;
+const MULTI_SPACE = /\s{2,}/g;
+const LIST_ITEM_PREFIX = /^[-*+]\s+/;
 
 /**
  * Strip SHA, conventional-commit type, and trailing (#123) from a changelog line.
@@ -188,7 +190,7 @@ export function stripChangelogChrome(raw: string): string {
     .replace(SHA_PREFIX, '')
     .replace(CONVENTIONAL_PREFIX, '')
     .replace(PR_SUFFIX, '')
-    .replace(/\s{2,}/g, ' ')
+    .replace(MULTI_SPACE, ' ')
     .trim();
 }
 
@@ -225,21 +227,28 @@ export function toVisitorChangelogTitle(raw: string): string {
 
 /**
  * Rewrite a GitHub release body so list items are visitor copy, not SHA + feat + (#PR).
+ * Single-pass implementation to eliminate intermediate array and string allocations on Edge runtimes.
  */
 export function toVisitorReleaseBody(body: string): string {
-  const items = body
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => /^[-*+]\s+/.test(line))
-    .map((line) => line.replace(/^[-*+]\s+/, ''))
-    .filter((message) => !INTERNAL_CHANGELOG_ITEM.test(message));
+  const lines = body.split('\n');
+  const items: string[] = [];
+
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!LIST_ITEM_PREFIX.test(trimmed)) continue;
+
+    const message = trimmed.replace(LIST_ITEM_PREFIX, '');
+    if (INTERNAL_CHANGELOG_ITEM.test(message)) continue;
+
+    items.push(`- ${toVisitorChangelogTitle(message)}`);
+  }
 
   if (items.length === 0) {
     const trimmed = body.trim();
     return trimmed ? toVisitorChangelogTitle(trimmed) : '';
   }
 
-  return items.map((message) => `- ${toVisitorChangelogTitle(message)}`).join('\n');
+  return items.join('\n');
 }
 
 /**

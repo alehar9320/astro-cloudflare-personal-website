@@ -17,3 +17,9 @@
 - **Performance & Edge Memory:** Refactored `processBufferedText` in `src/utils/chat-stream.ts` to use pointer-based `indexOf('\n', startPos)` traversal instead of `combined.split('\n')`.
 - **Allocation Reduction:** Eliminates dynamic string array allocations on incoming SSE response stream chunks in Cloudflare Workers V8 runtime while retaining complete handling for multi-line data lines, CRLF endings, and trailing partial lines.
 - **Verification:** Added Vitest unit test cases for single-character streaming, multi-line SSE payloads across chunks, and empty pushes.
+
+## 2025-06-04 - Single-Pass Edge Visitor Changelog Formatting
+
+- **Performance & Edge Memory:** Refactored `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` from a multi-stage array pipeline (`.split().map().filter().map().filter()`) into a single-pass `for...of` loop over lines.
+- **Allocation Reduction:** Hoisted static regular expressions (`LIST_ITEM_PREFIX`, `MULTI_SPACE`) to module scope, avoiding re-instantiation and dynamic intermediate array allocations during edge rendering of `/api/releases` and `/whats-new`.
+- **Verification & Test Coverage:** Created a dedicated Vitest test suite (`src/utils/visitor-changelog.test.ts`) covering `stripChangelogChrome`, `toVisitorChangelogTitle`, `toVisitorReleaseBody`, and `toVisitorRelease` with 14 unit test cases.
