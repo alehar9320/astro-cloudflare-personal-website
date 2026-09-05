@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-24 - Focus-Visible Standardization & Mobile Touch Target Ergonomics
+
+**Learning:** Replacing raw `:focus` pseudo-classes with `:focus-visible` across footer version links (`.version-link`) and accessibility skip links (`.sr-only.focus-visible`) prevents sticky, persistent focus rings during mouse click interactions while preserving essential keyboard focus indicators. Furthermore, declaring explicit `min-height: 44px; display: inline-flex; align-items: center;` on interactive colophon triggers (`.visit-trigger`) ensures mobile touch targets comply with WCAG 2.1 AA requirements on touch viewports without causing layout shift.
+
+**Action:** Updated `.version-link` in `Footer.astro` and `.sr-only.focus-visible` in `BaseLayout.astro` to use `:focus-visible`. Added `min-height: 44px; display: inline-flex; align-items: center;` to `.visit-trigger` in `Footer.astro`.
+
 ## 2026-05-23 - Compact Overlay Control Focus Containment & Touch Target Standard
 
 **Learning:** Compact overlay controls inside constrained components (such as `.chat-clear`, `.chat-close`, and suggestion chips in `Chat.astro`) require tight focus ring containment (`outline-offset: 2px`) to prevent focus outlines from overflowing overlay bounds or clipping against scroll container edges. Furthermore, ensuring all action controls maintain WCAG touch target dimensions (`min-height: 44px; min-width: 44px`) with `display: inline-flex; align-items: center; justify-content: center;` and gated tactile feedback (`transform: scale(0.96)`) under `@media (prefers-reduced-motion: no-preference)` delivers an accessible, highly responsive experience across touch and keyboard interactions.
