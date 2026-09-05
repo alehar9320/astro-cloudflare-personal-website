@@ -1,0 +1,262 @@
+---
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Interactive Lab | Alexander Härenstam"
+  description="Prism's creative laboratory for fluid canvas visual experiences."
+  robots="noindex, nofollow"
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero
+      title="Interactive Canvas Lab"
+      tagline="Mathematical wave superposition and Northern Lights refractions."
+      align="start"
+    />
+
+    <section class="lab-container">
+      <div class="lab-card">
+        <header class="lab-header">
+          <h2>Aurora Wave Superposition</h2>
+          <p>
+            An interactive 60fps HTML5 Canvas experiment driven by multi-layered sine wave
+            trigonometry.
+          </p>
+        </header>
+
+        <div class="canvas-wrapper">
+          <canvas id="aurora-lab-canvas"></canvas>
+          <div class="controls-overlay">
+            <button
+              id="toggle-motion"
+              type="button"
+              class="control-btn"
+              aria-label="Toggle animation"
+            >
+              Pause Motion
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import {
+    AURORA_COLORS,
+    calculateWaveHeight,
+    formatRgba,
+    interpolateRgb,
+    type WaveSpec,
+  } from '../../utils/aurora-math';
+
+  const canvas = document.getElementById('aurora-lab-canvas') as HTMLCanvasElement | null;
+  const toggleBtn = document.getElementById('toggle-motion') as HTMLButtonElement | null;
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let animationFrameId: number;
+    let isRunning = true;
+    let time = 0;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      isRunning = false;
+      if (toggleBtn) toggleBtn.textContent = 'Play Motion';
+    }
+
+    const waves: WaveSpec[] = [
+      { amplitude: 25, frequency: 0.008, speed: 0.02, phase: 0 },
+      { amplitude: 15, frequency: 0.015, speed: 0.03, phase: Math.PI / 4 },
+      { amplitude: 10, frequency: 0.025, speed: 0.015, phase: Math.PI / 2 },
+    ];
+
+    const resize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const width = canvas.parentElement.clientWidth;
+      const height = 360;
+
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      if (ctx) {
+        ctx.scale(dpr, dpr);
+      }
+    };
+
+    const render = () => {
+      if (!ctx || !canvas || !canvas.parentElement) return;
+      const width = canvas.parentElement.clientWidth;
+      const height = 360;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Deep dark glass backdrop
+      ctx.fillStyle = 'rgba(10, 16, 28, 0.85)';
+      ctx.fillRect(0, 0, width, height);
+
+      if (isRunning) {
+        time += 1;
+      }
+
+      // Render 3 layered aurora waves with smooth gradient fills
+      const layers = [
+        {
+          colorStart: AURORA_COLORS.marineBlue,
+          colorEnd: AURORA_COLORS.cyan,
+          alpha: 0.3,
+          yOffset: height * 0.45,
+        },
+        {
+          colorStart: AURORA_COLORS.cyan,
+          colorEnd: AURORA_COLORS.emerald,
+          alpha: 0.25,
+          yOffset: height * 0.55,
+        },
+        {
+          colorStart: AURORA_COLORS.emerald,
+          colorEnd: AURORA_COLORS.marineBlue,
+          alpha: 0.2,
+          yOffset: height * 0.65,
+        },
+      ];
+
+      layers.forEach((layer, idx) => {
+        ctx.beginPath();
+        ctx.moveTo(0, height);
+
+        for (let x = 0; x <= width; x += 4) {
+          const waveHeight = calculateWaveHeight(x, time + idx * 20, waves);
+          const y = layer.yOffset + waveHeight;
+          if (x === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+
+        ctx.lineTo(width, height);
+        ctx.lineTo(0, height);
+        ctx.closePath();
+
+        const blendedColor = interpolateRgb(
+          layer.colorStart,
+          layer.colorEnd,
+          (Math.sin(time * 0.01 + idx) + 1) / 2
+        );
+        ctx.fillStyle = formatRgba(blendedColor, layer.alpha);
+        ctx.fill();
+      });
+
+      if (isRunning) {
+        animationFrameId = requestAnimationFrame(render);
+      }
+    };
+
+    window.addEventListener('resize', resize);
+    resize();
+    render();
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        isRunning = !isRunning;
+        toggleBtn.textContent = isRunning ? 'Pause Motion' : 'Play Motion';
+        if (isRunning) {
+          render();
+        } else {
+          cancelAnimationFrame(animationFrameId);
+        }
+      });
+    }
+
+    // Teardown listener on Astro page transitions
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+      },
+      { once: true }
+    );
+  }
+</script>
+
+<style>
+  .lab-container {
+    width: 100%;
+    margin-top: 1rem;
+  }
+
+  .lab-card {
+    background: hsla(var(--gray-999-basis), 0.6);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid var(--gray-800);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .lab-header h2 {
+    font-size: var(--text-xl);
+    color: var(--gray-0);
+    margin: 0 0 0.5rem 0;
+  }
+
+  .lab-header p {
+    font-size: var(--text-md);
+    color: var(--gray-300);
+    margin: 0;
+  }
+
+  .canvas-wrapper {
+    position: relative;
+    width: 100%;
+    height: 360px;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid var(--gray-800);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .controls-overlay {
+    position: absolute;
+    bottom: 0.75rem;
+    right: 0.75rem;
+  }
+
+  .control-btn {
+    background: hsla(var(--gray-999-basis), 0.8);
+    color: var(--gray-100);
+    border: 1px solid var(--gray-700);
+    border-radius: 0.5rem;
+    padding: 0.4rem 0.8rem;
+    font-size: var(--text-sm);
+    cursor: pointer;
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background var(--theme-transition);
+  }
+
+  .control-btn:hover,
+  .control-btn:focus-visible {
+    background: var(--gray-800);
+    color: var(--gray-0);
+    outline: 2px solid var(--accent-regular);
+  }
+</style>
