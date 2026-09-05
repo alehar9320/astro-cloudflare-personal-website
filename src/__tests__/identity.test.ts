@@ -2797,6 +2797,22 @@ describe('identity copy', () => {
     expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
   });
 
+  it('keeps Footer LinkedIn hire Contact card attrs (#1118)', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(footer).toContain('href="https://www.linkedin.com/in/alehar/"');
+    expect(footer).toContain('data-hire-event="linkedin_click"');
+    expect(footer).toContain('data-hire-surface="footer"');
+    expect(footer).toContain('blog.ifs.com/author/alexander-harenstam/');
+    expect(footer).toContain('https://github.com/alehar9320');
+    // Blog + GitHub stay untagged as hire
+    const blogBlock = footer.slice(
+      footer.indexOf('blog.ifs.com'),
+      footer.indexOf('https://github.com/alehar9320')
+    );
+    expect(blogBlock).not.toContain('data-hire-event');
+    expect(footer).not.toContain('mailto:');
+  });
+
   it('keeps Contact quiet hire as exact LinkedIn, no twin-mouth (#824)', () => {
     const contact = readFileSync('src/pages/contact.astro', 'utf8');
     expect(contact).toContain('<p class="cta-hint">LinkedIn</p>');
