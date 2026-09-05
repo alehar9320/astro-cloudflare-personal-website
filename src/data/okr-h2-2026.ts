@@ -106,7 +106,7 @@ export const OBJECTIVES: readonly Objective[] = [
         note: "August's 200 merges in 30 days was a farm spike — target is steady weeks, not that peak",
       },
     ],
-    supporting: ['At least half of weekly merges visitor-facing, for 8 weeks before year-end'],
+    supporting: ['At least half of weekly merges visitor-facing, for 8 weeks before year-end', 'Jules autonomous PRs: 17 of 147'],
   },
 ];
 
