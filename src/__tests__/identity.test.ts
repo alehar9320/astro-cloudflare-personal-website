@@ -1229,13 +1229,16 @@ describe('identity copy', () => {
     expect(thesis).not.toContain('mailto:');
   });
 
-  it('lets the Work index include a visible Get in touch on LinkedIn CTA', () => {
-    const work = readFileSync('src/pages/work.astro', 'utf8');
-    expect(work).toContain('href="https://www.linkedin.com/in/alehar/"');
-    expect(work).toContain('target="_blank"');
-    expect(work).toContain('rel="noopener noreferrer"');
-    expect(work).toMatch(/>Get in touch on LinkedIn<\/a/);
-    expect(work).not.toContain('mailto:');
+  it('keeps /work/ Get in touch in chrome, not under Earlier work (#1104)', () => {
+    const page = readFileSync('src/pages/work.astro', 'utf8');
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    expect(page).not.toContain('class="hire-cta"');
+    expect(page).not.toMatch(/<p class="hire-cta"[\s\S]*Get in touch on LinkedIn/);
+    const mainEnd = page.indexOf('</main>');
+    const ctaAt = page.indexOf('<ContactCTA />');
+    expect(ctaAt).toBeGreaterThan(mainEnd);
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(cta).not.toContain('mailto:');
   });
 
   it('lets the AI coding copilots work-case TL;DR include at IFS', () => {
