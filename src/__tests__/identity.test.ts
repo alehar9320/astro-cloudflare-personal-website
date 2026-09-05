@@ -2797,6 +2797,21 @@ describe('identity copy', () => {
     expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
   });
 
+
+  it('keeps copilots WebPage.name IFS role in JSON-LD schema', () => {
+    const src = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(src).toContain("entry.id === 'ai-coding-copilots'");
+    expect(src).toContain(
+      "'Internal AI coding copilots | Product Manager, Developer Experience at IFS'"
+    );
+    expect(src).toContain("'@type': 'WebPage'");
+    expect(src).toContain("'@type': 'CreativeWork'");
+    const creativeAt = src.indexOf("'@type': 'CreativeWork'");
+    expect(creativeAt).toBeGreaterThan(0);
+    const creativeBlock = src.slice(creativeAt, creativeAt + 200);
+    expect(creativeBlock).toContain('name: entry.data.title');
+  });
+
   it('keeps Contact quiet hire as exact LinkedIn, no twin-mouth (#824)', () => {
     const contact = readFileSync('src/pages/contact.astro', 'utf8');
     expect(contact).toContain('<p class="cta-hint">LinkedIn</p>');
