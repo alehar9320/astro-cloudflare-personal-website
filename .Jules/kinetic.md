@@ -10,6 +10,17 @@ Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hi
 
 # Kinetic Journal ⚡
 
+## 2026-08-30 - Portfolio Card Image Zoom Depth Micro-Interaction
+
+- **Signal:** Portfolio preview cards lacked spatial depth and subtle visual feedback on nested card images during hover/focus.
+- **Action:**
+  - Added hardware-accelerated `transform: scale(1.04)` on nested `img` elements inside `.card:hover` and `.card:focus-visible` in `src/components/PortfolioPreview.astro`.
+  - Configured smooth `0.5s cubic-bezier(0.22, 1, 0.36, 1)` easing curve for natural image motion.
+  - Added `@media (prefers-reduced-motion: reduce)` rules to reset scale transforms and disable motion transitions for full WCAG 2.1 AA accessibility compliance.
+- **Tokens Added:**
+  - Hover Scale: `scale(1.04)`
+  - Transition Easing: `0.5s cubic-bezier(0.22, 1, 0.36, 1)`
+
 ## 2026-08-29 - CTA glass abort | Signal: closed #772/#667 | Lean Implementation: HARD ABORT CallToAction glassmorphism and micro-states
 
 ## 2025-05-15 - Interactive Glassmorphism for Skills Section
