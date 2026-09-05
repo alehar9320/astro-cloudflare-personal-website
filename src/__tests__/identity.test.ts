@@ -2797,6 +2797,17 @@ describe('identity copy', () => {
     expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
   });
 
+  it('keeps chat suggestion chips at 44px height with a visible focus ring', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    expect(chat).toContain('id="chat-suggestions"');
+    expect(chat).toContain('class="chat-suggestion"');
+    expect(chat).toMatch(/\.chat-suggestion\s*\{[\s\S]*?min-height:\s*44px;/);
+    expect(chat).toMatch(
+      /\.chat-suggestion:focus-visible\s*\{[\s\S]*?outline:\s*2px\s+solid\s+var\(--accent-regular\);[\s\S]*?outline-offset:\s*2px;/
+    );
+    expect(chat).not.toContain('mailto:');
+  });
+
   it('keeps Contact quiet hire as exact LinkedIn, no twin-mouth (#824)', () => {
     const contact = readFileSync('src/pages/contact.astro', 'utf8');
     expect(contact).toContain('<p class="cta-hint">LinkedIn</p>');
