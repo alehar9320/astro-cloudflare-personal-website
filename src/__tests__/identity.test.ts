@@ -2797,6 +2797,15 @@ describe('identity copy', () => {
     expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
   });
 
+
+  it('locks home proof-card keyboard focus-visible ring', () => {
+    const home = readFileSync('src/pages/index.astro', 'utf8');
+    expect(home).toContain('class="proof-card"');
+    expect(home).toContain('href="/work/ifs-design-system/"');
+    expect(home).toMatch(/\.proof-card:focus-visible\s*\{[\s\S]*?outline:\s*2px solid var\(--accent-regular\)/);
+    expect(home).toMatch(/\.proof-card:focus-visible\s*\{[\s\S]*?outline-offset:\s*4px/);
+  });
+
   it('keeps Contact quiet hire as exact LinkedIn, no twin-mouth (#824)', () => {
     const contact = readFileSync('src/pages/contact.astro', 'utf8');
     expect(contact).toContain('<p class="cta-hint">LinkedIn</p>');
