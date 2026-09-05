@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { env as workerEnv } from 'cloudflare:workers';
 import { GET, HOGQL } from '../pages/api/visits';
 
@@ -14,6 +14,88 @@ describe('visits API', () => {
     delete bindings.POSTHOG_PERSONAL_API_KEY;
     delete bindings.POSTHOG_PROJECT_ID;
     delete bindings.POSTHOG_QUERY_HOST;
+  });
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
+
+  async function getVisits() {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    return GET({} as Parameters<typeof GET>[0]);
+  }
+
+  async function expectFailOpen204(response: Response) {
+    expect(response.status).toBe(204);
+    expect(await response.text()).toBe('');
+  }
+
+  it('returns 204 when POSTHOG_PROJECT_ID is not all digits', async () => {
+    const bindings = workerEnv as VisitEnv;
+    bindings.POSTHOG_PERSONAL_API_KEY = 'phx_test';
+    bindings.POSTHOG_PROJECT_ID = 'not-digits';
+    await expectFailOpen204(await getVisits());
+  });
+
+  it('returns 204 when POSTHOG_QUERY_HOST is not https', async () => {
+    const bindings = workerEnv as VisitEnv;
+    bindings.POSTHOG_PERSONAL_API_KEY = 'phx_test';
+    bindings.POSTHOG_QUERY_HOST = 'http://eu.posthog.com';
+    await expectFailOpen204(await getVisits());
+  });
+
+  it('returns 204 when POSTHOG_QUERY_HOST is not a URL', async () => {
+    const bindings = workerEnv as VisitEnv;
+    bindings.POSTHOG_PERSONAL_API_KEY = 'phx_test';
+    bindings.POSTHOG_QUERY_HOST = 'not-a-url';
+    await expectFailOpen204(await getVisits());
+  });
+
+  it('returns 204 when fetch resolves with ok: false', async () => {
+    const bindings = workerEnv as VisitEnv;
+    bindings.POSTHOG_PERSONAL_API_KEY = 'phx_test';
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('nope', { status: 500 })));
+    await expectFailOpen204(await getVisits());
+  });
+
+  it('returns 204 when fetch json() throws', async () => {
+    const bindings = workerEnv as VisitEnv;
+    bindings.POSTHOG_PERSONAL_API_KEY = 'phx_test';
+    vi.stubGlobal('fetch', vi.fn().mockResolvedValue(new Response('{', { status: 200 })));
+    await expectFailOpen204(await getVisits());
+  });
+
+  it('returns 204 when unique_visitors is 0', async () => {
+    const bindings = workerEnv as VisitEnv;
+    bindings.POSTHOG_PERSONAL_API_KEY = 'phx_test';
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            results: [
+              {
+                pageviews: 0,
+                unique_visitors: 0,
+                first_seen: '2026-08-14T07:03:00.000Z',
+                pageviews_7d: 0,
+                unique_visitors_7d: 0,
+              },
+            ],
+          }),
+          { status: 200, headers: { 'content-type': 'application/json' } }
+        )
+      )
+    );
+    await expectFailOpen204(await getVisits());
+  });
+
+  it('returns 204 when fetch rejects', async () => {
+    const bindings = workerEnv as VisitEnv;
+    bindings.POSTHOG_PERSONAL_API_KEY = 'phx_test';
+    vi.stubGlobal('fetch', vi.fn().mockRejectedValue(new Error('network')));
+    await expectFailOpen204(await getVisits());
   });
 
   it('uses one HogQL query for uniques, first seen, 7d splits, and period comparisons', () => {
