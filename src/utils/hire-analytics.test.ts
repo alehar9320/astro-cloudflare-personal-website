@@ -30,8 +30,7 @@ describe('hire-analytics', () => {
   });
 
   it('does not throw when dataLayer is missing', () => {
-    // @ts-expect-error -- dataLayer is optional on Window
-    delete window.dataLayer;
+    delete (window as Partial<Window>).dataLayer;
     expect(() => trackHireEvent('linkedin_click', 'contact_cta')).not.toThrow();
   });
 

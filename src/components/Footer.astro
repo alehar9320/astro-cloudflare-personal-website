@@ -139,7 +139,7 @@ const currentYear = new Date().getFullYear();
             return;
           }
           openedByHover = false;
-          setOpen(panel.hidden);
+          setOpen(Boolean(panel.hidden));
         });
 
         trigger.addEventListener('focus', () => {
