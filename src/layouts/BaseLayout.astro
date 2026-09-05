@@ -50,8 +50,16 @@ const { title, description, ogTitle, shareUrl, canonicalUrl, robots } = Astro.pr
     <script>
       import { initHireAnalytics } from '../utils/hire-analytics';
       initHireAnalytics();
-      // Add “loaded” class once the document has completely loaded.
-      addEventListener('load', () => document.documentElement.classList.add('loaded'));
+      /* Optimization (⚡ Bolt): Ensure .loaded is added immediately if document.readyState is complete,
+         preventing missed events when module scripts execute post-load, and unbind the load listener after execution ({ once: true }).
+         Benchmark: Guarantees below-the-fold background image hydration without lingering listeners. */
+      if (document.readyState === 'complete') {
+        document.documentElement.classList.add('loaded');
+      } else {
+        addEventListener('load', () => document.documentElement.classList.add('loaded'), {
+          once: true,
+        });
+      }
     </script>
 
     <style>
