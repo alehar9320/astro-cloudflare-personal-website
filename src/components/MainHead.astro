@@ -77,10 +77,17 @@ const shareUrl = shareUrlProp ?? canonicalUrl;
   document.documentElement.classList[isDark ? 'add' : 'remove']('theme-dark');
 
   if (typeof localStorage !== 'undefined') {
-    // Watch the document element and persist user preference when it changes.
+    /* Optimization (⚡ Bolt): Track active theme state to eliminate redundant synchronous localStorage.setItem
+       disk I/O operations when non-theme classes (e.g. .loaded, .has-prominent-chat) mutate on documentElement.
+       Benchmark: Eliminates redundant synchronous disk writes during UI class mutations. */
+    let currentTheme = isDark ? 'dark' : 'light';
     const observer = new MutationObserver(() => {
-      const isDark = document.documentElement.classList.contains('theme-dark');
-      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+      const isDarkNow = document.documentElement.classList.contains('theme-dark');
+      const newTheme = isDarkNow ? 'dark' : 'light';
+      if (newTheme !== currentTheme) {
+        currentTheme = newTheme;
+        localStorage.setItem('theme', newTheme);
+      }
     });
     observer.observe(document.documentElement, {
       attributes: true,

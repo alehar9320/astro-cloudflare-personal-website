@@ -25,3 +25,7 @@ Action: Updated src/components/PostHog.astro to dynamically import posthog-js on
 2026-09-04 - Conditional Icon Gradient Generation & Zero CLS Dimensions
 Learning: Unconditional generation of random gradient IDs (`Math.random()`, `.toString(36)`) on non-gradient SVG icon renders wastes CPU cycles during SSR/prerendering. Additionally, missing explicit `width` and `height` attributes on content image tags causes Cumulative Layout Shift (CLS) when images load.
 Action: Updated `Icon.astro` to generate `gradientId` only when `gradient` prop is true, and added explicit `width="1472"` and `height="871"` attributes to hero images in `work/[...slug].astro` and `PortfolioPreview.astro`.
+
+2026-09-05 - Layout Lifecycle & Theme Persistence Optimization
+Learning: Unconditional `localStorage.setItem` calls inside a MutationObserver on `document.documentElement` trigger synchronous disk I/O on every non-theme class mutation (such as toggling `.loaded` or `.has-prominent-chat`). Comparing computed themes before writing eliminates redundant main-thread I/O. Furthermore, checking `document.readyState === 'complete'` before registering `window.addEventListener('load')` ensures below-the-fold assets hydrate reliably even when module scripts execute post-load, while `{ once: true }` prevents lingering listeners.
+Action: Updated `MainHead.astro` to track active theme state before calling `localStorage.setItem()`, and updated `BaseLayout.astro` to check `document.readyState === 'complete'` with `{ once: true }` on the `load` listener.
