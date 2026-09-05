@@ -241,7 +241,7 @@ const currentYear = new Date().getFullYear();
   }
 
   .version-link:hover,
-  .version-link:focus {
+  .version-link:focus-visible {
     color: var(--gray-200);
   }
 
@@ -274,7 +274,9 @@ const currentYear = new Date().getFullYear();
   }
 
   .visit-trigger {
-    display: inline;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     appearance: none;
     -webkit-appearance: none;
     margin: 0;
