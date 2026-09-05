@@ -146,6 +146,21 @@ describe('hire-analytics', () => {
     expect(window.dataLayer).toEqual([{ event: 'hire_cta_click', surface: 'nav' }]);
   });
 
+
+  it('records linkedin_click surface fab and Contact card for chat LinkedIn primary (#1117)', () => {
+    const capture = vi.fn();
+    window.posthog = { capture };
+    document.body.innerHTML =
+      '<a class="chat-explore-card-primary" href="https://www.linkedin.com/in/alehar/"' +
+      ' data-hire-event="linkedin_click" data-hire-surface="fab">Continue on LinkedIn</a>';
+    const a = document.querySelector('a')!;
+    expect(a.getAttribute('data-hire-event')).toBe('linkedin_click');
+    expect(a.getAttribute('data-hire-surface')).toBe('fab');
+    a.click();
+    expect(window.dataLayer).toEqual([{ event: 'linkedin_click', surface: 'fab' }]);
+    expect(capture).toHaveBeenCalledWith(HIRE_CONTACT_ACTION, { surface: 'fab' });
+  });
+
   it('fail-opens when PostHog is missing or throws', () => {
     delete window.posthog;
     document.body.innerHTML =
