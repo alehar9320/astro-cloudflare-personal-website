@@ -1,0 +1,86 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_working_with_me) return Astro.redirect('/404/');
+
+const items = [
+  { t: 'Asynchronous First', d: 'Clear written context over unnecessary meetings.' },
+  { t: 'Bias for Action', d: 'Ship small, iterate fast, validate with real data.' },
+  { t: 'Radical Transparency', d: 'Open trade-off decisions and honest feedback.' },
+];
+---
+
+<BaseLayout
+  title="Working With Me | Alexander Härenstam"
+  description="Operating manual"
+  robots="noindex"
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero title="Working With Me" align="start">
+      <p class="lede">Operating manual on collaboration, communication, and decision-making.</p>
+    </Hero>
+    <div class="grid">
+      {
+        items.map(({ t, d }) => (
+          <div class="card">
+            <>
+              <strong>{t}</strong>
+              <p>{d}</p>
+            </>
+          </div>
+        ))
+      }
+    </div>
+    <div class="actions">
+      <CallToAction
+        href="https://www.linkedin.com/in/alehar/"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-hire-event="hire_cta_click"
+        data-hire-surface="working-with-me">Connect on LinkedIn</CallToAction
+      >
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .lede {
+    margin: 0;
+    color: var(--gray-200);
+    max-width: 46ch;
+  }
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .card {
+    padding: 1.25rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+    background: var(--gradient-subtle);
+  }
+  .card strong {
+    display: block;
+    color: var(--gray-0);
+  }
+  .card p {
+    margin: 0.35rem 0 0;
+    color: var(--gray-300);
+  }
+  .actions {
+    display: flex;
+    align-items: flex-start;
+    margin-top: 0.5rem;
+    padding-bottom: var(--chat-fab-clearance);
+  }
+  @media (min-width: 50em) {
+    .actions {
+      padding-bottom: 0;
+    }
+  }
+</style>
