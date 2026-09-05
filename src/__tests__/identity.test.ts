@@ -50,7 +50,7 @@ describe('identity copy', () => {
     expect(bio).not.toContain('Explore the professional journey');
     expect(bio).not.toContain('No new numbered');
     expect(bio).not.toContain('only numbered proof');
-    expect(bio).toContain("Get in touch on{' '}");
+    expect(bio).not.toContain("Get in touch on{' '}");
     expect(bio.replace(/\s+/g, ' ')).toContain('up to 2x faster delivery');
     expect(bio).toContain('up to 30x ROI');
     expect(twin).toContain('up to 2x faster delivery');
@@ -2795,6 +2795,18 @@ describe('identity copy', () => {
     expect(work).toContain('https://www.linkedin.com/in/alehar/');
     expect(work).not.toContain('mailto:');
     expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
+  });
+
+  it('keeps Biography Get in touch in chrome, not under education (#1103)', () => {
+    const page = readFileSync('src/pages/biography.astro', 'utf8');
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    const mainEnd = page.indexOf('</main>');
+    const ctaAt = page.indexOf('<ContactCTA />');
+    expect(mainEnd).toBeGreaterThan(-1);
+    expect(ctaAt).toBeGreaterThan(mainEnd);
+    expect(page).not.toMatch(/Get in touch on\s*\{?\s*'?\s*<a[^>]*linkedin\.com\/in\/alehar/);
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(cta).not.toContain('mailto:');
   });
 
   it('keeps Contact quiet hire as exact LinkedIn, no twin-mouth (#824)', () => {
