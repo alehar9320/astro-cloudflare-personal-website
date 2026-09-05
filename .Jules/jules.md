@@ -1,3 +1,29 @@
+# HARD ABORT — do not restack Dual / copy-this / Kinetic Pill farms
+
+Read this before scouting. If the idea is one of these, ABORT the cycle. Do not downscope into a sibling with the same job. Do not open a PR.
+
+Tonight's Jules feature-enhancement reads this file from main after Dual merge.
+
+Do NOT restack:
+
+- #867 ThemeToggle tactile (copy-this)
+- #763 CTA tactile
+- #868 (KEEP Dual CLOSED)
+- #869 (KEEP Dual FAIL)
+- Kinetic/Aurora/Jules Pill tactile farms (#981, #959, #953, #899, #875, #860, #856, #851, #750)
+
+Do not downscope into a sibling tactile, focus, image-dimension, or Pill-gradient pass of those jobs. Do not open a PR.
+
+Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
+
+---
+
+## 2026-09-03 - Farm abort | Signal: Nick Dual FAIL #981 | Lean Implementation: HARD ABORT Jules Pill tactile restack of #959/#953/#899/#750
+
+## 2026-09-03 - Farm abort | Signal: Nick Eng FAIL #959 | Lean Implementation: HARD ABORT Pill tactile restack of #953/#899/#750
+
+## 2026-09-01 - Farm abort | Signal: Dual merge + scheduled farm classes | Lean Implementation: HARD ABORT restack of #867/#763/#868/#869 and Kinetic Pill farms
+
 ## 2026-05-19 - Tactile & Portability | Signal: Technical | Lean Implementation: Flagged CSS + Locals Fallback
 
 - [Insight 1: Deployment failures on Render caused by cloudflare:workers virtual module imports in shared code paths.]

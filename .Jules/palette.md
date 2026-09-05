@@ -1,3 +1,26 @@
+# HARD ABORT — unmounted Skills.astro orphan / Skills card focus-within
+
+Read this before scouting. If the idea is one of these, ABORT the cycle. Do not downscope into a sibling with the same job. Do not open a PR.
+
+If the idea is `:focus-within` on Skills cards, restacking that focus-within, or an unmounted `Skills.astro` orphan of the same class, ABORT.
+
+Dual SOFT CLOSE = do not restack the orphan.
+
+Do not restack #869 (KEEP Dual FAIL).
+
+Do NOT recreate:
+
+- Skills card `:focus-within` restacks
+- unmounted `Skills.astro` orphan PRs
+
+Already closed as farm: #855.
+
+Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
+
+---
+
+## 2026-09-01 - Farm abort | Signal: Nick close-reason split | Lean Implementation: HARD ABORT unmounted Skills.astro orphan / Skills card focus-within restack
+
 # Palette 🎨 - UX & Accessibility Journal
 
 ## 2026-05-23 - Compact Overlay Control Focus Containment & Touch Target Standard

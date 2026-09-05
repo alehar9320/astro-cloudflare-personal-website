@@ -1,3 +1,57 @@
+# HARD ABORT — Portfolio Card Zoom / orphaned PortfolioPreview / dead .proof-card
+
+Read this before scouting. If the idea is one of these, ABORT the cycle. Do not downscope into a sibling with the same job. Do not open a PR.
+
+If the idea is portfolio card image zoom, title micro-interaction on an unmounted `PortfolioPreview`, focus/contrast on dead `PortfolioPreview`, restacks onto live `.proof-card` via that orphan, or any motion/a11y pass on a component with no visitor surface, ABORT.
+
+Do NOT recreate:
+
+- Portfolio card image zoom
+- Portfolio card title micro-interaction with no live visitor surface
+- orphaned `PortfolioPreview` restacks (zero imports)
+- high-contrast / focus support on dead `PortfolioPreview`
+- restacking this farm onto live `.proof-card` until an Eng-clean tip mounts a real visitor surface
+
+Already closed as farm: #994, #987, #960.
+
+Leftover quota stays off this class (Riley ≥80 only elsewhere). Do not reopen as Jules.
+
+Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
+
+---
+
+## 2026-09-04 - Farm abort | Signal: Nick CLOSED #994 | Lean Implementation: HARD ABORT Kinetic PortfolioPreview image-zoom restack of #987/#960
+
+## 2026-09-04 - Farm abort | Signal: Nick Eng FAIL #987 | Lean Implementation: HARD ABORT Palette PortfolioPreview dead / zero imports; do not restack onto live .proof-card
+
+## 2026-09-03 - Farm abort | Signal: Nick Dual OWN FAIL #960 | Lean Implementation: HARD ABORT Kinetic Portfolio Card Zoom / orphaned PortfolioPreview
+
+# HARD ABORT — Pill fluid gradient / inert pill hover / nav social micro-interaction
+
+Read this before scouting. If the idea is one of these, ABORT the cycle. Do not downscope into a sibling with the same job. Do not open a PR.
+
+If the idea is a fluid gradient on `Pill`, inert-pill hover, pill tactile micro-UX, or nav social-link micro-interaction, ABORT. Do not downscope into a sibling hover/gradient pass on the same badge or nav icons.
+
+Do NOT recreate:
+
+- Pill fluid gradient / gradient-shift micro-interaction
+- inert pill hover / tactile pill micro-UX
+- nav social-link micro-interaction
+
+Already closed as farm: #981, #959, #953, #899, #875, #860, #856, #851, #750.
+
+Leftover quota stays off this class. Do not reopen as Jules.
+
+Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
+
+---
+
+## 2026-09-03 - Farm abort | Signal: Nick Dual FAIL #981 | Lean Implementation: HARD ABORT Jules Pill tactile restack of #959/#953/#899/#750
+
+## 2026-09-03 - Farm abort | Signal: Nick Eng FAIL #959 | Lean Implementation: HARD ABORT Pill tactile restack of #953/#899/#750
+
+## 2026-09-01 - Farm abort | Signal: Nick close-reason split | Lean Implementation: HARD ABORT Pill fluid gradient / inert pill hover / nav social micro-interaction
+
 # HARD ABORT — CallToAction glass farm
 
 Read this before scouting. If the idea is more glassmorphism, backdrop-filter, glow tokens, sheen, translateY hover, or micro-states on `CallToAction.astro` or the hire CTA, ABORT the cycle. Do not downscope into a sibling glass pass on the same button. Do not open a PR.

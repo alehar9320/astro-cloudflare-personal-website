@@ -1,3 +1,44 @@
+# HARD ABORT — Titan/Vantage type-guard / Astro check farm
+
+Read this before scouting. If the idea is one of these, ABORT the cycle. Do not downscope into a sibling with the same job. Do not open a PR.
+
+If the idea is resolving type diagnostics, Astro check errors, type-guard refactors, or a sibling Titan/Vantage type-cleanup pass of the same class, ABORT.
+
+Do NOT recreate:
+
+- Vantage type diagnostics / Astro check error sweeps
+- Titan/Vantage type-guard farms
+- sibling type-cleanup restacks of the same class
+
+Already closed as farm: #995, #422.
+
+Leftover quota stays off this class (Riley ≥80 only elsewhere). Do not reopen as Jules.
+
+Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
+
+---
+
+## 2026-09-04 - Farm abort | Signal: Nick CLOSED #995 | Lean Implementation: HARD ABORT Titan/Vantage type-guard farm (#422 class)
+
+# HARD ABORT — visits-API tests
+
+Read this before scouting. If the idea is one of these, ABORT the cycle. Do not downscope into a sibling with the same job. Do not open a PR.
+
+If the idea is expanding visits API / PostHog visits branch coverage, hardening visits-API tests, or a sibling coverage pass on that endpoint, ABORT.
+
+Do NOT recreate:
+
+- visits API branch test coverage expansions
+- PostHog visits API hardening of the same class
+
+Already closed as farm: #876, #859.
+
+Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
+
+---
+
+## 2026-09-01 - Farm abort | Signal: Nick close-reason split | Lean Implementation: HARD ABORT visits-API tests
+
 ## 2026-04-08 - Enforcing Mandatory Alt Text and Increasing Release Coverage | **Learning:** Accessibility must be enforced at the schema level to prevent regression, and API error states often represent significant coverage gaps. | **Action:** Removed `.optional()` from `img_alt` in `src/content.config.ts` and added a test case for non-OK GitHub API responses in `src/__tests__/github-releases.test.ts`.
 
 ## 2026-04-10 - Silencing Compiler Hints on JSON-LD Scripts | **Learning:** The Astro compiler treats scripts with attributes as processed by default; adding the `is:inline` directive for JSON-LD blocks clarifies intent and silences linting hints. | **Action:** Added `is:inline` to the `<script type="application/ld+json">` tags in `src/pages/about.astro` and `src/pages/work/[...slug].astro`.
