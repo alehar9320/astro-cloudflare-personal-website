@@ -1,4 +1,11 @@
-<div class="pill"><slot /></div>
+---
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+const isGlowEnabled = flagsEntry?.data.enable_pill_glow_v1 ?? false;
+---
+
+<div class:list={['pill', { 'pill-glow': isGlowEnabled }]}><slot /></div>
 
 <style>
   .pill {
@@ -23,5 +30,17 @@
     background-size: 250% 100%;
     background-position: 0% 50%;
     box-shadow: var(--shadow-sm);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pill-glow {
+      transition:
+        transform var(--theme-transition),
+        background-position var(--theme-transition);
+    }
+    .pill-glow:hover {
+      background-position: 100% 50%;
+      transform: translateY(-1px);
+    }
   }
 </style>

@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - Pill Gradient Glow | Signal: Competitive | Lean Implementation: Added subtle gradient position shift and micro-lift on Pill hover when enabled.
+
+- Insight: Interactive tag elements gain enhanced perceived quality and feedback when smooth linear gradient transitions accompany hover states.
+- User Target: Delight
+- Abort Triggers: None
+- User Reaction: Pending synthetic feedback.
