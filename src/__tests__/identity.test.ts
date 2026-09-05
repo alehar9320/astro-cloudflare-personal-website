@@ -2797,6 +2797,21 @@ describe('identity copy', () => {
     expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
   });
 
+
+  it('keeps home IFS proof program window (#1090)', () => {
+    const index = readFileSync('src/pages/index.astro', 'utf8');
+    expect(index).toContain('class="proof-card"');
+    expect(index).toContain('href="/work/ifs-design-system/"');
+    expect(index).toContain('class="proof-eyebrow"');
+    expect(index).toContain('class="proof-window"');
+    expect(index).toContain('Apr 2022 – Feb 2025 · Product Manager, Product Experience (Design System) · Gothenburg');
+    expect(index).toContain('class="proof-outcome"');
+    expect(index).toContain('Up to 2x faster delivery');
+    expect(index).toContain('Up to 30x ROI');
+    expect(index).toContain('Read the case');
+    expect(index).not.toContain('mailto:');
+  });
+
   it('keeps Contact quiet hire as exact LinkedIn, no twin-mouth (#824)', () => {
     const contact = readFileSync('src/pages/contact.astro', 'utf8');
     expect(contact).toContain('<p class="cta-hint">LinkedIn</p>');
