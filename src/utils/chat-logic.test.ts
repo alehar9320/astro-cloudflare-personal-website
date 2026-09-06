@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   pruneMessages,
+  getLastUserMessage,
   MAX_MESSAGES,
   MAX_MESSAGE_CONTENT_LENGTH,
   MAX_TOTAL_CONTENT_LENGTH,
@@ -17,6 +18,41 @@ import {
 } from './chat-logic';
 
 describe('chat logic utilities', () => {
+  describe('getLastUserMessage', () => {
+    it('returns undefined for an empty message array', () => {
+      expect(getLastUserMessage([])).toBeUndefined();
+    });
+
+    it('returns undefined when no user messages exist', () => {
+      const messages: ChatMessage[] = [
+        { role: 'assistant', content: 'Hello!' },
+        { role: 'assistant', content: 'How can I help?' },
+      ];
+      expect(getLastUserMessage(messages)).toBeUndefined();
+    });
+
+    it('returns the last user message when it is at the end', () => {
+      const userMsg: ChatMessage = { role: 'user', content: 'What is your background?' };
+      const messages: ChatMessage[] = [
+        { role: 'user', content: 'First question' },
+        { role: 'assistant', content: 'First answer' },
+        userMsg,
+      ];
+      expect(getLastUserMessage(messages)).toBe(userMsg);
+    });
+
+    it('returns the last user message even if trailing assistant messages exist', () => {
+      const lastUserMsg: ChatMessage = { role: 'user', content: 'Tell me about DevEx' };
+      const messages: ChatMessage[] = [
+        { role: 'user', content: 'Hello' },
+        { role: 'assistant', content: 'Hi' },
+        lastUserMsg,
+        { role: 'assistant', content: 'DevEx is developer experience.' },
+      ];
+      expect(getLastUserMessage(messages)).toBe(lastUserMsg);
+    });
+  });
+
   describe('pruneMessages', () => {
     it('returns the same messages if within limits', () => {
       const messages: ChatMessage[] = [
