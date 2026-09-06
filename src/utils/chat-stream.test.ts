@@ -97,4 +97,34 @@ describe('chat stream parser', () => {
   it('falls back to plain text when the input is not SSE', () => {
     expect(extractAssistantTextFromSse('Hello world')).toBe('Hello world');
   });
+
+  it('handles character-by-character chunk streaming without losing state or allocations', () => {
+    const parser = createChatStreamParser();
+    const payload = 'data: {"response":"Streamed text"}\n\n';
+    let result = '';
+
+    for (const char of payload) {
+      result += parser.push(char);
+    }
+    result += parser.flush();
+
+    expect(result).toBe('Streamed text');
+  });
+
+  it('handles multi-line SSE events split across separate chunk calls', () => {
+    const parser = createChatStreamParser();
+
+    expect(parser.push('data: {\n')).toBe('');
+    expect(parser.push('data: "response": "Multi-line"\n')).toBe('');
+    expect(parser.push('data: }\n\n')).toBe('Multi-line');
+    expect(parser.flush()).toBe('');
+  });
+
+  it('gracefully handles empty pushes and flushes on clean state', () => {
+    const parser = createChatStreamParser();
+
+    expect(parser.push('')).toBe('');
+    expect(parser.push('')).toBe('');
+    expect(parser.flush()).toBe('');
+  });
 });

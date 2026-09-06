@@ -70,7 +70,7 @@
       </section>
       <div id="chat-suggestions" class="chat-suggestions">
         <button type="button" class="chat-suggestion">
-          What did the IFS design system change?
+          What did the IFS Design System change?
         </button>
         <button type="button" class="chat-suggestion">How do you work as a PM?</button>
         <button type="button" class="chat-suggestion">What's the Industrial AI bet?</button>
@@ -335,7 +335,7 @@
 
   .chat-suggestion:focus-visible {
     outline: 2px solid var(--accent-regular);
-    outline-offset: 4px;
+    outline-offset: 2px;
   }
 
   .chat-window {
@@ -490,10 +490,20 @@
     border: none;
     color: var(--gray-400);
     cursor: pointer;
-    padding: 0.25rem 0.4rem;
+    padding: 0.25rem 0.5rem;
     font: inherit;
     font-size: 0.75rem;
     font-weight: 500;
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    box-sizing: border-box;
+    transition:
+      color var(--theme-transition),
+      transform var(--theme-transition);
   }
 
   .chat-clear:hover,
@@ -506,7 +516,14 @@
   .chat-clear:focus-visible,
   .chat-close:focus-visible {
     outline: 2px solid var(--accent-regular);
-    outline-offset: 4px;
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .chat-clear:active,
+    .chat-close:active {
+      transform: scale(0.96);
+    }
   }
 
   .chat-close {
@@ -515,6 +532,16 @@
     color: var(--gray-400);
     cursor: pointer;
     padding: 0.25rem;
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    box-sizing: border-box;
+    transition:
+      color var(--theme-transition),
+      transform var(--theme-transition);
   }
 
   .chat-messages {
@@ -616,13 +643,14 @@
   .chat-explore-card-open:hover,
   .chat-explore-card-open:focus-visible {
     outline: 2px solid var(--accent-regular);
-    outline-offset: 4px;
+    outline-offset: 2px;
   }
 
   .chat-explore-card-primary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-height: 44px;
     margin-top: 0.15rem;
     padding: 0.5rem 0.9rem;
     border-radius: 0.5rem;
@@ -638,7 +666,7 @@
   .chat-explore-card-primary:hover,
   .chat-explore-card-primary:focus-visible {
     outline: 2px solid var(--accent-regular);
-    outline-offset: 4px;
+    outline-offset: 2px;
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -860,7 +888,7 @@
 
   const FOLD_DISMISSED_KEY = 'chat-fold-dismissed';
   const FOLLOW_UP_PROMPTS = [
-    'What did the IFS design system change?',
+    'What did the IFS Design System change?',
     'How do you work as a PM?',
     "What's the Industrial AI bet?",
     'How do I get in touch on LinkedIn?',

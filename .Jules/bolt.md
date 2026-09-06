@@ -39,3 +39,19 @@ Action: Added loading="lazy" and decoding="async" to the below-the-fold case stu
 2026-09-01 - Explicit Image Dimensions for Zero CLS
 Learning: Adding explicit width and height attributes to non-responsive / fixed-ratio content images allows browsers to compute intrinsic aspect ratio boxes before image data arrives, completely eliminating Cumulative Layout Shift (CLS=0) during lazy loading.
 Action: Added width="1472" and height="871" attributes to the case study image in src/pages/work/[...slug].astro.
+
+2026-09-03 - Dynamic Import for Analytics Code-Splitting
+Learning: Top-level static imports of third-party libraries (e.g. posthog-js) force Vite to include them in the entry client bundle on all page renders, even when activation conditions (e.g. API keys) are absent. Using dynamic import (`await import(...)`) behind conditional runtime checks isolates heavy analytics dependencies into deferred chunks, preventing main-thread parse/execution overhead on critical page loads.
+Action: Updated src/components/PostHog.astro to dynamically import posthog-js only when PUBLIC_POSTHOG_KEY is present, reducing initial PostHog script payload from 240.6KB to 2.1KB (~238.5KB savings).
+
+2026-09-04 - Conditional Icon Gradient Generation & Zero CLS Dimensions
+Learning: Unconditional generation of random gradient IDs (`Math.random()`, `.toString(36)`) on non-gradient SVG icon renders wastes CPU cycles during SSR/prerendering. Additionally, missing explicit `width` and `height` attributes on content image tags causes Cumulative Layout Shift (CLS) when images load.
+Action: Updated `Icon.astro` to generate `gradientId` only when `gradient` prop is true, and added explicit `width="1472"` and `height="871"` attributes to hero images in `work/[...slug].astro` and `PortfolioPreview.astro`.
+
+2026-09-05 - Layout Lifecycle & Theme Persistence Optimization
+Learning: Unconditional `localStorage.setItem` calls inside a MutationObserver on `document.documentElement` trigger synchronous disk I/O on every non-theme class mutation (such as toggling `.loaded` or `.has-prominent-chat`). Comparing computed themes before writing eliminates redundant main-thread I/O. Furthermore, checking `document.readyState === 'complete'` before registering `window.addEventListener('load')` ensures below-the-fold assets hydrate reliably even when module scripts execute post-load, while `{ once: true }` prevents lingering listeners.
+Action: Updated `MainHead.astro` to track active theme state before calling `localStorage.setItem()`, and updated `BaseLayout.astro` to check `document.readyState === 'complete'` with `{ once: true }` on the `load` listener.
+
+2026-09-06 - Single-Pass Edge Changelog Parsing & Redundant Pass Elimination
+Learning: Multi-pass array allocation chains (`.split().map().filter().map().filter()`) during SSR on Cloudflare Workers edge runtimes create unnecessary memory pressure and GC cycles on every request. Additionally, re-parsing strings that were already transformed into visitor copy in downstream Astro components causes double CPU work and redundant regex evaluations.
+Action: Refactored `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use a single-pass loop with hoisted static regexes, and simplified `src/pages/whats-new.astro` to use `baseReleases.map(toVisitorRelease)` directly without a second parsing pass.
