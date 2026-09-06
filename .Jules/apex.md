@@ -2,24 +2,31 @@
 
 Read this before scouting. If the idea is one of these, ABORT the cycle. Do not downscope into a sibling with the same job. Do not open a PR.
 
-If the idea is a Product Frameworks MVP, Engineering Principles MVP, Operating Principles MVP, Product Playbook MVP, Product Decision Frameworks MVP, or a sibling experimental manifesto/frameworks/principles page with the same job, ABORT.
+If the idea is a Product Frameworks MVP, Engineering Principles MVP, Operating Principles MVP, DevEx Framework MVP, Product Playbook MVP, Product Decision Frameworks MVP, or a sibling experimental manifesto/frameworks/principles page with the same job, ABORT.
+
+Experimental farm: do not ship DevEx Framework MVP / Operating Principles / Product Frameworks farm pages.
 
 Do NOT recreate:
 
 - Product Frameworks MVP
 - Engineering Principles MVP
 - Operating Principles MVP
+- DevEx Framework MVP
 - Product Playbook MVP
 - Product Decision Frameworks MVP
-- any sibling experimental frameworks/principles/playbook/decision-frameworks/operating-principles page
+- any sibling experimental frameworks/principles/playbook/decision-frameworks/operating-principles/DevEx-framework page
 
-Already closed as farm: #992, #957, #906, #872, #858, #808.
+Why abort: experimental Apex DevEx Framework MVP / Operating Principles farm. No-restack.
+
+Already closed as farm: #1143, #1114, #992, #957, #906, #872, #858, #808.
 
 Leftover quota stays off this class (Riley ≥80 only elsewhere). Do not reopen as Jules.
 
 Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
 
 ---
+
+## 2026-09-06 - Farm abort | Signal: Nick CLOSE #1143/#1114 | Lean Implementation: HARD ABORT Apex DevEx Framework MVP / Operating Principles / Product Frameworks farm pages; do not ship
 
 ## 2026-09-04 - Farm abort | Signal: Nick CLOSED #992 | Lean Implementation: HARD ABORT Operating Principles MVP restack of #858/#872/#808/#957
 

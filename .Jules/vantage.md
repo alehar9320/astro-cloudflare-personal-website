@@ -4,19 +4,26 @@ Read this before scouting. If the idea is one of these, ABORT the cycle. Do not 
 
 If the idea is resolving type diagnostics, Astro check errors, type-guard refactors, or a sibling Titan/Vantage type-cleanup pass of the same class, ABORT.
 
+Vantage type-guard farm stays Vantage-only. Do not mix into Palette: Palette must not pull Vantage Node/DOM/Astro-check type-diagnostics (see `.Jules/palette.md`).
+
 Do NOT recreate:
 
 - Vantage type diagnostics / Astro check error sweeps
 - Titan/Vantage type-guard farms
 - sibling type-cleanup restacks of the same class
+- Palette-contaminated Vantage type-diagnostic restacks
 
-Already closed as farm: #995, #422.
+Why abort: Vantage type-guard / Astro-check farm (and Palette contamination of same). No-restack.
+
+Already closed as farm: #1140, #1127, #995, #422, #876, #859.
 
 Leftover quota stays off this class (Riley ≥80 only elsewhere). Do not reopen as Jules.
 
 Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
 
 ---
+
+## 2026-09-06 - Farm abort | Signal: Nick CLOSE #1140/#1127 | Lean Implementation: HARD ABORT Vantage type-guard stays Vantage-only; do not contaminate Palette with Node/DOM/Astro-check type-diagnostics
 
 ## 2026-09-04 - Farm abort | Signal: Nick CLOSED #995 | Lean Implementation: HARD ABORT Titan/Vantage type-guard farm (#422 class)
 

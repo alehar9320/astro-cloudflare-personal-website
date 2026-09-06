@@ -4,21 +4,27 @@ Read this before scouting. If the idea is one of these, ABORT the cycle. Do not 
 
 If the idea is portfolio card image zoom, title micro-interaction on an unmounted `PortfolioPreview`, focus/contrast on dead `PortfolioPreview`, restacks onto live `.proof-card` via that orphan, or any motion/a11y pass on a component with no visitor surface, ABORT.
 
+`identity.test` forbids this class. Zero Astro importers for `PortfolioPreview`. Do not restack onto `.proof-card` / PortfolioPreview image zoom.
+
 Do NOT recreate:
 
 - Portfolio card image zoom
 - Portfolio card title micro-interaction with no live visitor surface
-- orphaned `PortfolioPreview` restacks (zero imports)
+- orphaned `PortfolioPreview` restacks (zero Astro importers)
 - high-contrast / focus support on dead `PortfolioPreview`
 - restacking this farm onto live `.proof-card` until an Eng-clean tip mounts a real visitor surface
 
-Already closed as farm: #994, #987, #960.
+Why abort: kinetic/orphan PortfolioPreview farm; identity.test forbids; no visitor surface. No-restack.
+
+Already closed as farm: #1144, #1137, #1125, #994, #987, #960.
 
 Leftover quota stays off this class (Riley ≥80 only elsewhere). Do not reopen as Jules.
 
 Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
 
 ---
+
+## 2026-09-06 - Farm abort | Signal: Nick CLOSE #1144/#1137/#1125 | Lean Implementation: HARD ABORT Kinetic PortfolioPreview kinetic/orphan; identity.test forbids; zero Astro importers; do not restack onto .proof-card
 
 ## 2026-09-04 - Farm abort | Signal: Nick CLOSED #994 | Lean Implementation: HARD ABORT Kinetic PortfolioPreview image-zoom restack of #987/#960
 
@@ -38,13 +44,15 @@ Do NOT recreate:
 - inert pill hover / tactile pill micro-UX
 - nav social-link micro-interaction
 
-Already closed as farm: #981, #959, #953, #899, #875, #860, #856, #851, #750.
+Already closed as farm: #1141, #1115, #1086, #993, #981, #959, #953, #899, #875, #860, #856, #851, #750.
 
 Leftover quota stays off this class. Do not reopen as Jules.
 
 Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
 
 ---
+
+## 2026-09-06 - Farm abort | Signal: Nick CLOSE #1141/#993/#1086 + glow #1115 | Lean Implementation: HARD ABORT inert Pill :hover/tactile/gradient-glow farm (canonical home: Aurora/delights + jules FE nightly; ThemeToggle bounce stays out of kinetic-only)
 
 ## 2026-09-03 - Farm abort | Signal: Nick Dual FAIL #981 | Lean Implementation: HARD ABORT Jules Pill tactile restack of #959/#953/#899/#750
 
