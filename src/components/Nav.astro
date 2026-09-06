@@ -288,6 +288,7 @@ const isCurrentPage = (href: string) => {
       color var(--theme-transition),
       background-color var(--theme-transition),
       box-shadow var(--theme-transition),
+      transform var(--theme-transition),
       outline-offset var(--theme-transition);
   }
 
@@ -300,7 +301,7 @@ const isCurrentPage = (href: string) => {
 
   .menu-button:focus-visible {
     outline: 2px solid var(--accent-regular);
-    outline-offset: 2px;
+    outline-offset: -2px;
   }
 
   .menu-button[aria-expanded='true'] {
@@ -567,6 +568,10 @@ const isCurrentPage = (href: string) => {
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    .menu-button:active {
+      transform: scale(0.96);
+    }
+
     .logo-wobble:hover :global(svg) {
       animation: wobble 0.5s ease-in-out;
     }
@@ -596,6 +601,7 @@ const isCurrentPage = (href: string) => {
     .site-title:hover,
     .site-title:active,
     .site-title:focus-visible,
+    .menu-button:active,
     .link:active,
     .social:active {
       transform: none;

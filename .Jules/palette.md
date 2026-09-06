@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-25 - Mobile Nav Toggle Focus Containment & Active Tactile Feedback
+
+**Learning:** Compact pill-shaped toggle buttons positioned near container edges or adjacent text elements (like `.menu-button` in `Nav.astro`) benefit from contained inset focus rings (`outline-offset: -2px`). Negative outline offsets prevent the keyboard focus ring from bleeding outside element bounds or clipping against adjacent layout boundaries on narrow mobile viewports. Additionally, adding physical `:active` tactile feedback (`transform: scale(0.96)`) gated by `@media (prefers-reduced-motion: no-preference)` delivers physical responsiveness during touch and click interactions without violating user motion preferences.
+
+**Action:** Updated `.menu-button:focus-visible` in `Nav.astro` to set `outline-offset: -2px;` and added `:active` tactile scaling (`scale(0.96)`) gated behind `prefers-reduced-motion: no-preference`.
+
 ## 2026-05-24 - Focus-Visible Standardization & Mobile Touch Target Ergonomics
 
 **Learning:** Replacing raw `:focus` pseudo-classes with `:focus-visible` across footer version links (`.version-link`) and accessibility skip links (`.sr-only.focus-visible`) prevents sticky, persistent focus rings during mouse click interactions while preserving essential keyboard focus indicators. Furthermore, declaring explicit `min-height: 44px; display: inline-flex; align-items: center;` on interactive colophon triggers (`.visit-trigger`) ensures mobile touch targets comply with WCAG 2.1 AA requirements on touch viewports without causing layout shift.
