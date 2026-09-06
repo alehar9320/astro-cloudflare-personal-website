@@ -17,14 +17,14 @@ As Product Manager, Developer Experience at IFS in Greater Stockholm, I work on 
 
 ## Problem
 
-Internal AI coding copilots for IFS engineering teams.
+Engineering teams needed developer tooling and internal AI capabilities aligned with enterprise software workflows.
 
 ## Approach
 
-As Product Manager, Developer Experience at IFS in Greater Stockholm, I work on internal AI coding copilots for engineering teams. I have been in this role since February 2025.
+As Product Manager, Developer Experience at IFS in Greater Stockholm, I set the strategy for internal AI coding copilots for engineering teams, starting in February 2025.
 
 ## Outcome
 
-Internal AI coding copilots for IFS engineering teams.
+Internal AI coding copilots empowering IFS engineering teams with strategic AI capabilities.
 
 <a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>
