@@ -1,56 +1,32 @@
 ---
 import CallToAction from '../../components/CallToAction.astro';
-import Hero from '../../components/Hero.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import { getEntry } from 'astro:content';
 
 const flagsEntry = await getEntry('flags', 'config');
 if (!flagsEntry?.data.enable_devex_framework) return Astro.redirect('/404/');
-
-const pillars = [
-  { t: 'Feedback Loops', d: 'Fast, deterministic test and build cycles.' },
-  { t: 'Cognitive Load', d: 'Minimal friction and clear primitives for focus.' },
-  { t: 'Flow State', d: 'Removing friction points across toolchains.' },
-];
 ---
 
-<BaseLayout
-  title="DevEx Framework"
-  ogTitle="DevEx Framework"
-  description="DevEx pillars."
-  robots="noindex"
->
-  <main
-    id="main-content"
-    class="wrapper stack gap-8"
-    style="padding-bottom: var(--chat-fab-clearance)"
-  >
-    <Hero title="DevEx Framework" align="start"
-      ><p class="lede">Core pillars driving developer productivity.</p></Hero
-    >
+<BaseLayout title="DevEx Framework" description="DevEx pillars." robots="noindex">
+  <main id="main-content" class="wrapper stack gap-8">
+    <header class="stack gap-2">
+      <h1 class="title">DevEx Framework</h1>
+      <p class="lede">Core pillars driving developer productivity.</p>
+    </header>
     <div class="grid">
-      {
-        pillars.map(({ t, d }) => (
-          <div class="card">
-            <>
-              <strong>{t}</strong>
-              <p>{d}</p>
-            </>
-          </div>
-        ))
-      }
+      <div class="card"><strong>Feedback Loops</strong><p>Fast test/build cycles.</p></div>
+      <div class="card"><strong>Cognitive Load</strong><p>Clear primitives & focus.</p></div>
+      <div class="card"><strong>Flow State</strong><p>Frictionless toolchains.</p></div>
     </div>
-    <div>
-      <CallToAction
-        href="https://www.linkedin.com/in/alehar/"
-        target="_blank"
-        rel="noopener noreferrer"
-        data-hire-surface="devex-framework">Get in touch</CallToAction>
-    </div>
+    <CallToAction href="https://www.linkedin.com/in/alehar/">Get in touch</CallToAction>
   </main>
 </BaseLayout>
 
 <style>
+  .title {
+    font-size: var(--text-4xl);
+    color: var(--gray-0);
+  }
   .lede {
     margin: 0;
     color: var(--gray-200);
@@ -73,5 +49,8 @@ const pillars = [
   .card p {
     margin: 0.35rem 0 0;
     color: var(--gray-300);
+  }
+  main {
+    padding-bottom: var(--chat-fab-clearance);
   }
 </style>
