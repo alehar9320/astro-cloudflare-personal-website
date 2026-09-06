@@ -10,6 +10,13 @@
  *   No localhost / *-me.alehar.workers.dev preview hosts.
  * - Contact-card: $autocapture with element href containing linkedin.com OR element text
  *   containing "Get in touch", same host + Linux-exclude. Unique persons.
+ *
+ * GitHub DORA recipes (production only, repo alehar9320/astro-cloudflare-personal-website, last 7 days window):
+ * - Ships to production: count of PRs state=MERGED base=main with mergedAt in last 7 days.
+ * - Lead time: median hours of (mergedAt − createdAt) for that same 7-day merged-to-main set.
+ * - Change failure rate: failed CI workflow runs (.github/workflows/ci.yml) event=push head_branch=main in last 7 days,
+ *   divided by total CI runs on push/main in window. Revert PRs count as fails if CI stayed green.
+ * - Time to restore: median hours from failed push/main CI run to next green push/main CI run. If 0 fails, Current is '0 fails'.
  */
 
 export type ProgressDirection = 'up' | 'down' | 'none';
@@ -107,6 +114,57 @@ export const OBJECTIVES: readonly Objective[] = [
       },
     ],
     supporting: ['At least half of weekly merges visitor-facing, for 8 weeks before year-end'],
+  },
+];
+
+export const DORA_METRICS: readonly KeyResult[] = [
+  {
+    id: 'dora-deploy',
+    label: 'Ships to production (deployment frequency)',
+    window: '7 days',
+    baselineLabel: '33',
+    currentLabel: '29',
+    targetLabel: '—',
+    baseline: 33,
+    current: 29,
+    target: 0,
+    direction: 'none',
+  },
+  {
+    id: 'dora-lead',
+    label: 'Time from PR open to merge (lead time for changes)',
+    window: '7 days',
+    baselineLabel: '0.2h',
+    currentLabel: '0.2h',
+    targetLabel: '—',
+    baseline: 0.2,
+    current: 0.2,
+    target: 0,
+    direction: 'none',
+  },
+  {
+    id: 'dora-cfr',
+    label: 'Failed production CI / production ships (change failure rate)',
+    window: '7 days',
+    baselineLabel: '0%',
+    currentLabel: '0%',
+    targetLabel: '—',
+    baseline: 0,
+    current: 0,
+    target: 0,
+    direction: 'none',
+  },
+  {
+    id: 'dora-restore',
+    label: 'Time from failed main CI to next green main CI (time to restore)',
+    window: '7 days',
+    baselineLabel: '0 fails',
+    currentLabel: '0 fails',
+    targetLabel: '—',
+    baseline: 0,
+    current: 0,
+    target: 0,
+    direction: 'none',
   },
 ];
 
