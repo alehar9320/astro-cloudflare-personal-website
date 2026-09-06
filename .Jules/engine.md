@@ -17,3 +17,9 @@
 - **Performance & Edge Memory:** Refactored `processBufferedText` in `src/utils/chat-stream.ts` to use pointer-based `indexOf('\n', startPos)` traversal instead of `combined.split('\n')`.
 - **Allocation Reduction:** Eliminates dynamic string array allocations on incoming SSE response stream chunks in Cloudflare Workers V8 runtime while retaining complete handling for multi-line data lines, CRLF endings, and trailing partial lines.
 - **Verification:** Added Vitest unit test cases for single-character streaming, multi-line SSE payloads across chunks, and empty pushes.
+
+## 2025-06-04 - Zero-Allocation Chat User Message Lookup & Direct Pruning Loop
+
+- **Allocation Reduction:** Introduced `getLastUserMessage(messages)` in `src/utils/chat-logic.ts` using a reverse `for` loop to eliminate `[...messages].reverse().find(...)` array clone and in-place reversal allocations on every chat API request in Cloudflare Workers edge runtimes.
+- **Loop Optimization:** Refactored initial total content character count calculation in `pruneMessages` to use a direct indexed `for` loop instead of `reduce()`, eliminating callback closure allocations on context window evaluation.
+- **Verification:** Added Vitest unit tests in `src/utils/chat-logic.test.ts` covering empty message history, history with trailing assistant messages, and multiple user messages.
