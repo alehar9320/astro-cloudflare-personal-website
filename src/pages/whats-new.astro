@@ -7,7 +7,7 @@ import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
 import { LATEST_RELEASE_SNAPSHOT } from '../data/latest-release';
 import { fetchGitHubReleases } from '../utils/github-releases';
-import { toVisitorChangelogTitle, toVisitorRelease } from '../utils/visitor-changelog';
+import { toVisitorRelease } from '../utils/visitor-changelog';
 import { buildWhatsNewGlance } from '../utils/whats-new-glance';
 
 interface Bindings {
@@ -26,20 +26,10 @@ function readEnv(): Bindings {
 const token = readEnv().GITHUB_TOKEN?.trim();
 const fetched = await fetchGitHubReleases(fetch, undefined, token ? { token } : undefined);
 const baseReleases = fetched.length > 0 ? fetched : [LATEST_RELEASE_SNAPSHOT];
-const visitorReleases = baseReleases.map((release) => {
-  const visitor = toVisitorRelease(release);
-  return {
-    ...visitor,
-    body: visitor.body
-      .split('\n')
-      .map((line) => {
-        const bullet = line.match(/^([-*+]\s+)(.*)$/);
-        if (!bullet) return toVisitorChangelogTitle(line);
-        return `${bullet[1]}${toVisitorChangelogTitle(bullet[2])}`;
-      })
-      .join('\n'),
-  };
-});
+/* Optimization (⚡ Bolt): toVisitorRelease already returns fully-formatted visitor bullet points.
+   Eliminating the redundant second-pass split/map/regex transform saves main-thread edge CPU cycles and memory allocations per request.
+   Benchmark: Eliminates redundant multi-pass string parsing and re-parsing on edge SSR renders of /whats-new/. */
+const visitorReleases = baseReleases.map(toVisitorRelease);
 const glance = buildWhatsNewGlance(visitorReleases);
 
 const dek = 'What you can see on this site lately.';
