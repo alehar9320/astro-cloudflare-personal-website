@@ -78,29 +78,36 @@ function collectItems(releases: SiteRelease[], nowMs: number): GlanceItem[] {
   const items: GlanceItem[] = [];
   const seen = new Set<string>();
 
-  for (const release of releases.map(toVisitorRelease)) {
+  for (const rawRelease of releases) {
+    const release = toVisitorRelease(rawRelease);
     const publishedMs = release.publishedAt ? Date.parse(release.publishedAt) : Number.NaN;
     if (Number.isNaN(publishedMs)) continue;
     const age = nowMs - publishedMs;
     if (age < 0 || age > MONTH_MS) continue;
 
     const bullets = splitReleaseBody(release.body);
-    const lines =
-      bullets.length > 0
-        ? bullets.map((item) => ({
-            raw: item.message,
-            title: toVisitorChangelogTitle(item.message),
-          }))
-        : release.body.trim()
-          ? [{ raw: release.body, title: toVisitorChangelogTitle(release.body) }]
-          : [];
-
-    for (const line of lines) {
-      if (!isKeptVisitorLine(line.raw, line.title)) continue;
-      const key = line.title.toLowerCase();
-      if (seen.has(key)) continue;
-      seen.add(key);
-      items.push({ publishedMs, title: line.title });
+    if (bullets.length > 0) {
+      for (const item of bullets) {
+        const raw = item.message;
+        const title = toVisitorChangelogTitle(raw);
+        if (!isKeptVisitorLine(raw, title)) continue;
+        const key = title.toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        items.push({ publishedMs, title });
+      }
+    } else {
+      const trimmedBody = release.body.trim();
+      if (trimmedBody) {
+        const title = toVisitorChangelogTitle(trimmedBody);
+        if (isKeptVisitorLine(trimmedBody, title)) {
+          const key = title.toLowerCase();
+          if (!seen.has(key)) {
+            seen.add(key);
+            items.push({ publishedMs, title });
+          }
+        }
+      }
     }
   }
 
@@ -114,11 +121,18 @@ export function buildWhatsNewGlance(
 ): WhatsNewGlance {
   const nowMs = now.getTime();
   const items = collectItems(releases, nowMs);
-  const thisWeek = items
-    .filter((item) => nowMs - item.publishedMs <= WEEK_MS)
-    .map((item) => item.title)
-    .slice(0, 3);
-  const thisWeekKeys = new Set(thisWeek.map((title) => title.toLowerCase()));
+  const thisWeek: string[] = [];
+  for (const item of items) {
+    if (nowMs - item.publishedMs <= WEEK_MS) {
+      thisWeek.push(item.title);
+      if (thisWeek.length === 3) break;
+    }
+  }
+
+  const thisWeekKeys = new Set<string>();
+  for (const title of thisWeek) {
+    thisWeekKeys.add(title.toLowerCase());
+  }
 
   const buckets = new Map<string, GlanceItem[]>();
   for (const item of items) {
@@ -130,21 +144,31 @@ export function buildWhatsNewGlance(
     buckets.set(theme.heading, list);
   }
 
-  const ranked = THEMES.flatMap((theme) => {
+  const ranked: { heading: string; lines: string[]; latest: number }[] = [];
+  for (const theme of THEMES) {
     const list = buckets.get(theme.heading);
-    if (!list || list.length === 0) return [];
-    return [
-      {
+    if (list && list.length > 0) {
+      const lines: string[] = [];
+      for (const item of list) {
+        lines.push(item.title);
+      }
+      ranked.push({
         heading: theme.heading,
-        lines: list.map((item) => item.title),
+        lines,
         latest: list[0].publishedMs,
-      },
-    ];
-  })
-    .sort((a, b) => b.latest - a.latest)
-    .slice(0, 4);
+      });
+    }
+  }
 
-  const groups: GlanceGroup[] = ranked.map(({ heading, lines }) => ({ heading, lines }));
+  ranked.sort((a, b) => b.latest - a.latest);
+  if (ranked.length > 4) {
+    ranked.length = 4;
+  }
+
+  const groups: GlanceGroup[] = [];
+  for (const item of ranked) {
+    groups.push({ heading: item.heading, lines: item.lines });
+  }
 
   return { thisWeek, groups };
 }

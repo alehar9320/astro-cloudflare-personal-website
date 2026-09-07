@@ -179,6 +179,9 @@ export function formatReleaseDate(dateString: string | null): string {
   return date.toISOString().split('T')[0];
 }
 
+const COMMIT_HASH_MATCH = /^([a-f0-9]{7,40})\s+(.*)/i;
+const BULLET_PREFIX = /^[-*+]\s+/;
+
 /**
  * Parses a single changelog line into a ReleaseItem, extracting hashes and messages.
  * @param {string} line - A single line from the release body.
@@ -187,7 +190,7 @@ export function formatReleaseDate(dateString: string | null): string {
 export function parseReleaseItem(line: string): ReleaseItem {
   const cleaned = line.trim();
   // Matches a 7 to 40-character hex hash at the beginning
-  const hashMatch = cleaned.match(/^([a-f0-9]{7,40})\s+(.*)/i);
+  const hashMatch = cleaned.match(COMMIT_HASH_MATCH);
 
   if (hashMatch) {
     const hash = hashMatch[1];
@@ -223,9 +226,9 @@ export function splitReleaseBody(body: string): ReleaseItem[] {
 
   for (const line of lines) {
     const trimmed = line.trim();
-    if (!/^[-*+]\s+/.test(trimmed)) continue;
+    if (!BULLET_PREFIX.test(trimmed)) continue;
 
-    const rawMessage = trimmed.replace(/^[-*+]\s+/, '');
+    const rawMessage = trimmed.replace(BULLET_PREFIX, '');
     const item = parseReleaseItem(rawMessage);
     if (isPublicChangelogItem(item)) {
       items.push(item);

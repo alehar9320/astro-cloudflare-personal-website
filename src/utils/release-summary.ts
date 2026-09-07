@@ -36,29 +36,48 @@ Notes:
 ${notes}`;
 }
 
+const SENTENCE_SPLIT = /(?<=[.!?])\s+/;
+const METRIC_TOKENS_REGEX = /\b\d+(?:\.\d+)?x\b|\b\d+%\b|\broi\b|\bmillion\b|\bbillion\b/gi;
+const PAREN_HASH_REGEX = /\(#\d+\)/g;
+const PLAIN_HASH_REGEX = /#\d+/g;
+const ISSUE_NUMBER_DIGITS_REGEX = /\bissue number\s+\d+\b/gi;
+const CONVENTIONAL_PREFIX_GLOBAL =
+  /\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/gi;
+const PUNCTUATION_SPACE_REGEX = /\s+([.,;:])/g;
+const LEADING_PUNCTUATION_REGEX = /^[\s:;\-]+/;
+const MULTI_SPACE_REGEX = /\s{2,}/g;
+
 function sentenceCount(text: string): number {
-  return text
-    .split(/(?<=[.!?])\s+/)
-    .map((part) => part.trim())
-    .filter((part) => part.length > 0).length;
+  const parts = text.split(SENTENCE_SPLIT);
+  let count = 0;
+  for (let i = 0; i < parts.length; i++) {
+    if (parts[i].trim().length > 0) {
+      count++;
+    }
+  }
+  return count;
 }
 
 function metricTokens(text: string): string[] {
-  const matches = text.match(/\b\d+(?:\.\d+)?x\b|\b\d+%\b|\broi\b|\bmillion\b|\bbillion\b/gi);
-  return matches ? matches.map((token) => token.toLowerCase()) : [];
+  const matches = text.match(METRIC_TOKENS_REGEX);
+  if (!matches) return [];
+  for (let i = 0; i < matches.length; i++) {
+    matches[i] = matches[i].toLowerCase();
+  }
+  return matches;
 }
 
 export function stripExecBanned(text: string): string {
   return text
     .replace(BANNED_NAME, '')
     .replace(SHA_ALL, '')
-    .replace(/\(#\d+\)/g, '')
-    .replace(/#\d+/g, '')
-    .replace(/\bissue number\s+\d+\b/gi, '')
-    .replace(/\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/gi, '')
-    .replace(/\s+([.,;:])/g, '$1')
-    .replace(/^[\s:;\-]+/, '')
-    .replace(/\s{2,}/g, ' ')
+    .replace(PAREN_HASH_REGEX, '')
+    .replace(PLAIN_HASH_REGEX, '')
+    .replace(ISSUE_NUMBER_DIGITS_REGEX, '')
+    .replace(CONVENTIONAL_PREFIX_GLOBAL, '')
+    .replace(PUNCTUATION_SPACE_REGEX, '$1')
+    .replace(LEADING_PUNCTUATION_REGEX, '')
+    .replace(MULTI_SPACE_REGEX, ' ')
     .trim();
 }
 
@@ -107,12 +126,25 @@ export function parseModelText(result: unknown): string {
 }
 
 export function groundedReleaseSummary(tag: string, body: string, title = tag): string {
-  const items = splitReleaseBody(body)
-    .map((item) => stripExecBanned(item.message.trim()))
-    .filter(isVisitorFacingBullet);
-  const listed = (items.length > 0 ? items : body.trim() ? [stripExecBanned(body.trim())] : [])
-    .filter(isVisitorFacingBullet)
-    .slice(0, 3);
+  const rawItems = splitReleaseBody(body);
+  const items: string[] = [];
+  for (let i = 0; i < rawItems.length; i++) {
+    const stripped = stripExecBanned(rawItems[i].message.trim());
+    if (isVisitorFacingBullet(stripped)) {
+      items.push(stripped);
+    }
+  }
+
+  const candidateSource =
+    items.length > 0 ? items : body.trim() ? [stripExecBanned(body.trim())] : [];
+  const listed: string[] = [];
+  for (let i = 0; i < candidateSource.length; i++) {
+    if (isVisitorFacingBullet(candidateSource[i])) {
+      listed.push(candidateSource[i]);
+      if (listed.length === 3) break;
+    }
+  }
+
   const source = `${tag}\n${title}\n${body}`;
   if (listed.length > 0) {
     const text = `The latest release is ${title}. Visitors can now ${listed.join('; ')}. More is in the changelog on this page.`;

@@ -23,3 +23,9 @@
 - **Allocation Reduction:** Introduced `getLastUserMessage(messages)` in `src/utils/chat-logic.ts` using a reverse `for` loop to eliminate `[...messages].reverse().find(...)` array clone and in-place reversal allocations on every chat API request in Cloudflare Workers edge runtimes.
 - **Loop Optimization:** Refactored initial total content character count calculation in `pruneMessages` to use a direct indexed `for` loop instead of `reduce()`, eliminating callback closure allocations on context window evaluation.
 - **Verification:** Added Vitest unit tests in `src/utils/chat-logic.test.ts` covering empty message history, history with trailing assistant messages, and multiple user messages.
+
+## 2025-06-11 - Single-Pass Edge SSR Transforms & Allocation Reductions in Whats-New Glance
+
+- **Allocation Reduction:** Refactored `collectItems`, `thisWeek`, and `ranked` in `src/utils/whats-new-glance.ts` to process release notes with direct loops and early exit bounds, eliminating intermediate `.map()`, `.filter().map().slice()`, and `.flatMap()` array allocations during edge SSR requests.
+- **Single-Pass Transforms & Hoisted Regexes:** Refactored `sentenceCount`, `metricTokens`, and `groundedReleaseSummary` in `src/utils/release-summary.ts` and `github-releases.ts` to use single-pass loops and hoisted static regular expressions, avoiding regex re-compilation and intermediate array chaining.
+- **Verification:** Verified via full Vitest test suite (`npm run test`), ESLint, Prettier, `npm run astro check`, and production build (`npm run build`).
