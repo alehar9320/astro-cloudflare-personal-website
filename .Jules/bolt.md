@@ -33,3 +33,7 @@ Action: Updated `MainHead.astro` to track active theme state before calling `loc
 2026-09-06 - Single-Pass Edge Changelog Parsing & Redundant Pass Elimination
 Learning: Multi-pass array allocation chains (`.split().map().filter().map().filter()`) during SSR on Cloudflare Workers edge runtimes create unnecessary memory pressure and GC cycles on every request. Additionally, re-parsing strings that were already transformed into visitor copy in downstream Astro components causes double CPU work and redundant regex evaluations.
 Action: Refactored `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use a single-pass loop with hoisted static regexes, and simplified `src/pages/whats-new.astro` to use `baseReleases.map(toVisitorRelease)` directly without a second parsing pass.
+
+2026-09-07 - Single-Pass Glance Construction & Zero Redundant Title Transforms
+Learning: Passing releases through `releases.map(toVisitorRelease)` inside utility helper `collectItems` creates an extra shallow array allocation. Re-invoking `toVisitorChangelogTitle` on bullet messages already transformed by `toVisitorRelease` performs redundant regex evaluation and Map lookup passes. Furthermore, chaining `.filter().map().slice()` and `.flatMap()` during glance aggregation forces 5 intermediate array allocations per SSR request.
+Action: Updated `collectItems` in `src/utils/whats-new-glance.ts` to iterate over releases directly and use pre-transformed bullet titles, and refactored `buildWhatsNewGlance` to construct weekly items and theme groups in single-pass loops.
