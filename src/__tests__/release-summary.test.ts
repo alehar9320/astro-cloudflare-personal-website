@@ -318,4 +318,43 @@ describe('release summary API', () => {
     });
     expect(fetchSpy).not.toHaveBeenCalled();
   });
+
+  it('rejects POST payload with invalid tag characters or oversized body and falls back to GitHub', async () => {
+    const fetchSpy = vi.spyOn(githubReleases, 'fetchGitHubReleases');
+    fetchSpy.mockClear();
+
+    const request = new Request('https://example.com/api/release-summary', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        tag: '../../invalid-path-tag',
+        body: 'x'.repeat(6000),
+      }),
+    });
+    const response = await POST(createContext({}, request));
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      tag: latest.version,
+      summary: notesFallback,
+    });
+    expect(fetchSpy).toHaveBeenCalled();
+  });
+
+  it('rejects POST payload with non-object JSON and falls back to GitHub', async () => {
+    const fetchSpy = vi.spyOn(githubReleases, 'fetchGitHubReleases');
+    fetchSpy.mockClear();
+
+    const request = new Request('https://example.com/api/release-summary', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify('not-an-object'),
+    });
+    const response = await POST(createContext({}, request));
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      tag: latest.version,
+      summary: notesFallback,
+    });
+    expect(fetchSpy).toHaveBeenCalled();
+  });
 });
