@@ -1,0 +1,231 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Prism Digital Art Laboratory | Alexander Härenstam"
+  description="Experimental interactive canvas and generative Northern Lights refractions by Prism 👩‍🚀."
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <header class="lab-header">
+      <p class="lab-eyebrow">👩‍🚀 Prism Laboratory</p>
+      <h1 class="title">Interactive Northern Lights Wavefront</h1>
+      <p class="dek">
+        Mathematical fluid simulation utilizing harmonic sine wave superposition, adaptive DPR
+        canvas scaling, and pointer refraction physics.
+      </p>
+    </header>
+
+    <div class="interactive-container">
+      <canvas
+        id="aurora-lab-canvas"
+        class="aurora-canvas"
+        aria-label="Interactive Northern Lights Canvas Field"></canvas>
+      <div class="canvas-overlay">
+        <p class="overlay-text">Move pointer / touch to refract light fields</p>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  import { calculateHarmonicWave, clampDevicePixelRatio, lerp } from '../../utils/aurora-math';
+
+  const canvas = document.getElementById('aurora-lab-canvas') as HTMLCanvasElement | null;
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let animationFrameId: number;
+    const startTime = performance.now();
+    let pointerX = 0;
+    let pointerY = 0;
+    let targetPointerX = 0;
+    let targetPointerY = 0;
+    let isPointerActive = false;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const resize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      const dpr = clampDevicePixelRatio(window.devicePixelRatio || 1, 2);
+      const width = canvas.parentElement.clientWidth;
+      const height = canvas.parentElement.clientHeight || 450;
+
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      if (ctx) {
+        ctx.scale(dpr, dpr);
+      }
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      targetPointerX = e.clientX - rect.left;
+      targetPointerY = e.clientY - rect.top;
+      isPointerActive = true;
+    };
+
+    const handlePointerLeave = () => {
+      isPointerActive = false;
+    };
+
+    const draw = (now: number) => {
+      if (!ctx || !canvas) return;
+
+      const displayWidth = canvas.clientWidth;
+      const displayHeight = canvas.clientHeight;
+
+      ctx.clearRect(0, 0, displayWidth, displayHeight);
+
+      // Smoothly interpolate pointer coordinate for fluid fluid-like response
+      pointerX = lerp(pointerX, targetPointerX, 0.08);
+      pointerY = lerp(pointerY, targetPointerY, 0.08);
+
+      const elapsed = (now - startTime) / 1000;
+      const waveTime = prefersReducedMotion ? 0 : elapsed;
+
+      // Draw multi-layered northern lights ribbons
+      const layers = [
+        { color: 'rgba(56, 189, 248, 0.28)', freq: 0.006, amp: 35, speedMult: 1.0, yOffset: 0.35 },
+        { color: 'rgba(129, 140, 248, 0.22)', freq: 0.008, amp: 25, speedMult: 1.3, yOffset: 0.5 },
+        { color: 'rgba(45, 212, 191, 0.18)', freq: 0.004, amp: 45, speedMult: 0.7, yOffset: 0.65 },
+      ];
+
+      layers.forEach((layer) => {
+        ctx.beginPath();
+        ctx.fillStyle = layer.color;
+
+        const baseLineY = displayHeight * layer.yOffset;
+
+        ctx.moveTo(0, displayHeight);
+
+        for (let x = 0; x <= displayWidth; x += 6) {
+          let y =
+            baseLineY + calculateHarmonicWave(x, waveTime * layer.speedMult, layer.freq, layer.amp);
+
+          if (isPointerActive) {
+            const dx = x - pointerX;
+            const dist = Math.abs(dx);
+            if (dist < 180) {
+              const influence = (1 - dist / 180) * (pointerY - baseLineY) * 0.35;
+              y += influence;
+            }
+          }
+
+          if (x === 0) {
+            ctx.lineTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+
+        ctx.lineTo(displayWidth, displayHeight);
+        ctx.closePath();
+        ctx.fill();
+      });
+
+      if (!prefersReducedMotion) {
+        animationFrameId = requestAnimationFrame(draw);
+      }
+    };
+
+    window.addEventListener('resize', resize, { passive: true });
+    canvas.addEventListener('pointermove', handlePointerMove, { passive: true });
+    canvas.addEventListener('pointerleave', handlePointerLeave, { passive: true });
+
+    resize();
+
+    if (prefersReducedMotion) {
+      draw(performance.now());
+    } else {
+      animationFrameId = requestAnimationFrame(draw);
+    }
+
+    // Clean up animation frame and event listeners on Astro page transitions
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+        if (canvas) {
+          canvas.removeEventListener('pointermove', handlePointerMove);
+          canvas.removeEventListener('pointerleave', handlePointerLeave);
+        }
+      },
+      { once: true }
+    );
+  }
+</script>
+
+<style>
+  .lab-header {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .lab-eyebrow {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--accent-light);
+    margin: 0;
+  }
+
+  .title {
+    font-size: var(--text-3xl);
+    color: var(--gray-0);
+    margin: 0;
+  }
+
+  .dek {
+    font-size: var(--text-md);
+    color: var(--gray-200);
+    max-width: 60ch;
+    margin: 0;
+  }
+
+  .interactive-container {
+    position: relative;
+    width: 100%;
+    height: 450px;
+    border-radius: 1rem;
+    overflow: hidden;
+    background: hsla(var(--gray-999-basis), 0.5);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid hsla(var(--gray-0-basis), 0.12);
+    box-shadow: var(--shadow-md);
+  }
+
+  .aurora-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  .canvas-overlay {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    pointer-events: none;
+    background: hsla(var(--gray-999-basis), 0.6);
+    backdrop-filter: blur(8px);
+    padding: 0.4rem 0.8rem;
+    border-radius: 999rem;
+    border: 1px solid hsla(var(--gray-0-basis), 0.1);
+  }
+
+  .overlay-text {
+    font-size: var(--text-xs);
+    color: var(--gray-300);
+    margin: 0;
+  }
+</style>
