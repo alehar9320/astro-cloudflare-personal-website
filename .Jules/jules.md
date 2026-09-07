@@ -21,3 +21,9 @@
 - [Insight 1: Tighter focus ring outline-offsets (2px) prevent focus ring overflow clipping on compact overlay toggles.]
 - [Insight 2: Gating active press scale transitions behind prefers-reduced-motion media queries respects accessibility preferences while preserving tactile visual feedback.]
 - [Delta: 17 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-16 - Tag Pill Tactile Feedback | Signal: Technical/Accessibility | Lean Implementation: Flagged CSS Motion Gate + Transform Scale
+
+- [Insight 1: Hardware-accelerated press scale (`scale(0.96)`) on tag pills provides responsive tactile feedback during click/tap events.]
+- [Insight 2: Gating tactile animations behind `portfolio_tactile_v1` and `prefers-reduced-motion: no-preference` ensures zero impact on users preferring reduced motion.]
+- [Delta: 13 lines. Guardrails: All passed autonomously.]
