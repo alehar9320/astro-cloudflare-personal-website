@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - Pill Tactile Hover | Signal: Competitive | Lean Implementation: Added subtle hover scale and elevation to Pill components gated by enable_pill_tactile_v1 flag.
+
+- Insight: Interactive tag badges benefit from tactile feedback to signal hover state and visual polish.
+- User Target: Joy & Comfort
+- Abort Triggers: None (verified via build and test pipeline).
+- User Reaction: Pending synthetic feedback.
