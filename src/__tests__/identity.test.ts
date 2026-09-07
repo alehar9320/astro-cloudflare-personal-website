@@ -2823,7 +2823,7 @@ describe('identity copy', () => {
     expect(focusAt).toBeGreaterThan(0);
     const focusBlock = toggle.slice(focusAt, toggle.indexOf('}', focusAt));
     expect(focusBlock).toContain('outline: 2px solid var(--accent-regular)');
-    expect(focusBlock).toContain('outline-offset: 2px');
+    expect(focusBlock).toContain('outline-offset: -2px');
     expect(toggle).toContain("button.setAttribute('aria-pressed', String(dark))");
     expect(toggle).toContain(
       "button.setAttribute('aria-label', `Switch to ${dark ? 'light' : 'dark'} theme`)"
