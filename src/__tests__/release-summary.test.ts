@@ -440,4 +440,24 @@ describe('release summary API', () => {
     });
     expect(fetchSpy).toHaveBeenCalled();
   });
+
+  it('rejects POST payload missing tag and version fields and falls back to GitHub', async () => {
+    const fetchSpy = vi.spyOn(githubReleases, 'fetchGitHubReleases');
+    fetchSpy.mockClear();
+
+    const request = new Request('https://example.com/api/release-summary', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        body: 'Some notes without tag or version',
+      }),
+    });
+    const response = await POST(createContext({}, request));
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      tag: latest.version,
+      summary: notesFallback,
+    });
+    expect(fetchSpy).toHaveBeenCalled();
+  });
 });

@@ -48,6 +48,8 @@ function jsonBody(tag: string, summary: string) {
   return new Response(JSON.stringify({ tag, summary }), { headers: jsonHeaders });
 }
 
+const SAFE_TAG_REGEX = /^[a-zA-Z0-9_.-]+$/;
+
 export const ReleaseSummaryPostSchema = z.object({
   tag: z.string().trim().max(100).optional(),
   version: z.string().trim().max(100).optional(),
@@ -60,13 +62,13 @@ function postedRelease(data: unknown): SiteRelease | null {
   const result = ReleaseSummaryPostSchema.safeParse(data);
   if (!result.success) return null;
 
-  const rawVersion = result.data.tag || result.data.version || '';
-  const rawBody = result.data.body || result.data.notes || '';
+  const rawVersion = result.data.tag ?? result.data.version ?? '';
   const version = rawVersion.trim();
+  if (!version || !SAFE_TAG_REGEX.test(version)) return null;
 
-  if (!version || !/^[a-zA-Z0-9_.-]+$/.test(version)) return null;
-
+  const rawBody = result.data.body ?? result.data.notes ?? '';
   const title = result.data.title?.trim() || version;
+
   return {
     body: rawBody,
     publishedAt: null,
