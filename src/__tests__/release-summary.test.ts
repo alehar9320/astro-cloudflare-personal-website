@@ -357,4 +357,66 @@ describe('release summary API', () => {
     });
     expect(fetchSpy).toHaveBeenCalled();
   });
+
+  it('accepts POST payload with version and notes fields and custom title', async () => {
+    const fetchSpy = vi.spyOn(githubReleases, 'fetchGitHubReleases');
+    fetchSpy.mockClear();
+
+    const request = new Request('https://example.com/api/release-summary', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        version: latest.version,
+        title: 'Custom Release Title',
+        notes: latest.body,
+      }),
+    });
+    const response = await POST(createContext({}, request));
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      tag: latest.version,
+      summary:
+        'The latest release is Custom Release Title. Visitors can now inline footer pageviews with an exec glance. More is in the changelog on this page.',
+    });
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it('handles invalid JSON body string in POST gracefully and falls back to GitHub', async () => {
+    const fetchSpy = vi.spyOn(githubReleases, 'fetchGitHubReleases');
+    fetchSpy.mockClear();
+
+    const request = new Request('https://example.com/api/release-summary', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: '{ invalid json }',
+    });
+    const response = await POST(createContext({}, request));
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      tag: latest.version,
+      summary: notesFallback,
+    });
+    expect(fetchSpy).toHaveBeenCalled();
+  });
+
+  it('rejects whitespace-only tag in POST payload and falls back to GitHub', async () => {
+    const fetchSpy = vi.spyOn(githubReleases, 'fetchGitHubReleases');
+    fetchSpy.mockClear();
+
+    const request = new Request('https://example.com/api/release-summary', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        tag: '   ',
+        notes: 'Some notes',
+      }),
+    });
+    const response = await POST(createContext({}, request));
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      tag: latest.version,
+      summary: notesFallback,
+    });
+    expect(fetchSpy).toHaveBeenCalled();
+  });
 });
