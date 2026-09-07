@@ -121,11 +121,6 @@ const schema = {
           }
         </ul>
       </section>
-      <p class="hire-cta">
-        <a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer"
-          >Get in touch on LinkedIn</a
-        >
-      </p>
     </main>
     <ContactCTA />
   </div>
@@ -239,31 +234,6 @@ const schema = {
     font-size: var(--text-sm);
   }
 
-  .hire-cta {
-    margin: 0;
-    color: var(--gray-300);
-    /* Phone: keep the LinkedIn hire CTA out of the fixed chat FAB band. */
-    padding-bottom: var(--chat-fab-clearance);
-    padding-right: var(--chat-fab-clearance);
-  }
-
-  .hire-cta a {
-    color: var(--gray-200);
-    text-decoration: 1px solid underline transparent;
-    text-underline-offset: 0.25em;
-  }
-
-  .hire-cta a:hover,
-  .hire-cta a:focus-visible {
-    text-decoration-color: currentColor;
-  }
-
-  .hire-cta a:focus-visible {
-    outline: 2px solid var(--accent-regular);
-    outline-offset: 4px;
-    border-radius: 0.25rem;
-  }
-
   @media (prefers-reduced-motion: no-preference) {
     .proof-card {
       transition:
@@ -310,11 +280,6 @@ const schema = {
     }
 
     .earlier {
-      padding-bottom: 0;
-      padding-right: 0;
-    }
-
-    .hire-cta {
       padding-bottom: 0;
       padding-right: 0;
     }
