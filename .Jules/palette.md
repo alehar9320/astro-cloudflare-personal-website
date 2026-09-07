@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-25 - Theme Toggle Touch Target Ergonomics & Focus Containment
+
+**Learning:** Compact pill controls located within constrained header/navigation layouts (such as `ThemeToggle.astro` in `Nav.astro`) require explicit minimum dimensions (`min-width: 44px; min-height: 44px; align-items: center; justify-content: center;`) to satisfy WCAG 2.1 AA touch target standards on mobile viewports. Furthermore, switching from positive `outline-offset: 2px` to negative inset focus containment (`outline-offset: -2px`) prevents the focus ring from overflowing outer header borders or clipping against adjacent layout elements during keyboard navigation.
+
+**Action:** Enforced `min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;` and `outline-offset: -2px` for `button:focus-visible` in `src/components/ThemeToggle.astro`.
+
 ## 2026-05-24 - Focus-Visible Standardization & Mobile Touch Target Ergonomics
 
 **Learning:** Replacing raw `:focus` pseudo-classes with `:focus-visible` across footer version links (`.version-link`) and accessibility skip links (`.sr-only.focus-visible`) prevents sticky, persistent focus rings during mouse click interactions while preserving essential keyboard focus indicators. Furthermore, declaring explicit `min-height: 44px; display: inline-flex; align-items: center;` on interactive colophon triggers (`.visit-trigger`) ensures mobile touch targets comply with WCAG 2.1 AA requirements on touch viewports without causing layout shift.
