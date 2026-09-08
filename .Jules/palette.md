@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-26 - Page Link Touch Target Ergonomics
+
+**Learning:** Section list links (such as `.earlier a` in `work.astro`) and standalone page action links (such as `.history-link` in `whats-new.astro` and `.hire-cta a`) often render as compact inline links on mobile viewports, failing WCAG 2.1 AA 44x44px minimum touch target requirements and risking mis-taps. Setting `display: inline-flex; align-items: center; min-height: 44px;` expands the interactive tap area without disrupting surrounding line rhythm.
+
+**Action:** Added `display: inline-flex; align-items: center; min-height: 44px;` to `:global(.history-link)` in `whats-new.astro` and `.earlier a` / `.hire-cta a` in `work.astro`.
+
 ## 2026-05-25 - Theme Toggle Touch Target Ergonomics & Focus Containment
 
 **Learning:** Compact pill controls located within constrained header/navigation layouts (such as `ThemeToggle.astro` in `Nav.astro`) require explicit minimum dimensions (`min-width: 44px; min-height: 44px; align-items: center; justify-content: center;`) to satisfy WCAG 2.1 AA touch target standards on mobile viewports. Furthermore, switching from positive `outline-offset: 2px` to negative inset focus containment (`outline-offset: -2px`) prevents the focus ring from overflowing outer header borders or clipping against adjacent layout elements during keyboard navigation.
