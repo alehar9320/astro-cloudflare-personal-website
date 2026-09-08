@@ -1,0 +1,368 @@
+---
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Interactive Laboratory | Northern Lights Refraction"
+  description="Experimental creative engineering playground featuring interactive HTML5 canvas simulations in Alexander Härenstam's Northern Lights aesthetic."
+  robots="noindex"
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero
+      title="Interactive Laboratory"
+      tagline="Safe-space experimental canvases & generative art experiments."
+      align="start"
+    >
+      <p class="intro-text">
+        Explore interactive mathematical visual physics, harmonic waves, and dynamic light
+        refraction routines built with native browser APIs and zero external dependencies.
+      </p>
+    </Hero>
+
+    <section class="lab-canvas-card">
+      <div class="card-header">
+        <h2 class="card-title">Northern Lights Refraction Matrix</h2>
+        <div class="controls-bar" role="toolbar" aria-label="Canvas interactive controls">
+          <button
+            id="pause-toggle"
+            class="control-btn"
+            type="button"
+            aria-label="Pause or resume canvas animation"
+          >
+            <span id="pause-label">Pause</span>
+          </button>
+          <button
+            id="particles-toggle"
+            class="control-btn"
+            type="button"
+            aria-label="Toggle refractive particles layer"
+          >
+            <span id="particles-label">Particles: On</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="canvas-viewport" id="canvas-container">
+        <canvas
+          id="aurora-matrix-canvas"
+          aria-label="Interactive Northern Lights generative canvas simulation"></canvas>
+      </div>
+
+      <p class="card-footer-note">
+        Tip: Move your cursor or touch and drag across the canvas to distort wave energy and trigger
+        particle refraction.
+      </p>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import {
+    calculateParticleRefraction,
+    calculateWaveOffset,
+    interpolateColor,
+  } from '../../utils/aurora-canvas';
+
+  interface Particle {
+    x: number;
+    y: number;
+    baseX: number;
+    baseY: number;
+    radius: number;
+    speed: number;
+    phase: number;
+  }
+
+  const canvas = document.getElementById('aurora-matrix-canvas') as HTMLCanvasElement | null;
+  const container = document.getElementById('canvas-container');
+  const pauseBtn = document.getElementById('pause-toggle');
+  const pauseLabel = document.getElementById('pause-label');
+  const particlesBtn = document.getElementById('particles-toggle');
+  const particlesLabel = document.getElementById('particles-label');
+
+  if (canvas && container) {
+    const ctx = canvas.getContext('2d');
+    let animFrameId: number = 0;
+    let isPaused = false;
+    let showParticles = true;
+    let time = 0;
+
+    let cursorX = -9999;
+    let cursorY = -9999;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let particles: Particle[] = [];
+
+    const marineBlue: [number, number, number] = [10, 25, 47];
+    const cyanLight: [number, number, number] = [64, 224, 208];
+    const auroraGreen: [number, number, number] = [0, 255, 179];
+
+    const initParticles = (width: number, height: number) => {
+      particles = [];
+      const count = Math.min(Math.floor((width * height) / 12000), 60);
+      for (let i = 0; i < count; i++) {
+        const x = Math.random() * width;
+        const y = Math.random() * height;
+        particles.push({
+          x,
+          y,
+          baseX: x,
+          baseY: y,
+          radius: Math.random() * 2.2 + 1,
+          speed: Math.random() * 0.4 + 0.2,
+          phase: Math.random() * Math.PI * 2,
+        });
+      }
+    };
+
+    const resize = () => {
+      if (!canvas || !container) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const width = container.clientWidth;
+      const height = container.clientHeight || 420;
+
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      if (ctx) {
+        ctx.scale(dpr, dpr);
+      }
+
+      initParticles(width, height);
+    };
+
+    const drawFrame = () => {
+      if (!ctx || !canvas) return;
+      const width = parseFloat(canvas.style.width) || 400;
+      const height = parseFloat(canvas.style.height) || 400;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Deep translucent background fill
+      const bgGrad = ctx.createLinearGradient(0, 0, width, height);
+      bgGrad.addColorStop(0, 'rgba(8, 18, 36, 0.92)');
+      bgGrad.addColorStop(1, 'rgba(12, 32, 54, 0.95)');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      // Draw generative multi-harmonic aurora wave bands
+      const bandCount = 4;
+      for (let b = 0; b < bandCount; b++) {
+        ctx.beginPath();
+        const baseHeight = height * (0.35 + b * 0.15);
+        const waveColor = interpolateColor(
+          b % 2 === 0 ? marineBlue : cyanLight,
+          auroraGreen,
+          (Math.sin(time + b) + 1) / 2,
+          0.18 + b * 0.05
+        );
+
+        ctx.fillStyle = waveColor;
+        ctx.moveTo(0, height);
+
+        for (let x = 0; x <= width; x += 8) {
+          const waveY =
+            baseHeight +
+            calculateWaveOffset(x, time * (0.8 + b * 0.2), 24 - b * 4, 0.008 + b * 0.002, b * 1.2);
+          ctx.lineTo(x, waveY);
+        }
+
+        ctx.lineTo(width, height);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Draw interactive particles
+      if (showParticles) {
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          p.phase += p.speed * 0.03;
+          p.y = p.baseY + Math.sin(p.phase) * 12;
+
+          const refraction = calculateParticleRefraction(p.x, p.y, cursorX, cursorY, 140);
+          const drawX = p.x + refraction.dx;
+          const drawY = p.y + refraction.dy;
+
+          ctx.beginPath();
+          ctx.arc(drawX, drawY, p.radius + refraction.intensity * 2, 0, Math.PI * 2);
+          ctx.fillStyle = interpolateColor(
+            cyanLight,
+            auroraGreen,
+            refraction.intensity,
+            0.6 + refraction.intensity * 0.4
+          );
+          ctx.fill();
+        }
+      }
+
+      if (!isPaused && !prefersReducedMotion) {
+        time += 0.02;
+        animFrameId = requestAnimationFrame(drawFrame);
+      }
+    };
+
+    // Event Handlers
+    const handleMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      cursorX = e.clientX - rect.left;
+      cursorY = e.clientY - rect.top;
+    };
+
+    const handleMouseLeave = () => {
+      cursorX = -9999;
+      cursorY = -9999;
+    };
+
+    const handleTouchMove = (e: TouchEvent) => {
+      if (e.touches.length > 0) {
+        const rect = canvas.getBoundingClientRect();
+        cursorX = e.touches[0].clientX - rect.left;
+        cursorY = e.touches[0].clientY - rect.top;
+      }
+    };
+
+    window.addEventListener('resize', resize);
+    canvas.addEventListener('mousemove', handleMouseMove);
+    canvas.addEventListener('mouseleave', handleMouseLeave);
+    canvas.addEventListener('touchmove', handleTouchMove, { passive: true });
+    canvas.addEventListener('touchend', handleMouseLeave);
+
+    if (pauseBtn && pauseLabel) {
+      pauseBtn.addEventListener('click', () => {
+        isPaused = !isPaused;
+        pauseLabel.textContent = isPaused ? 'Resume' : 'Pause';
+        if (!isPaused && !prefersReducedMotion) {
+          drawFrame();
+        }
+      });
+    }
+
+    if (particlesBtn && particlesLabel) {
+      particlesBtn.addEventListener('click', () => {
+        showParticles = !showParticles;
+        particlesLabel.textContent = showParticles ? 'Particles: On' : 'Particles: Off';
+        if (isPaused || prefersReducedMotion) {
+          drawFrame();
+        }
+      });
+    }
+
+    // Lifecycle Teardown on Astro page swap
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+        window.removeEventListener('resize', resize);
+        if (canvas) {
+          canvas.removeEventListener('mousemove', handleMouseMove);
+          canvas.removeEventListener('mouseleave', handleMouseLeave);
+          canvas.removeEventListener('touchmove', handleTouchMove);
+          canvas.removeEventListener('touchend', handleMouseLeave);
+        }
+      },
+      { once: true }
+    );
+
+    resize();
+    drawFrame();
+  }
+</script>
+
+<style>
+  .intro-text {
+    color: var(--gray-200);
+    max-width: 54ch;
+    font-size: var(--text-md);
+  }
+
+  .lab-canvas-card {
+    background: hsla(var(--gray-999-basis), 0.5);
+    border: 1px solid var(--gray-800);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .card-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .card-title {
+    font-size: var(--text-lg);
+    font-family: var(--font-brand);
+    color: var(--gray-0);
+    margin: 0;
+  }
+
+  .controls-bar {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .control-btn {
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.5rem 1rem;
+    background: hsla(var(--gray-999-basis), 0.7);
+    border: 1px solid var(--gray-700);
+    border-radius: 0.5rem;
+    color: var(--gray-100);
+    font-size: var(--text-sm);
+    font-family: var(--font-brand);
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.15s ease;
+  }
+
+  .control-btn:hover {
+    background: hsla(var(--gray-999-basis), 0.9);
+    border-color: var(--accent-light);
+  }
+
+  .control-btn:focus-visible {
+    outline: 2px solid var(--accent-light);
+    outline-offset: -2px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .control-btn:active {
+      transform: scale(0.96);
+    }
+  }
+
+  .canvas-viewport {
+    width: 100%;
+    height: 420px;
+    position: relative;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: #081224;
+    border: 1px solid hsla(var(--gray-999-basis), 0.3);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .card-footer-note {
+    font-size: var(--text-sm);
+    color: var(--gray-400);
+    margin: 0;
+  }
+</style>
