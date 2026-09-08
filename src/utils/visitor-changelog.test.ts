@@ -77,6 +77,13 @@ describe('visitor-changelog utilities', () => {
       expect(output).toBe('- RSS feed of the work\n- Web app manifest');
     });
 
+    it('handles CRLF line endings correctly', () => {
+      const input =
+        '- 520 feat: add a live RSS feed for the work (#520)\r\n* 518 feat: add a working web app manifest (#518)\r\n';
+      const output = toVisitorReleaseBody(input);
+      expect(output).toBe('- RSS feed of the work\n- Web app manifest');
+    });
+
     it('filters out internal agent or tool items from bullet lists', () => {
       const input =
         '- feat: add public feature\n- chore(jules): internal sync\n- refactor(engine): internal logic';

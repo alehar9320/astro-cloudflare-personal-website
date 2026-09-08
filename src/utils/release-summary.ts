@@ -36,11 +36,39 @@ Notes:
 ${notes}`;
 }
 
-function sentenceCount(text: string): number {
-  return text
-    .split(/(?<=[.!?])\s+/)
-    .map((part) => part.trim())
-    .filter((part) => part.length > 0).length;
+/**
+ * Counts non-empty sentences in a string using single-pass character traversal.
+ * Avoids regex lookbehind splitting and array allocations on edge runtimes.
+ *
+ * @param text - Input string to analyze.
+ * @returns The number of sentences detected.
+ */
+export function sentenceCount(text: string): number {
+  let count = 0;
+  let inSentence = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    const isPunct = char === '.' || char === '!' || char === '?';
+
+    if (isPunct) {
+      const next = text[i + 1];
+      const isSentenceEnd =
+        next === undefined || next === ' ' || next === '\t' || next === '\n' || next === '\r';
+      if (isSentenceEnd && inSentence) {
+        count++;
+        inSentence = false;
+      }
+    } else if (char !== ' ' && char !== '\t' && char !== '\n' && char !== '\r') {
+      inSentence = true;
+    }
+  }
+
+  if (inSentence) {
+    count++;
+  }
+
+  return count;
 }
 
 function metricTokens(text: string): string[] {

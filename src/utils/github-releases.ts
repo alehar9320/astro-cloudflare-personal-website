@@ -213,15 +213,27 @@ export function isPublicChangelogItem(item: ReleaseItem): boolean {
  * Splits a release body into individual, formatted ReleaseItem objects.
  * Filters for lines starting with list markers (-, *, +).
  * Drops Jules, agent-farm, and Johan-nits internals from the public list.
- * Single-pass implementation to minimize allocations on edge runtimes.
+ * Uses pointer-based line scanning (`indexOf('\n', startPos)`) to eliminate dynamic line array allocations on edge runtimes.
  * @param {string} body - The full Markdown body of a GitHub release.
  * @returns {ReleaseItem[]} An array of parsed release items.
  */
 export function splitReleaseBody(body: string): ReleaseItem[] {
-  const lines = body.split('\n');
   const items: ReleaseItem[] = [];
+  let startPos = 0;
+  const len = body.length;
 
-  for (const line of lines) {
+  while (startPos < len) {
+    let nextNewline = body.indexOf('\n', startPos);
+    if (nextNewline === -1) {
+      nextNewline = len;
+    }
+
+    let line = body.slice(startPos, nextNewline);
+    if (line.endsWith('\r')) {
+      line = line.slice(0, -1);
+    }
+    startPos = nextNewline + 1;
+
     const trimmed = line.trim();
     if (!/^[-*+]\s+/.test(trimmed)) continue;
 
