@@ -106,6 +106,62 @@ describe('visits API', () => {
     expect(errorSpy).toHaveBeenCalledWith({ event: 'visits_count_hidden' });
   });
 
+  it('handles invalid POSTHOG_PROJECT_ID format', async () => {
+    const bindings = workerEnv as VisitEnv;
+    bindings.POSTHOG_PERSONAL_API_KEY = 'test-key';
+    bindings.POSTHOG_PROJECT_ID = 'invalid-id';
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const response = await GET({} as Parameters<typeof GET>[0]);
+    expect(response.status).toBe(204);
+    expect(errorSpy).toHaveBeenCalledWith({ event: 'visits_invalid_project_id' });
+  });
+
+  it('handles non-HTTPS POSTHOG_QUERY_HOST', async () => {
+    const bindings = workerEnv as VisitEnv;
+    bindings.POSTHOG_PERSONAL_API_KEY = 'test-key';
+    bindings.POSTHOG_QUERY_HOST = 'http://insecure.posthog.com';
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const response = await GET({} as Parameters<typeof GET>[0]);
+    expect(response.status).toBe(204);
+    expect(errorSpy).toHaveBeenCalledWith({ event: 'visits_invalid_host' });
+  });
+
+  it('handles malformed POSTHOG_QUERY_HOST URL', async () => {
+    const bindings = workerEnv as VisitEnv;
+    bindings.POSTHOG_PERSONAL_API_KEY = 'test-key';
+    bindings.POSTHOG_QUERY_HOST = 'not-a-valid-url';
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const response = await GET({} as Parameters<typeof GET>[0]);
+    expect(response.status).toBe(204);
+    expect(errorSpy).toHaveBeenCalledWith({ event: 'visits_invalid_host' });
+  });
+
+  it('uses custom POSTHOG_PROJECT_ID and POSTHOG_QUERY_HOST in fetch request', async () => {
+    const bindings = workerEnv as VisitEnv;
+    bindings.POSTHOG_PERSONAL_API_KEY = 'test-key';
+    bindings.POSTHOG_PROJECT_ID = '999999';
+    bindings.POSTHOG_QUERY_HOST = 'https://us.posthog.com';
+
+    const fetchSpy = vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      new Response(
+        JSON.stringify({
+          results: [[100, 50, '2023-01-01', 10, 5, 2, 1, 4, 20, 15, 40, 30]],
+        }),
+        { status: 200 }
+      )
+    );
+
+    const response = await GET({} as Parameters<typeof GET>[0]);
+    expect(response.status).toBe(200);
+    expect(fetchSpy).toHaveBeenCalledWith(
+      'https://us.posthog.com/api/projects/999999/query/',
+      expect.any(Object)
+    );
+  });
+
   it('returns 200 with visit glance data on valid response', async () => {
     const bindings = workerEnv as VisitEnv;
     bindings.POSTHOG_PERSONAL_API_KEY = 'test-key';
