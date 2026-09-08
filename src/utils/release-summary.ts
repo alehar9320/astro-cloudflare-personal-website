@@ -12,16 +12,33 @@ const ENGINEERING_LEAK =
 const VISITOR_VERB =
   /^(open|tap|see|read|view|show|visit|browse|get|use|download|contact|inline)\b/i;
 
+/**
+ * Evaluates whether a release item message is visitor-facing.
+ * Checks that the message starts with an action verb and does not contain engineering leaks.
+ * @param message - Raw message string from release body.
+ * @returns True if visitor-facing, false otherwise.
+ */
 export function isVisitorFacingBullet(message: string): boolean {
   const text = message.trim();
   if (!text || ENGINEERING_LEAK.test(text)) return false;
   return VISITOR_VERB.test(text);
 }
 
+/**
+ * Generates KV store cache key for a given release tag.
+ * @param tag - Git release tag name.
+ * @returns Formatted KV cache key.
+ */
 export function releaseSummaryKey(tag: string): string {
   return `${RELEASE_SUMMARY_KEY_PREFIX}${tag}`;
 }
 
+/**
+ * Constructs LLM prompt for generating executive release summaries.
+ * @param tag - Git release tag name.
+ * @param notes - Release notes body text.
+ * @returns Complete prompt string for Workers AI model.
+ */
 export function releaseSummaryPrompt(tag: string, notes: string): string {
   return `Write exactly three plain-English sentences for a hiring manager about this GitHub release.
 Say what a visitor can now see or do. Use only facts in the notes.
@@ -48,6 +65,11 @@ function metricTokens(text: string): string[] {
   return matches ? matches.map((token) => token.toLowerCase()) : [];
 }
 
+/**
+ * Strips agent names, git SHAs, issue numbers, and conventional commit prefixes.
+ * @param text - Raw text string to sanitize.
+ * @returns Cleaned text string.
+ */
 export function stripExecBanned(text: string): string {
   return text
     .replace(BANNED_NAME, '')
@@ -62,6 +84,13 @@ export function stripExecBanned(text: string): string {
     .trim();
 }
 
+/**
+ * Validates generated release summary against safety and grounding rules.
+ * Ensures sentence count is 2-4 sentences, no git leak/agent tokens, and metrics match source notes.
+ * @param summary - Candidate summary string.
+ * @param source - Source release text for grounding checks.
+ * @returns True if summary passes safety rules, false otherwise.
+ */
 export function isSafeReleaseSummary(summary: string, source: string): boolean {
   const text = summary.trim();
   if (!text) return false;
@@ -84,6 +113,12 @@ export function isSafeReleaseSummary(summary: string, source: string): boolean {
   return true;
 }
 
+/**
+ * Sanitizes and validates candidate release summary text against source release notes.
+ * @param summary - Raw summary output from AI model.
+ * @param source - Source release text to verify grounding.
+ * @returns Sanitized summary string, or null if validation fails.
+ */
 export function prepareReleaseSummary(summary: string, source: string): string | null {
   const original = summary.trim();
   if (
@@ -99,6 +134,12 @@ export function prepareReleaseSummary(summary: string, source: string): string |
   return isSafeReleaseSummary(text, source) ? text : null;
 }
 
+/**
+ * Extracts and trims response string from AI model output payload.
+ * Handles string output or structured objects containing response property.
+ * @param result - Raw response object or string from AI model call.
+ * @returns Extracted text string or empty string.
+ */
 export function parseModelText(result: unknown): string {
   if (typeof result === 'string') return result.trim();
   if (!result || typeof result !== 'object') return '';
@@ -106,6 +147,13 @@ export function parseModelText(result: unknown): string {
   return typeof row.response === 'string' ? row.response.trim() : '';
 }
 
+/**
+ * Generates deterministic fallback release summary from release items when AI model is unavailable.
+ * @param tag - Git release tag name.
+ * @param body - Release body text.
+ * @param title - Optional release title, defaulting to tag.
+ * @returns Grounded fallback release summary string.
+ */
 export function groundedReleaseSummary(tag: string, body: string, title = tag): string {
   const items = splitReleaseBody(body)
     .map((item) => stripExecBanned(item.message.trim()))
