@@ -1,149 +1,100 @@
-# Model Context Protocol (MCP) Setup
+# Model Context Protocol (MCP)
 
-This project supports MCP servers to provide AI agents with real-time context and tools for development and deployment.
+Engineering SoT for which MCP servers this repo expects. Visitor copy does not live here.
 
-## Render MCP Server
+## Exec summary
 
-The Render MCP server allows AI agents to manage Cloud Services and debug applications directly from your editor.
+| Item | Fact |
+| --- | --- |
+| Repo config SoT | [`mcp_config.json.example`](../mcp_config.json.example) (copy patterns into your editor; do not commit real keys) |
+| Tracked local file | `mcp_config.json` (gitignored secrets belong in your editor or env, not in git) |
+| Servers in scope | `astro-docs`, `render`, `context7` — do **not** add new `mcpServers` without an explicit ask |
+| Production | Cloudflare Workers ([ADR 0001](adr/0001-cloudflare-production-render-jules.md)) |
+| Render | Jules **test** env only — not prod, not failover |
 
-### 1. Cursor Setup
+Hire path stays [LinkedIn](https://www.linkedin.com/in/alehar/) only. Overlay frost lock `69ca717`. GitHub Pages stays off.
 
-Add the following configuration to `~/.cursor/mcp.json`:
+## Server map
+
+| Server | Purpose | Notes |
+| --- | --- | --- |
+| `astro-docs` | Latest Astro docs for agents | Public URL, no key |
+| `context7` | Version-specific library docs / examples | Needs a Context7 API key in headers |
+| `render` | Manage / debug the **Jules Render test** service | Needs a Render API key. Never treat Render as production |
+
+Canonical example (matches `mcp_config.json.example`):
 
 ```json
 {
   "mcpServers": {
+    "astro-docs": {
+      "url": "https://mcp.docs.astro.build/mcp"
+    },
     "render": {
       "url": "https://mcp.render.com/mcp",
       "headers": {
-        "Authorization": "Bearer <YOUR_API_KEY>"
+        "Authorization": "Bearer your-render-api-key"
       }
-    }
-  }
-}
-```
-
-Replace `<YOUR_API_KEY>` with your Render API key. For more details, see the [Cursor MCP documentation](https://docs.cursor.com/context/model-context-protocol).
-
-### 2. Antigravity Setup
-
-1. Open the MCP store via the "..." dropdown at the top of the editor's agent panel.
-2. Click on "Manage MCP Servers" -> "View raw config".
-3. Modify the `mcp_config.json` (located at `~/.gemini/antigravity/mcp_config.json`) with the following:
-
-```json
-{
-  "mcpServers": {
-    "render": {
-      "url": "https://mcp.render.com/mcp",
-      "headers": {
-        "Authorization": "Bearer <YOUR_API_KEY>"
-      }
-    }
-  }
-}
-```
-
-### 3. Codex / Cline Setup
-
-If you are using the Cline (formerly Claude Dev) extension in VS Code:
-
-1. Open the Cline MCP settings file:
-   - macOS: `~/Library/Application Support/Code/User/globalStorage/saoudrizwan.claude-dev/settings/cline_mcp_settings.json`
-   - Windows: `%APPDATA%\Code\User\globalStorage\saoudrizwan.claude-dev\settings\cline_mcp_settings.json`
-2. Add the "render" entry to the `mcpServers` object:
-
-```json
-{
-  "mcpServers": {
-    "render": {
-      "url": "https://mcp.render.com/mcp",
-      "headers": {
-        "Authorization": "Bearer <YOUR_API_KEY>"
-      }
-    }
-  }
-}
-```
-
-### 4. Claude Desktop Setup
-
-1. Open your Claude Desktop configuration file:
-   - macOS: `~/Library/Application Support/Claude/claude_desktop_config.json`
-   - Windows: `%APPDATA%\Claude\claude_desktop_config.json`
-2. Add the following to the `mcpServers` object:
-
-```json
-{
-  "mcpServers": {
-    "render": {
-      "url": "https://mcp.render.com/mcp",
-      "headers": {
-        "Authorization": "Bearer <YOUR_API_KEY>"
-      }
-    }
-  }
-}
-```
-
-## Astro Docs MCP Server
-
-This repo also references the Astro Docs MCP server in `mcp_config.json`:
-
-```json
-{
-  "astro-docs": {
-    "url": "https://mcp.docs.astro.build/mcp"
-  }
-}
-```
-
-You can add this to your preferred editor's MCP configuration to give the AI access to the latest Astro documentation.
-
-## Context7 MCP Server
-
-Context7 provides up-to-date, version-specific documentation and code examples straight from the source.
-
-### 1. Cursor Setup
-
-Add the following to your Cursor MCP settings:
-
-```json
-{
-  "mcpServers": {
+    },
     "context7": {
       "url": "https://mcp.context7.com/mcp",
       "headers": {
-        "CONTEXT7_API_KEY": "<YOUR_API_KEY>"
+        "CONTEXT7_API_KEY": "your-context7-api-key"
       }
     }
   }
 }
 ```
 
-### 2. Claude Desktop Setup
+## Editor setup (optional)
 
-Add the following to your Claude Desktop configuration:
+Paste the same three servers into your editor MCP config. Replace placeholder keys. Do not invent a fourth server here.
+
+<details>
+<summary>Cursor (~/.cursor/mcp.json)</summary>
 
 ```json
 {
   "mcpServers": {
+    "astro-docs": {
+      "url": "https://mcp.docs.astro.build/mcp"
+    },
+    "render": {
+      "url": "https://mcp.render.com/mcp",
+      "headers": {
+        "Authorization": "Bearer <YOUR_RENDER_API_KEY>"
+      }
+    },
     "context7": {
       "url": "https://mcp.context7.com/mcp",
       "headers": {
-        "CONTEXT7_API_KEY": "<YOUR_API_KEY>"
+        "CONTEXT7_API_KEY": "<YOUR_CONTEXT7_API_KEY>"
       }
     }
   }
 }
 ```
 
-### 3. Automated Setup
+See also the [Cursor MCP docs](https://docs.cursor.com/context/model-context-protocol).
 
-You can also set up Context7 for your coding agents using the CLI:
+</details>
 
-```bash
-npx ctx7 setup
-```
+<details>
+<summary>Claude Desktop / Cline / Antigravity</summary>
 
-Follow the prompts to authenticate and configure your preferred agent (Cursor, Claude Code, etc.).
+Use the same `mcpServers` object as above in:
+
+- Claude Desktop: `claude_desktop_config.json`
+- Cline: `cline_mcp_settings.json`
+- Antigravity: `~/.gemini/antigravity/mcp_config.json`
+
+For Context7 alone you can also run `npx ctx7 setup` and follow its prompts.
+
+</details>
+
+## Out of scope
+
+- Adding new `mcpServers` keys to this repo
+- Documenting Cloudflare as anything other than production
+- Treating Render MCP as a path to ship or fail over prod
+- Visitor essays, hire email/CV, or GitHub Pages
