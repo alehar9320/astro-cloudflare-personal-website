@@ -972,8 +972,14 @@
   function showFollowUps() {
     removeFollowUps();
     if (!chatMessages) return;
-    const lastUser = [...messages].reverse().find((msg: Message) => msg.role === 'user');
-    const lastUserText = lastUser?.content?.trim() ?? '';
+    /* Optimization (⚡ Bolt): Iterate backwards to find the last user message without dynamic shallow array allocations ([...messages]) or array reversal (.reverse()). Benchmark: 0 temporary array allocations on follow-up prompt updates. */
+    let lastUserText = '';
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === 'user') {
+        lastUserText = messages[i].content?.trim() ?? '';
+        break;
+      }
+    }
     const prompts = FOLLOW_UP_PROMPTS.filter((prompt) => prompt !== lastUserText);
     if (prompts.length === 0) return;
     const row = document.createElement('div');
