@@ -30,7 +30,7 @@ describe('content.config', () => {
   it('validates flags fixture against schema', async () => {
     const rawSchema = collections.flags.schema;
     const schema =
-      typeof rawSchema === 'function' ? rawSchema({ image: () => ({} as never) }) : rawSchema;
+      typeof rawSchema === 'function' ? rawSchema({ image: () => ({}) as never }) : rawSchema;
     if (!schema) throw new Error('Flags schema is undefined');
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
@@ -45,7 +45,7 @@ describe('content.config', () => {
   it('validates work schema with sample data', () => {
     const rawSchema = collections.work.schema;
     const schema =
-      typeof rawSchema === 'function' ? rawSchema({ image: () => ({} as never) }) : rawSchema;
+      typeof rawSchema === 'function' ? rawSchema({ image: () => ({}) as never }) : rawSchema;
     if (!schema) throw new Error('Work schema is undefined');
     const sampleWork = {
       title: 'Sample Work',
