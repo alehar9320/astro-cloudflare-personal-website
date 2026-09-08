@@ -20,3 +20,24 @@ declare module '*.txt?raw' {
   const content: string;
   export default content;
 }
+
+declare namespace NodeJS {
+  interface ProcessEnv {
+    [key: string]: string | undefined;
+  }
+  interface Process {
+    env: ProcessEnv;
+  }
+}
+
+declare var process: NodeJS.Process;
+
+interface Element {
+  append(...nodes: (string | Node)[]): void;
+  prepend(...nodes: (string | Node)[]): void;
+}
+
+interface ParentNode {
+  append(...nodes: (string | Node)[]): void;
+  prepend(...nodes: (string | Node)[]): void;
+}
