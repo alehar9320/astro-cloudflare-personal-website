@@ -29,7 +29,7 @@ Notes: npm scripts forward arguments after `--` to the underlying command.
 ## High-level architecture
 
 - Framework: Astro site (astro.config.mjs) using @astrojs/cloudflare adapter.
-- Hosting: Built for Cloudflare Pages / Workers. wrangler.jsonc config points at the Cloudflare entrypoint and binds `ASSETS` -> ./dist.
+- Hosting: Cloudflare Workers + Assets only (production). `wrangler.jsonc` points at the Worker entrypoint and binds `ASSETS` -> `./dist`. Do not use Cloudflare Pages. Render is the Jules test env only ([ADR 0001](../docs/adr/0001-cloudflare-production-render-jules.md)), not prod or failover.
 - Production deployment model: Cloudflare Git integration auto-deploys commits on `main`. GitHub Actions should validate changes and publish GitHub releases, but it should not introduce a second manual production deploy path or try to push generated release files back to protected `main`.
 - Content-first: Uses Astro Content Collections (src/content and src/content.config.ts). Collections have Zod schemas (see `work` collection schema).
 - Source layout:
@@ -70,7 +70,7 @@ Notes: npm scripts forward arguments after `--` to the underlying command.
 
 ## MCP servers
 
-- This repo contains `mcp_config.json` with `astro-docs` and `render` MCP servers configured.
+- This repo contains `mcp_config.json` with `astro-docs`, `render`, and `context7` MCP servers configured.
 - See `mcp_config.json` at project root and [docs/mcp.md](docs/mcp.md) for detailed setup instructions for Cursor, Antigravity, Codex, and Claude Desktop.
 
 ---
