@@ -29,10 +29,16 @@ This project is built with a modern web stack designed for speed, SEO, and devel
 
 ## 🛠 Features
 
-- **Responsive Design**: Fast and accessible UI mapped to look great on desktop, tablet, and mobile devices.
-- **Professional Portfolio**: Highlights my work experience, including my role at IFS, Ericsson, and other ventures.
-- **Skills & Education**: A detailed breakdown of my technical, design, and product management skills, backed by my academic background from Chalmers University of Technology.
-- **SEO Optimized**: Standard Astro best practices with fast load times and clean, accessible HTML out of the box.
+What visitors get on [the live site](https://me.alehar.workers.dev/) today (not a generic portfolio template):
+
+- **Home proof cards**: Short case teasers that deep-link into Work (IFS Design System and related proof).
+- **Work**: Indexed case studies under `/work/` (design systems, AI coding copilots, analytics, thesis, and earlier work).
+- **Biography**: Role and path at `/biography/` (not a separate About page).
+- **Contact / hire**: LinkedIn-only hire path at `/contact/` — [linkedin.com/in/alehar](https://www.linkedin.com/in/alehar/) (no public email, no CV PDF).
+- **What's New**: Visitor-facing rewrite of GitHub Releases at `/whats-new/`.
+- **Meta pages**: This site (`/this-site/`), What's next (`/roadmap/`), and Site success (`/okr/`).
+- **Chat twin**: Docked at the bottom — Alexander's digital twin with his context (it can be wrong).
+- **Responsive + accessible chrome**: Fast, keyboard-friendly UI across desktop, tablet, and mobile.
 
 ## 🎨 Design & Aesthetics
 
