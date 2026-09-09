@@ -195,7 +195,18 @@ describe('identity copy', () => {
     expect(page).toContain('ContactCTA');
     expect(footer).toContain('https://www.linkedin.com/in/alehar/');
     expect(footer).not.toContain('mailto:');
-    expect(upcoming).toContain('export const UPCOMING: readonly string[] = []');
+    expect(upcoming).not.toContain(
+      'export const UPCOMING: readonly string[] = []'
+    );
+    expect(upcoming).toContain(
+      "'Clearer next steps from the first view, so a visit becomes a second look.'"
+    );
+    expect(upcoming).toContain(
+      "'A LinkedIn hire path visitors can take without hunting.'"
+    );
+    expect(upcoming).not.toContain('84.3');
+    expect(upcoming).not.toContain('KR1.');
+    expect(upcoming).not.toContain('KR2.');
     expect(page).toContain("throw new Error('Roadmap still promises flatten.')");
     expect(page).not.toContain("Astro.redirect('/')");
     expect(page).toContain('Hero title="What\'s next"');
