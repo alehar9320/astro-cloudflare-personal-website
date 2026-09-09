@@ -62,6 +62,12 @@ cp .dev.vars.example .dev.vars # Configure local environment variables
 - **GitHub Actions Role:** CI validates changes on PRs and, on `main`, creates a GitHub release from `scripts/release.js`. It must not push generated release files back to protected `main`.
 - **Footer + What's New:** The footer version link and `/whats-new` page consume GitHub release data rather than tracked repo artifacts.
 
+## Start a task
+
+1. Read the live GitHub issue on `alehar9320/astro-cloudflare-personal-website`. Do not invent scope.
+2. Grep, search, or AST only the files, selectors, and hrefs named in that issue. Do not dump the repo into the prompt.
+3. For production errors, use PostHog and/or Sentry.
+
 ## 4. AI Constraints (The "Never" List)
 
 - **NEVER** add new top-level dependencies without explicit permission. (Zod is an exception as it's now a core dependency for validation).
@@ -73,6 +79,17 @@ cp .dev.vars.example .dev.vars # Configure local environment variables
 - **NEVER** add or preserve a parallel manual production deploy step in CI when Cloudflare Git auto-deploy already owns production releases.
 - **NEVER** design automation that depends on direct writes back to protected `main` for release metadata.
 - **NEVER** create Jules agent journal folders at the repository root. Journals live only under `.Jules/`.
+
+## High-priority never
+
+- Hire path is LinkedIn only: https://www.linkedin.com/in/alehar/. No public email, no mailto hire, no placeholder CV PDF.
+- Do not invent VP, Head, or Director titles. Title is Product Manager, Developer Experience at IFS.
+- Visitor-first copy. Alexander is secondary.
+- Chat stays docked at the bottom. No tall sheet.
+- No Prism, aurora, or lab on public main nav.
+- Overlay frost `69ca717`. Stay off #800.
+- Ericsson 2014–2016 stays in README.
+- PRs stay draft until Dual CLOSE of that tip.
 
 ## 5. AI Agent Skills
 

@@ -2,6 +2,9 @@
 
 Purpose: Give future Copilot sessions quick, actionable context for building, testing, linting, and understanding repository conventions.
 
+Before starting a change, follow [AGENTS.md § Start a task](../AGENTS.md#start-a-task).
+
+
 ---
 
 ## Quick commands
