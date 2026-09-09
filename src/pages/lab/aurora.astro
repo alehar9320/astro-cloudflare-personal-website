@@ -1,0 +1,283 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Aurora Canvas Lab | Alexander Härenstam"
+  description="Interactive Northern Lights wave visualizer laboratory canvas."
+>
+  <main class="lab-container">
+    <header class="lab-header">
+      <a href="/" class="back-link">&larr; Back to home</a>
+      <h1 class="lab-title">Aurora Canvas Lab</h1>
+      <p class="lab-subtitle">
+        Mathematical wave simulation with real-time pointer refraction &amp; Northern Lights theme.
+      </p>
+    </header>
+
+    <div class="canvas-wrapper">
+      <canvas
+        id="aurora-lab-canvas"
+        aria-label="Interactive Northern Lights wave animation"
+        role="img"></canvas>
+      <div class="controls-overlay">
+        <button id="pause-toggle" type="button" class="control-btn" aria-label="Pause animation">
+          Pause
+        </button>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  import { calculateWaveY } from '../../utils/aurora-math';
+
+  interface Wave {
+    amplitude: number;
+    frequency: number;
+    speed: number;
+    color: string;
+    phase: number;
+  }
+
+  const canvas = document.getElementById('aurora-lab-canvas') as HTMLCanvasElement | null;
+  const pauseBtn = document.getElementById('pause-toggle') as HTMLButtonElement | null;
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let animationFrameId: number;
+    let time = 0;
+    let isPaused = false;
+    let pointerX = -1000;
+    let pointerY = -1000;
+
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (reducedMotionQuery.matches) {
+      isPaused = true;
+      if (pauseBtn) pauseBtn.textContent = 'Play';
+    }
+
+    const waves: Wave[] = [
+      {
+        amplitude: 35,
+        frequency: 0.008,
+        speed: 0.015,
+        color: 'rgba(56, 189, 248, 0.35)',
+        phase: 0,
+      },
+      { amplitude: 45, frequency: 0.005, speed: 0.01, color: 'rgba(129, 140, 248, 0.3)', phase: 2 },
+      { amplitude: 25, frequency: 0.012, speed: 0.02, color: 'rgba(45, 212, 191, 0.25)', phase: 4 },
+    ];
+
+    const resize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const width = canvas.parentElement.clientWidth;
+      const height = canvas.parentElement.clientHeight || 500;
+
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      if (ctx) {
+        ctx.scale(dpr, dpr);
+      }
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      pointerX = e.clientX - rect.left;
+      pointerY = e.clientY - rect.top;
+    };
+
+    const handlePointerLeave = () => {
+      pointerX = -1000;
+      pointerY = -1000;
+    };
+
+    const draw = () => {
+      if (!ctx || !canvas) return;
+      const width = canvas.style.width ? parseFloat(canvas.style.width) : canvas.width;
+      const height = canvas.style.height ? parseFloat(canvas.style.height) : canvas.height;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Draw background gradient
+      const bgGradient = ctx.createLinearGradient(0, 0, 0, height);
+      bgGradient.addColorStop(0, '#030712');
+      bgGradient.addColorStop(1, '#0f172a');
+      ctx.fillStyle = bgGradient;
+      ctx.fillRect(0, 0, width, height);
+
+      const baseLine = height * 0.55;
+
+      // Draw wave layers
+      for (const wave of waves) {
+        ctx.beginPath();
+        ctx.moveTo(0, height);
+
+        for (let x = 0; x <= width; x += 4) {
+          let y = calculateWaveY(
+            x,
+            time,
+            wave.amplitude,
+            wave.frequency,
+            wave.speed,
+            wave.phase,
+            baseLine
+          );
+
+          // Pointer interaction refraction
+          const dx = x - pointerX;
+          const dy = y - pointerY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < 120) {
+            const factor = (1 - dist / 120) * 20;
+            y -= factor;
+          }
+
+          if (x === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+
+        ctx.lineTo(width, height);
+        ctx.lineTo(0, height);
+        ctx.closePath();
+
+        ctx.fillStyle = wave.color;
+        ctx.fill();
+      }
+
+      if (!isPaused) {
+        time += 1;
+        animationFrameId = requestAnimationFrame(draw);
+      }
+    };
+
+    const togglePause = () => {
+      isPaused = !isPaused;
+      if (pauseBtn) {
+        pauseBtn.textContent = isPaused ? 'Play' : 'Pause';
+      }
+      if (!isPaused) {
+        cancelAnimationFrame(animationFrameId);
+        draw();
+      }
+    };
+
+    if (pauseBtn) {
+      pauseBtn.addEventListener('click', togglePause);
+    }
+
+    canvas.addEventListener('pointermove', handlePointerMove);
+    canvas.addEventListener('pointerleave', handlePointerLeave);
+    window.addEventListener('resize', resize);
+
+    resize();
+    draw();
+
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+        canvas.removeEventListener('pointermove', handlePointerMove);
+        canvas.removeEventListener('pointerleave', handlePointerLeave);
+        if (pauseBtn) pauseBtn.removeEventListener('click', togglePause);
+      },
+      { once: true }
+    );
+  }
+</script>
+
+<style>
+  .lab-container {
+    max-width: 60rem;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .lab-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .back-link {
+    color: var(--gray-300);
+    text-decoration: none;
+    font-size: var(--text-sm);
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .back-link:hover,
+  .back-link:focus-visible {
+    color: var(--gray-0);
+  }
+
+  .lab-title {
+    font-size: var(--text-3xl);
+    color: var(--gray-0);
+    margin: 0;
+  }
+
+  .lab-subtitle {
+    font-size: var(--text-md);
+    color: var(--gray-300);
+    margin: 0;
+  }
+
+  .canvas-wrapper {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background-color: #030712;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .controls-overlay {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+  }
+
+  .control-btn {
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    color: var(--gray-0);
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    font-size: var(--text-sm);
+    cursor: pointer;
+    min-height: 44px;
+    min-width: 44px;
+    transition: background-color var(--theme-transition);
+  }
+
+  .control-btn:hover,
+  .control-btn:focus-visible {
+    background: rgba(30, 41, 59, 0.9);
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 2px;
+  }
+</style>
