@@ -10,18 +10,18 @@ tags:
 ---
 
 <div class="tldr-box">
-  <p><strong>TL;DR:</strong> Usage telemetry so <strong>IFS Cloud</strong> roadmap decisions rest on how people actually use the product. I am <strong>Product Manager, Developer Experience</strong> at IFS.</p>
+  <p><strong>TL;DR:</strong> User behavior analytics for IFS Cloud. Apr 2022 – Feb 2025 · Product Manager, Product Experience (Design System) · Gothenburg</p>
 </div>
 
-At IFS I worked on user behavior analytics for IFS Cloud: capturing usage so product teams can see what customers actually do. Roadmap decisions rest on that usage.
+Apr 2022 – Feb 2025 · Product Manager, Product Experience (Design System) · Gothenburg
 
 ## Problem
 
-Product teams need to see what customers actually do so IFS Cloud roadmap decisions rest on that usage.
+IFS Cloud needed usage telemetry so roadmap decisions rest on how people actually use the product — not assumptions that over-engineer features.
 
 ## Approach
 
-As Product Manager, Developer Experience at IFS, I worked on user behavior analytics for IFS Cloud: capturing usage so product teams can see what customers actually do.
+While Product Manager for the IFS Design System (Apr 2022 – Feb 2025), I spearheaded the User Behavior Analytics Platform for IFS Cloud — so features are grounded in genuine customer needs, preventing over-engineering and optimizing development resources.
 
 ## Outcome
 
