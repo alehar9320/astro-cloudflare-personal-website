@@ -10,6 +10,11 @@
  *   No localhost / *-me.alehar.workers.dev preview hosts.
  * - Contact-card: $autocapture with element href containing linkedin.com OR element text
  *   containing "Get in touch", same host + Linux-exclude. Unique persons.
+ * - DORA deploy: merged PRs base=main, count by mergedAt (7-day Europe/Stockholm windows).
+ * - DORA lead: median hours from PR createdAt to mergedAt, base=main.
+ * - DORA CFR: failed push/main CI / successful push/main CI; no reverts.
+ * - DORA restore: time from failed main CI to next green main CI (0 fails → "0 fails").
+ *   Windows: current 2026-08-29..2026-09-04; baseline 2026-08-22..2026-08-28 (Nick-locked 2026-09-04 CEST).
  */
 
 export type ProgressDirection = 'up' | 'down' | 'none';
@@ -107,6 +112,58 @@ export const OBJECTIVES: readonly Objective[] = [
       },
     ],
     supporting: ['At least half of weekly merges visitor-facing, for 8 weeks before year-end'],
+  },
+];
+
+/** DORA metrics — Nick-locked 2026-09-04 CEST from GitHub recipes (7-day windows). */
+export const DORA_METRICS: readonly KeyResult[] = [
+  {
+    id: 'dora-deploy',
+    label: 'Ships to production (deployment frequency)',
+    window: '7 days',
+    baselineLabel: '20',
+    currentLabel: '28',
+    targetLabel: '—',
+    baseline: 20,
+    current: 28,
+    target: 0,
+    direction: 'none',
+  },
+  {
+    id: 'dora-lead',
+    label: 'Time from PR open to merge (lead time for changes)',
+    window: '7 days',
+    baselineLabel: '0.3 h',
+    currentLabel: '0.2 h',
+    targetLabel: '—',
+    baseline: 0.3,
+    current: 0.2,
+    target: 0,
+    direction: 'none',
+  },
+  {
+    id: 'dora-cfr',
+    label: 'Failed production CI / production ships (change failure rate)',
+    window: '7 days',
+    baselineLabel: '0%',
+    currentLabel: '0%',
+    targetLabel: '—',
+    baseline: 0,
+    current: 0,
+    target: 0,
+    direction: 'none',
+  },
+  {
+    id: 'dora-restore',
+    label: 'Time from failed main CI to next green main CI (time to restore)',
+    window: '7 days',
+    baselineLabel: '0 fails',
+    currentLabel: '0 fails',
+    targetLabel: '—',
+    baseline: 0,
+    current: 0,
+    target: 0,
+    direction: 'none',
   },
 ];
 
