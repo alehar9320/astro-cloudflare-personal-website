@@ -29,3 +29,9 @@
 - **Edge Memory & Performance:** Refactored `splitReleaseBody` in `src/utils/github-releases.ts` and `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use pointer-based line scanning (`indexOf('\n', startPos)`), eliminating dynamic `body.split('\n')` string array allocations during SSR and API execution.
 - **Sentence Counting Optimization:** Refactored `sentenceCount` in `src/utils/release-summary.ts` from regex lookbehind `.split(/(?<=[.!?])\s+/)` into a single-pass character scanning loop. Added whitespace-aware sentence boundary detection to safely ignore dots inside version strings (`2026.08.15.1714`).
 - **Verification:** Added Vitest unit test cases across `release-summary.test.ts`, `visitor-changelog.test.ts`, and `github-releases.test.ts` covering version numbers, CRLF line endings, multiple trailing punctuation, and whitespace handling.
+
+## 2025-06-18 - Module-Level Static RegExp Hoisting Across Edge Utilities
+
+- **Performance & Edge Allocation:** Hoisted static inline regular expression literals across utility modules and API routes (`src/utils/release-summary.ts`, `src/utils/visitor-changelog.ts`, `src/utils/github-releases.ts`, `src/utils/chat-logic.ts`, `src/utils/chat-explore.ts`, `src/utils/hire-analytics.ts`, and `src/pages/api/visits.ts`) into module-scoped `const` constants.
+- **V8 GC Optimization:** Eliminates repeated `RegExp` instantiation and dynamic regex compilation on every request and SSR transformation on Cloudflare Workers edge runtimes.
+- **Verification:** Expanded Vitest unit test suite in `src/utils/chat-explore.test.ts` to cover empty inputs and metric/keyword regex matches (369/369 tests passing).

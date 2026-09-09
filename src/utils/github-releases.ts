@@ -27,6 +27,10 @@ const RELEASES_API_URL =
 const RELEASES_PAGE_URL =
   'https://github.com/alehar9320/astro-cloudflare-personal-website/releases';
 const REPO_URL = 'https://github.com/alehar9320/astro-cloudflare-personal-website';
+
+const TOKEN_REDACT_PATTERN = /token\s+[a-zA-Z0-9_-]+/g;
+const HASH_MATCH_PATTERN = /^([a-f0-9]{7,40})\s+(.*)/i;
+const LIST_MARKER_PATTERN = /^[-*+]\s+/;
 function logReleaseValidationFailed(issues: z.ZodError['issues']): void {
   const sanitizedIssues = issues.map((issue) => {
     const safeIssue = { ...issue } as Record<string, unknown>;
@@ -156,7 +160,7 @@ export async function fetchGitHubReleases(
     return releases;
   } catch (error) {
     // Redact potential token if error message contains it (defense in depth)
-    const safeErrorMessage = String(error).replace(/token\s+[a-zA-Z0-9_-]+/g, 'token [REDACTED]');
+    const safeErrorMessage = String(error).replace(TOKEN_REDACT_PATTERN, 'token [REDACTED]');
     console.error({ event: 'github_releases_request_error', error: safeErrorMessage });
     return [];
   }
@@ -187,7 +191,7 @@ export function formatReleaseDate(dateString: string | null): string {
 export function parseReleaseItem(line: string): ReleaseItem {
   const cleaned = line.trim();
   // Matches a 7 to 40-character hex hash at the beginning
-  const hashMatch = cleaned.match(/^([a-f0-9]{7,40})\s+(.*)/i);
+  const hashMatch = cleaned.match(HASH_MATCH_PATTERN);
 
   if (hashMatch) {
     const hash = hashMatch[1];
@@ -235,9 +239,9 @@ export function splitReleaseBody(body: string): ReleaseItem[] {
     startPos = nextNewline + 1;
 
     const trimmed = line.trim();
-    if (!/^[-*+]\s+/.test(trimmed)) continue;
+    if (!LIST_MARKER_PATTERN.test(trimmed)) continue;
 
-    const rawMessage = trimmed.replace(/^[-*+]\s+/, '');
+    const rawMessage = trimmed.replace(LIST_MARKER_PATTERN, '');
     const item = parseReleaseItem(rawMessage);
     if (isPublicChangelogItem(item)) {
       items.push(item);

@@ -91,6 +91,8 @@ export function groundedDesignSystemAnswer(lastUserMessage: string): string | nu
 /** Visitor-facing hire line — no twin-mouth me/my/I. Card still carries the primary. */
 export const LINKEDIN_HIRE_REPLY = 'Continue on LinkedIn: https://www.linkedin.com/in/alehar/';
 
+const CONTACT_WORD_PATTERN = /\bcontact\b/;
+
 export function groundedLinkedInHireAnswer(lastUserMessage: string): string | null {
   const question = lastUserMessage.trim().toLowerCase();
   if (!question) return null;
@@ -107,7 +109,7 @@ export function groundedLinkedInHireAnswer(lastUserMessage: string): string | nu
     question.includes('linkedin') ||
     question.includes('get in touch') ||
     question.includes('hire') ||
-    /\bcontact\b/.test(question)
+    CONTACT_WORD_PATTERN.test(question)
   ) {
     return LINKEDIN_HIRE_REPLY;
   }

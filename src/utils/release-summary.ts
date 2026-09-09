@@ -12,6 +12,20 @@ const ENGINEERING_LEAK =
 const VISITOR_VERB =
   /^(open|tap|see|read|view|show|visit|browse|get|use|download|contact|inline)\b/i;
 
+const METRIC_TOKENS_PATTERN = /\b\d+(?:\.\d+)?x\b|\b\d+%\b|\broi\b|\bmillion\b|\bbillion\b/gi;
+const PR_PAREN_PATTERN = /\(#\d+\)/g;
+const HASH_ISSUE_NUM_PATTERN = /#\d+/g;
+const ISSUE_NUMBER_PHRASE_PATTERN = /\bissue number\s+\d+\b/gi;
+const CONVENTIONAL_PREFIX_PATTERN =
+  /\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/gi;
+const PUNCT_SPACING_PATTERN = /\s+([.,;:])/g;
+const LEADING_PUNCT_PATTERN = /^[\s:;\-]+/;
+const MULTIPLE_SPACES_PATTERN = /\s{2,}/g;
+
+const ISSUE_NUMBER_TEST_PATTERN = /\bissue number\b/i;
+const COMMIT_HASH_TEST_PATTERN = /\bcommit hash\b/i;
+const HASHTAG_NUM_TEST_PATTERN = /\B#\d+\b/;
+
 /**
  * Evaluates whether a release item message is visitor-facing.
  * Checks that the message starts with an action verb and does not contain engineering leaks.
@@ -89,7 +103,7 @@ export function sentenceCount(text: string): number {
 }
 
 function metricTokens(text: string): string[] {
-  const matches = text.match(/\b\d+(?:\.\d+)?x\b|\b\d+%\b|\broi\b|\bmillion\b|\bbillion\b/gi);
+  const matches = text.match(METRIC_TOKENS_PATTERN);
   return matches ? matches.map((token) => token.toLowerCase()) : [];
 }
 
@@ -102,13 +116,13 @@ export function stripExecBanned(text: string): string {
   return text
     .replace(BANNED_NAME, '')
     .replace(SHA_ALL, '')
-    .replace(/\(#\d+\)/g, '')
-    .replace(/#\d+/g, '')
-    .replace(/\bissue number\s+\d+\b/gi, '')
-    .replace(/\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/gi, '')
-    .replace(/\s+([.,;:])/g, '$1')
-    .replace(/^[\s:;\-]+/, '')
-    .replace(/\s{2,}/g, ' ')
+    .replace(PR_PAREN_PATTERN, '')
+    .replace(HASH_ISSUE_NUM_PATTERN, '')
+    .replace(ISSUE_NUMBER_PHRASE_PATTERN, '')
+    .replace(CONVENTIONAL_PREFIX_PATTERN, '')
+    .replace(PUNCT_SPACING_PATTERN, '$1')
+    .replace(LEADING_PUNCT_PATTERN, '')
+    .replace(MULTIPLE_SPACES_PATTERN, ' ')
     .trim();
 }
 
@@ -126,9 +140,9 @@ export function isSafeReleaseSummary(summary: string, source: string): boolean {
   if (count < 2 || count > 4) return false;
   if (
     SHA_ONE.test(text) ||
-    /\bissue number\b/i.test(text) ||
-    /\bcommit hash\b/i.test(text) ||
-    /\B#\d+\b/.test(text) ||
+    ISSUE_NUMBER_TEST_PATTERN.test(text) ||
+    COMMIT_HASH_TEST_PATTERN.test(text) ||
+    HASHTAG_NUM_TEST_PATTERN.test(text) ||
     CONVENTIONAL.test(text) ||
     ENGINEERING_LEAK.test(text)
   ) {
@@ -151,9 +165,9 @@ export function prepareReleaseSummary(summary: string, source: string): string |
   const original = summary.trim();
   if (
     SHA_ONE.test(original) ||
-    /\bissue number\b/i.test(original) ||
-    /\bcommit hash\b/i.test(original) ||
-    /\B#\d+\b/.test(original) ||
+    ISSUE_NUMBER_TEST_PATTERN.test(original) ||
+    COMMIT_HASH_TEST_PATTERN.test(original) ||
+    HASHTAG_NUM_TEST_PATTERN.test(original) ||
     CONVENTIONAL.test(original)
   ) {
     return null;

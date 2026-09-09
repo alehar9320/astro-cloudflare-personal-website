@@ -31,6 +31,7 @@ interface VisitEnv {
 const DEFAULT_PROJECT_ID = '171414';
 const DEFAULT_QUERY_HOST = 'https://eu.posthog.com';
 const QUERY_TIMEOUT_MS = 5000;
+const PROJECT_ID_PATTERN = /^\d+$/;
 export const HOGQL = `SELECT
   count() AS pageviews,
   uniq(distinct_id) AS unique_visitors,
@@ -70,7 +71,7 @@ export const GET: APIRoute = async () => {
     }
 
     const projectId = (bindings.POSTHOG_PROJECT_ID || DEFAULT_PROJECT_ID).trim();
-    if (!/^\d+$/.test(projectId)) {
+    if (!PROJECT_ID_PATTERN.test(projectId)) {
       console.error({ event: 'visits_invalid_project_id' });
       return empty204();
     }

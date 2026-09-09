@@ -178,6 +178,8 @@ const SHA_PREFIX = /^[a-f0-9]{7,40}\s+/i;
 const CONVENTIONAL_PREFIX =
   /^(feat|fix|chore|docs|refactor|test|style|perf|build|ci)(\([^)]+\))?:\s*/i;
 const PR_SUFFIX = /\s*\(#(\d+)\)\s*$/;
+const MULTIPLE_SPACES_PATTERN = /\s{2,}/g;
+const PR_MATCH_PATTERN = /\(#(\d+)\)/;
 
 /**
  * Strip SHA, conventional-commit type, and trailing (#123) from a changelog line.
@@ -188,7 +190,7 @@ export function stripChangelogChrome(raw: string): string {
     .replace(SHA_PREFIX, '')
     .replace(CONVENTIONAL_PREFIX, '')
     .replace(PR_SUFFIX, '')
-    .replace(/\s{2,}/g, ' ')
+    .replace(MULTIPLE_SPACES_PATTERN, ' ')
     .trim();
 }
 
@@ -209,7 +211,7 @@ export function toVisitorChangelogTitle(raw: string): string {
   const trimmed = raw.trim();
   if (!trimmed) return trimmed;
 
-  const prMatch = trimmed.match(/\(#(\d+)\)/);
+  const prMatch = trimmed.match(PR_MATCH_PATTERN);
   if (prMatch) {
     const mapped = BY_PR.get(Number(prMatch[1]));
     if (mapped) return mapped;

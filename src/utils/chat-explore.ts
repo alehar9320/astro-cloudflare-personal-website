@@ -62,6 +62,12 @@ export const EXPLORE_CARDS = {
   },
 } as const satisfies Record<string, ExploreCard>;
 
+const CONTACT_WORD_PATTERN = /\bcontact\b/;
+const METRICS_WORD_PATTERN = /\b(2x|30x|roi)\b/;
+const ABOUT_YOU_PATTERN = /\babout you\b/;
+const CASES_WORD_PATTERN = /\bcases?\b/;
+const WORK_WORD_PATTERN = /\bwork\b/;
+
 export function exploreCardForQuestion(lastUserMessage: string): ExploreCard | null {
   const question = lastUserMessage.trim().toLowerCase();
   if (!question) return null;
@@ -81,7 +87,7 @@ export function exploreCardForQuestion(lastUserMessage: string): ExploreCard | n
     question.includes('linkedin') ||
     question.includes('get in touch') ||
     question.includes('hire') ||
-    /\bcontact\b/.test(question)
+    CONTACT_WORD_PATTERN.test(question)
   ) {
     return LINKEDIN_CONFIRM;
   }
@@ -89,7 +95,7 @@ export function exploreCardForQuestion(lastUserMessage: string): ExploreCard | n
   if (
     question.includes('design system') ||
     question.includes('zeroheight') ||
-    /\b(2x|30x|roi)\b/.test(question)
+    METRICS_WORD_PATTERN.test(question)
   ) {
     return EXPLORE_CARDS.designSystem;
   }
@@ -117,7 +123,7 @@ export function exploreCardForQuestion(lastUserMessage: string): ExploreCard | n
   if (
     question.includes('biograph') ||
     question.includes('background') ||
-    /\babout you\b/.test(question) ||
+    ABOUT_YOU_PATTERN.test(question) ||
     question.includes('about yourself') ||
     question.includes('who are you') ||
     question.includes('education') ||
@@ -128,14 +134,14 @@ export function exploreCardForQuestion(lastUserMessage: string): ExploreCard | n
     return EXPLORE_CARDS.biography;
   }
 
-  if (/\bcases?\b/.test(question) && !question.includes('industrial')) {
+  if (CASES_WORD_PATTERN.test(question) && !question.includes('industrial')) {
     return EXPLORE_CARDS.designSystem;
   }
 
   if (
     question.includes('industrial ai') ||
     question.includes('portfolio') ||
-    /\bwork\b/.test(question)
+    WORK_WORD_PATTERN.test(question)
   ) {
     return EXPLORE_CARDS.work;
   }

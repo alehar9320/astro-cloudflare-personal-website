@@ -9,8 +9,17 @@ import {
 } from './chat-explore';
 
 describe('exploreCardForQuestion', () => {
-  it('offers the IFS Design System card for the live design-system chip', () => {
+  it('handles empty message strings gracefully', () => {
+    expect(exploreCardForQuestion('')).toBeNull();
+    expect(exploreCardForQuestion('   ')).toBeNull();
+  });
+
+  it('offers the IFS Design System card for the live design-system chip and metric keywords', () => {
     expect(exploreCardForQuestion(DESIGN_SYSTEM_CHIP)).toEqual(EXPLORE_CARDS.designSystem);
+    expect(exploreCardForQuestion('What ROI was delivered?')).toEqual(EXPLORE_CARDS.designSystem);
+    expect(exploreCardForQuestion('Tell me about 2x efficiency')).toEqual(
+      EXPLORE_CARDS.designSystem
+    );
   });
 
   it('offers published work, biography, and case cards from existing titles and lines', () => {
@@ -41,6 +50,7 @@ describe('exploreCardForQuestion', () => {
     expect(EXPLORE_CARDS.work.href).toBe('/work/');
     expect(exploreCardForQuestion('How do I get in touch on LinkedIn?')).toEqual(LINKEDIN_CONFIRM);
     expect(exploreCardForQuestion('How do I get in touch on LinkedIn?')?.href).toBe(LINKEDIN_HREF);
+    expect(exploreCardForQuestion('Where can I contact you?')).toEqual(LINKEDIN_CONFIRM);
     expect(exploreCardForQuestion('What is your email?')).toBeNull();
     expect(exploreCardForQuestion('Can I download a CV?')).toBeNull();
   });
