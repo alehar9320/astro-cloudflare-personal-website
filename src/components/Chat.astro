@@ -1162,7 +1162,40 @@
 
   initConversationalFold();
 
-  if (chatSuggestions) bindChipSubmit(chatSuggestions);
+  if (chatSuggestions) {
+    const path = location.pathname;
+    const chips = Array.from(document.querySelectorAll('.chat-suggestion'));
+    let texts: string[];
+    if (path === '/biography/' || path.startsWith('/biography/')) {
+      texts = [
+        'How do you work as a PM?',
+        "What's your path to DevEx at IFS?",
+        "What's the Industrial AI bet?",
+      ];
+    } else if (path === '/contact/' || path === '/contact') {
+      texts = [
+        'How do you work as a PM?',
+        "What's the Industrial AI bet?",
+        'How do I get in touch on LinkedIn?',
+      ];
+    } else if (path === '/work/' || path.startsWith('/work/')) {
+      texts = [
+        'What did the IFS design system change?',
+        'How do you work as a PM?',
+        "What's the Industrial AI bet?",
+      ];
+    } else {
+      texts = [
+        'What did the IFS design system change?',
+        'How do you work as a PM?',
+        "What's the Industrial AI bet?",
+      ];
+    }
+    chips.slice(0, 3).forEach((el, i) => {
+      el.textContent = texts[i];
+    });
+    bindChipSubmit(chatSuggestions);
+  }
 
   chatToggle?.addEventListener('click', () => {
     const isExpanded = chatToggle.getAttribute('aria-expanded') === 'true';
