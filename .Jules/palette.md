@@ -1,3 +1,15 @@
+# HARD ABORT: package.json / package-lock contamination on Palette tips
+
+Read this before scouting or opening a tip. If the tip would add or change `package.json` or `package-lock.json` (npm audit overrides, dependency bumps, lockfile churn) alongside Palette visitor or journal work, **HARD ABORT**.
+
+Strip those files from the tip. Keep only the intended product files + this `.Jules/palette.md` journal entry.
+
+Closed contamination class: #1205 (package.json + package-lock on Nav touch-target tip). Related: #1204 (same class on Bolt).
+
+Do not open a second PR to "fix" contamination — restack the same DRAFT tip clean.
+
+---
+
 # Palette 🎨 - UX & Accessibility Journal
 
 ## 2026-05-26 - Page Link Touch Target Ergonomics

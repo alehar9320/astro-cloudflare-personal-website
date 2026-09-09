@@ -1,3 +1,17 @@
+# HARD ABORT: package.json / package-lock contamination on Bolt tips
+
+Read this before scouting or opening a tip. If the tip would add or change `package.json` or `package-lock.json` (npm audit overrides, dependency bumps, lockfile churn) alongside Bolt visitor or journal work, **HARD ABORT**.
+
+Strip those files from the tip. Keep only the intended product files + this `.Jules/bolt.md` journal entry.
+
+Also HARD ABORT / strip `.github/workflows/ci.yml` audit-level or workflow drift that is not the Bolt product change.
+
+Closed contamination class: #1204 (ci.yml audit-level + package-lock on hoist-static-regexes tip).
+
+Do not open a second PR to "fix" contamination — restack the same DRAFT tip clean.
+
+---
+
 2026-05-03 - LCP Optimization for Hero Images
 Learning: Above-the-fold images, such as the portrait hero on the home page and the main project image on work detail pages, are critical for Largest Contentful Paint (LCP). Explicitly setting fetchpriority="high" and decoding="async" ensures the browser prioritizes these assets, improving perceived and actual load performance.
 Action: Added fetchpriority="high" and decoding="async" to the hero images in src/pages/index.astro and src/pages/work/[...slug].astro.
