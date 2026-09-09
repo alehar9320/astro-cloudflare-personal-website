@@ -1,0 +1,62 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_devex_framework) return Astro.redirect('/404/');
+---
+
+<BaseLayout
+  title="DevEx Framework | Product Manager, Developer Experience at IFS"
+  description="Core pillars of Developer Experience strategy."
+  robots="noindex"
+>
+  <main id="main-content" role="main" class="wrapper stack gap-8">
+    <Hero title="DevEx Framework" tagline="Velocity, Tooling, and Feedback Loops." align="start">
+      <p class="lede">
+        Core strategic pillars for scaling developer productivity, quality, and platform adoption.
+      </p>
+      <div class="actions">
+        <CallToAction
+          href="https://www.linkedin.com/in/alehar/"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-hire-event="hire_cta_click"
+          data-hire-surface="devex-framework"
+        >
+          Get in touch
+        </CallToAction>
+        <p class="cta-hint">LinkedIn · replies from me</p>
+      </div>
+    </Hero>
+  </main>
+</BaseLayout>
+
+<style>
+  .lede {
+    margin: 0;
+    color: var(--gray-200);
+    max-width: 46ch;
+  }
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    padding-bottom: var(--chat-fab-clearance);
+  }
+  .cta-hint {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    font-weight: 400;
+  }
+  @media (min-width: 50em) {
+    .actions {
+      padding-bottom: 0;
+    }
+  }
+</style>
