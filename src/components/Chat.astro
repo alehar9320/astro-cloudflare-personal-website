@@ -6,7 +6,7 @@
   <button
     id="chat-toggle"
     class="chat-toggle"
-    aria-label="Open chat"
+    aria-label="Open AI chat"
     aria-expanded="false"
     aria-controls="chat-window"
     aria-describedby="status-tooltip"
@@ -98,7 +98,8 @@
       height="40"
       decoding="async"
     />
-    <input type="text" id="chat-input" required autocomplete="off" placeholder="Message…" />
+    <span id="chat-ai-cue" class="chat-ai-cue" aria-hidden="true">AI</span>
+    <input type="text" id="chat-input" required autocomplete="off" placeholder="Message…" aria-label="Message" />
     <button type="submit" id="chat-send" class="chat-send" aria-label="Send message" disabled>
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -787,6 +788,16 @@
   .chat-container.is-prominent .chat-form,
   .chat-container.is-docked .chat-form {
     display: flex;
+  }
+
+  .chat-ai-cue {
+    flex-shrink: 0;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    line-height: 1;
+    color: var(--gray-400);
+    user-select: none;
   }
 
   .chat-form input {
