@@ -343,7 +343,9 @@ const isCurrentPage = (href: string) => {
   }
 
   .link {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     color: var(--gray-300);
     text-decoration: none;
     transition: transform var(--theme-transition);
@@ -433,6 +435,10 @@ const isCurrentPage = (href: string) => {
 
   .social {
     display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
     padding: var(--icon-padding);
     text-decoration: none;
     color: var(--accent-dark);
