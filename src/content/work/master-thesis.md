@@ -10,16 +10,14 @@ tags:
 ---
 
 <div class="tldr-box">
-  <p><strong>TL;DR:</strong> <strong>Chalmers</strong> master's thesis, 2017, on business model innovation and digitalization.</p>
+  <p><strong>TL;DR:</strong> <strong>Chalmers</strong> master's thesis, 2017, on business model innovation and digitalization — published proof from Invativa at Svenska Mässan.</p>
 </div>
 
-This is earlier work. Master's thesis at [Chalmers University of Technology](https://www.chalmers.se/en/) in 2017. It mapped what digitalization does to business models, studied one case, and compared that to the literature.
+M.Sc., Management and Economics of Innovation · Chalmers University of Technology · 2015 – 2017
 
-1. What digitalization does to a business model.
-2. A case where digitalization was part of changing the model.
-3. Where that case differed from the literature.
+Jan 2017 – Jun 2017 · Master Thesis Worker · Invativa · Göteborg
 
-Opportunities showed up as reach, scale, and data for decisions. Barriers were mostly organizational. The featured case is the [IFS Design System](/work/ifs-design-system/).
+**Business Model Innovation for a digital future** — case firm Svenska Mässan (inside) with Invativa (outside-in). Public PDF: [publications.lib.chalmers.se](https://publications.lib.chalmers.se/records/fulltext/250572/250572.pdf).
 
 ## Problem
 
@@ -27,7 +25,11 @@ What digitalization does to a business model, including a case where digitalizat
 
 ## Approach
 
-Master's thesis at Chalmers University of Technology in 2017 on business model innovation and digitalization. It mapped what digitalization does to business models, studied one case, and compared that to the literature.
+Master's thesis at Chalmers University of Technology in 2017 on business model innovation and digitalization. Three research steps:
+
+1. Academically mapping what it means to transform a business with digitalization
+2. Studying a specific business case where digitalization was part of changing the business model
+3. Identifying the gap between what theory stipulates and the business case at hand
 
 ## Outcome
 

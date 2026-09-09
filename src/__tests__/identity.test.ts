@@ -1218,9 +1218,15 @@ describe('identity copy', () => {
     expect(thesis).toContain('## Outcome');
     expect(thesis).toContain('Chalmers University of Technology');
     expect(thesis).toContain('business model innovation and digitalization');
-    expect(thesis).toContain('mapped what digitalization does to business models');
-    expect(thesis).toContain('studied one case');
-    expect(thesis).toContain('compared that to the literature');
+    expect(thesis).toContain(
+      'Academically mapping what it means to transform a business with digitalization'
+    );
+    expect(thesis).toContain(
+      'Studying a specific business case where digitalization was part of changing the business model'
+    );
+    expect(thesis).toContain(
+      'Identifying the gap between what theory stipulates and the business case at hand'
+    );
     expect(thesis).toContain('Opportunities showed up as reach, scale, and data for decisions');
     expect(thesis).toContain('Barriers were mostly organizational');
     expect(thesis).toContain(
@@ -2807,4 +2813,20 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('densifies master-thesis with published degree, window, and title', () => {
+    const md = readFileSync('src/content/work/master-thesis.md', 'utf8');
+    expect(md).toContain(
+      'M.Sc., Management and Economics of Innovation · Chalmers University of Technology · 2015 – 2017'
+    );
+    expect(md).toContain('Jan 2017 – Jun 2017 · Master Thesis Worker · Invativa · Göteborg');
+    expect(md).toContain('Svenska Mässan');
+    expect(md).not.toContain('/work/ifs-design-system/');
+    expect(md).toContain('Business Model Innovation for a digital future');
+    expect(md).toContain('## Problem');
+    expect(md).toContain('## Approach');
+    expect(md).toContain('## Outcome');
+    expect(md).not.toContain('mailto:');
+  });
+
 });
