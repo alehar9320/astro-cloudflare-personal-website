@@ -73,6 +73,7 @@ cp .dev.vars.example .dev.vars # Configure local environment variables
 - **NEVER** add or preserve a parallel manual production deploy step in CI when Cloudflare Git auto-deploy already owns production releases.
 - **NEVER** design automation that depends on direct writes back to protected `main` for release metadata.
 - **NEVER** create Jules agent journal folders at the repository root. Journals live only under `.Jules/`.
+- **NEVER** ship visitor UI that fails `.agents/skills/elevated-taste/SKILL.md` anti-slop.
 
 ## 5. AI Agent Skills
 
@@ -85,6 +86,7 @@ Project-specific AI agent skills are defined in the `.agents/skills/` directory.
 - Automated Quality Assurance
 - Persona & Context Alignment
 - Context7 Documentation Retrieval
+- Elevated Taste (respect look-and-feel, raise craft, no AI slop)
 
 Refer to the individual `SKILL.md` files in each skill folder for detailed guidance.
 
