@@ -110,6 +110,70 @@ export const OBJECTIVES: readonly Objective[] = [
   },
 ];
 
+/** PR velocity windows — Nick-locked 2026-09-04 CEST from GitHub merged: recipe. */
+export const PR_VELOCITY: readonly KeyResult[] = [
+  {
+    id: 'pv-day',
+    label: 'Today vs yesterday',
+    window: 'day',
+    baselineLabel: '—',
+    currentLabel: '2 vs 4',
+    targetLabel: '—',
+    baseline: 4,
+    current: 2,
+    target: 0,
+    direction: 'none',
+  },
+  {
+    id: 'pv-week',
+    label: 'This week vs last week',
+    window: 'week',
+    baselineLabel: '—',
+    currentLabel: '15 vs 20',
+    targetLabel: '—',
+    baseline: 20,
+    current: 15,
+    target: 0,
+    direction: 'none',
+  },
+  {
+    id: 'pv-month',
+    label: 'This month vs last month',
+    window: 'month',
+    baselineLabel: '—',
+    currentLabel: '12 vs 0',
+    targetLabel: '—',
+    baseline: 0,
+    current: 12,
+    target: 0,
+    direction: 'none',
+  },
+  {
+    id: 'pv-quarter',
+    label: 'This quarter vs last quarter',
+    window: 'quarter',
+    baselineLabel: '—',
+    currentLabel: '223 vs 144',
+    targetLabel: '—',
+    baseline: 144,
+    current: 223,
+    target: 0,
+    direction: 'none',
+  },
+  {
+    id: 'pv-year',
+    label: 'This year vs last year',
+    window: 'year',
+    baselineLabel: '—',
+    currentLabel: '410 vs 0',
+    targetLabel: '—',
+    baseline: 0,
+    current: 410,
+    target: 0,
+    direction: 'none',
+  },
+];
+
 /**
  * Quiet bar only when Current sits between Baseline and Target in the expected
  * direction. KR3.1 is a future median floor (direction none) — never a miss bar
