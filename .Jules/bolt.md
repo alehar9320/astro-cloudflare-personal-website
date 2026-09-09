@@ -1,3 +1,25 @@
+# HARD ABORT — lazy IFS / below-fold case-study image
+
+Read this before scouting. If the idea is one of these, ABORT the cycle. Do not downscope into a sibling with the same job. Do not open a PR.
+
+If the idea is `loading="lazy"` on the below-the-fold IFS / case-study image, restacking that lazy-load, or re-doing explicit image dimensions, ABORT.
+
+Do NOT recreate:
+
+- lazy load on the below-the-fold case-study image (`ifs-design-system` / `work/[...slug]`)
+- a restack of merged lazy-IFS / case-study image work
+- re-doing merged image width/height
+
+Merged #852/#868 done. Do not restack #868 (KEEP Dual CLOSED).
+
+Already closed as farm / merged done: #852, #868.
+
+Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
+
+---
+
+## 2026-09-01 - Farm abort | Signal: Nick close-reason split | Lean Implementation: HARD ABORT lazy IFS / below-fold case-study image work
+
 2026-05-03 - LCP Optimization for Hero Images
 Learning: Above-the-fold images, such as the portrait hero on the home page and the main project image on work detail pages, are critical for Largest Contentful Paint (LCP). Explicitly setting fetchpriority="high" and decoding="async" ensures the browser prioritizes these assets, improving perceived and actual load performance.
 Action: Added fetchpriority="high" and decoding="async" to the hero images in src/pages/index.astro and src/pages/work/[...slug].astro.
