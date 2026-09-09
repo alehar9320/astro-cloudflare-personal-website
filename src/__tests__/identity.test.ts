@@ -342,6 +342,17 @@ describe('identity copy', () => {
     expect(footer.match(/class="group"/g)?.length).toBe(1);
   });
 
+  it('keeps footer visit-stats hidden on 204, !ok, parse failure, and catch', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(footer).toContain('span class="visit-stats" data-visit-stats hidden');
+    expect(footer).toContain('if (response.status === 204 || !response.ok) return;');
+    expect(footer).toContain('data = await response.json();');
+    expect(footer).toContain('.catch(() => {');
+    expect(footer).toContain('Fail-open: keep the count hidden.');
+    expect(footer).not.toContain('uniqueVisitors: 0');
+    expect(footer).not.toContain('up to 0 unique visitor');
+  });
+
   it('drops Report an issue from the footer and keeps LinkedIn hire', () => {
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
     expect(footer).not.toContain('Report an issue');
