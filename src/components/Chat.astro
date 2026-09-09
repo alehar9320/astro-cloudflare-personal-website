@@ -1078,6 +1078,10 @@
       open.target = '_blank';
       open.rel = 'noopener noreferrer';
     }
+    if (isLinkedIn) {
+      open.setAttribute('data-hire-event', 'linkedin_click');
+      open.setAttribute('data-hire-surface', 'fab');
+    }
 
     // LinkedIn confirm is unstacked: title + one primary only (no quiet line).
     if (isLinkedIn) {
