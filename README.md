@@ -89,15 +89,15 @@ Navigate to `http://localhost:4321` in your browser to view the site as you make
 
 This project is structured to be deployed primarily on **Cloudflare Workers + Assets**. Push changes to the `main` branch connected to your Cloudflare Git integration and Cloudflare will automatically build using `npm run build` and deploy the output directory (`./dist/`). GitHub Actions handles quality checks plus GitHub release creation; it does not manually deploy production in parallel or push generated release files back to protected `main`.
 
-Render is also supported as a **Node web service**. The repo includes a [render.yaml](./render.yaml) Blueprint that uses:
+**Render is the Jules test environment only** ([ADR 0001](./docs/adr/0001-cloudflare-production-render-jules.md)) — not a second production host and not failover. The repo keeps a [render.yaml](./render.yaml) Blueprint for that Node path:
 
 - `npm install && npm run build`
 - `npm run start`
 - `NODE_VERSION=22.12.0`
 
-At build time, Render sets `RENDER=true`, which switches Astro to the standalone Node adapter. The Astro config also binds the server to `0.0.0.0`, which Render requires for health checks to pass.
+At build time, Render sets `RENDER=true`, which switches Astro to the standalone Node adapter. The Astro config also binds the server to `0.0.0.0`, which Render requires for health checks to pass. Expect Workers bindings (AI, KV, etc.) to be absent or stubbed there.
 
-If you deploy on Render, configure any required secrets in the Render dashboard environment settings. Do not commit or mirror local `.env` values into the repository.
+If you use the Jules Render service, configure any required secrets in the Render dashboard. Do not commit or mirror local `.env` values into the repository.
 
 ## 📬 Contact & Connect
 
