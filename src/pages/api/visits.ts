@@ -42,6 +42,8 @@ export const HOGQL = `SELECT
   uniqIf(distinct_id, timestamp >= now() - INTERVAL 14 DAY AND timestamp < now() - INTERVAL 7 DAY) AS unique_visitors_7d_prev,
   uniqIf(distinct_id, timestamp >= now() - INTERVAL 30 DAY) AS unique_visitors_30d,
   uniqIf(distinct_id, timestamp >= now() - INTERVAL 60 DAY AND timestamp < now() - INTERVAL 30 DAY) AS unique_visitors_30d_prev,
+  uniqIf(distinct_id, timestamp >= now() - INTERVAL 90 DAY) AS unique_visitors_90d,
+  uniqIf(distinct_id, timestamp >= now() - INTERVAL 180 DAY AND timestamp < now() - INTERVAL 90 DAY) AS unique_visitors_90d_prev,
   uniqIf(distinct_id, timestamp >= now() - INTERVAL 365 DAY) AS unique_visitors_365d,
   uniqIf(distinct_id, timestamp >= now() - INTERVAL 730 DAY AND timestamp < now() - INTERVAL 365 DAY) AS unique_visitors_365d_prev
 FROM events
