@@ -33,7 +33,7 @@ What visitors get on [the live site](https://me.alehar.workers.dev/) today (not 
 
 - **Home proof cards**: Short case teasers that deep-link into Work (IFS Design System and related proof).
 - **Work**: Indexed case studies under `/work/` (design systems, AI coding copilots, analytics, thesis, and earlier work).
-- **Biography**: Role and path at `/biography/` (not a separate About page).
+- **Biography**: Role and path at `/biography/` (not a separate About page). Prior published work: Ericsson internships/part-time, 2014–2016 (omitted from the visitor bio on purpose; stays here).
 - **Contact / hire**: LinkedIn-only hire path at `/contact/` — [linkedin.com/in/alehar](https://www.linkedin.com/in/alehar/) (no public email, no CV PDF).
 - **What's New**: Visitor-facing rewrite of GitHub Releases at `/whats-new/`.
 - **Meta pages**: This site (`/this-site/`), What's next (`/roadmap/`), and Site success (`/okr/`).
