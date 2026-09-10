@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-27 - Mobile Navigation Menu Touch Target Ergonomics
+
+**Learning:** Primary text navigation items (`.link`) and social action triggers (`.social`) in dropdown menu drawers (`Nav.astro`) are heavily accessed on touch viewports. Setting `display: inline-flex; align-items: center; min-height: 44px;` on text links and `align-items: center; justify-content: center; min-width: 44px; min-height: 44px;` on icon triggers ensures compliance with WCAG 2.1 AA touch target guidelines while keeping the interface feeling spacious and tactile.
+
+**Action:** Added explicit 44px minimum height / width touch target sizing and flex centering to `.link` and `.social` in `src/components/Nav.astro`.
+
 ## 2026-05-26 - Page Link Touch Target Ergonomics
 
 **Learning:** Section list links (such as `.earlier a` in `work.astro`) and standalone page action links (such as `.history-link` in `whats-new.astro` and `.hire-cta a`) often render as compact inline links on mobile viewports, failing WCAG 2.1 AA 44x44px minimum touch target requirements and risking mis-taps. Setting `display: inline-flex; align-items: center; min-height: 44px;` expands the interactive tap area without disrupting surrounding line rhythm.
