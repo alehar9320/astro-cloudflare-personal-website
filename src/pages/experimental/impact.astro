@@ -1,0 +1,86 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_product_impact) return Astro.redirect('/404/');
+
+const linkedinHref = 'https://www.linkedin.com/in/alehar/';
+
+const metrics = [
+  { label: 'Delivery Acceleration', val: 'Up to 2x faster' },
+  { label: 'Design System Adoption', val: 'Global Enterprise Scale' },
+  { label: 'Developer Experience', val: 'Streamlined Tooling & Standards' },
+];
+---
+
+<BaseLayout
+  title="Product Impact Snapshot | Alexander Härenstam"
+  description="Product Impact Snapshot and outcomes for Developer Experience leadership."
+  robots="noindex"
+>
+  <main id="main-content" class="wrapper stack gap-8" style="margin-top: 2rem;">
+    <Hero
+      title="Product Impact Snapshot"
+      tagline="Measurable outcomes in DevEx and Design Systems leadership."
+      align="start"
+    />
+    <div class="grid">
+      {
+        metrics.map(({ label, val }) => (
+          <div class="card">
+            <h3>{label}</h3>
+            <p>{val}</p>
+          </div>
+        ))
+      }
+    </div>
+    <div class="actions">
+      <CallToAction
+        href={linkedinHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-hire-event="hire_cta_click"
+        data-hire-surface="impact"
+      >
+        Connect on LinkedIn
+      </CallToAction>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .card {
+    padding: 1.5rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 0.75rem;
+    background: var(--gradient-subtle);
+  }
+  .card h3 {
+    font-size: var(--text-md);
+    color: var(--gray-200);
+    margin: 0 0 0.5rem;
+  }
+  .card p {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--gray-0);
+    margin: 0;
+  }
+  .actions {
+    margin-top: 1rem;
+    padding-bottom: var(--chat-fab-clearance);
+  }
+  @media (min-width: 50em) {
+    .actions {
+      padding-bottom: 0;
+    }
+  }
+</style>
