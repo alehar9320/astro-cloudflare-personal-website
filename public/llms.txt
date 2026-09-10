@@ -25,4 +25,7 @@ Recruiter keywords (not a fake title): Product Management, Developer Experience,
 - [Lidköping Stenhuggeri](https://me.alehar.workers.dev/work/lidkoping-stenhuggeri/): Early Android work. Demoted.
 - [Chalmers master's thesis](https://me.alehar.workers.dev/work/master-thesis/): Chalmers, 2017. Earlier work, not an equal card.
 - [What's New](https://me.alehar.workers.dev/whats-new/): Changelog.
+- [This site](https://me.alehar.workers.dev/this-site/): How the site is built and run.
+- [What's next](https://me.alehar.workers.dev/roadmap/): Public roadmap.
+- [Site success](https://me.alehar.workers.dev/okr/): How success is measured.
 - [GitHub](https://github.com/alehar9320/astro-cloudflare-personal-website): Source.
