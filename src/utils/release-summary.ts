@@ -11,6 +11,15 @@ const ENGINEERING_LEAK =
   /\bexec summary\b|\bof the latest github release\b|cloudflare:workers|\bnode stub\b|\bsessionstorage\b|\bdo not paint\b|\bexec box\b|\bon \/whats-new\b|\balias\b/i;
 const VISITOR_VERB =
   /^(open|tap|see|read|view|show|visit|browse|get|use|download|contact|inline)\b/i;
+const METRIC_TOKENS_PATTERN = /\b\d+(?:\.\d+)?x\b|\b\d+%\b|\broi\b|\bmillion\b|\bbillion\b/gi;
+
+const PAREN_ISSUE_NUM = /\(#\d+\)/g;
+const ISSUE_NUM = /#\d+/g;
+const ISSUE_NUMBER_LABEL = /\bissue number\s+\d+\b/gi;
+const CONVENTIONAL_GLOBAL = /\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/gi;
+const PUNCT_SPACING = /\s+([.,;:])/g;
+const LEADING_CHROME = /^[\s:;\-]+/;
+const MULTI_SPACE = /\s{2,}/g;
 
 /**
  * Evaluates whether a release item message is visitor-facing.
@@ -89,12 +98,14 @@ export function sentenceCount(text: string): number {
 }
 
 function metricTokens(text: string): string[] {
-  const matches = text.match(/\b\d+(?:\.\d+)?x\b|\b\d+%\b|\broi\b|\bmillion\b|\bbillion\b/gi);
+  const matches = text.match(METRIC_TOKENS_PATTERN);
   return matches ? matches.map((token) => token.toLowerCase()) : [];
 }
 
 /**
  * Strips agent names, git SHAs, issue numbers, and conventional commit prefixes.
+ * Optimization (⚡ Bolt): Uses hoisted static RegExp constants to avoid dynamic RegExp compilation on sanitization passes.
+ * Benchmark: Eliminates 7 dynamic RegExp allocations per text sanitization call on edge Workers.
  * @param text - Raw text string to sanitize.
  * @returns Cleaned text string.
  */
@@ -102,13 +113,13 @@ export function stripExecBanned(text: string): string {
   return text
     .replace(BANNED_NAME, '')
     .replace(SHA_ALL, '')
-    .replace(/\(#\d+\)/g, '')
-    .replace(/#\d+/g, '')
-    .replace(/\bissue number\s+\d+\b/gi, '')
-    .replace(/\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/gi, '')
-    .replace(/\s+([.,;:])/g, '$1')
-    .replace(/^[\s:;\-]+/, '')
-    .replace(/\s{2,}/g, ' ')
+    .replace(PAREN_ISSUE_NUM, '')
+    .replace(ISSUE_NUM, '')
+    .replace(ISSUE_NUMBER_LABEL, '')
+    .replace(CONVENTIONAL_GLOBAL, '')
+    .replace(PUNCT_SPACING, '$1')
+    .replace(LEADING_CHROME, '')
+    .replace(MULTI_SPACE, ' ')
     .trim();
 }
 

@@ -179,6 +179,9 @@ export function formatReleaseDate(dateString: string | null): string {
   return date.toISOString().split('T')[0];
 }
 
+const HASH_PREFIX = /^([a-f0-9]{7,40})\s+(.*)/i;
+const BULLET_PREFIX = /^[-*+]\s+/;
+
 /**
  * Parses a single changelog line into a ReleaseItem, extracting hashes and messages.
  * @param {string} line - A single line from the release body.
@@ -187,7 +190,7 @@ export function formatReleaseDate(dateString: string | null): string {
 export function parseReleaseItem(line: string): ReleaseItem {
   const cleaned = line.trim();
   // Matches a 7 to 40-character hex hash at the beginning
-  const hashMatch = cleaned.match(/^([a-f0-9]{7,40})\s+(.*)/i);
+  const hashMatch = HASH_PREFIX.exec(cleaned);
 
   if (hashMatch) {
     const hash = hashMatch[1];
@@ -214,6 +217,8 @@ export function isPublicChangelogItem(item: ReleaseItem): boolean {
  * Filters for lines starting with list markers (-, *, +).
  * Drops Jules, agent-farm, and Johan-nits internals from the public list.
  * Uses pointer-based line scanning (`indexOf('\n', startPos)`) to eliminate dynamic line array allocations on edge runtimes.
+ * Optimization (⚡ Bolt): Uses hoisted static `BULLET_PREFIX` RegExp and `slice` to avoid dynamic RegExp compilation and dual test/replace passes.
+ * Benchmark: Eliminates dynamic RegExp allocation per line and reduces regex evaluation pass from 2x to 1x per line on edge SSR requests.
  * @param {string} body - The full Markdown body of a GitHub release.
  * @returns {ReleaseItem[]} An array of parsed release items.
  */
@@ -235,9 +240,10 @@ export function splitReleaseBody(body: string): ReleaseItem[] {
     startPos = nextNewline + 1;
 
     const trimmed = line.trim();
-    if (!/^[-*+]\s+/.test(trimmed)) continue;
+    const match = BULLET_PREFIX.exec(trimmed);
+    if (!match) continue;
 
-    const rawMessage = trimmed.replace(/^[-*+]\s+/, '');
+    const rawMessage = trimmed.slice(match[0].length);
     const item = parseReleaseItem(rawMessage);
     if (isPublicChangelogItem(item)) {
       items.push(item);

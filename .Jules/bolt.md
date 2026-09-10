@@ -41,3 +41,7 @@ Action: Updated `collectItems` in `src/utils/whats-new-glance.ts` to iterate ove
 2026-09-08 - Zero-Allocation Reverse Array Scan for Chat Follow-up Prompts
 Learning: Dynamic shallow array copying and array reversal (`[...messages].reverse().find(...)`) on every UI update creates unnecessary temporary heap allocations and garbage collection overhead in client-side scripts. Replacing array copy/reverse with a reverse indexed `for` loop eliminates dynamic array allocations completely and stops scanning as soon as the first matching element is found.
 Action: Refactored `showFollowUps()` in `src/components/Chat.astro` to use an indexed reverse `for` loop.
+
+2026-09-09 - Module-Level Static RegExp Hoisting for Edge Utilities
+Learning: In Cloudflare Workers edge runtimes, dynamic regular expression literals inside frequently invoked utility functions (such as release body parsers and text sanitization helpers) trigger repeated RegExp compilation overhead and temporary object allocations on every request. Hoisting static RegExp literals to module-level constants and avoiding redundant test/replace passes reduces CPU time and memory churn.
+Action: Hoisted static regular expressions (`BULLET_PREFIX`, `HASH_PREFIX`, `METRIC_TOKENS_PATTERN`, `PAREN_ISSUE_NUM`, `ISSUE_NUM`, `ISSUE_NUMBER_LABEL`, `CONVENTIONAL_GLOBAL`, `PUNCT_SPACING`, `LEADING_CHROME`, `MULTI_SPACE`) to module scope in `src/utils/github-releases.ts` and `src/utils/release-summary.ts`.
