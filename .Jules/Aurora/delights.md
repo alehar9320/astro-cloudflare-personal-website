@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - Pill Hover Elevate | Signal: Competitive | Lean Implementation: Added subtle translateY(-2px) elevation and gradient shift on hover to Pill badges gated behind enable_pill_hover_v1.
+
+- Insight: Interactive tag badges in modern tech portfolios feel more tactile and responsive when subtle hover elevation is present.
+- User Target: Joy & Comfort
+- Abort Triggers: None (verified via test and build pipeline).
+- User Reaction: Pending synthetic feedback.
