@@ -10,6 +10,15 @@ Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hi
 
 # Kinetic Journal ⚡
 
+## 2026-08-30 - Work Card Image Scale Micro-Interaction
+
+- **Signal:** Portfolio preview cards lacked spatial motion depth on hover and focus states.
+- **Action:**
+  - Added hardware-accelerated `transform: scale(1.04)` transition on work card images in `PortfolioPreview.astro`.
+  - Implemented `@media (prefers-reduced-motion: reduce)` override to reset transform scale for accessibility.
+- **Tokens/CSS Added:**
+  - Image Scale: `transform: scale(1.04)` with `cubic-bezier(0.22, 1, 0.36, 1)` transition timing.
+
 ## 2026-08-29 - CTA glass abort | Signal: closed #772/#667 | Lean Implementation: HARD ABORT CallToAction glassmorphism and micro-states
 
 ## 2025-05-15 - Interactive Glassmorphism for Skills Section
