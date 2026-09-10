@@ -99,6 +99,17 @@ At build time, Render sets `RENDER=true`, which switches Astro to the standalone
 
 If you deploy on Render, configure any required secrets in the Render dashboard environment settings. Do not commit or mirror local `.env` values into the repository.
 
+## 📚 Documentation
+
+Engineering source of truth lives in the repo. The [GitHub Wiki](https://github.com/alehar9320/astro-cloudflare-personal-website/wiki) is a map only (no visitor essays). GitHub Pages stays off.
+
+| Doc | Role |
+| --- | --- |
+| [AGENTS.md](./AGENTS.md) | AI / agent source of truth |
+| [docs/](./docs/) | ADRs, MCP, Zod guidelines, inspirations (no folder index on main; do not reopen closed #911) |
+| [SECURITY.md](./SECURITY.md) | Vulnerability reports via LinkedIn |
+| [GitHub Releases](https://github.com/alehar9320/astro-cloudflare-personal-website/releases) | Canonical changelog (`CHANGELOG.md` is a stub; visitor rewrite is `/whats-new/`) |
+
 ## 📬 Contact & Connect
 
 - **LinkedIn:** [Alexander Härenstam](https://www.linkedin.com/in/alehar/)
