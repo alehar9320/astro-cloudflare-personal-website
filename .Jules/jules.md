@@ -21,3 +21,9 @@
 - [Insight 1: Tighter focus ring outline-offsets (2px) prevent focus ring overflow clipping on compact overlay toggles.]
 - [Insight 2: Gating active press scale transitions behind prefers-reduced-motion media queries respects accessibility preferences while preserving tactile visual feedback.]
 - [Delta: 17 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-16 - Pill Tactile Micro-Interaction | Signal: Technical/Competitive | Lean Implementation: Flagged Hardware-Accelerated CSS Transitions
+
+- [Insight 1: Subtle hardware-accelerated transforms (`translateY` + `scale`) on interactive pill badges create responsive tactile feedback.]
+- [Insight 2: Wrapping feature flags in Zod schema content collections guarantees compile-time flag safety across all Astro components.]
+- [Delta: ~20 lines across flags and component. Guardrails: All passed autonomously.]
