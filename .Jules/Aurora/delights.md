@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - Pill Glow | Signal: Technical/Behavioral | Lean Implementation: Added interactive subtle elevation & accent glow on hover for tag pills.
+
+- Insight: Tags and pill indicators are frequent hover targets when exploring case studies; adding responsive tactile response increases perceived depth.
+- User Target: Comfort & Joy
+- Abort Triggers: None (verified via build and test pipelines).
+- User Reaction: Pending synthetic feedback.
