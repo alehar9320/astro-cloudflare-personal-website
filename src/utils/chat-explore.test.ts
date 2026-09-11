@@ -67,4 +67,26 @@ describe('exploreCardForQuestion', () => {
     expect(LINKEDIN_CONFIRM.line).not.toContain('from me');
     expect(LINKEDIN_CONFIRM.title).not.toContain('from me');
   });
+
+  it('handles empty inputs, whitespace, and unmapped questions correctly', () => {
+    expect(exploreCardForQuestion('')).toBeNull();
+    expect(exploreCardForQuestion('   ')).toBeNull();
+    expect(exploreCardForQuestion('What is the weather today in Stockholm?')).toBeNull();
+  });
+
+  it('handles case-insensitivity, punctuation, and keyword aliases', () => {
+    expect(exploreCardForQuestion('  ZEROHEIGHT  ')).toEqual(EXPLORE_CARDS.designSystem);
+    expect(exploreCardForQuestion('TELL ME ABOUT TELEMETRY!')).toEqual(EXPLORE_CARDS.analytics);
+    expect(exploreCardForQuestion('What is your EDUCATION background?')).toEqual(
+      EXPLORE_CARDS.biography
+    );
+    expect(exploreCardForQuestion('How do you work as a product manager?')).toEqual(
+      EXPLORE_CARDS.biography
+    );
+    expect(exploreCardForQuestion('Tell me about your EXPERIENCE')).toEqual(
+      EXPLORE_CARDS.biography
+    );
+    expect(exploreCardForQuestion('Tell me about 30x ROI!')).toEqual(EXPLORE_CARDS.designSystem);
+    expect(exploreCardForQuestion('Can I see your portfolio?')).toEqual(EXPLORE_CARDS.work);
+  });
 });
