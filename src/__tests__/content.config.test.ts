@@ -28,7 +28,16 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
+    const rawSchema = collections.flags.schema;
+    const schema =
+      typeof rawSchema === 'function'
+        ? rawSchema({
+            image: () => ({}) as unknown as ReturnType<Parameters<typeof rawSchema>[0]['image']>,
+          })
+        : rawSchema;
+    if (!schema || typeof schema.safeParse !== 'function') {
+      throw new Error('Flags schema is not defined or valid');
+    }
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -40,7 +49,16 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const rawSchema = collections.work.schema;
+    const schema =
+      typeof rawSchema === 'function'
+        ? rawSchema({
+            image: () => ({}) as unknown as ReturnType<Parameters<typeof rawSchema>[0]['image']>,
+          })
+        : rawSchema;
+    if (!schema || typeof schema.safeParse !== 'function') {
+      throw new Error('Work schema is not defined or valid');
+    }
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
