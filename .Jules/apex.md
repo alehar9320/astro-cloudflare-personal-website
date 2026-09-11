@@ -22,3 +22,5 @@ Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, an
 ## 2026-05-26 - Product Manifesto | Signal: Product Leadership "Guiding Principles" trend | Lean Implementation: Isolated experimental route, uses Hero/Icon primitives, ~45 lines delta.
 
 ## 2026-05-27 - Strategic Reading List | Signal: Portfolio "Bookshelf" trend | Lean Implementation: Isolated experimental route, static data array, uses Hero/Pill/Icon primitives, ~48 lines delta.
+
+## 2026-05-28 - Operating Cadence | Signal: Product Leadership Cadence trend | Lean Implementation: Isolated experimental route guarded by feature flag, < 40 lines total delta.

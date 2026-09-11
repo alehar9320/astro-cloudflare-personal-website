@@ -1,0 +1,56 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flags = await getEntry('flags', 'config');
+if (!flags?.data.enable_operating_cadence) return Astro.redirect('/404/');
+
+const items = [
+  { t: 'Daily', d: 'Unblock execution, async sync & code reviews' },
+  { t: 'Weekly', d: 'Sprint momentum, DevEx telemetry & bug triage' },
+  { t: 'Quarterly', d: 'Roadmaps, strategy themes & OKR calibration' },
+];
+---
+
+<BaseLayout title="Operating Cadence" description="Product execution rhythm." robots="noindex">
+  <main class="wrapper stack gap-8" style="margin-top:3rem;">
+    <Hero title="Operating Cadence" tagline="Execution rhythm." align="start" />
+    <div class="grid">
+      {
+        items.map((i) => (
+          <div class="card">
+            <strong>{i.t}</strong>
+            <p>{i.d}</p>
+          </div>
+        ))
+      }
+    </div>
+    <CallToAction href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener"
+      >Get in touch</CallToAction
+    >
+  </main>
+</BaseLayout>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+  .card {
+    padding: 1rem;
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+  }
+  .card strong {
+    color: var(--gray-0);
+  }
+  .card p {
+    margin: 0.25rem 0 0;
+    color: var(--gray-300);
+    font-size: var(--text-sm);
+  }
+</style>
