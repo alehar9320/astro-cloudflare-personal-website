@@ -275,6 +275,10 @@ const isCurrentPage = (href: string) => {
   .menu-button {
     position: relative;
     display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
     border: 0;
     border-radius: 999rem;
     padding: 0.5rem;
@@ -288,7 +292,12 @@ const isCurrentPage = (href: string) => {
       color var(--theme-transition),
       background-color var(--theme-transition),
       box-shadow var(--theme-transition),
+      transform var(--theme-transition),
       outline-offset var(--theme-transition);
+  }
+
+  .menu-button:active {
+    transform: scale(0.96);
   }
 
   .menu-button:hover,
@@ -433,6 +442,10 @@ const isCurrentPage = (href: string) => {
 
   .social {
     display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
     padding: var(--icon-padding);
     text-decoration: none;
     color: var(--accent-dark);
@@ -444,7 +457,7 @@ const isCurrentPage = (href: string) => {
   }
 
   .social:active {
-    transform: scale(0.97);
+    transform: scale(0.96);
   }
 
   .social:hover,
@@ -596,6 +609,7 @@ const isCurrentPage = (href: string) => {
     .site-title:hover,
     .site-title:active,
     .site-title:focus-visible,
+    .menu-button:active,
     .link:active,
     .social:active {
       transform: none;

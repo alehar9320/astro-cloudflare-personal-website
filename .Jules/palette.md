@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-27 - Mobile Navigation Control & Footer Link Touch Target Ergonomics
+
+**Learning:** Compact navigation buttons (such as `.menu-button` in `Nav.astro`) and header/footer social icon links (`.social`) require explicit minimum touch target dimensions (`min-width: 44px; min-height: 44px; align-items: center; justify-content: center;`) to comply with WCAG 2.1 AA requirements on mobile viewports. Adding responsive physical feedback (`transform: scale(0.96)`) under `@media (prefers-reduced-motion: no-preference)` enhances touch interaction feel. Additionally, configuring footer colophon containers with flex-wrap and setting `min-height: 44px` on all footer anchor tags guarantees accessible tap areas without causing layout distortion.
+
+**Action:** Updated `.menu-button` and `.social` in `Nav.astro` with 44x44px minimum touch targets and `:active` scale feedback. Enforced 44x44px minimum touch targets for `footer a` and flex-wrap alignment for `.colophon` in `Footer.astro`.
+
 ## 2026-05-26 - Page Link Touch Target Ergonomics
 
 **Learning:** Section list links (such as `.earlier a` in `work.astro`) and standalone page action links (such as `.history-link` in `whats-new.astro` and `.hire-cta a`) often render as compact inline links on mobile viewports, failing WCAG 2.1 AA 44x44px minimum touch target requirements and risking mis-taps. Setting `display: inline-flex; align-items: center; min-height: 44px;` expands the interactive tap area without disrupting surrounding line rhythm.
