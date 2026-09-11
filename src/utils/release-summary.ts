@@ -88,8 +88,13 @@ export function sentenceCount(text: string): number {
   return count;
 }
 
+/* Optimization (⚡ Bolt): Hoisted static RegExp constant to module level to prevent dynamic RegExp
+   compilation overhead during metric validation on Cloudflare Workers edge runtimes.
+   Benchmark: Eliminates inline RegExp creation on each call to metricTokens. */
+const METRIC_TOKENS_REGEX = /\b\d+(?:\.\d+)?x\b|\b\d+%\b|\broi\b|\bmillion\b|\bbillion\b/gi;
+
 function metricTokens(text: string): string[] {
-  const matches = text.match(/\b\d+(?:\.\d+)?x\b|\b\d+%\b|\broi\b|\bmillion\b|\bbillion\b/gi);
+  const matches = text.match(METRIC_TOKENS_REGEX);
   return matches ? matches.map((token) => token.toLowerCase()) : [];
 }
 
