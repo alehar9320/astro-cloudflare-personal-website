@@ -5,6 +5,16 @@ import { defineCollection } from 'astro:content';
 import { collections } from '../content.config';
 import flagsFixture from '../content/flags/config.json';
 
+interface SafeParsable {
+  safeParse: (data: unknown) => {
+    success: boolean;
+    data?: {
+      title?: string;
+      publishDate?: Date;
+    };
+  };
+}
+
 describe('content.config', () => {
   it('exercises infrastructure mocks', () => {
     const schema = z.object({ test: z.string() });
@@ -28,7 +38,7 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
+    const schema = collections.flags.schema as unknown as SafeParsable;
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -40,7 +50,7 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const schema = collections.work.schema as unknown as SafeParsable;
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -51,7 +61,7 @@ describe('content.config', () => {
     };
     const result = schema.safeParse(sampleWork);
     expect(result.success).toBe(true);
-    if (result.success) {
+    if (result.success && result.data) {
       expect(result.data.title).toBe(sampleWork.title);
       expect(result.data.publishDate).toBeInstanceOf(Date);
     }

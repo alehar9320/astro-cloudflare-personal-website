@@ -45,20 +45,26 @@ function asIsoTimestamp(raw: unknown): string | null {
   return d.toISOString();
 }
 
+/**
+ * Extracts a named or indexed field from a response row.
+ * Optimization: Uses pre-computed `columnMap` hashtable for O(1) field lookup
+ * instead of repeated O(N) `columns.indexOf(key)` scans across tabular result rows.
+ */
 function valueFromRow(
   row: unknown,
-  columns: string[] | undefined,
+  columnMap: Record<string, number> | undefined,
   key: string,
   index: number
 ): unknown {
   if (row && typeof row === 'object' && !Array.isArray(row) && key in row) {
     return (row as Record<string, unknown>)[key];
   }
-  if (Array.isArray(row) && columns) {
-    const colIndex = columns.indexOf(key);
-    if (colIndex >= 0) return row[colIndex];
+  if (Array.isArray(row)) {
+    if (columnMap && Object.hasOwn(columnMap, key)) {
+      return row[columnMap[key]];
+    }
+    return row[index];
   }
-  if (Array.isArray(row)) return row[index];
   return undefined;
 }
 
@@ -76,26 +82,33 @@ export function parseVisitGlance(payload: unknown): VisitGlance | null {
   if (!Array.isArray(results) || results.length === 0) return null;
 
   const columns = (payload as { columns?: unknown }).columns;
-  const columnNames = Array.isArray(columns)
-    ? columns.filter((c): c is string => typeof c === 'string')
-    : undefined;
+  let columnMap: Record<string, number> | undefined;
+  if (Array.isArray(columns)) {
+    columnMap = Object.create(null) as Record<string, number>;
+    for (let i = 0; i < columns.length; i++) {
+      const col = columns[i];
+      if (typeof col === 'string') {
+        columnMap[col] = i;
+      }
+    }
+  }
 
   const row = results[0];
-  const pageviews = asFiniteNumber(valueFromRow(row, columnNames, 'pageviews', 0));
-  const uniqueVisitors = asFiniteNumber(valueFromRow(row, columnNames, 'unique_visitors', 1));
-  const firstSeen = asIsoTimestamp(valueFromRow(row, columnNames, 'first_seen', 2));
-  const pageviews7d = asFiniteNumber(valueFromRow(row, columnNames, 'pageviews_7d', 3));
-  const uniqueVisitors7d = asFiniteNumber(valueFromRow(row, columnNames, 'unique_visitors_7d', 4));
-  const unique1d = asFiniteNumber(valueFromRow(row, columnNames, 'unique_visitors_1d', 5));
-  const unique1dPrev = asFiniteNumber(valueFromRow(row, columnNames, 'unique_visitors_1d_prev', 6));
-  const unique7dPrev = asFiniteNumber(valueFromRow(row, columnNames, 'unique_visitors_7d_prev', 7));
-  const unique30d = asFiniteNumber(valueFromRow(row, columnNames, 'unique_visitors_30d', 8));
+  const pageviews = asFiniteNumber(valueFromRow(row, columnMap, 'pageviews', 0));
+  const uniqueVisitors = asFiniteNumber(valueFromRow(row, columnMap, 'unique_visitors', 1));
+  const firstSeen = asIsoTimestamp(valueFromRow(row, columnMap, 'first_seen', 2));
+  const pageviews7d = asFiniteNumber(valueFromRow(row, columnMap, 'pageviews_7d', 3));
+  const uniqueVisitors7d = asFiniteNumber(valueFromRow(row, columnMap, 'unique_visitors_7d', 4));
+  const unique1d = asFiniteNumber(valueFromRow(row, columnMap, 'unique_visitors_1d', 5));
+  const unique1dPrev = asFiniteNumber(valueFromRow(row, columnMap, 'unique_visitors_1d_prev', 6));
+  const unique7dPrev = asFiniteNumber(valueFromRow(row, columnMap, 'unique_visitors_7d_prev', 7));
+  const unique30d = asFiniteNumber(valueFromRow(row, columnMap, 'unique_visitors_30d', 8));
   const unique30dPrev = asFiniteNumber(
-    valueFromRow(row, columnNames, 'unique_visitors_30d_prev', 9)
+    valueFromRow(row, columnMap, 'unique_visitors_30d_prev', 9)
   );
-  const unique365d = asFiniteNumber(valueFromRow(row, columnNames, 'unique_visitors_365d', 10));
+  const unique365d = asFiniteNumber(valueFromRow(row, columnMap, 'unique_visitors_365d', 10));
   const unique365dPrev = asFiniteNumber(
-    valueFromRow(row, columnNames, 'unique_visitors_365d_prev', 11)
+    valueFromRow(row, columnMap, 'unique_visitors_365d_prev', 11)
   );
 
   if (

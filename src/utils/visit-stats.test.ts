@@ -87,7 +87,7 @@ describe('parseVisitGlance', () => {
     expect(glance?.uniqueVisitorsYoY).toBeNull();
   });
 
-  it('reads a column-ordered array row', () => {
+  it('reads a column-ordered array row using hashtable lookup', () => {
     const glance = parseVisitGlance({
       columns: ['pageviews', 'unique_visitors', 'first_seen', 'pageviews_7d', 'unique_visitors_7d'],
       results: [[94, 12, '2026-08-14T07:03:00.000Z', 20, 8]],
@@ -100,6 +100,38 @@ describe('parseVisitGlance', () => {
       uniqueVisitors7d: 8,
       ...emptyPeriods,
     });
+  });
+
+  it('correctly maps reordered column arrays using hashtable index lookup', () => {
+    const glance = parseVisitGlance({
+      columns: ['unique_visitors_7d', 'pageviews_7d', 'first_seen', 'unique_visitors', 'pageviews'],
+      results: [[8, 20, '2026-08-14T07:03:00.000Z', 12, 94]],
+    });
+    expect(glance).toEqual({
+      pageviews: 94,
+      uniqueVisitors: 12,
+      firstSeen: '2026-08-14T07:03:00.000Z',
+      pageviews7d: 20,
+      uniqueVisitors7d: 8,
+      ...emptyPeriods,
+    });
+  });
+
+  it('handles non-string values inside columns header array defensively', () => {
+    const glance = parseVisitGlance({
+      columns: [
+        'pageviews',
+        null,
+        'unique_visitors',
+        123,
+        'first_seen',
+        'pageviews_7d',
+        'unique_visitors_7d',
+      ],
+      results: [[94, 'ignore', 12, 'ignore', '2026-08-14T07:03:00.000Z', 20, 8]],
+    });
+    expect(glance?.pageviews).toBe(94);
+    expect(glance?.uniqueVisitors).toBe(12);
   });
 
   it('parses a zero row so the API can fail-open', () => {

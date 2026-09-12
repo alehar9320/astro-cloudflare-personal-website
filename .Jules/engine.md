@@ -29,3 +29,9 @@
 - **Edge Memory & Performance:** Refactored `splitReleaseBody` in `src/utils/github-releases.ts` and `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use pointer-based line scanning (`indexOf('\n', startPos)`), eliminating dynamic `body.split('\n')` string array allocations during SSR and API execution.
 - **Sentence Counting Optimization:** Refactored `sentenceCount` in `src/utils/release-summary.ts` from regex lookbehind `.split(/(?<=[.!?])\s+/)` into a single-pass character scanning loop. Added whitespace-aware sentence boundary detection to safely ignore dots inside version strings (`2026.08.15.1714`).
 - **Verification:** Added Vitest unit test cases across `release-summary.test.ts`, `visitor-changelog.test.ts`, and `github-releases.test.ts` covering version numbers, CRLF line endings, multiple trailing punctuation, and whitespace handling.
+
+## 2025-06-18 - Pre-Computed Hashtable Indexing for Tabular Visit API Column Parsing
+
+- **Edge Performance & Lookup Optimization:** Refactored `parseVisitGlance` and `valueFromRow` in `src/utils/visit-stats.ts` to pre-compute a single `Record<string, number>` hashtable lookup map from tabular PostHog HogQL API `columns` headers.
+- **Lookup Complexity Reduction:** Replaced repeated $O(N)$ `columns.indexOf(key)` array scans across 12 extracted metric fields with $O(1)$ constant-time property lookups, eliminating redundant loop overhead on edge runtimes during analytics API queries.
+- **Verification & Safety:** Added Vitest unit test cases in `src/utils/visit-stats.test.ts` covering reordered column arrays and non-string column header filtering.
