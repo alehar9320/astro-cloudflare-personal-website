@@ -103,9 +103,7 @@ export function parseVisitGlance(payload: unknown): VisitGlance | null {
   const unique1dPrev = asFiniteNumber(valueFromRow(row, columnMap, 'unique_visitors_1d_prev', 6));
   const unique7dPrev = asFiniteNumber(valueFromRow(row, columnMap, 'unique_visitors_7d_prev', 7));
   const unique30d = asFiniteNumber(valueFromRow(row, columnMap, 'unique_visitors_30d', 8));
-  const unique30dPrev = asFiniteNumber(
-    valueFromRow(row, columnMap, 'unique_visitors_30d_prev', 9)
-  );
+  const unique30dPrev = asFiniteNumber(valueFromRow(row, columnMap, 'unique_visitors_30d_prev', 9));
   const unique365d = asFiniteNumber(valueFromRow(row, columnMap, 'unique_visitors_365d', 10));
   const unique365dPrev = asFiniteNumber(
     valueFromRow(row, columnMap, 'unique_visitors_365d_prev', 11)
