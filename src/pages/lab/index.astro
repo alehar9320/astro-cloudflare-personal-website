@@ -1,0 +1,381 @@
+---
+import Hero from '../../components/Hero.astro';
+import Icon from '../../components/Icon.astro';
+import Pill from '../../components/Pill.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Northern Lights Canvas Lab | Alexander Härenstam"
+  description="Interactive digital art laboratory showcasing real-time math-driven Northern Lights wave dynamics and liquid refraction."
+>
+  <div class="stack gap-20">
+    <main class="wrapper stack gap-8" id="main-content">
+      <Hero
+        title="Interactive Canvas Lab"
+        tagline="Safe-space creative laboratory exploring real-time math dynamics, vector waves, and Northern Lights liquid refractions."
+        align="start"
+      >
+        <div class="roles">
+          <Pill><Icon icon="terminal-window" size="1.33em" /> Digital Art Lab</Pill>
+          <Pill><Icon icon="strategy" size="1.33em" /> 60 FPS Fluid Physics</Pill>
+        </div>
+      </Hero>
+
+      <section class="lab-container glass-card">
+        <header class="lab-header">
+          <div class="lab-meta">
+            <h2 class="lab-title">Aurora Wave Refraction Field</h2>
+            <p class="lab-description">
+              Move your pointer across the canvas to interact with superposed sine wave harmonics
+              and marine cyan light particles.
+            </p>
+          </div>
+          <div class="controls">
+            <button
+              id="pause-toggle"
+              class="control-btn"
+              type="button"
+              aria-label="Pause or play aurora animation"
+            >
+              <span id="pause-icon" class="btn-icon">⏸</span>
+              <span id="pause-text" class="btn-text">Pause</span>
+            </button>
+          </div>
+        </header>
+
+        <div class="canvas-wrapper">
+          <canvas id="aurora-lab-canvas" aria-label="Interactive Northern Lights wave field canvas"
+          ></canvas>
+        </div>
+      </section>
+    </main>
+  </div>
+</BaseLayout>
+
+<script>
+  import {
+    calculateWaveHeight,
+    clampDpr,
+    formatRgba,
+    interpolateRgb,
+  } from '../../utils/aurora-math';
+
+  interface Particle {
+    x: number;
+    y: number;
+    vx: number;
+    vy: number;
+    radius: number;
+    alpha: number;
+    baseY: number;
+  }
+
+  const initAuroraLab = () => {
+    const canvas = document.getElementById('aurora-lab-canvas') as HTMLCanvasElement | null;
+    const pauseBtn = document.getElementById('pause-toggle') as HTMLButtonElement | null;
+    const pauseIcon = document.getElementById('pause-icon') as HTMLSpanElement | null;
+    const pauseText = document.getElementById('pause-text') as HTMLSpanElement | null;
+
+    if (!canvas) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animFrameId: number | null = null;
+    let isRunning = true;
+    let pointerX = -1000;
+    let pointerY = -1000;
+    let pointerActive = false;
+    let particles: Particle[] = [];
+
+    // Pre-computed colors: Marine Blue -> Cyan
+    const colorMarine: [number, number, number] = [14, 116, 144];
+    const colorCyan: [number, number, number] = [56, 189, 248];
+
+    // Check prefers-reduced-motion
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const prefersReducedMotion = reducedMotionQuery.matches;
+
+    const resizeCanvas = () => {
+      const parent = canvas.parentElement;
+      if (!parent) return;
+
+      const dpr = clampDpr(window.devicePixelRatio || 1);
+      const width = parent.clientWidth;
+      const height = parent.clientHeight || 450;
+
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      ctx.scale(dpr, dpr);
+
+      // Mobile adaptive particle scaling (fewer particles on small viewports)
+      const particleCount = width < 600 ? 25 : 55;
+      particles = [];
+      for (let i = 0; i < particleCount; i++) {
+        const py = Math.random() * height;
+        particles.push({
+          x: Math.random() * width,
+          y: py,
+          baseY: py,
+          vx: (Math.random() - 0.5) * 0.4,
+          vy: (Math.random() - 0.5) * 0.4,
+          radius: Math.random() * 2 + 1,
+          alpha: Math.random() * 0.6 + 0.2,
+        });
+      }
+    };
+
+    let startTime = performance.now();
+
+    const drawFrame = (now: number) => {
+      const elapsed = (now - startTime) / 1000;
+      const width = canvas.parentElement?.clientWidth || canvas.width;
+      const height = canvas.parentElement?.clientHeight || canvas.height;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Render 3 Aurora Wave Ribbons
+      const waveLines = 3;
+      for (let w = 0; w < waveLines; w++) {
+        ctx.beginPath();
+        const factor = w / (waveLines - 1 || 1);
+        const rgb = interpolateRgb(colorMarine, colorCyan, factor);
+        const baseHeight = height * (0.35 + w * 0.2);
+
+        ctx.moveTo(0, height);
+
+        const step = width < 600 ? 12 : 6;
+        for (let x = 0; x <= width; x += step) {
+          let waveY = baseHeight + calculateWaveHeight(x, baseHeight, elapsed + w * 0.8, 0.008, 28);
+
+          // Pointer disturbance
+          if (pointerActive) {
+            const dx = x - pointerX;
+            const dy = waveY - pointerY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 140) {
+              const push = (1 - dist / 140) * 32;
+              waveY += dy > 0 ? push : -push;
+            }
+          }
+
+          if (x === 0) {
+            ctx.moveTo(x, waveY);
+          } else {
+            ctx.lineTo(x, waveY);
+          }
+        }
+
+        ctx.lineTo(width, height);
+        ctx.lineTo(0, height);
+        ctx.closePath();
+
+        const grad = ctx.createLinearGradient(0, baseHeight - 40, 0, height);
+        grad.addColorStop(0, formatRgba(rgb, 0.35));
+        grad.addColorStop(1, formatRgba(rgb, 0.02));
+        ctx.fillStyle = grad;
+        ctx.fill();
+      }
+
+      // Render Fluid Light Particles
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+
+        if (isRunning && !prefersReducedMotion) {
+          p.x += p.vx;
+          p.y += p.vy;
+
+          if (p.x < 0) p.x = width;
+          if (p.x > width) p.x = 0;
+          if (p.y < 0) p.y = height;
+          if (p.y > height) p.y = 0;
+        }
+
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
+        const color = interpolateRgb(colorCyan, colorMarine, p.y / height);
+        ctx.fillStyle = formatRgba(color, p.alpha);
+        ctx.fill();
+      }
+
+      if (isRunning && !prefersReducedMotion) {
+        animFrameId = requestAnimationFrame(drawFrame);
+      }
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      pointerX = e.clientX - rect.left;
+      pointerY = e.clientY - rect.top;
+      pointerActive = true;
+    };
+
+    const handlePointerLeave = () => {
+      pointerActive = false;
+    };
+
+    const togglePlay = () => {
+      isRunning = !isRunning;
+      if (pauseText) pauseText.textContent = isRunning ? 'Pause' : 'Play';
+      if (pauseIcon) pauseIcon.textContent = isRunning ? '⏸' : '▶';
+
+      if (isRunning && !prefersReducedMotion) {
+        startTime = performance.now() - (animFrameId ? 0 : 0);
+        animFrameId = requestAnimationFrame(drawFrame);
+      } else if (animFrameId) {
+        cancelAnimationFrame(animFrameId);
+        animFrameId = null;
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target === pauseBtn || e.target === canvas) {
+        if (e.key === ' ' || e.key === 'Enter') {
+          e.preventDefault();
+          togglePlay();
+        }
+      }
+    };
+
+    // Event listeners
+    window.addEventListener('resize', resizeCanvas);
+    canvas.addEventListener('pointermove', handlePointerMove);
+    canvas.addEventListener('pointerleave', handlePointerLeave);
+    if (pauseBtn) {
+      pauseBtn.addEventListener('click', togglePlay);
+    }
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Initial sizing and frame draw
+    resizeCanvas();
+    if (prefersReducedMotion) {
+      isRunning = false;
+      if (pauseText) pauseText.textContent = 'Play';
+      if (pauseIcon) pauseIcon.textContent = '▶';
+      drawFrame(performance.now());
+    } else {
+      drawFrame(performance.now());
+    }
+
+    // Comprehensive lifecycle cleanup on page navigation / swap
+    const cleanup = () => {
+      if (animFrameId) {
+        cancelAnimationFrame(animFrameId);
+        animFrameId = null;
+      }
+      window.removeEventListener('resize', resizeCanvas);
+      canvas.removeEventListener('pointermove', handlePointerMove);
+      canvas.removeEventListener('pointerleave', handlePointerLeave);
+      if (pauseBtn) {
+        pauseBtn.removeEventListener('click', togglePlay);
+      }
+      window.removeEventListener('keydown', handleKeyDown);
+
+      // Clear memory references
+      particles = [];
+      canvas.width = 0;
+      canvas.height = 0;
+    };
+
+    document.addEventListener('astro:before-swap', cleanup, { once: true });
+    window.addEventListener('pagehide', cleanup, { once: true });
+  };
+
+  // Run initial setup
+  initAuroraLab();
+</script>
+
+<style>
+  .glass-card {
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .lab-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  @media (min-width: 40em) {
+    .lab-header {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .lab-title {
+    font-size: var(--text-lg);
+    color: var(--gray-0);
+    margin-bottom: 0.25rem;
+  }
+
+  .lab-description {
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    max-width: 42ch;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .control-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    padding: 0.5rem 1.25rem;
+    border-radius: 999rem;
+    border: 1px solid var(--gray-700);
+    background: var(--gray-900);
+    color: var(--gray-100);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      border-color var(--theme-transition),
+      background-color var(--theme-transition);
+  }
+
+  .control-btn:hover {
+    border-color: var(--accent-regular);
+    background: var(--gray-800);
+  }
+
+  .control-btn:focus-visible {
+    outline: 2px solid var(--accent-light);
+    outline-offset: 2px;
+  }
+
+  .canvas-wrapper {
+    position: relative;
+    width: 100%;
+    height: 420px;
+    border-radius: 1rem;
+    overflow: hidden;
+    background: var(--gray-999);
+    border: 1px solid var(--gray-800);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+    touch-action: none;
+  }
+</style>
