@@ -1,0 +1,86 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_operating_model) return Astro.redirect('/404/');
+
+const href = 'https://www.linkedin.com/in/alehar/';
+const pillars = [
+  { t: 'Frictionless Flow', d: 'Shorten feedback loops and streamline build pipelines.' },
+  { t: 'Cognitive Ergonomics', d: 'Reduce mental overhead with design systems and clear APIs.' },
+  {
+    t: 'Developer Sentiment',
+    d: 'Measure developer satisfaction and act on qualitative insights.',
+  },
+];
+---
+
+<BaseLayout title="Operating Model" description="DevEx operating model." robots="noindex">
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero title="DevEx Operating Model" align="start">
+      <p class="lede">Product Manager, Developer Experience at IFS. Core operating pillars.</p>
+      <div class="cta-box">
+        <CallToAction
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          data-hire-event="hire_cta_click"
+          data-hire-surface="operating-model">Get in touch</CallToAction
+        >
+        <p class="cta-hint">LinkedIn · replies from me</p>
+      </div>
+    </Hero>
+    <div class="grid">
+      {
+        pillars.map(({ t, d }) => (
+          <div class="card">
+            <>
+              <strong>{t}</strong>
+              <p>{d}</p>
+            </>
+          </div>
+        ))
+      }
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .lede {
+    margin: 0;
+    color: var(--gray-200);
+  }
+  .cta-box {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+  }
+  .cta-hint {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+  }
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .card {
+    padding: 1rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+    background: var(--gradient-subtle);
+  }
+  .card strong {
+    display: block;
+    color: var(--gray-0);
+  }
+  .card p {
+    margin: 0.35rem 0 0;
+    color: var(--gray-300);
+  }
+</style>
