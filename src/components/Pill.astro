@@ -1,4 +1,11 @@
-<div class="pill"><slot /></div>
+---
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+const isInteractiveEnabled = flagsEntry?.data.enable_pill_interactive_v1 ?? false;
+---
+
+<div class={`pill ${isInteractiveEnabled ? 'interactive-v1' : ''}`}><slot /></div>
 
 <style>
   .pill {
@@ -23,5 +30,24 @@
     background-size: 250% 100%;
     background-position: 0% 50%;
     box-shadow: var(--shadow-sm);
+  }
+
+  .pill.interactive-v1 {
+    transition:
+      background-position 0.3s ease,
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pill.interactive-v1:hover {
+      background-position: 100% 50%;
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .pill.interactive-v1:active {
+      transform: translateY(1px) scale(0.98);
+    }
   }
 </style>
