@@ -1,5 +1,7 @@
 ---
+import { getEntry } from 'astro:content';
 const currentYear = new Date().getFullYear();
+const flags = (await getEntry('flags', 'config'))?.data;
 ---
 
 <footer>
@@ -30,7 +32,7 @@ const currentYear = new Date().getFullYear();
       </span>
     </div>
   </div>
-  <p class="socials">
+  <p class="socials" class:list={[{ tactile: flags?.enable_footer_social_tactile_v1 }]}>
     <a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">
       LinkedIn</a
     >
@@ -215,6 +217,17 @@ const currentYear = new Date().getFullYear();
     align-items: center;
     gap: 1rem;
     flex-wrap: wrap;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .socials.tactile a {
+      transition:
+        text-decoration-color var(--theme-transition),
+        transform 0.2s ease;
+    }
+    .socials.tactile a:hover {
+      transform: translateY(-2px);
+    }
   }
 
   .version-link {
