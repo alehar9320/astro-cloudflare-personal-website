@@ -12,6 +12,16 @@ Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hi
 
 ## 2026-08-29 - CTA glass abort | Signal: closed #772/#667 | Lean Implementation: HARD ABORT CallToAction glassmorphism and micro-states
 
+## 2026-08-29 - Portfolio Card Image Scale & Reduced Motion Safeguards
+
+- **Signal:** Portfolio preview cards (`PortfolioPreview.astro`) lacked subtle spatial motion affordance on hover/focus and required robust reduced motion handling.
+- **Action:**
+  - Added hardware-accelerated `transform: scale(1.04)` transition on `.card:hover img` and `.card:focus-visible img`.
+  - Added `@media (prefers-reduced-motion: reduce)` block to disable transition and force `transform: none` on `.card` and `img` elements.
+- **Tokens/Snippets Added:**
+  - Card Image Scale: `transform: scale(1.04)` with `cubic-bezier(0.22, 1, 0.36, 1)` transition timing.
+  - Reduced Motion Standard: `transform: none` and `transition: none` inside `@media (prefers-reduced-motion: reduce)`.
+
 ## 2025-05-15 - Interactive Glassmorphism for Skills Section
 
 - **Signal:** Standardized skills box lacked interactive affordance and depth.
