@@ -21,3 +21,9 @@
 - [Insight 1: Tighter focus ring outline-offsets (2px) prevent focus ring overflow clipping on compact overlay toggles.]
 - [Insight 2: Gating active press scale transitions behind prefers-reduced-motion media queries respects accessibility preferences while preserving tactile visual feedback.]
 - [Delta: 17 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-17 - Card Image Zoom Micro-Interaction | Signal: Competitive | Lean Implementation: Flagged Hardware-Accelerated CSS Scale
+
+- [Insight 1: Applying hardware-accelerated transform scale(1.04) on project card images on hover/focus-visible provides spatial depth while preserving CLS=0.]
+- [Insight 2: Gating image scale animations under prefers-reduced-motion ensures accessibility compliance across viewports.]
+- [Delta: 16 lines. Guardrails: All passed autonomously.]

@@ -13,10 +13,14 @@ const { data, id } = project;
 const flagsEntry = await getEntry('flags', 'config');
 const isTactileEnabled = flagsEntry?.data.portfolio_tactile_v1 ?? false;
 const isShimmerEnabled = flagsEntry?.data.portfolio_shimmer_v1 ?? false;
+const isZoomEnabled = flagsEntry?.data.enable_card_zoom_v1 ?? false;
 ---
 
 <a
-  class={`card ${isTactileEnabled ? 'tactile' : ''} ${isShimmerEnabled ? 'shimmer' : ''}`}
+  class:list={[
+    'card',
+    { tactile: isTactileEnabled, shimmer: isShimmerEnabled, zoom: isZoomEnabled },
+  ]}
   href={`/work/${id}`}
 >
   <span class="title">{data.title}</span>
@@ -130,6 +134,14 @@ const isShimmerEnabled = flagsEntry?.data.portfolio_shimmer_v1 ?? false;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .card.zoom:hover img,
+    .card.zoom:focus-visible img {
+      transform: scale(1.04);
+    }
   }
 
   @media (min-width: 50em) {
