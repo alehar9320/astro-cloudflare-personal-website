@@ -50,7 +50,11 @@ import Pill from '../../components/Pill.astro';
 </BaseLayout>
 
 <script>
-  import { clampDpr, calculateHarmonicWave, calculateVectorAttraction } from '../../utils/aurora-math';
+  import {
+    clampDpr,
+    calculateHarmonicWave,
+    calculateVectorAttraction,
+  } from '../../utils/aurora-math';
 
   const canvas = document.getElementById('aurora-lab-canvas') as HTMLCanvasElement | null;
   const toggleBtn = document.getElementById('toggle-animation-btn') as HTMLButtonElement | null;
@@ -97,8 +101,8 @@ import Pill from '../../components/Pill.astro';
     const handlePointerMove = (e: MouseEvent | TouchEvent) => {
       if (!canvas) return;
       const rect = canvas.getBoundingClientRect();
-      const clientX = 'touches' in e ? e.touches[0]?.clientX ?? 0 : e.clientX;
-      const clientY = 'touches' in e ? e.touches[0]?.clientY ?? 0 : e.clientY;
+      const clientX = 'touches' in e ? (e.touches[0]?.clientX ?? 0) : e.clientX;
+      const clientY = 'touches' in e ? (e.touches[0]?.clientY ?? 0) : e.clientY;
       pointer.target = {
         x: clientX - rect.left,
         y: clientY - rect.top,
@@ -122,9 +126,27 @@ import Pill from '../../components/Pill.astro';
 
       // Render layered northern lights harmonic ribbons
       const ribbons = [
-        { color: 'rgba(10, 220, 200, 0.35)', wavelength: 0.008, amplitude: 35, speed: 0.8, yOffset: 0.4 },
-        { color: 'rgba(30, 144, 255, 0.30)', wavelength: 0.006, amplitude: 45, speed: 0.6, yOffset: 0.5 },
-        { color: 'rgba(138, 43, 226, 0.25)', wavelength: 0.010, amplitude: 25, speed: 1.1, yOffset: 0.6 },
+        {
+          color: 'rgba(10, 220, 200, 0.35)',
+          wavelength: 0.008,
+          amplitude: 35,
+          speed: 0.8,
+          yOffset: 0.4,
+        },
+        {
+          color: 'rgba(30, 144, 255, 0.30)',
+          wavelength: 0.006,
+          amplitude: 45,
+          speed: 0.6,
+          yOffset: 0.5,
+        },
+        {
+          color: 'rgba(138, 43, 226, 0.25)',
+          wavelength: 0.01,
+          amplitude: 25,
+          speed: 1.1,
+          yOffset: 0.6,
+        },
       ];
 
       for (const ribbon of ribbons) {
@@ -133,7 +155,13 @@ import Pill from '../../components/Pill.astro';
 
         ctx.moveTo(0, displayHeight);
         for (let x = 0; x <= displayWidth; x += 4) {
-          const wave = calculateHarmonicWave(x, time, ribbon.wavelength, ribbon.amplitude, ribbon.speed);
+          const wave = calculateHarmonicWave(
+            x,
+            time,
+            ribbon.wavelength,
+            ribbon.amplitude,
+            ribbon.speed
+          );
 
           // Refraction pulse near pointer location
           const dx = x - pointer.current.x;
