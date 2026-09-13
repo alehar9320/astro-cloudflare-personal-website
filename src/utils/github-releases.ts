@@ -162,6 +162,11 @@ export async function fetchGitHubReleases(
   }
 }
 
+/* Optimization (⚡ Bolt): Hoisting static regular expressions to module scope prevents dynamic RegExp compilation and GC allocation overhead on edge runtimes. Benchmark: Zero RegExp object re-allocations during changelog scanning. */
+const HASH_LINE_REGEX = /^([a-f0-9]{7,40})\s+(.*)/i;
+const LIST_MARKER_REGEX = /^[-*+]\s+/;
+const INTERNAL_CHANGELOG_ITEM = /\bjules\b|\bagent[- ]farm\b|\bjohan nits\b/i;
+
 /**
  * Formats an ISO date string into a YYYY-MM-DD format.
  * @param {string | null} dateString - The raw date string from the API.
@@ -176,7 +181,8 @@ export function formatReleaseDate(dateString: string | null): string {
     return 'Unknown date';
   }
 
-  return date.toISOString().split('T')[0];
+  /* Optimization (⚡ Bolt): Using slice(0, 10) instead of split('T')[0] extracts the YYYY-MM-DD substring directly without allocating an intermediate 2-element string array on edge runtimes. Benchmark: Zero array allocations per formatted date. */
+  return date.toISOString().slice(0, 10);
 }
 
 /**
@@ -186,8 +192,7 @@ export function formatReleaseDate(dateString: string | null): string {
  */
 export function parseReleaseItem(line: string): ReleaseItem {
   const cleaned = line.trim();
-  // Matches a 7 to 40-character hex hash at the beginning
-  const hashMatch = cleaned.match(/^([a-f0-9]{7,40})\s+(.*)/i);
+  const hashMatch = cleaned.match(HASH_LINE_REGEX);
 
   if (hashMatch) {
     const hash = hashMatch[1];
@@ -202,8 +207,6 @@ export function parseReleaseItem(line: string): ReleaseItem {
     message: cleaned,
   };
 }
-
-const INTERNAL_CHANGELOG_ITEM = /\bjules\b|\bagent[- ]farm\b|\bjohan nits\b/i;
 
 export function isPublicChangelogItem(item: ReleaseItem): boolean {
   return !INTERNAL_CHANGELOG_ITEM.test(item.message);
@@ -235,9 +238,9 @@ export function splitReleaseBody(body: string): ReleaseItem[] {
     startPos = nextNewline + 1;
 
     const trimmed = line.trim();
-    if (!/^[-*+]\s+/.test(trimmed)) continue;
+    if (!LIST_MARKER_REGEX.test(trimmed)) continue;
 
-    const rawMessage = trimmed.replace(/^[-*+]\s+/, '');
+    const rawMessage = trimmed.replace(LIST_MARKER_REGEX, '');
     const item = parseReleaseItem(rawMessage);
     if (isPublicChangelogItem(item)) {
       items.push(item);
