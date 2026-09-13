@@ -31,6 +31,21 @@ describe('exploreCardForQuestion', () => {
     );
   });
 
+  it('handles edge cases gracefully such as non-string values or empty whitespace', () => {
+    // @ts-expect-error testing runtime guard against non-string input
+    expect(exploreCardForQuestion(null)).toBeNull();
+    // @ts-expect-error testing runtime guard against non-string input
+    expect(exploreCardForQuestion(undefined)).toBeNull();
+    expect(exploreCardForQuestion('')).toBeNull();
+    expect(exploreCardForQuestion('   ')).toBeNull();
+  });
+
+  it('handles uppercase and mixed-case queries', () => {
+    expect(exploreCardForQuestion('TELL ME ABOUT YOUR WORK')).toEqual(EXPLORE_CARDS.work);
+    expect(exploreCardForQuestion('DESIGN SYSTEM')).toEqual(EXPLORE_CARDS.designSystem);
+    expect(exploreCardForQuestion('LINKEDIN')).toEqual(LINKEDIN_CONFIRM);
+  });
+
   it('keeps action cards on published routes and LinkedIn confirm on the hire path', () => {
     expect(EXPLORE_CARDS.designSystem.href).toBe('/work/ifs-design-system/');
     expect(EXPLORE_CARDS.designSystem.actionLabel).toBe('View the case');

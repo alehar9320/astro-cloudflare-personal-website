@@ -63,6 +63,7 @@ export const EXPLORE_CARDS = {
 } as const satisfies Record<string, ExploreCard>;
 
 export function exploreCardForQuestion(lastUserMessage: string): ExploreCard | null {
+  if (typeof lastUserMessage !== 'string') return null;
   const question = lastUserMessage.trim().toLowerCase();
   if (!question) return null;
 
