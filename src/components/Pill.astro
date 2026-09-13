@@ -23,5 +23,32 @@
     background-size: 250% 100%;
     background-position: 0% 50%;
     box-shadow: var(--shadow-sm);
+    transition:
+      background-position var(--theme-transition),
+      transform var(--theme-transition),
+      box-shadow var(--theme-transition);
+  }
+
+  .pill:hover {
+    background-position: 100% 50%;
+    transform: translateY(-2px);
+    box-shadow:
+      0 8px 20px -4px hsla(210, 100%, 45%, 0.35),
+      var(--shadow-md);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pill {
+      transition: none;
+    }
+    .pill:hover {
+      transform: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .pill {
+      border: 1px solid CanvasText;
+    }
   }
 </style>

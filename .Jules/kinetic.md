@@ -10,6 +10,18 @@ Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hi
 
 # Kinetic Journal ⚡
 
+## 2026-08-30 - Interactive Pill Motion & Gradient Shift
+
+- **Signal:** Static `.pill` components lacked tactile motion feedback and subtle ambient depth on hover/focus states.
+- **Action:**
+  - Enhanced `.pill` in `src/components/Pill.astro` with hardware-accelerated `translateY(-2px)` elevation shift.
+  - Implemented smooth Northern Lights linear gradient shift (`background-position: 100% 50%`) paired with `hsla(210, 100%, 45%, 0.35)` cyan shadow glow on hover.
+  - Added `@media (prefers-reduced-motion: reduce)` motion gate and `@media (forced-colors: active)` system high-contrast border fallback.
+- **Tokens Added:**
+  - Motion Affordance: `translateY(-2px)`
+  - Elevation Glow: `hsla(210, 100%, 45%, 0.35)`
+  - Shift Duration: `var(--theme-transition)`
+
 ## 2026-08-29 - CTA glass abort | Signal: closed #772/#667 | Lean Implementation: HARD ABORT CallToAction glassmorphism and micro-states
 
 ## 2025-05-15 - Interactive Glassmorphism for Skills Section
