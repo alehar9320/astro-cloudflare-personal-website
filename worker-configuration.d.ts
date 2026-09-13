@@ -35,13 +35,13 @@ declare var onmessage: never;
 declare class DOMException extends Error {
   constructor(message?: string, name?: string);
   /**
-   * The **`message`** read-only property of the a message or description associated with the given error name.
+   * The **`message`** read-only property of the DOMException interface represents a message or description associated with the given error name.
    *
    * [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMException/message)
    */
   readonly message: string;
   /**
-   * The **`name`** read-only property of the one of the strings associated with an error name.
+   * The **`name`** read-only property of the DOMException interface returns one of the strings associated with an error name.
    *
    * [MDN Reference](https://developer.mozilla.org/docs/Web/API/DOMException/name)
    */
@@ -1506,7 +1506,7 @@ interface ErrorEventErrorEventInit {
 declare class MessageEvent extends Event {
   constructor(type: string, initializer: MessageEventInit);
   /**
-   * The **`data`** read-only property of the The data sent by the message emitter; this can be any data type, depending on what originated this event.
+   * The **`data`** read-only property of the MessageEvent interface represents the data sent by the message emitter; this can be any data type, depending on what originated this event.
    *
    * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessageEvent/data)
    */
