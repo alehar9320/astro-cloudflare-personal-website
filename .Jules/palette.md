@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-27 - CallToAction Active Tactile Press Feedback
+
+**Learning:** Standalone primary action buttons (such as `CallToAction.astro`) that feature hover lift (`translateY(-2px)`) feel floaty or unresponsive during touch press or mouse click interactions if they lack an explicit active state transformation. Adding `:active { transform: translateY(0) scale(0.98); }` gated within `@media (prefers-reduced-motion: no-preference)` delivers physical tactile feedback upon interaction while honoring user motion preferences.
+
+**Action:** Added `@media (prefers-reduced-motion: no-preference)` active state press feedback (`transform: translateY(0) scale(0.98);`) to `CallToAction.astro`.
+
 ## 2026-05-26 - Page Link Touch Target Ergonomics
 
 **Learning:** Section list links (such as `.earlier a` in `work.astro`) and standalone page action links (such as `.history-link` in `whats-new.astro` and `.hire-cta a`) often render as compact inline links on mobile viewports, failing WCAG 2.1 AA 44x44px minimum touch target requirements and risking mis-taps. Setting `display: inline-flex; align-items: center; min-height: 44px;` expands the interactive tap area without disrupting surrounding line rhythm.
