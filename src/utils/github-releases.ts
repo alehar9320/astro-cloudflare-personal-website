@@ -176,7 +176,9 @@ export function formatReleaseDate(dateString: string | null): string {
     return 'Unknown date';
   }
 
-  return date.toISOString().split('T')[0];
+  // Optimization (⚡ Bolt): Use .slice(0, 10) on ISO string instead of .split('T')[0].
+  // Benchmark / Impact: Avoids allocating a two-element string array per date formatting call on Edge Workers.
+  return date.toISOString().slice(0, 10);
 }
 
 /**
