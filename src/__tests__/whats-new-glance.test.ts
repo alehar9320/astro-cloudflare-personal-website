@@ -190,4 +190,64 @@ describe('whats-new glance', () => {
     expect(glance.thisWeek).toEqual([]);
     expect(glance.groups).toEqual([]);
   });
+
+  it('handles invalid dates, future releases, empty titles, and unbulleted bodies', () => {
+    expect(isKeptVisitorLine('feat: chat update', '   ')).toBe(false);
+
+    const glance = buildWhatsNewGlance(
+      [
+        release({
+          body: 'feat: future ship in menu',
+          publishedAt: '2026-08-25T12:00:00Z',
+        }),
+        release({
+          body: 'feat: invalid date chat item',
+          publishedAt: 'invalid-date-string',
+        }),
+        release({
+          body: '',
+          publishedAt: '2026-08-20T10:00:00Z',
+        }),
+        release({
+          body: 'feat: unbulleted release text with chat composer improvements',
+          publishedAt: '2026-08-20T09:00:00Z',
+        }),
+        release({
+          body: '- 1a2b3c4',
+          publishedAt: '2026-08-20T08:00:00Z',
+        }),
+      ],
+      now
+    );
+
+    expect(glance.thisWeek).toHaveLength(1);
+    expect(glance.thisWeek[0]).toMatch(/chat composer/i);
+  });
+
+  it('filters theme groups correctly and excludes items not matching known themes', () => {
+    const glance = buildWhatsNewGlance(
+      [
+        release({
+          body: '- feat: item 1 this week composer\n- feat: item 2 this week menu\n- feat: item 3 this week chat',
+          publishedAt: '2026-08-20T12:00:00Z',
+        }),
+        release({
+          body: '- feat: custom uncategorized item facing visitor glance',
+          publishedAt: '2026-08-10T12:00:00Z',
+        }),
+        release({
+          body: '- feat: work case study outcome analysis\n- feat: LinkedIn contact hire options',
+          publishedAt: '2026-08-08T12:00:00Z',
+        }),
+      ],
+      now
+    );
+
+    expect(glance.thisWeek).toHaveLength(3);
+    // Uncategorized item should be excluded from theme groups
+    const groupLines = glance.groups.flatMap((g) => g.lines);
+    expect(groupLines).not.toContain('custom uncategorized item facing visitor glance');
+    expect(glance.groups.map((g) => g.heading)).toContain('Work-case copy');
+    expect(glance.groups.map((g) => g.heading)).toContain('Hire and LinkedIn');
+  });
 });
