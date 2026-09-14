@@ -1,0 +1,377 @@
+---
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Interactive Canvas Lab | Alexander Härenstam"
+  description="Prism Interactive Canvas Laboratory — Generative Northern Lights refraction and particle field experiments."
+>
+  <main id="main-content" class="wrapper stack gap-8 lab-container">
+    <header class="hero-section">
+      <Hero
+        title="Interactive Refraction Lab"
+        tagline="Experimental math-driven canvas interactions & fluid Northern Lights refractions."
+        align="center"
+      />
+    </header>
+
+    <section class="lab-card glass-panel" aria-label="Interactive Aurora Canvas Simulation">
+      <div class="canvas-header">
+        <h2 class="canvas-title">Aurora Refraction Field</h2>
+        <div class="canvas-controls">
+          <button
+            id="toggle-anim-btn"
+            type="button"
+            class="btn-control"
+            aria-label="Pause animation"
+          >
+            <span id="toggle-anim-text">Pause</span>
+          </button>
+          <button
+            id="reset-particles-btn"
+            type="button"
+            class="btn-control"
+            aria-label="Reset particle canvas"
+          >
+            Reset Particles
+          </button>
+        </div>
+      </div>
+
+      <div class="canvas-wrapper">
+        <canvas id="aurora-lab-canvas"></canvas>
+      </div>
+
+      <footer class="canvas-footer">
+        <p class="canvas-caption">
+          Move pointer over canvas to warp refraction waves and attract particle filaments.
+        </p>
+      </footer>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import {
+    getAuroraWaveY,
+    getCappedDpr,
+    updateParticlePosition,
+    type ParticleState,
+  } from '../../utils/auroraMath';
+
+  const canvas = document.getElementById('aurora-lab-canvas') as HTMLCanvasElement | null;
+  const toggleBtn = document.getElementById('toggle-anim-btn') as HTMLButtonElement | null;
+  const toggleText = document.getElementById('toggle-anim-text');
+  const resetBtn = document.getElementById('reset-particles-btn') as HTMLButtonElement | null;
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let animationFrameId: number = 0;
+    let isRunning = true;
+    let time = 0;
+
+    let pointerX: number | null = null;
+    let pointerY: number | null = null;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      isRunning = false;
+      if (toggleText) toggleText.textContent = 'Play';
+    }
+
+    let particles: ParticleState[] = [];
+
+    const initParticles = () => {
+      if (!canvas) return;
+      const particleCount = canvas.width < 600 ? 30 : 60;
+      particles = [];
+      for (let i = 0; i < particleCount; i++) {
+        particles.push({
+          x: Math.random() * canvas.width,
+          y: Math.random() * canvas.height,
+          vx: (Math.random() - 0.5) * 0.8,
+          vy: (Math.random() - 0.5) * 0.8,
+          life: Math.random() * 100,
+          maxLife: 100 + Math.random() * 100,
+        });
+      }
+    };
+
+    const resize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      const dpr = getCappedDpr(window.devicePixelRatio);
+      const width = canvas.parentElement.clientWidth;
+      const height = Math.min(Math.max(width * 0.5, 320), 500);
+
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      if (ctx) {
+        ctx.scale(dpr, dpr);
+      }
+
+      initParticles();
+      if (!isRunning) {
+        renderFrame();
+      }
+    };
+
+    const handlePointerMove = (e: MouseEvent | TouchEvent) => {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const clientX = 'touches' in e ? (e.touches[0]?.clientX ?? 0) : e.clientX;
+      const clientY = 'touches' in e ? (e.touches[0]?.clientY ?? 0) : e.clientY;
+      pointerX = clientX - rect.left;
+      pointerY = clientY - rect.top;
+    };
+
+    const handlePointerLeave = () => {
+      pointerX = null;
+      pointerY = null;
+    };
+
+    const renderFrame = () => {
+      if (!ctx || !canvas) return;
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+
+      // Dark glass background clear
+      ctx.fillStyle = 'rgba(11, 15, 25, 0.25)';
+      ctx.fillRect(0, 0, width, height);
+
+      time += 0.015;
+
+      // Draw multi-layered Aurora refraction wave paths
+      const waveColors = [
+        'rgba(0, 229, 255, 0.35)',
+        'rgba(80, 150, 255, 0.25)',
+        'rgba(0, 255, 178, 0.20)',
+      ];
+
+      for (let w = 0; w < waveColors.length; w++) {
+        ctx.beginPath();
+        ctx.strokeStyle = waveColors[w];
+        ctx.lineWidth = 2 + w * 0.5;
+
+        const baseH = height * (0.3 + w * 0.2);
+        const amplitude = 25 + w * 10;
+        const freq = 0.008 - w * 0.002;
+
+        for (let x = 0; x <= width; x += 8) {
+          let y = getAuroraWaveY(x, time + w * 1.5, baseH, amplitude, freq);
+
+          // Pointer warp distortion near wave points
+          if (pointerX !== null && pointerY !== null) {
+            const dx = pointerX - x;
+            const dy = pointerY - y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 120) {
+              y += (1 - dist / 120) * 35 * Math.sin(time * 3);
+            }
+          }
+
+          if (x === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+        ctx.stroke();
+      }
+
+      // Update and draw floating luminous particles
+      for (let i = 0; i < particles.length; i++) {
+        const p = particles[i];
+        const updated = updateParticlePosition(
+          p.x,
+          p.y,
+          p.vx,
+          p.vy,
+          pointerX,
+          pointerY,
+          0.96,
+          0.04
+        );
+
+        p.x = updated.x;
+        p.y = updated.y;
+        p.vx = updated.vx;
+        p.vy = updated.vy;
+        p.life += 1;
+
+        // Wrap particles around canvas bounds
+        if (p.x < 0) p.x = width;
+        if (p.x > width) p.x = 0;
+        if (p.y < 0) p.y = height;
+        if (p.y > height) p.y = 0;
+
+        if (p.life > p.maxLife) {
+          p.life = 0;
+          p.x = Math.random() * width;
+          p.y = Math.random() * height;
+        }
+
+        const alpha = Math.sin((p.life / p.maxLife) * Math.PI) * 0.8;
+        ctx.fillStyle = `rgba(160, 230, 255, ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 1.8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    };
+
+    const loop = () => {
+      if (!isRunning) return;
+      renderFrame();
+      animationFrameId = requestAnimationFrame(loop);
+    };
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        isRunning = !isRunning;
+        if (toggleText) {
+          toggleText.textContent = isRunning ? 'Pause' : 'Play';
+        }
+        if (isRunning) {
+          loop();
+        } else {
+          cancelAnimationFrame(animationFrameId);
+        }
+      });
+    }
+
+    if (resetBtn) {
+      resetBtn.addEventListener('click', () => {
+        initParticles();
+        if (!isRunning) renderFrame();
+      });
+    }
+
+    window.addEventListener('resize', resize, { passive: true });
+    canvas.addEventListener('mousemove', handlePointerMove, { passive: true });
+    canvas.addEventListener('touchmove', handlePointerMove, { passive: true });
+    canvas.addEventListener('mouseleave', handlePointerLeave, { passive: true });
+    canvas.addEventListener('touchend', handlePointerLeave, { passive: true });
+
+    resize();
+    if (isRunning) {
+      loop();
+    }
+
+    // Astro page transition teardown logic
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+        if (canvas) {
+          canvas.removeEventListener('mousemove', handlePointerMove);
+          canvas.removeEventListener('touchmove', handlePointerMove);
+          canvas.removeEventListener('mouseleave', handlePointerLeave);
+          canvas.removeEventListener('touchend', handlePointerLeave);
+        }
+      },
+      { once: true }
+    );
+  }
+</script>
+
+<style>
+  .lab-container {
+    padding-block: 2rem 4rem;
+  }
+
+  .lab-card {
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .glass-panel {
+    background: hsla(var(--gray-999-basis), 0.5);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid hsla(0, 0%, 100%, 0.12);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.25);
+  }
+
+  .canvas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .canvas-title {
+    font-size: var(--text-lg);
+    font-weight: 600;
+    color: var(--gray-0);
+    margin: 0;
+  }
+
+  .canvas-controls {
+    display: flex;
+    gap: 0.5rem;
+  }
+
+  .btn-control {
+    background: hsla(var(--gray-999-basis), 0.6);
+    color: var(--gray-100);
+    border: 1px solid hsla(0, 0%, 100%, 0.2);
+    border-radius: 0.5rem;
+    padding: 0.4rem 0.85rem;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      background var(--theme-transition),
+      border-color var(--theme-transition);
+  }
+
+  .btn-control:hover,
+  .btn-control:focus-visible {
+    background: hsla(var(--gray-999-basis), 0.9);
+    border-color: var(--accent-light);
+    color: var(--gray-0);
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 2px;
+  }
+
+  .canvas-wrapper {
+    position: relative;
+    width: 100%;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: rgba(11, 15, 25, 0.8);
+    border: 1px solid hsla(0, 0%, 100%, 0.08);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  .canvas-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .canvas-caption {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+  }
+</style>
