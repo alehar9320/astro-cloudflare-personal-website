@@ -1,0 +1,82 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import CallToAction from '../../components/CallToAction.astro';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_product_playbook) return Astro.redirect('/404/');
+
+const linkedinHref = 'https://www.linkedin.com/in/alehar/';
+
+const plays = [
+  {
+    title: 'Developer-First Design',
+    desc: 'Prioritize low friction API surfaces and developer workflows.',
+  },
+  {
+    title: 'Data-Informed Prioritization',
+    desc: 'Combine qualitative feedback with real usage analytics.',
+  },
+  {
+    title: 'Continuous Delivery',
+    desc: 'Ship small, atomic changes frequently with reliable verification.',
+  },
+];
+---
+
+<BaseLayout
+  title="Product Playbook"
+  description="Core DevEx product execution strategies."
+  robots="noindex"
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero
+      title="Product Playbook"
+      tagline="Core DevEx product execution strategies."
+      align="start"
+    />
+    <div class="grid">
+      {
+        plays.map(({ title, desc }) => (
+          <section class="card">
+            <h2>{title}</h2>
+            <p>{desc}</p>
+          </section>
+        ))
+      }
+    </div>
+    <div class="actions">
+      <CallToAction href={linkedinHref} target="_blank" rel="noopener noreferrer"
+        >Get in touch</CallToAction
+      >
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .card {
+    padding: 1rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+    background: var(--gradient-subtle);
+  }
+  .card h2 {
+    font-size: var(--text-md);
+    color: var(--gray-0);
+    margin: 0 0 0.5rem;
+  }
+  .card p {
+    margin: 0;
+    color: var(--gray-300);
+    font-size: var(--text-sm);
+  }
+  .actions {
+    margin-top: 1rem;
+  }
+</style>
