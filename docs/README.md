@@ -18,7 +18,7 @@ Engineering documentation for this repo. Visitor copy lives on the live site ([h
 | [README.md](../README.md) | Human front door: what this is, how to run, how prod deploys |
 | [AGENTS.md](../AGENTS.md) | AI / agent source of truth |
 | [SECURITY.md](../SECURITY.md) | Vulnerability reports via LinkedIn |
-| GitHub Releases | Canonical changelog (prefer releases over root \`CHANGELOG.md\`) |
+| GitHub Releases | Canonical changelog (prefer releases over root `CHANGELOG.md`) |
 
 ## Locks (do not undo in docs)
 
