@@ -21,3 +21,9 @@
 - [Insight 1: Tighter focus ring outline-offsets (2px) prevent focus ring overflow clipping on compact overlay toggles.]
 - [Insight 2: Gating active press scale transitions behind prefers-reduced-motion media queries respects accessibility preferences while preserving tactile visual feedback.]
 - [Delta: 17 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-16 - Portfolio Card Image Zoom | Signal: Competitive/Technical | Lean Implementation: Flagged CSS Scale Transition
+
+- [Insight 1: Hardware-accelerated image scaling (`transform: scale(1.05)`) on hover/focus-visible provides spatial depth to portfolio cards without triggering layout reflows.]
+- [Insight 2: Explicitly overriding transforms with `@media (prefers-reduced-motion: reduce)` maintains full WCAG 2.1 AA accessibility compliance.]
+- [Delta: 16 lines. Guardrails: All passed autonomously.]
