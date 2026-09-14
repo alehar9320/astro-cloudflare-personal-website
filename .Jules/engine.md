@@ -29,3 +29,9 @@
 - **Edge Memory & Performance:** Refactored `splitReleaseBody` in `src/utils/github-releases.ts` and `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use pointer-based line scanning (`indexOf('\n', startPos)`), eliminating dynamic `body.split('\n')` string array allocations during SSR and API execution.
 - **Sentence Counting Optimization:** Refactored `sentenceCount` in `src/utils/release-summary.ts` from regex lookbehind `.split(/(?<=[.!?])\s+/)` into a single-pass character scanning loop. Added whitespace-aware sentence boundary detection to safely ignore dots inside version strings (`2026.08.15.1714`).
 - **Verification:** Added Vitest unit test cases across `release-summary.test.ts`, `visitor-changelog.test.ts`, and `github-releases.test.ts` covering version numbers, CRLF line endings, multiple trailing punctuation, and whitespace handling.
+
+## 2025-06-18 - Pre-Computed Hashtable Column Index Mapping for PostHog HogQL API Parsing
+
+- **Performance & Edge Memory:** Refactored `parseVisitGlance` in `src/utils/visit-stats.ts` to construct a single `Record<string, number>` hashtable column index lookup map (`columnMap`) when parsing PostHog HogQL API tabular results.
+- **Allocation & Scanning Reduction:** Replaced repeated $O(N)$ `columns.indexOf(key)` array scans across 12 column lookups per row evaluation with $O(1)$ constant-time hashtable property reads.
+- **Verification:** Verified all 26 unit test cases in `src/utils/visit-stats.test.ts` pass cleanly with column map property lookups.
