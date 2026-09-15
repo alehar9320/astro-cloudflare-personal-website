@@ -41,3 +41,7 @@ Action: Updated `collectItems` in `src/utils/whats-new-glance.ts` to iterate ove
 2026-09-08 - Zero-Allocation Reverse Array Scan for Chat Follow-up Prompts
 Learning: Dynamic shallow array copying and array reversal (`[...messages].reverse().find(...)`) on every UI update creates unnecessary temporary heap allocations and garbage collection overhead in client-side scripts. Replacing array copy/reverse with a reverse indexed `for` loop eliminates dynamic array allocations completely and stops scanning as soon as the first matching element is found.
 Action: Refactored `showFollowUps()` in `src/components/Chat.astro` to use an indexed reverse `for` loop.
+
+2026-09-09 - Zero-Allocation ISO Date Formatting for Edge Runtimes
+Learning: In Cloudflare Workers edge runtimes, using `date.toISOString().split('T')[0]` allocates an intermediate 2-element string array on every date formatting call. Replacing `split('T')[0]` with `slice(0, 10)` extracts the YYYY-MM-DD date substring directly without temporary array allocation or garbage collection overhead.
+Action: Refactored `formatReleaseDate` in `src/utils/github-releases.ts` to use `.slice(0, 10)`.

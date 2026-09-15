@@ -176,7 +176,9 @@ export function formatReleaseDate(dateString: string | null): string {
     return 'Unknown date';
   }
 
-  return date.toISOString().split('T')[0];
+  // Optimize: Use .slice(0, 10) instead of .split('T')[0] to extract YYYY-MM-DD
+  // directly without allocating an intermediate 2-element array per date call.
+  return date.toISOString().slice(0, 10);
 }
 
 /**
