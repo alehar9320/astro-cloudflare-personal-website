@@ -1,0 +1,370 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Icon from '../../components/Icon.astro';
+---
+
+<BaseLayout
+  title="Aurora Light Refraction | Digital Art Lab"
+  description="Multi-harmonic sine wave synthesis and interactive optical refraction ribbons."
+>
+  <main class="wrapper stack gap-6" style="margin-block: 2rem 4rem;">
+    <header class="lab-header">
+      <a href="/lab/" class="back-link">&larr; Back to Laboratory</a>
+      <Hero
+        title="Aurora Light Refraction"
+        tagline="Interactive multi-harmonic sine wave dynamics and Northern Lights optical refraction."
+        align="start"
+      />
+    </header>
+
+    <div class="canvas-wrapper">
+      <canvas id="aurora-canvas" aria-label="Interactive Aurora Light Canvas Visualizer"></canvas>
+      <div class="control-bar">
+        <button
+          id="toggle-anim-btn"
+          type="button"
+          class="control-btn"
+          aria-label="Pause animation loop"
+        >
+          <span id="btn-label">Pause Motion</span>
+        </button>
+        <span class="fps-badge" id="dpr-indicator">DPR: 1.0</span>
+      </div>
+    </div>
+
+    <section class="info-card">
+      <div class="info-header">
+        <Icon icon="rocket-launch" size="1.5rem" color="var(--accent-regular)" gradient />
+        <h2>Canvas Physics & Mathematics</h2>
+      </div>
+      <p>
+        Synthesized using multi-harmonic sine wave propagation across a Northern Lights chromatic
+        spectrum (cyan, marine blue, emerald, and violet). Moving your cursor or touch pointer over
+        the viewport refracts the light wave frequencies using damped spring physics.
+      </p>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import {
+    calculateAuroraWaveElevation,
+    capDevicePixelRatio,
+    interpolateColor,
+    NORTHERN_LIGHTS_PALETTE,
+    updateSpringState,
+    formatRgba,
+  } from '../../utils/aurora-math';
+
+  const canvas = document.getElementById('aurora-canvas') as HTMLCanvasElement | null;
+  const toggleBtn = document.getElementById('toggle-anim-btn') as HTMLButtonElement | null;
+  const btnLabel = document.getElementById('btn-label') as HTMLSpanElement | null;
+  const dprIndicator = document.getElementById('dpr-indicator') as HTMLSpanElement | null;
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let animationFrameId: number | null = null;
+    let isPlaying = true;
+    let time = 0;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      isPlaying = false;
+      if (btnLabel) btnLabel.textContent = 'Play Motion (Reduced Motion Active)';
+    }
+
+    const pointer = { x: 0.5, y: 0.5 };
+    let springPointer = { position: 0.5, velocity: 0 };
+
+    const resize = () => {
+      if (!canvas) return;
+      const parent = canvas.parentElement;
+      const width = parent?.clientWidth || 800;
+      const height = parent?.clientHeight || 450;
+      const dpr = capDevicePixelRatio(window.devicePixelRatio || 1, 2);
+
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      if (dprIndicator) {
+        dprIndicator.textContent = `DPR: ${dpr.toFixed(1)} | Scale: ${width}x${height}`;
+      }
+    };
+
+    const handlePointerMove = (e: MouseEvent | TouchEvent) => {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const clientX = 'touches' in e ? (e.touches[0]?.clientX ?? 0) : e.clientX;
+      const clientY = 'touches' in e ? (e.touches[0]?.clientY ?? 0) : e.clientY;
+      pointer.x = Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+      pointer.y = Math.max(0, Math.min(1, (clientY - rect.top) / rect.height));
+    };
+
+    const draw = () => {
+      if (!ctx || !canvas) return;
+
+      const w = canvas.width;
+      const h = canvas.height;
+
+      // Update pointer spring dynamics
+      springPointer = updateSpringState(springPointer, pointer.x, 0.04, 0.88);
+
+      ctx.fillStyle = formatRgba(NORTHERN_LIGHTS_PALETTE.marine, 1);
+      ctx.fillRect(0, 0, w, h);
+
+      if (isPlaying) {
+        time += 0.015;
+      }
+
+      const waveLayers = [
+        {
+          color1: NORTHERN_LIGHTS_PALETTE.cyan,
+          color2: NORTHERN_LIGHTS_PALETTE.emerald,
+          wavelength: w * 0.6,
+          amplitude: h * 0.15,
+          yOffset: h * 0.45,
+          alpha: 0.45,
+          phase: 0,
+        },
+        {
+          color1: NORTHERN_LIGHTS_PALETTE.violet,
+          color2: NORTHERN_LIGHTS_PALETTE.sky,
+          wavelength: w * 0.4,
+          amplitude: h * 0.12,
+          yOffset: h * 0.55,
+          alpha: 0.35,
+          phase: Math.PI / 3,
+        },
+        {
+          color1: NORTHERN_LIGHTS_PALETTE.emerald,
+          color2: NORTHERN_LIGHTS_PALETTE.cyan,
+          wavelength: w * 0.8,
+          amplitude: h * 0.18,
+          yOffset: h * 0.65,
+          alpha: 0.25,
+          phase: Math.PI / 1.5,
+        },
+      ];
+
+      waveLayers.forEach((layer) => {
+        ctx.beginPath();
+        ctx.moveTo(0, h);
+
+        const refractionMultiplier = 1 + (springPointer.position - 0.5) * 0.6;
+        const effectiveWavelength = layer.wavelength * refractionMultiplier;
+
+        for (let x = 0; x <= w; x += 8) {
+          const elevation = calculateAuroraWaveElevation(
+            x,
+            time,
+            effectiveWavelength,
+            layer.amplitude,
+            0.5,
+            layer.phase
+          );
+          const y = layer.yOffset + elevation;
+          if (x === 0) {
+            ctx.lineTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+
+        ctx.lineTo(w, h);
+        ctx.closePath();
+
+        const blendedColor = interpolateColor(layer.color1, layer.color2, springPointer.position);
+        const gradient = ctx.createLinearGradient(0, layer.yOffset - layer.amplitude, 0, h);
+        gradient.addColorStop(0, formatRgba(blendedColor, layer.alpha));
+        gradient.addColorStop(1, formatRgba(NORTHERN_LIGHTS_PALETTE.marine, 0));
+
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      });
+
+      if (isPlaying) {
+        animationFrameId = requestAnimationFrame(draw);
+      }
+    };
+
+    const togglePlay = () => {
+      isPlaying = !isPlaying;
+      if (btnLabel) {
+        btnLabel.textContent = isPlaying ? 'Pause Motion' : 'Play Motion';
+      }
+      if (toggleBtn) {
+        toggleBtn.setAttribute(
+          'aria-label',
+          isPlaying ? 'Pause animation loop' : 'Play animation loop'
+        );
+      }
+      if (isPlaying) {
+        draw();
+      } else if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+    };
+
+    window.addEventListener('resize', resize);
+    canvas.addEventListener('mousemove', handlePointerMove);
+    canvas.addEventListener('touchmove', handlePointerMove, { passive: true });
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', togglePlay);
+    }
+
+    resize();
+    draw();
+
+    // Lifecycle cleanup on Astro client-side navigation
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        if (animationFrameId !== null) {
+          cancelAnimationFrame(animationFrameId);
+        }
+        window.removeEventListener('resize', resize);
+        if (canvas) {
+          canvas.removeEventListener('mousemove', handlePointerMove);
+          canvas.removeEventListener('touchmove', handlePointerMove);
+        }
+        if (toggleBtn) {
+          toggleBtn.removeEventListener('click', togglePlay);
+        }
+      },
+      { once: true }
+    );
+  }
+</script>
+
+<style>
+  .lab-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .back-link {
+    font-size: var(--text-sm);
+    color: var(--accent-light);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  .back-link:hover,
+  .back-link:focus-visible {
+    text-decoration: underline;
+    color: var(--gray-0);
+  }
+
+  .canvas-wrapper {
+    position: relative;
+    width: 100%;
+    height: 450px;
+    background: var(--gray-999);
+    border: 1px solid var(--gray-800);
+    border-radius: 1rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: crosshair;
+  }
+
+  .control-bar {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: none;
+  }
+
+  .control-btn {
+    pointer-events: auto;
+    background: rgba(10, 25, 47, 0.75);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--gray-700);
+    color: var(--gray-0);
+    font-size: var(--text-xs);
+    font-weight: 600;
+    padding: 0.5rem 1rem;
+    border-radius: 999px;
+    cursor: pointer;
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      background var(--theme-transition),
+      border-color var(--theme-transition);
+  }
+
+  .control-btn:hover {
+    background: rgba(10, 25, 47, 0.95);
+    border-color: var(--accent-regular);
+  }
+
+  .control-btn:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 2px;
+  }
+
+  .fps-badge {
+    background: rgba(10, 25, 47, 0.75);
+    backdrop-filter: blur(8px);
+    border: 1px solid var(--gray-800);
+    color: var(--gray-300);
+    font-size: var(--text-xs);
+    font-family: var(--font-mono, monospace);
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+  }
+
+  .info-card {
+    padding: 1.5rem;
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .info-header {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .info-header h2 {
+    font-size: var(--text-md);
+    color: var(--gray-0);
+    margin: 0;
+  }
+
+  .info-card p {
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  @media (max-width: 40em) {
+    .canvas-wrapper {
+      height: 350px;
+    }
+  }
+</style>
