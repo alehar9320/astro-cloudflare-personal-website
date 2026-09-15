@@ -29,3 +29,9 @@
 - **Edge Memory & Performance:** Refactored `splitReleaseBody` in `src/utils/github-releases.ts` and `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use pointer-based line scanning (`indexOf('\n', startPos)`), eliminating dynamic `body.split('\n')` string array allocations during SSR and API execution.
 - **Sentence Counting Optimization:** Refactored `sentenceCount` in `src/utils/release-summary.ts` from regex lookbehind `.split(/(?<=[.!?])\s+/)` into a single-pass character scanning loop. Added whitespace-aware sentence boundary detection to safely ignore dots inside version strings (`2026.08.15.1714`).
 - **Verification:** Added Vitest unit test cases across `release-summary.test.ts`, `visitor-changelog.test.ts`, and `github-releases.test.ts` covering version numbers, CRLF line endings, multiple trailing punctuation, and whitespace handling.
+
+## 2025-06-18 - Pre-Computed Hashtable Indexing & Zero-Allocation ISO Date Slicing
+
+- **Edge Memory & Column Lookup:** Refactored `parseVisitGlance` in `src/utils/visit-stats.ts` to pre-compute a `Record<string, number>` column lookup hashtable when parsing PostHog HogQL responses. Replaces repeated $O(N)$ `columns.indexOf(key)` scans across 12 metric fields with $O(1)$ constant-time property lookups on Cloudflare Workers edge runtimes.
+- **Zero-Allocation Date Formatting:** Refactored `formatReleaseDate` in `src/utils/github-releases.ts` to use `.slice(0, 10)` on ISO date strings instead of `.split('T')[0]`, eliminating two-element string array allocation overhead per formatted date.
+- **Verification:** Updated unit tests in `src/utils/visit-stats.test.ts` to verify 12-column HogQL tabular array parsing with pre-computed hashtable mapping and DoD/WoW/MoM/YoY percentage calculations.

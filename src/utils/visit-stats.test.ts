@@ -102,6 +102,37 @@ describe('parseVisitGlance', () => {
     });
   });
 
+  it('parses all 12 columns using pre-computed hashtable index mapping and computes percentage changes', () => {
+    const glance = parseVisitGlance({
+      columns: [
+        'pageviews',
+        'unique_visitors',
+        'first_seen',
+        'pageviews_7d',
+        'unique_visitors_7d',
+        'unique_visitors_1d',
+        'unique_visitors_1d_prev',
+        'unique_visitors_7d_prev',
+        'unique_visitors_30d',
+        'unique_visitors_30d_prev',
+        'unique_visitors_365d',
+        'unique_visitors_365d_prev',
+      ],
+      results: [[100, 20, '2026-08-14T07:03:00.000Z', 30, 10, 5, 4, 8, 15, 10, 50, 25]],
+    });
+    expect(glance).toEqual({
+      pageviews: 100,
+      uniqueVisitors: 20,
+      firstSeen: '2026-08-14T07:03:00.000Z',
+      pageviews7d: 30,
+      uniqueVisitors7d: 10,
+      uniqueVisitorsDoD: 25,
+      uniqueVisitorsWoW: 25,
+      uniqueVisitorsMoM: 50,
+      uniqueVisitorsYoY: 100,
+    });
+  });
+
   it('parses a zero row so the API can fail-open', () => {
     expect(
       parseVisitGlance({
