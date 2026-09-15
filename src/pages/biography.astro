@@ -147,12 +147,6 @@ const schema = {
     gap: 2rem;
   }
 
-  .timeline a[href='/work/ifs-design-system/'] {
-    display: inline-block;
-    min-height: 44px;
-    min-width: 44px;
-  }
-
   @media (max-width: 30em) {
     .about {
       gap: 2rem;
@@ -180,6 +174,9 @@ const schema = {
   }
 
   .content :global(a) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     text-decoration: 1px solid underline transparent;
     text-underline-offset: 0.25em;
     transition: text-decoration-color var(--theme-transition);

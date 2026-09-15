@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-27 - Footer & Biography Link Touch Target Ergonomics
+
+**Learning:** Footer colophon links (`.colophon a`), location links, social links (`.socials a`), and biography content links (`.content :global(a)`) often lack explicit vertical dimensions, rendering below the 44px minimum touch target threshold recommended by WCAG 2.1 AA and leading to mis-taps on mobile viewports. Applying `display: inline-flex; align-items: center; min-height: 44px;` across `footer a` and `.content :global(a)` expands the touch interaction zone without breaking inline text rhythm or desktop layout.
+
+**Action:** Updated `footer a` in `Footer.astro` and `.content :global(a)` in `biography.astro` to enforce `display: inline-flex; align-items: center; min-height: 44px;`.
+
 ## 2026-05-26 - Page Link Touch Target Ergonomics
 
 **Learning:** Section list links (such as `.earlier a` in `work.astro`) and standalone page action links (such as `.history-link` in `whats-new.astro` and `.hire-cta a`) often render as compact inline links on mobile viewports, failing WCAG 2.1 AA 44x44px minimum touch target requirements and risking mis-taps. Setting `display: inline-flex; align-items: center; min-height: 44px;` expands the interactive tap area without disrupting surrounding line rhythm.
