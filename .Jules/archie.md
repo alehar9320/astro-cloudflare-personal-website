@@ -1,0 +1,3 @@
+2026-08-24 - Initial Architectural Governance & Tech Radar Codification
+Learning: Missing master ADR index (`docs/adr/README.md`) and Tech Radar (`docs/tech-radar.md`) allowed implicit architectural conventions (such as strict Zod boundary validation and Workers-First runtime models) to remain uncodified, risking AI agent context drift during feature development.
+Action: Standardized ADR 0001, codified Zod boundary validation as Accepted ADR 0002, created master index `docs/adr/README.md`, and established `docs/tech-radar.md` with explicit Directives for AI Agents across four operational quadrants.

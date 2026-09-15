@@ -1,18 +1,26 @@
-# ADR 0001: Cloudflare as production, Render as Jules test env
+# 0001. Cloudflare Workers as Production Environment and Render as Jules Testbed
 
-- Status: Accepted
-- Date: 2026-08-24
+- **Status:** Accepted
+- **Date:** 2026-08-24
+- **Deciders:** Autonomous Architect (Archie) / Repository Analysis
 
 ## Context
 
-The site can build two ways: Cloudflare Workers (static + `@astrojs/cloudflare`) or a Node standalone server when `RENDER=true` (`@astrojs/node`). Prod already runs at https://me.alehar.workers.dev/. We need a clear split so Google Jules can debug against a Node environment without treating that path as a second production or failover.
+The site can build using two runtime paths: Cloudflare Workers (static + `@astrojs/cloudflare`) or a Node.js standalone server when `RENDER=true` (`@astrojs/node`). Production runs on Cloudflare Workers (`https://me.alehar.workers.dev/`). A clear architectural split is required so autonomous agents like Google Jules can execute and debug tests in a Node.js environment without treating that secondary path as production or a failover target.
 
 ## Decision
 
-Production is Cloudflare Workers only. Render is a test environment for Google Jules (Node server via `render.yaml`). It is not a second prod and not a failover.
+Production is strictly Cloudflare Workers with Assets (`wrangler.jsonc`). The Render deployment is designated strictly as a test/debugging environment for autonomous agents (Google Jules) via `render.yaml`. Render is neither a production target nor a failover environment.
 
-## Consequences
+## Consequences & Tradeoffs
 
-- Ship and operate prod on the Cloudflare Worker (`wrangler.jsonc`, `src/cloudflare-worker.ts`).
-- Keep the Render Node path for Jules debugging only; expect AI/KV and other Workers bindings to be absent or stubbed there (`src/env/cloudflare-workers.node.ts`).
-- Docs and ops language should call Cloudflare production and Render the Jules test env.
+- **Positive:** Clear operational boundaries prevent accidental deployment of Node-specific artifacts to Cloudflare Workers and simplify Workers-first runtime optimizations.
+- **Negative / Risks:** Node testbed requires stubbing Cloudflare Worker bindings (e.g., `src/env/cloudflare-workers.node.ts`).
+- **Adoption Readiness:** Fully implemented and active in repository build pipelines (`astro.config.mjs`, `wrangler.jsonc`, `render.yaml`).
+
+## Directives for AI Agents
+
+- **Do:** Assume Cloudflare Workers + Assets (`wrangler.jsonc`) is the sole production runtime.
+- **Do:** Keep `@astrojs/node` build logic isolated behind `process.env.RENDER === 'true'`.
+- **Don't:** Add production features or cloud bindings that rely on Node.js runtime globals or server-side Node packages in production code paths.
+- **Don't:** Treat Render as a production environment or failover target in documentation, CI, or deployment logic.
