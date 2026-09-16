@@ -1,0 +1,87 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_devex_framework) return Astro.redirect('/404/');
+
+const pillars = [
+  {
+    t: 'Developer Velocity',
+    d: 'Eliminating friction in local setups, CI pipelines, and deployments.',
+  },
+  {
+    t: 'Cognitive Load',
+    d: 'Designing intuitive systems and clear abstractions to reduce context switching.',
+  },
+  {
+    t: 'Fast Feedback Loops',
+    d: 'Empowering engineers with instant telemetry and automated checks.',
+  },
+];
+---
+
+<BaseLayout
+  title="DevEx Framework | Alexander Härenstam"
+  description="DevEx framework pillars."
+  robots="noindex"
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero title="DevEx Framework" tagline="Pillars for engineering productivity." align="start" />
+    <div class="grid">
+      {
+        pillars.map(({ t, d }) => (
+          <section class="card">
+            <h2>{t}</h2>
+            <p>{d}</p>
+          </section>
+        ))
+      }
+    </div>
+    <div class="actions">
+      <CallToAction
+        href="https://www.linkedin.com/in/alehar/"
+        target="_blank"
+        rel="noopener noreferrer">Get in touch</CallToAction
+      >
+      <p class="cta-hint">LinkedIn · replies from me</p>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
+  .card {
+    padding: 1.5rem;
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 0.75rem;
+  }
+  .card h2 {
+    font-size: var(--text-lg);
+    margin: 0 0 0.5rem;
+    color: var(--gray-0);
+  }
+  .card p {
+    margin: 0;
+    color: var(--gray-300);
+  }
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    padding-bottom: var(--chat-fab-clearance);
+  }
+  .cta-hint {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+  }
+</style>

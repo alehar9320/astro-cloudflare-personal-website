@@ -15,6 +15,8 @@ Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, an
 
 ---
 
+## 2026-08-30 - DevEx Framework MVP | Signal: Developer Experience leadership framework trend | Lean Implementation: Flagged experimental route (/experimental/devex-framework), static pillar array, flag guarded, ~38 lines total delta.
+
 ## 2026-08-29 - Farm abort | Signal: closed #768/#732/#718/#702 | Lean Implementation: HARD ABORT dx-stack/uses/stack experimental routes; prefer live visitor surfaces
 
 ## 2026-05-25 - Strategic Pulse | Signal: "/now" page trend | Lean Implementation: Flagged experimental route, < 50 lines total delta.
