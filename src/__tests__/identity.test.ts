@@ -2807,4 +2807,17 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('locks Work proof-card keyboard focus-visible ring', () => {
+    const work = readFileSync('src/pages/work.astro', 'utf8');
+    expect(work).toContain('class="proof-card"');
+    expect(work).toContain('href="/work/ifs-design-system/"');
+    expect(work).toMatch(
+      /\.proof-card:focus-visible\s*\{[\s\S]*?outline:\s*2px solid var\(--accent-regular\)/
+    );
+    expect(work).toMatch(
+      /\.proof-card:focus-visible\s*\{[\s\S]*?outline-offset:\s*4px/
+    );
+  });
+
 });
