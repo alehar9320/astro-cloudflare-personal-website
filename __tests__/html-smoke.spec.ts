@@ -13,6 +13,7 @@ const validHtml = `<!doctype html>
     <title>Valid Page</title>
   </head>
   <body>
+    <a href="#main-content">Skip to content</a>
     <main id="main-content">Hello</main>
   </body>
 </html>`;
@@ -26,6 +27,7 @@ const valid404 = `<!doctype html>
     <title>Not Found</title>
   </head>
   <body>
+    <a href="#main-content">Skip to content</a>
     <main id="main-content">
       <a href="/">Return to Homepage</a>
     </main>
@@ -75,6 +77,16 @@ describe('HTML document contracts', () => {
     expect(checkDocument(html, 'empty-title.html')).toContain(
       'empty-title.html: missing non-empty title'
     );
+  });
+
+  it('rejects a document missing Skip to content', () => {
+    const html = validHtml.replace('<a href="#main-content">Skip to content</a>', '');
+    expect(checkDocument(html, 'index.html')).toContain('index.html: missing skip to content');
+  });
+
+  it('rejects a document missing #main-content', () => {
+    const html = validHtml.replace(' id="main-content"', '');
+    expect(checkDocument(html, 'index.html')).toContain('index.html: missing #main-content');
   });
 });
 
@@ -127,5 +139,39 @@ describe('build output contracts', () => {
       '404.html': validHtml,
     });
     expect(checkBuild(dist)).toContain('404 page is missing a home link');
+  });
+
+  it('passes What's New, This site, Roadmap, and Site success when Skip to content is present (#1123)', () => {
+    const dist = makeDist({
+      'index.html': validHtml,
+      '404.html': valid404,
+      'whats-new/index.html': validHtml,
+      'this-site/index.html': validHtml,
+      'roadmap/index.html': validHtml,
+      'okr/index.html': validHtml,
+    });
+    expect(checkBuild(dist)).toEqual([]);
+  });
+
+  it('passes when What's New, This site, Roadmap, and Site success are nested under client/ (#1123)', () => {
+    const dist = makeDist({
+      'client/index.html': validHtml,
+      'client/404.html': valid404,
+      'client/whats-new/index.html': validHtml,
+      'client/this-site/index.html': validHtml,
+      'client/roadmap/index.html': validHtml,
+      'client/okr/index.html': validHtml,
+    });
+    expect(checkBuild(dist)).toEqual([]);
+  });
+
+  it('fails when What's New is missing Skip to content (#1123)', () => {
+    const bare = validHtml.replace('<a href="#main-content">Skip to content</a>', '');
+    const dist = makeDist({
+      'index.html': validHtml,
+      '404.html': valid404,
+      'whats-new/index.html': bare,
+    });
+    expect(checkBuild(dist)).toContain('whats-new/index.html: missing skip to content');
   });
 });
