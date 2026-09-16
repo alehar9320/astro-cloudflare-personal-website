@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-27 - Action CTA Touch Target Ergonomics on Fallback Pages
+
+**Learning:** Primary action triggers and call-to-action buttons nested in container wrappers (such as `.cta-container` in `NotFoundContent.astro`) require explicit WCAG 2.1 AA 44x44px touch target bounds (`min-height: 44px; min-width: 44px;`) across touch viewports to prevent mis-taps when placed adjacent to secondary action hints or links.
+
+**Action:** Enforced `min-height: 44px; min-width: 44px;` for `:global(a)` inside `.cta-container` in `src/components/NotFoundContent.astro`.
+
 ## 2026-05-26 - Page Link Touch Target Ergonomics
 
 **Learning:** Section list links (such as `.earlier a` in `work.astro`) and standalone page action links (such as `.history-link` in `whats-new.astro` and `.hire-cta a`) often render as compact inline links on mobile viewports, failing WCAG 2.1 AA 44x44px minimum touch target requirements and risking mis-taps. Setting `display: inline-flex; align-items: center; min-height: 44px;` expands the interactive tap area without disrupting surrounding line rhythm.
