@@ -272,6 +272,12 @@
     line-height: 1;
   }
 
+  /* Hide Live badge whenever chat is open/prominent — all viewports (#1093). */
+  .chat-container.is-open #chat-live,
+  .chat-container.is-prominent #chat-live {
+    display: none;
+  }
+
   .chat-suggestions {
     display: flex;
     flex-direction: column;
