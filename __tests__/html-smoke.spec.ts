@@ -13,6 +13,7 @@ const validHtml = `<!doctype html>
     <title>Valid Page</title>
   </head>
   <body>
+    <a href="#main-content">Skip to content</a>
     <main id="main-content">Hello</main>
   </body>
 </html>`;
@@ -26,6 +27,7 @@ const valid404 = `<!doctype html>
     <title>Not Found</title>
   </head>
   <body>
+    <a href="#main-content">Skip to content</a>
     <main id="main-content">
       <a href="/">Return to Homepage</a>
     </main>
@@ -75,6 +77,16 @@ describe('HTML document contracts', () => {
     expect(checkDocument(html, 'empty-title.html')).toContain(
       'empty-title.html: missing non-empty title'
     );
+  });
+
+  it('rejects a document missing Skip to content', () => {
+    const html = validHtml.replace('<a href="#main-content">Skip to content</a>', '');
+    expect(checkDocument(html, 'index.html')).toContain('index.html: missing skip to content');
+  });
+
+  it('rejects a document missing #main-content', () => {
+    const html = validHtml.replace(' id="main-content"', '');
+    expect(checkDocument(html, 'index.html')).toContain('index.html: missing #main-content');
   });
 });
 

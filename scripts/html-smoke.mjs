@@ -68,6 +68,14 @@ export function checkDocument(html, filePath = 'document.html') {
     failures.push(`${filePath}: missing description meta`);
   }
 
+  if (!/<a\b[^>]*href\s*=\s*["']#main-content["'][^>]*>\s*Skip to content\s*<\/a>/i.test(html)) {
+    failures.push(`${filePath}: missing skip to content`);
+  }
+
+  if (!/id\s*=\s*["']main-content["']/i.test(html)) {
+    failures.push(`${filePath}: missing #main-content`);
+  }
+
   return failures;
 }
 
