@@ -1,3 +1,22 @@
+# HARD ABORT — Skills microcopy
+
+Read this before scouting. If the idea is one of these, ABORT the cycle. Do not downscope into a sibling with the same job. Do not open a PR.
+
+If the idea is benefit-driven Skills microcopy, restacking Skills headings/body copy, or a sibling Skills phrasing pass, ABORT.
+
+Do NOT recreate:
+
+- benefit-driven Skills microcopy enhancements
+- Skills section copy restacks of the same class
+
+Already closed as farm: #853.
+
+Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, and other shipped pages). Hire path is LinkedIn only. Do not invent a public email or CV.
+
+---
+
+## 2026-09-01 - Farm abort | Signal: Nick close-reason split | Lean Implementation: HARD ABORT Skills microcopy
+
 # Scribe's Journal ✍️
 
 ## 2026-05-16 - Narrative Anchors & Strategic CTAs | **Learning:** Transforming dead-end placeholders and passive headings into active CTAs and strategic anchors (e.g., "Strategic Foundation") significantly boosts the narrative of leadership and conversion potential. | **Action:** Audit all "coming soon" or placeholder text to find conversion opportunities and ensure section headers use authoritative, benefit-driven nouns/verbs.
