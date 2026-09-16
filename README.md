@@ -3,7 +3,13 @@
 <div align="center">
 
 [![Built with Astro](https://img.shields.io/badge/Astro-0C1120?style=flat&logo=astro&logoColor=white)](https://astro.build/)
-[![Deployed on Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=flat&logo=cloudflare&logoColor=white)](https://pages.cloudflare.com/)
+[![Deployed on Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=flat&logo=cloudflare&logoColor=white)](https://workers.cloudflare.com/)
+[![Sentry](https://img.shields.io/badge/Sentry-362D59?style=flat&logo=sentry&logoColor=white)](https://sentry.io/)
+[![PostHog](https://img.shields.io/badge/PostHog-1D4AFF?style=flat&logo=posthog&logoColor=white)](https://posthog.com/)
+[![Dependabot](https://img.shields.io/badge/Dependabot-025E8C?style=flat&logo=dependabot&logoColor=white)](https://github.com/dependabot)
+[![Google Jules](https://img.shields.io/badge/Google_Jules-4285F4?style=flat&logo=google&logoColor=white)](https://jules.google.com)
+[![Jules test on Render](https://img.shields.io/badge/Render-Jules_test-46E3B7?style=flat&logo=render&logoColor=white)](https://render.com/)
+[![Grok Bot](https://img.shields.io/badge/Grok_Bot-000000?style=flat)](https://grok.com/)
 [![Tested with Vitest](https://img.shields.io/badge/Tested_with-Vitest-FCC72B?style=flat&logo=vitest&logoColor=white)](https://vitest.dev/)
 [![Code Style: Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat&logo=prettier)](https://github.com/prettier/prettier)
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/alehar9320/astro-cloudflare-personal-website/ci.yml?style=flat&logo=githubactions&logoColor=white)](https://github.com/alehar9320/astro-cloudflare-personal-website/actions)
