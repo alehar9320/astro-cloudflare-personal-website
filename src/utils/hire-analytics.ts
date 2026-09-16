@@ -8,7 +8,7 @@ export type HireEventName =
   | 'chat_opened'
   | 'chat_message_sent';
 
-export type HireSurface = 'nav' | 'hero' | 'contact_cta' | 'contact_page' | 'fab';
+export type HireSurface = 'nav' | 'hero' | 'contact_cta' | 'contact_page' | 'fab' | 'footer';
 
 declare global {
   interface Window {
