@@ -13,6 +13,41 @@ export type VisitorChangelogEntry = {
 /** Known shipped PRs on this site. Do not invent work that is not in the feed. */
 export const VISITOR_CHANGELOG: readonly VisitorChangelogEntry[] = [
   {
+    pr: 864,
+    subject: 'Fix biography IFS Design System proof link hit target and mobile dock clearance',
+    title: 'Biography proof links are easier to tap, including on phones',
+  },
+  {
+    pr: 825,
+    subject: 'Quiet Contact hire line to LinkedIn; no twin-mouth',
+    title: 'Contact sends hire interest to LinkedIn — one clear path',
+  },
+  {
+    pr: 823,
+    subject: 'Cold-land Work/case so shared proof is a real site entry',
+    title: 'Shared Work links open the case as a real site entry',
+  },
+  {
+    pr: 819,
+    subject: 'What’s New: denser desktop Last-30 so lines clear composer',
+    title: 'What’s New fits more updates above the chat dock on desktop',
+  },
+  {
+    pr: 817,
+    subject: 'Raise home Read the case 44x44 hit-box clear of dock',
+    title: 'Home “Read the case” stays clear of the chat dock',
+  },
+  {
+    pr: 817,
+    subject: 'Keep home Read the case clear of the docked composer',
+    title: 'Home “Read the case” stays clear of the chat dock',
+  },
+  {
+    pr: 803,
+    subject: 'Hire tracking is live',
+    title: 'Hire interest tracking is live',
+  },
+  {
     pr: 524,
     subject: 'rewrite What’s New for visitors',
     title: 'What’s New rewritten for visitors',
@@ -177,10 +212,10 @@ const BY_SUBJECT = new Map(
 const SHA_PREFIX = /^[a-f0-9]{7,40}\s+/i;
 const CONVENTIONAL_PREFIX =
   /^(feat|fix|chore|docs|refactor|test|style|perf|build|ci)(\([^)]+\))?:\s*/i;
-const PR_SUFFIX = /\s*\(#(\d+)\)\s*$/;
+const PR_SUFFIX = /(?:\s*\(#\d+\))+\s*$/;
 
 /**
- * Strip SHA, conventional-commit type, and trailing (#123) from a changelog line.
+ * Strip SHA, conventional-commit type, and all trailing (#123) suffixes from a changelog line.
  */
 export function stripChangelogChrome(raw: string): string {
   return raw
