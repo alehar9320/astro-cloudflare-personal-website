@@ -13,6 +13,7 @@ const validHtml = `<!doctype html>
     <title>Valid Page</title>
   </head>
   <body>
+    <a href="#main-content">Skip to content</a>
     <main id="main-content">Hello</main>
   </body>
 </html>`;
@@ -26,6 +27,7 @@ const valid404 = `<!doctype html>
     <title>Not Found</title>
   </head>
   <body>
+    <a href="#main-content">Skip to content</a>
     <main id="main-content">
       <a href="/">Return to Homepage</a>
     </main>
@@ -75,6 +77,16 @@ describe('HTML document contracts', () => {
     expect(checkDocument(html, 'empty-title.html')).toContain(
       'empty-title.html: missing non-empty title'
     );
+  });
+
+  it('rejects a document missing Skip to content', () => {
+    const html = validHtml.replace('<a href="#main-content">Skip to content</a>', '');
+    expect(checkDocument(html, 'index.html')).toContain('index.html: missing skip to content');
+  });
+
+  it('rejects a document missing #main-content', () => {
+    const html = validHtml.replace(' id="main-content"', '');
+    expect(checkDocument(html, 'index.html')).toContain('index.html: missing #main-content');
   });
 });
 
@@ -127,5 +139,37 @@ describe('build output contracts', () => {
       '404.html': validHtml,
     });
     expect(checkBuild(dist)).toContain('404 page is missing a home link');
+  });
+
+  it('passes Work, Biography, and Contact when Skip to content is present (#1121)', () => {
+    const dist = makeDist({
+      'index.html': validHtml,
+      '404.html': valid404,
+      'work/index.html': validHtml,
+      'biography/index.html': validHtml,
+      'contact/index.html': validHtml,
+    });
+    expect(checkBuild(dist)).toEqual([]);
+  });
+
+  it('passes when Work, Biography, and Contact are nested under client/ (#1121)', () => {
+    const dist = makeDist({
+      'client/index.html': validHtml,
+      'client/404.html': valid404,
+      'client/work/index.html': validHtml,
+      'client/biography/index.html': validHtml,
+      'client/contact/index.html': validHtml,
+    });
+    expect(checkBuild(dist)).toEqual([]);
+  });
+
+  it('fails when Work is missing Skip to content (#1121)', () => {
+    const bare = validHtml.replace('<a href="#main-content">Skip to content</a>', '');
+    const dist = makeDist({
+      'index.html': validHtml,
+      '404.html': valid404,
+      'work/index.html': bare,
+    });
+    expect(checkBuild(dist)).toContain('work/index.html: missing skip to content');
   });
 });

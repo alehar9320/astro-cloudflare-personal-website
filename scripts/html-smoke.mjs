@@ -68,6 +68,14 @@ export function checkDocument(html, filePath = 'document.html') {
     failures.push(`${filePath}: missing description meta`);
   }
 
+  if (!/<a\b[^>]*href\s*=\s*["']#main-content["'][^>]*>\s*Skip to content\s*<\/a>/i.test(html)) {
+    failures.push(`${filePath}: missing skip to content`);
+  }
+
+  if (!/id\s*=\s*["']main-content["']/i.test(html)) {
+    failures.push(`${filePath}: missing #main-content`);
+  }
+
   return failures;
 }
 
@@ -93,8 +101,27 @@ function isNotFoundPage(relativePath) {
 }
 
 /**
- * This gate checks home and 404 only. Other routes (including experimental
- * redirect stubs) are a follow-up.
+ * Work, Biography, and Contact share the Skip to content gate (#1121).
+ * @param {string} relativePath
+ */
+function isVisitorContentPage(relativePath) {
+  const routes = ['work', 'biography', 'contact'];
+  return routes.some(
+    (route) =>
+      relativePath === `${route}/index.html` ||
+      relativePath === `client/${route}/index.html`
+  );
+}
+
+/**
+ * @param {string} relativePath
+ */
+function isSkipGatedPage(relativePath) {
+  return isHomeIndex(relativePath) || isNotFoundPage(relativePath) || isVisitorContentPage(relativePath);
+}
+
+/**
+ * Gate: home, 404, Work, Biography, Contact. Experimental stubs stay unchecked.
  * @param {string} distDir
  * @returns {string[]}
  */
@@ -119,7 +146,7 @@ export function checkBuild(distDir) {
 
   for (const file of htmlFiles) {
     const rel = path.relative(distDir, file).replaceAll('\\', '/');
-    if (!isHomeIndex(rel) && !isNotFoundPage(rel)) continue;
+    if (!isSkipGatedPage(rel)) continue;
     const html = fs.readFileSync(file, 'utf8');
     failures.push(...checkDocument(html, rel));
   }
