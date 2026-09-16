@@ -2807,4 +2807,26 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('shows visible (opens in a new tab) on footer external target=_blank links (#1162)', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    const warning = '(opens in a new tab)';
+    const anchors = [
+      'https://www.google.com/maps/place/Stockholm/',
+      'https://www.google.com/maps/place/Sweden/',
+      'https://www.linkedin.com/in/alehar/',
+      'https://blog.ifs.com/author/alexander-harenstam/',
+      'https://github.com/alehar9320',
+    ];
+    for (const href of anchors) {
+      const i = footer.indexOf(`href="${href}"`);
+      expect(i).toBeGreaterThan(-1);
+      const slice = footer.slice(i, i + 280);
+      expect(slice).toContain('target="_blank"');
+      expect(slice).toContain('noopener noreferrer');
+      expect(slice).toContain(warning);
+      expect(slice).not.toMatch(/class="[^"]*sr-only[^"]*"[^>]*>\s*\(opens in a new tab\)/);
+    }
+    expect(footer).not.toContain('mailto:');
+  });
 });
