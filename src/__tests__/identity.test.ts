@@ -1348,6 +1348,15 @@ describe('identity copy', () => {
     expect(nav).not.toContain('hsla(var(--gray-999-basis), 0.85)');
   });
 
+  it('keeps mobile Menu button at 44px hit target', () => {
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    const block = nav.match(/\.menu-button\s*\{[\s\S]*?\}/);
+    expect(block).toBeTruthy();
+    expect(block![0]).toMatch(/min-height:\s*44px/);
+    expect(block![0]).toMatch(/min-width:\s*44px/);
+    expect(nav).toContain('<span class="sr-only">Menu</span>');
+  });
+
   it('closes the mobile nav overlay on Escape and restores focus without leaking the keydown', () => {
     const nav = readFileSync('src/components/Nav.astro', 'utf8');
     expect(nav).toContain('AbortController');
