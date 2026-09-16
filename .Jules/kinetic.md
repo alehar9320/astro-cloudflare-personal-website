@@ -24,3 +24,14 @@ Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hi
   - Glass Blur: `16px`
   - Affordance: `translateY(-4px)`
   - Glow: `hsla(210, 100%, 45%, 0.3)`
+
+## 2026-03-30 - Portfolio Card Image Zoom & Reduced Motion Safeguards
+
+- **Signal:** Portfolio preview cards translated on hover but internal project images remained flat, lacking spatial depth during hover and keyboard focus states.
+- **Action:**
+  - Added hardware-accelerated `transform: scale(1.05)` with `transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)` on `.card:hover img` and `.card:focus-visible img` in `src/components/PortfolioPreview.astro`.
+  - Added `@media (prefers-reduced-motion: reduce)` block resetting transitions and transforms for WCAG 2.1 AA accessibility compliance.
+- **Tokens & Performance:**
+  - Image Scale: `1.05`
+  - Timing Function: `cubic-bezier(0.22, 1, 0.36, 1)` (0.5s)
+  - Zero layout reflow or repaint overhead (composite layer scale only).
