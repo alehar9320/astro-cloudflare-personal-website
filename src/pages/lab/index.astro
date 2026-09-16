@@ -1,0 +1,235 @@
+---
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Aurora Lab | Alexander Härenstam"
+  description="Experimental creative computing lab showcasing mathematical Northern Lights wave refractions and interactive canvas animations."
+>
+  <div class="stack gap-20">
+    <main class="wrapper stack gap-8" id="main-content">
+      <Hero
+        title="Aurora Lab"
+        tagline="Safe-space creative computing experiments exploring light refractions and harmonic wave synthesis."
+        align="start"
+      />
+
+      <section class="lab-canvas-container glass-panel">
+        <div class="canvas-header">
+          <div class="canvas-title">
+            <span class="live-indicator"></span>
+            <h2>Wave Refraction Matrix</h2>
+          </div>
+          <p class="canvas-instruction">
+            Move cursor or touch canvas to refract Northern Lights wave harmonics.
+          </p>
+        </div>
+
+        <div class="canvas-viewport" id="canvas-viewport">
+          <canvas
+            id="aurora-lab-canvas"
+            aria-label="Interactive Northern Lights wave refraction animation"></canvas>
+        </div>
+      </section>
+    </main>
+  </div>
+</BaseLayout>
+
+<script>
+  import { calculateRefractionOffset, clampDpr, harmonicWave } from '../../utils/aurora-math';
+
+  function initLabCanvas() {
+    const canvas = document.getElementById('aurora-lab-canvas') as HTMLCanvasElement | null;
+    const viewport = document.getElementById('canvas-viewport');
+    if (!canvas || !viewport) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animId = 0;
+    let time = 0;
+    let pointerX = -1000;
+    let pointerY = -1000;
+
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const resize = () => {
+      const width = viewport.clientWidth || 800;
+      const height = viewport.clientHeight || 400;
+      const dpr = clampDpr(window.devicePixelRatio || 1, 2);
+
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      ctx.scale(dpr, dpr);
+    };
+
+    const handlePointerMove = (e: MouseEvent | TouchEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      if ('touches' in e && e.touches.length > 0) {
+        pointerX = e.touches[0].clientX - rect.left;
+        pointerY = e.touches[0].clientY - rect.top;
+      } else if ('clientX' in e) {
+        pointerX = (e as MouseEvent).clientX - rect.left;
+        pointerY = (e as MouseEvent).clientY - rect.top;
+      }
+    };
+
+    const handlePointerLeave = () => {
+      pointerX = -1000;
+      pointerY = -1000;
+    };
+
+    const drawWaveRibbon = (
+      baseYRatio: number,
+      freq: number,
+      amp: number,
+      phase: number,
+      color: string
+    ) => {
+      const width = viewport.clientWidth || 800;
+      const height = viewport.clientHeight || 400;
+      const baseY = height * baseYRatio;
+
+      ctx.beginPath();
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 2.5;
+
+      const step = 6;
+      for (let x = 0; x <= width + step; x += step) {
+        const waveY = baseY + harmonicWave(x, time, freq, amp, phase);
+        const refraction = calculateRefractionOffset(x, waveY, pointerX, pointerY, 140, 28);
+        const finalX = x + refraction.dx;
+        const finalY = waveY + refraction.dy;
+
+        if (x === 0) {
+          ctx.moveTo(finalX, finalY);
+        } else {
+          ctx.lineTo(finalX, finalY);
+        }
+      }
+
+      ctx.stroke();
+    };
+
+    const render = () => {
+      const width = viewport.clientWidth || 800;
+      const height = viewport.clientHeight || 400;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Northern Lights gradient palette
+      drawWaveRibbon(0.35, 0.008, 18, 0, 'rgba(80, 227, 194, 0.7)'); // Cyan accent
+      drawWaveRibbon(0.5, 0.006, 26, 1.2, 'rgba(40, 160, 220, 0.6)'); // Marine blue
+      drawWaveRibbon(0.65, 0.009, 22, 2.4, 'rgba(120, 90, 240, 0.5)'); // Deep aurora purple
+
+      if (!reducedMotionQuery.matches) {
+        time += 0.018;
+        animId = requestAnimationFrame(render);
+      }
+    };
+
+    window.addEventListener('resize', resize, { passive: true });
+    viewport.addEventListener('mousemove', handlePointerMove, { passive: true });
+    viewport.addEventListener('mouseleave', handlePointerLeave, { passive: true });
+    viewport.addEventListener('touchstart', handlePointerMove, { passive: true });
+    viewport.addEventListener('touchmove', handlePointerMove, { passive: true });
+    viewport.addEventListener('touchend', handlePointerLeave, { passive: true });
+
+    resize();
+    render();
+
+    // Clean up lifecycle on page navigation (Astro client transitions)
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cancelAnimationFrame(animId);
+        window.removeEventListener('resize', resize);
+        viewport.removeEventListener('mousemove', handlePointerMove);
+        viewport.removeEventListener('mouseleave', handlePointerLeave);
+        viewport.removeEventListener('touchstart', handlePointerMove);
+        viewport.removeEventListener('touchmove', handlePointerMove);
+        viewport.removeEventListener('touchend', handlePointerLeave);
+      },
+      { once: true }
+    );
+  }
+
+  // Initialize on load and on page swaps
+  initLabCanvas();
+  document.addEventListener('astro:page-load', initLabCanvas);
+</script>
+
+<style>
+  .gap-20 {
+    gap: 5rem;
+  }
+  .gap-8 {
+    gap: 2rem;
+  }
+
+  .glass-panel {
+    background: hsla(var(--gray-999-basis), 0.5);
+    border: 1px solid var(--gray-800);
+    border-radius: 1.5rem;
+    padding: 1.5rem;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .canvas-header {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .canvas-title {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .canvas-title h2 {
+    font-size: var(--text-lg);
+    color: var(--gray-100);
+    font-weight: 600;
+  }
+
+  .live-indicator {
+    width: 0.625rem;
+    height: 0.625rem;
+    border-radius: 50%;
+    background-color: #50e3c2;
+    box-shadow: 0 0 8px #50e3c2;
+  }
+
+  .canvas-instruction {
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+  }
+
+  .canvas-viewport {
+    width: 100%;
+    height: 380px;
+    border-radius: 1rem;
+    background: radial-gradient(circle at 50% 50%, rgba(10, 20, 35, 0.8), rgba(4, 8, 16, 0.95));
+    overflow: hidden;
+    position: relative;
+    cursor: crosshair;
+    touch-action: none;
+    border: 1px solid var(--gray-800);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+</style>
