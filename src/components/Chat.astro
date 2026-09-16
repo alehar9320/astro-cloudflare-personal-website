@@ -140,7 +140,16 @@
 
   @media (min-width: 50em) {
     .chat-container.is-open:not(.is-prominent) {
-      padding-top: 5rem;
+      inset: 5rem 0 0 0;
+      padding-top: 0;
+      height: auto;
+      max-height: none;
+      justify-content: stretch;
+    }
+
+    .chat-container.is-open:not(.is-prominent) .chat-window {
+      flex: 1 1 auto;
+      min-height: 0;
     }
   }
 
