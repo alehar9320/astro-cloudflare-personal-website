@@ -1,4 +1,11 @@
-<div class="pill"><slot /></div>
+---
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+const isPillHoverEnabled = flagsEntry?.data.enable_pill_hover_v1 ?? false;
+---
+
+<div class:list={['pill', { hoverable: isPillHoverEnabled }]}><slot /></div>
 
 <style>
   .pill {
@@ -23,5 +30,17 @@
     background-size: 250% 100%;
     background-position: 0% 50%;
     box-shadow: var(--shadow-sm);
+    transition:
+      transform 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pill.hoverable:hover {
+      transform: translateY(-2px);
+      box-shadow:
+        var(--shadow-md),
+        0 0 12px var(--accent-overlay);
+    }
   }
 </style>
