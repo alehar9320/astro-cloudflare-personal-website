@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-27 - Header Social Icon Link Touch Ergonomics & Focus Containment
+
+**Learning:** Social icon links located in navigation headers (e.g., `.social` in `Nav.astro`) often render with small click/tap dimensions when using tight icon padding. Explicitly setting `min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center;` satisfies WCAG 2.1 AA touch target standards on mobile viewports. Furthermore, using `outline-offset: 2px` for rounded icon containers maintains tight, unclipped keyboard focus ring containment within compact header toolbars.
+
+**Action:** Enforced `min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center;` and contained `outline-offset: 2px` for `.social` links in `src/components/Nav.astro`. Gated tactile `:active` scaling behind `@media (prefers-reduced-motion: no-preference)`.
+
 ## 2026-05-26 - Page Link Touch Target Ergonomics
 
 **Learning:** Section list links (such as `.earlier a` in `work.astro`) and standalone page action links (such as `.history-link` in `whats-new.astro` and `.hire-cta a`) often render as compact inline links on mobile viewports, failing WCAG 2.1 AA 44x44px minimum touch target requirements and risking mis-taps. Setting `display: inline-flex; align-items: center; min-height: 44px;` expands the interactive tap area without disrupting surrounding line rhythm.
