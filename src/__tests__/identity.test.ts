@@ -2807,4 +2807,16 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('keeps nav text links with a visible focus ring', () => {
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    expect(nav).toMatch(
+      /\.link:focus-visible\s*\{[\s\S]*?outline:\s*2px\s+solid\s+var\(--accent-regular\);[\s\S]*?outline-offset:\s*4px;/
+    );
+    expect(nav).toContain('class="link"');
+    expect(nav).toContain("href: '/work/'");
+    expect(nav).toContain("href: '/biography/'");
+    expect(nav).toContain("href: '/contact/'");
+    expect(nav).not.toContain('mailto:');
+  });
 });
