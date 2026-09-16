@@ -1126,12 +1126,16 @@ describe('identity copy', () => {
     expect(ds).not.toContain('mailto:');
   });
 
-  it('lets the AI coding copilots case include a visible Get in touch on LinkedIn CTA', () => {
-    const copilots = readFileSync('src/content/work/ai-coding-copilots.md', 'utf8');
-    expect(copilots).toContain(
+  it('keeps copilots case body free of in-body Get in touch; hire stays chrome (#1105)', () => {
+    const md = readFileSync('src/content/work/ai-coding-copilots.md', 'utf8');
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(md).not.toContain(
       '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
     );
-    expect(copilots).not.toContain('mailto:');
+    expect(md).not.toContain('mailto:');
+    const mainEnd = slug.indexOf('</main>');
+    const ctaAt = slug.indexOf('<ContactCTA />');
+    expect(ctaAt).toBeGreaterThan(mainEnd);
 
     const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
     const work = readFileSync('src/pages/work.astro', 'utf8');
@@ -1154,7 +1158,7 @@ describe('identity copy', () => {
     expect(copilots).toContain('internal AI coding copilots');
     expect(copilots).toContain('engineering teams');
     expect(copilots).toContain('February 2025');
-    expect(copilots).toContain(
+    expect(copilots).not.toContain(
       '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
     );
     expect(copilots).not.toContain('mailto:');

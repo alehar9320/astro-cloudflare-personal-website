@@ -27,4 +27,3 @@ As Product Manager, Developer Experience at IFS in Greater Stockholm, I work on 
 
 Internal AI coding copilots for IFS engineering teams.
 
-<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>
