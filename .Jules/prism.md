@@ -1,0 +1,4 @@
+## 2026-03-30 - Interactive Aurora Waves Canvas Lab
+- **Garbage Collection & Canvas Metrics**: Implemented DPR capping at `Math.min(window.devicePixelRatio, 2)` to eliminate excessive GPU texture memory allocations on high-DPI retina viewports. Integrated `astro:before-swap` listener teardown to cancel `requestAnimationFrame` loops and remove event listeners during client-side Astro page navigation.
+- **Math Logic Setup**: Built dual sine-harmonic wave functions (`sin(x * freq + t * speed) + 0.5 * cos(0.5 * x * freq + 0.7 * t * speed)`) combined with inverse-quadratic distance pointer field distortion (`Math.pow(1 - distance / radius, 2)`) to simulate interactive Northern Lights refractions.
+- **Mobile Viewport Scaling**: Responsive canvas container resize handler dynamically recalculates pixel buffer dimensions on orientation change while maintaining CSS aspect ratio.

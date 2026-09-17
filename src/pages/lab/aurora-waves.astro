@@ -1,0 +1,234 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Aurora Waves Lab | Alexander Härenstam"
+  description="Interactive math-driven Northern Lights wave simulation built with HTML5 Canvas."
+  robots="noindex, nofollow"
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <header class="lab-header">
+      <a href="/" class="back-link">&larr; Return to Home</a>
+      <h1 class="title">Aurora Waves Experiment</h1>
+      <p class="description">
+        Interactive HTML5 canvas generative wave simulation powered by sine wave harmonics, dynamic
+        pointer field distortion, and capped DPR hardware optimization.
+      </p>
+    </header>
+
+    <section class="canvas-card" aria-label="Interactive Aurora Waves Canvas">
+      <div class="canvas-container">
+        <canvas id="aurora-lab-canvas" aria-label="Aurora waves interactive animation canvas"
+        ></canvas>
+        <div class="canvas-overlay">
+          <p class="hint">Move cursor / touch over the canvas to distort wave phase field</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import {
+    calculateWaveY,
+    getCappedDpr,
+    getDefaultAuroraWaveConfigs,
+    type MousePosition,
+  } from '../../utils/aurora-waves';
+
+  const canvas = document.getElementById('aurora-lab-canvas') as HTMLCanvasElement | null;
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    if (ctx) {
+      let animationFrameId: number = 0;
+      const startTime = performance.now();
+      const waveConfigs = getDefaultAuroraWaveConfigs();
+
+      const mouse: MousePosition = {
+        x: -1000,
+        y: -1000,
+        active: false,
+      };
+
+      const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+      const resize = () => {
+        if (!canvas || !canvas.parentElement) return;
+        const width = canvas.parentElement.clientWidth;
+        const height = canvas.parentElement.clientHeight || 400;
+
+        const dpr = getCappedDpr(window.devicePixelRatio || 1);
+        canvas.width = width * dpr;
+        canvas.height = height * dpr;
+        canvas.style.width = `${width}px`;
+        canvas.style.height = `${height}px`;
+
+        ctx.scale(dpr, dpr);
+      };
+
+      const handlePointerMove = (e: PointerEvent) => {
+        const rect = canvas.getBoundingClientRect();
+        mouse.x = e.clientX - rect.left;
+        mouse.y = e.clientY - rect.top;
+        mouse.active = true;
+      };
+
+      const handlePointerLeave = () => {
+        mouse.active = false;
+      };
+
+      const renderStaticWave = () => {
+        if (!ctx || !canvas) return;
+        const width = canvas.width / getCappedDpr(window.devicePixelRatio || 1);
+        const height = canvas.height / getCappedDpr(window.devicePixelRatio || 1);
+        ctx.clearRect(0, 0, width, height);
+
+        const baseY = height * 0.5;
+        waveConfigs.forEach((config) => {
+          ctx.beginPath();
+          ctx.lineWidth = config.lineWidth;
+          ctx.strokeStyle = config.color;
+
+          for (let x = 0; x <= width; x += 10) {
+            const y = calculateWaveY(x, 0, config, baseY, { x: -1000, y: -1000, active: false });
+            if (x === 0) {
+              ctx.moveTo(x, y);
+            } else {
+              ctx.lineTo(x, y);
+            }
+          }
+          ctx.stroke();
+        });
+      };
+
+      const render = () => {
+        if (reducedMotionQuery.matches) {
+          renderStaticWave();
+          return;
+        }
+
+        if (!ctx || !canvas) return;
+        const dpr = getCappedDpr(window.devicePixelRatio || 1);
+        const width = canvas.width / dpr;
+        const height = canvas.height / dpr;
+
+        ctx.clearRect(0, 0, width, height);
+
+        const time = (performance.now() - startTime) * 0.001;
+        const baseY = height * 0.5;
+
+        waveConfigs.forEach((config) => {
+          ctx.beginPath();
+          ctx.lineWidth = config.lineWidth;
+          ctx.strokeStyle = config.color;
+
+          const step = 6;
+          for (let x = 0; x <= width + step; x += step) {
+            const y = calculateWaveY(x, time, config, baseY, mouse);
+            if (x === 0) {
+              ctx.moveTo(x, y);
+            } else {
+              ctx.lineTo(x, y);
+            }
+          }
+          ctx.stroke();
+        });
+
+        animationFrameId = requestAnimationFrame(render);
+      };
+
+      window.addEventListener('resize', resize);
+      canvas.addEventListener('pointermove', handlePointerMove);
+      canvas.addEventListener('pointerleave', handlePointerLeave);
+
+      resize();
+      render();
+
+      document.addEventListener(
+        'astro:before-swap',
+        () => {
+          cancelAnimationFrame(animationFrameId);
+          window.removeEventListener('resize', resize);
+          if (canvas) {
+            canvas.removeEventListener('pointermove', handlePointerMove);
+            canvas.removeEventListener('pointerleave', handlePointerLeave);
+          }
+        },
+        { once: true }
+      );
+    }
+  }
+</script>
+
+<style>
+  .lab-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 2rem;
+  }
+
+  .back-link {
+    font-size: var(--text-sm);
+    color: var(--accent-regular);
+    text-decoration: none;
+  }
+
+  .back-link:hover {
+    text-decoration: underline;
+  }
+
+  .title {
+    font-size: var(--text-3xl);
+    color: var(--gray-0);
+  }
+
+  .description {
+    font-size: var(--text-md);
+    color: var(--gray-300);
+    max-width: 60ch;
+  }
+
+  .canvas-card {
+    background: hsla(var(--gray-999-basis), 0.5);
+    border: 1px solid hsla(var(--gray-0-basis), 0.1);
+    border-radius: 1rem;
+    padding: 1rem;
+    backdrop-filter: blur(12px);
+  }
+
+  .canvas-container {
+    position: relative;
+    width: 100%;
+    height: 420px;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.8), rgba(2, 6, 23, 0.95));
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  .canvas-overlay {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    pointer-events: none;
+  }
+
+  .hint {
+    margin: 0;
+    font-size: var(--text-xs);
+    color: var(--gray-400);
+    background: rgba(0, 0, 0, 0.4);
+    padding: 0.35rem 0.75rem;
+    border-radius: 999rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+</style>
