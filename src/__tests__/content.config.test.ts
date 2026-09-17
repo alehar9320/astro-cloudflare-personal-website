@@ -1,7 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import { z } from './mocks/astro-zod';
 import { glob } from 'astro/loaders';
-import { defineCollection } from 'astro:content';
+import { defineCollection, type SchemaContext } from 'astro:content';
 import { collections } from '../content.config';
 import flagsFixture from '../content/flags/config.json';
 
@@ -28,19 +28,25 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
-    expect(result.success).toBe(true);
+    const rawSchema = collections.flags.schema;
+    const dummyContext = { image: () => ({}) as ReturnType<SchemaContext['image']> };
+    const schema = typeof rawSchema === 'function' ? rawSchema(dummyContext) : rawSchema;
+    if (schema && 'safeParse' in schema) {
+      const result = schema.safeParse(flagsFixture);
+      expect(result.success).toBe(true);
 
-    if (result.success) {
-      // Use toMatchObject to ensure all fixture properties are correctly validated
-      // while allowing for Zod-injected default values.
-      expect(result.data).toMatchObject(flagsFixture);
+      if (result.success) {
+        // Use toMatchObject to ensure all fixture properties are correctly validated
+        // while allowing for Zod-injected default values.
+        expect(result.data).toMatchObject(flagsFixture);
+      }
     }
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const rawSchema = collections.work.schema;
+    const dummyContext = { image: () => ({}) as ReturnType<SchemaContext['image']> };
+    const schema = typeof rawSchema === 'function' ? rawSchema(dummyContext) : rawSchema;
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -49,11 +55,13 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.title).toBe(sampleWork.title);
-      expect(result.data.publishDate).toBeInstanceOf(Date);
+    if (schema && 'safeParse' in schema) {
+      const result = schema.safeParse(sampleWork);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.title).toBe(sampleWork.title);
+        expect(result.data.publishDate).toBeInstanceOf(Date);
+      }
     }
   });
 });

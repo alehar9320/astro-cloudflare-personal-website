@@ -67,6 +67,11 @@ const isShimmerEnabled = flagsEntry?.data.portfolio_shimmer_v1 ?? false;
     border-color: hsla(var(--gray-999-basis), 0.5);
   }
 
+  .card:hover img,
+  .card:focus-visible img {
+    transform: scale(1.04);
+  }
+
   .card.tactile:active {
     transform: translateY(2px) scale(0.98);
     transition: transform 0.2s ease;
@@ -130,6 +135,7 @@ const isShimmerEnabled = flagsEntry?.data.portfolio_shimmer_v1 ?? false;
     width: 100%;
     height: 100%;
     object-fit: cover;
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);
   }
 
   @media (min-width: 50em) {
@@ -140,6 +146,31 @@ const isShimmerEnabled = flagsEntry?.data.portfolio_shimmer_v1 ?? false;
 
     .title {
       border-radius: 0.9375rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card,
+    img {
+      transition: none;
+    }
+
+    .card:hover,
+    .card:focus-visible,
+    .card.tactile:active,
+    .card:hover img,
+    .card:focus-visible img {
+      transform: none;
+    }
+
+    .card.shimmer:hover::after {
+      animation: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .card {
+      border-color: CanvasText;
     }
   }
 </style>
