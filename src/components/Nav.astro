@@ -6,6 +6,7 @@ import ThemeToggle from './ThemeToggle.astro';
 
 const flagsEntry = await getEntry('flags', 'config');
 const isLogoWobbleEnabled = flagsEntry?.data.enable_logo_wobble_v1 ?? false;
+const isSocialTactileEnabled = flagsEntry?.data.enable_social_tactile_v1 ?? false;
 
 /** Main menu items */
 const textLinks: { label: string; href: string; event?: string; surface?: string }[] = [
@@ -90,7 +91,12 @@ const isCurrentPage = (href: string) => {
       <div class="socials">
         {
           iconLinks.map(({ href, icon, label, event, surface }) => (
-            <a href={href} class="social" data-hire-event={event} data-hire-surface={surface}>
+            <a
+              href={href}
+              class:list={['social', { 'tactile-social': isSocialTactileEnabled }]}
+              data-hire-event={event}
+              data-hire-surface={surface}
+            >
               <span class="sr-only">{label}</span>
               <Icon icon={icon} />
             </a>
@@ -121,7 +127,12 @@ const isCurrentPage = (href: string) => {
       <div class="socials">
         {
           iconLinks.map(({ href, icon, label, event, surface }) => (
-            <a href={href} class="social" data-hire-event={event} data-hire-surface={surface}>
+            <a
+              href={href}
+              class:list={['social', { 'tactile-social': isSocialTactileEnabled }]}
+              data-hire-event={event}
+              data-hire-surface={surface}
+            >
               <span class="sr-only">{label}</span>
               <Icon icon={icon} />
             </a>
@@ -445,6 +456,10 @@ const isCurrentPage = (href: string) => {
 
   .social:active {
     transform: scale(0.97);
+  }
+
+  .social.tactile-social:active {
+    transform: scale(0.92);
   }
 
   .social:hover,

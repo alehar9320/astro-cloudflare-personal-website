@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - Social Links Tactile Feedback | Signal: Competitive | Lean Implementation: Added responsive scale(0.92) press state to nav social icons gated behind enable_social_tactile_v1.
+
+- Insight: Competitive benchmarking shows immediate tactile scaling on social action buttons enhances physical touch confidence on mobile viewports.
+- User Target: Comfort
+- Abort Triggers: None (verified via test and build pipeline).
+- User Reaction: Pending synthetic feedback.
