@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-27 - Header Navigation Touch Ergonomics & Focus Ring Containment
+
+**Learning:** Compact header action triggers (like `.menu-button` and `.social` icon links in `Nav.astro`) require explicit WCAG 2.1 AA minimum interactive dimensions (`min-width: 44px; min-height: 44px; display: inline-flex; align-items: center; justify-content: center;`) on mobile viewports to prevent mis-taps. Additionally, reducing the `:focus-visible` `outline-offset` from `4px` to `2px` on compact `.social` links ensures focus rings remain tightly contained within the header toolbar bounds without clipping adjacent navigation elements.
+
+**Action:** Added `min-width: 44px; min-height: 44px; align-items: center; justify-content: center;` to `.menu-button` and `display: inline-flex; align-items: center; justify-content: center; min-width: 44px; min-height: 44px;` to `.social` in `src/components/Nav.astro`. Adjusted `.social:focus-visible` `outline-offset` to `2px`.
+
 ## 2026-05-26 - Page Link Touch Target Ergonomics
 
 **Learning:** Section list links (such as `.earlier a` in `work.astro`) and standalone page action links (such as `.history-link` in `whats-new.astro` and `.hire-cta a`) often render as compact inline links on mobile viewports, failing WCAG 2.1 AA 44x44px minimum touch target requirements and risking mis-taps. Setting `display: inline-flex; align-items: center; min-height: 44px;` expands the interactive tap area without disrupting surrounding line rhythm.
