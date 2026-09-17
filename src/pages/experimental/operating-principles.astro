@@ -1,0 +1,33 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import CallToAction from '../../components/CallToAction.astro';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_operating_principles) return Astro.redirect('/404/');
+
+const items = [
+  'DevEx is Business Strategy — Developer velocity drives time-to-market.',
+  'Fast Feedback Loops — Shortened loops multiply output.',
+  'Systems Over Rules — Automated guardrails scale quality.',
+];
+---
+
+<BaseLayout title="Operating Principles" description="DevEx operating principles." robots="noindex">
+  <main class="wrapper stack gap-8">
+    <Hero title="Operating Principles" align="start">
+      <p style="color: var(--gray-200)">DevEx and product leadership directives.</p>
+    </Hero>
+    <ul style="color: var(--gray-200); line-height: 1.6; padding-left: 1.2rem;">
+      {items.map((item) => <li>{item}</li>)}
+    </ul>
+    <div>
+      <CallToAction
+        href="https://www.linkedin.com/in/alehar/"
+        target="_blank"
+        rel="noopener noreferrer">Get in touch</CallToAction
+      >
+    </div>
+  </main>
+</BaseLayout>
