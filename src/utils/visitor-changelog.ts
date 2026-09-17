@@ -200,6 +200,9 @@ function titleCaseFirst(text: string): string {
 const INTERNAL_CHANGELOG_ITEM =
   /\bjules\b|\bagent[- ]farm\b|\bjohan nits\b|\bengine\b|\bbolt\b|\bgoogle-labs-jules\b|\bprune\b|\bparser\b/i;
 const BULLET_PREFIX = /^[-*+]\s+/;
+// Optimization (⚡ Bolt): Hoist PR match regular expression to module scope to avoid
+// dynamic RegExp creation on every changelog item title transformation.
+const PR_MATCH_RE = /\(#(\d+)\)/;
 
 /**
  * Visitor sentence for a changelog item. Lookup known shipped PRs, else sanitize.
@@ -209,7 +212,7 @@ export function toVisitorChangelogTitle(raw: string): string {
   const trimmed = raw.trim();
   if (!trimmed) return trimmed;
 
-  const prMatch = trimmed.match(/\(#(\d+)\)/);
+  const prMatch = trimmed.match(PR_MATCH_RE);
   if (prMatch) {
     const mapped = BY_PR.get(Number(prMatch[1]));
     if (mapped) return mapped;

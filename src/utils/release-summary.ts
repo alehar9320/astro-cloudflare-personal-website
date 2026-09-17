@@ -7,10 +7,24 @@ const BANNED_NAME = /\b(palette|oracle|scribe|sentinel|vantage|bolt|jules)\b/gi;
 const SHA_ONE = /\b[a-f0-9]{7,40}\b/i;
 const SHA_ALL = /\b[a-f0-9]{7,40}\b/gi;
 const CONVENTIONAL = /\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/i;
+const CONVENTIONAL_GLOBAL_RE = /\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/gi;
 const ENGINEERING_LEAK =
   /\bexec summary\b|\bof the latest github release\b|cloudflare:workers|\bnode stub\b|\bsessionstorage\b|\bdo not paint\b|\bexec box\b|\bon \/whats-new\b|\balias\b/i;
 const VISITOR_VERB =
   /^(open|tap|see|read|view|show|visit|browse|get|use|download|contact|inline)\b/i;
+
+// Optimization (⚡ Bolt): Hoist static regular expressions to module constants to avoid
+// dynamic RegExp re-compilation / allocation on every string sanitization and metric check.
+const METRIC_TOKENS_RE = /\b\d+(?:\.\d+)?x\b|\b\d+%\b|\broi\b|\bmillion\b|\bbillion\b/gi;
+const PAREN_ISSUE_RE = /\(#\d+\)/g;
+const ISSUE_NUM_RE = /#\d+/g;
+const ISSUE_TEXT_RE = /\bissue number\s+\d+\b/gi;
+const PUNCT_SPACE_RE = /\s+([.,;:])/g;
+const LEADING_PUNCT_RE = /^[\s:;\-]+/;
+const MULTI_SPACE_RE = /\s{2,}/g;
+const ISSUE_WORD_RE = /\bissue number\b/i;
+const COMMIT_HASH_WORD_RE = /\bcommit hash\b/i;
+const HASH_REF_RE = /\B#\d+\b/;
 
 /**
  * Evaluates whether a release item message is visitor-facing.
@@ -89,7 +103,7 @@ export function sentenceCount(text: string): number {
 }
 
 function metricTokens(text: string): string[] {
-  const matches = text.match(/\b\d+(?:\.\d+)?x\b|\b\d+%\b|\broi\b|\bmillion\b|\bbillion\b/gi);
+  const matches = text.match(METRIC_TOKENS_RE);
   return matches ? matches.map((token) => token.toLowerCase()) : [];
 }
 
@@ -102,13 +116,13 @@ export function stripExecBanned(text: string): string {
   return text
     .replace(BANNED_NAME, '')
     .replace(SHA_ALL, '')
-    .replace(/\(#\d+\)/g, '')
-    .replace(/#\d+/g, '')
-    .replace(/\bissue number\s+\d+\b/gi, '')
-    .replace(/\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/gi, '')
-    .replace(/\s+([.,;:])/g, '$1')
-    .replace(/^[\s:;\-]+/, '')
-    .replace(/\s{2,}/g, ' ')
+    .replace(PAREN_ISSUE_RE, '')
+    .replace(ISSUE_NUM_RE, '')
+    .replace(ISSUE_TEXT_RE, '')
+    .replace(CONVENTIONAL_GLOBAL_RE, '')
+    .replace(PUNCT_SPACE_RE, '$1')
+    .replace(LEADING_PUNCT_RE, '')
+    .replace(MULTI_SPACE_RE, ' ')
     .trim();
 }
 
@@ -126,9 +140,9 @@ export function isSafeReleaseSummary(summary: string, source: string): boolean {
   if (count < 2 || count > 4) return false;
   if (
     SHA_ONE.test(text) ||
-    /\bissue number\b/i.test(text) ||
-    /\bcommit hash\b/i.test(text) ||
-    /\B#\d+\b/.test(text) ||
+    ISSUE_WORD_RE.test(text) ||
+    COMMIT_HASH_WORD_RE.test(text) ||
+    HASH_REF_RE.test(text) ||
     CONVENTIONAL.test(text) ||
     ENGINEERING_LEAK.test(text)
   ) {
@@ -151,9 +165,9 @@ export function prepareReleaseSummary(summary: string, source: string): string |
   const original = summary.trim();
   if (
     SHA_ONE.test(original) ||
-    /\bissue number\b/i.test(original) ||
-    /\bcommit hash\b/i.test(original) ||
-    /\B#\d+\b/.test(original) ||
+    ISSUE_WORD_RE.test(original) ||
+    COMMIT_HASH_WORD_RE.test(original) ||
+    HASH_REF_RE.test(original) ||
     CONVENTIONAL.test(original)
   ) {
     return null;

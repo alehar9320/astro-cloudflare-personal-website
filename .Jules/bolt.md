@@ -41,3 +41,7 @@ Action: Updated `collectItems` in `src/utils/whats-new-glance.ts` to iterate ove
 2026-09-08 - Zero-Allocation Reverse Array Scan for Chat Follow-up Prompts
 Learning: Dynamic shallow array copying and array reversal (`[...messages].reverse().find(...)`) on every UI update creates unnecessary temporary heap allocations and garbage collection overhead in client-side scripts. Replacing array copy/reverse with a reverse indexed `for` loop eliminates dynamic array allocations completely and stops scanning as soon as the first matching element is found.
 Action: Refactored `showFollowUps()` in `src/components/Chat.astro` to use an indexed reverse `for` loop.
+
+2026-09-09 - Zero-Allocation ISO Date Formatting & Module-Level Static RegExp Hoisting
+Learning: Using `date.toISOString().split('T')[0]` allocates temporary 2-element arrays on every date formatting invocation during Edge SSR. Replacing `.split('T')[0]` with `.slice(0, 10)` extracts the ISO date substring directly without intermediate array allocations. Additionally, hoisting inline regular expressions to module-level constants in heavily used utility functions (e.g. `github-releases.ts`, `release-summary.ts`, `visitor-changelog.ts`) prevents dynamic RegExp re-compilation and GC pressure on Cloudflare Workers.
+Action: Updated `formatReleaseDate` to use `.slice(0, 10)` and hoisted static regular expression literals to module constants across `github-releases.ts`, `release-summary.ts`, and `visitor-changelog.ts`.
