@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - Paper Plane Tilt | Signal: Competitive | Lean Implementation: Added subtle flight transform (translate 3px, -3px, rotate 8deg) on hover/focus to CTA icons in CallToAction.astro.
+
+- Insight: Competitive analysis shows that micro-interactions on call-to-action icons increase hover engagement and affordance delight.
+- User Target: Joy
+- Abort Triggers: None (verified via build and test pipeline).
+- User Reaction: Pending synthetic feedback.
