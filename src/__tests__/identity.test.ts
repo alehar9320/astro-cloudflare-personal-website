@@ -2807,4 +2807,12 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('enforces WCAG 2.1 AA 44px minimum touch targets on footer links', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(footer).toContain('footer a {');
+    expect(footer).toContain('display: inline-flex');
+    expect(footer).toContain('align-items: center');
+    expect(footer).toContain('min-height: 44px');
+  });
 });
