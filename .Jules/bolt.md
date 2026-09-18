@@ -41,3 +41,7 @@ Action: Updated `collectItems` in `src/utils/whats-new-glance.ts` to iterate ove
 2026-09-08 - Zero-Allocation Reverse Array Scan for Chat Follow-up Prompts
 Learning: Dynamic shallow array copying and array reversal (`[...messages].reverse().find(...)`) on every UI update creates unnecessary temporary heap allocations and garbage collection overhead in client-side scripts. Replacing array copy/reverse with a reverse indexed `for` loop eliminates dynamic array allocations completely and stops scanning as soon as the first matching element is found.
 Action: Refactored `showFollowUps()` in `src/components/Chat.astro` to use an indexed reverse `for` loop.
+
+2026-09-09 - Zero-Allocation ISO Date Formatting & Hoisted List Marker Parsing
+Learning: Calling `date.toISOString().split('T')[0]` in Edge SSR utility helpers allocates an unnecessary two-element string array on every request. Replacing `.split('T')[0]` with `.slice(0, 10)` extracts the YYYY-MM-DD date substring directly without heap array allocation. Additionally, hoisting list marker regexes (`/^[-*+]\s+/`) to module-level constants avoids inline RegExp object re-evaluation inside line scanning loops.
+Action: Updated `formatReleaseDate` to use `date.toISOString().slice(0, 10)` and hoisted `LIST_MARKER_REGEX` in `src/utils/github-releases.ts`.

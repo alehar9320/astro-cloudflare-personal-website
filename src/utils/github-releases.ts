@@ -164,8 +164,9 @@ export async function fetchGitHubReleases(
 
 /**
  * Formats an ISO date string into a YYYY-MM-DD format.
- * @param {string | null} dateString - The raw date string from the API.
- * @returns {string} The formatted date, or 'Unknown date' if invalid.
+ * Uses string slicing instead of `.split('T')[0]` to eliminate intermediate array allocations on Edge SSR requests.
+ * @param dateString - The raw date string from the API.
+ * @returns The formatted date, or 'Unknown date' if invalid.
  */
 export function formatReleaseDate(dateString: string | null): string {
   if (!dateString) return 'Unknown date';
@@ -176,7 +177,8 @@ export function formatReleaseDate(dateString: string | null): string {
     return 'Unknown date';
   }
 
-  return date.toISOString().split('T')[0];
+  // Slice YYYY-MM-DD directly from ISO string to eliminate 2-element array allocation on edge runtimes
+  return date.toISOString().slice(0, 10);
 }
 
 /**
@@ -204,6 +206,7 @@ export function parseReleaseItem(line: string): ReleaseItem {
 }
 
 const INTERNAL_CHANGELOG_ITEM = /\bjules\b|\bagent[- ]farm\b|\bjohan nits\b/i;
+const LIST_MARKER_REGEX = /^[-*+]\s+/;
 
 export function isPublicChangelogItem(item: ReleaseItem): boolean {
   return !INTERNAL_CHANGELOG_ITEM.test(item.message);
@@ -213,9 +216,9 @@ export function isPublicChangelogItem(item: ReleaseItem): boolean {
  * Splits a release body into individual, formatted ReleaseItem objects.
  * Filters for lines starting with list markers (-, *, +).
  * Drops Jules, agent-farm, and Johan-nits internals from the public list.
- * Uses pointer-based line scanning (`indexOf('\n', startPos)`) to eliminate dynamic line array allocations on edge runtimes.
- * @param {string} body - The full Markdown body of a GitHub release.
- * @returns {ReleaseItem[]} An array of parsed release items.
+ * Uses pointer-based line scanning (`indexOf('\n', startPos)`) and hoisted regexes to eliminate dynamic allocations on edge runtimes.
+ * @param body - The full Markdown body of a GitHub release.
+ * @returns An array of parsed release items.
  */
 export function splitReleaseBody(body: string): ReleaseItem[] {
   const items: ReleaseItem[] = [];
@@ -235,9 +238,9 @@ export function splitReleaseBody(body: string): ReleaseItem[] {
     startPos = nextNewline + 1;
 
     const trimmed = line.trim();
-    if (!/^[-*+]\s+/.test(trimmed)) continue;
+    if (!LIST_MARKER_REGEX.test(trimmed)) continue;
 
-    const rawMessage = trimmed.replace(/^[-*+]\s+/, '');
+    const rawMessage = trimmed.replace(LIST_MARKER_REGEX, '');
     const item = parseReleaseItem(rawMessage);
     if (isPublicChangelogItem(item)) {
       items.push(item);
