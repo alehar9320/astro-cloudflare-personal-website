@@ -29,3 +29,9 @@
 - **Edge Memory & Performance:** Refactored `splitReleaseBody` in `src/utils/github-releases.ts` and `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use pointer-based line scanning (`indexOf('\n', startPos)`), eliminating dynamic `body.split('\n')` string array allocations during SSR and API execution.
 - **Sentence Counting Optimization:** Refactored `sentenceCount` in `src/utils/release-summary.ts` from regex lookbehind `.split(/(?<=[.!?])\s+/)` into a single-pass character scanning loop. Added whitespace-aware sentence boundary detection to safely ignore dots inside version strings (`2026.08.15.1714`).
 - **Verification:** Added Vitest unit test cases across `release-summary.test.ts`, `visitor-changelog.test.ts`, and `github-releases.test.ts` covering version numbers, CRLF line endings, multiple trailing punctuation, and whitespace handling.
+
+## 2025-06-18 - Pre-Computed Hashtable Indexing & Zero-Allocation ISO Date Formatting
+
+- **Edge Memory & Performance:** Refactored `parseVisitGlance` in `src/utils/visit-stats.ts` to pre-compute a `Record<string, number>` column lookup map before extracting tabular PostHog API fields. Replaces 12 repeated $O(N)$ `columns.indexOf(key)` array scans per request with $O(1)$ constant-time property lookups.
+- **Allocation Reduction:** Refactored `formatReleaseDate` in `src/utils/github-releases.ts` to extract the `YYYY-MM-DD` substring via `date.toISOString().slice(0, 10)`, eliminating intermediate string array allocations.
+- **Verification:** Added unit tests in `src/utils/visit-stats.test.ts` covering re-ordered columns and non-string entries in tabular column maps, with all 369 Vitest tests passing.

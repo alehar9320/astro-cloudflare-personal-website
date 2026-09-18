@@ -102,6 +102,24 @@ describe('parseVisitGlance', () => {
     });
   });
 
+  it('handles re-ordered columns and non-string column entries via pre-computed hashtable indexing', () => {
+    const glance = parseVisitGlance({
+      columns: [
+        null,
+        'unique_visitors_7d',
+        'first_seen',
+        'pageviews_7d',
+        'pageviews',
+        'unique_visitors',
+      ],
+      results: [[1234, 8, '2026-08-14T07:03:00.000Z', 20, 94, 12]],
+    });
+    expect(glance?.pageviews).toBe(94);
+    expect(glance?.uniqueVisitors).toBe(12);
+    expect(glance?.pageviews7d).toBe(20);
+    expect(glance?.uniqueVisitors7d).toBe(8);
+  });
+
   it('parses a zero row so the API can fail-open', () => {
     expect(
       parseVisitGlance({
