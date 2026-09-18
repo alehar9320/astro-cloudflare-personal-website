@@ -1,0 +1,76 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_devex_framework) return Astro.redirect('/404/');
+
+const pillars = [
+  {
+    t: 'Fast Feedback Loops',
+    d: 'Shortening local verification cycles to keep engineers in flow.',
+  },
+  {
+    t: 'Cognitive Load Reduction',
+    d: 'Simplifying workflows to eliminate non-essential complexity.',
+  },
+  {
+    t: 'Self-Serve Capability',
+    d: 'Empowering teams with golden paths for independent execution.',
+  },
+];
+---
+
+<BaseLayout title="DevEx Framework" description="Developer Experience framework." robots="noindex">
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero title="DevEx Framework" align="start">
+      <p class="lede">Core dimensions for optimizing Developer Experience at scale.</p>
+    </Hero>
+    <div class="grid">
+      {
+        pillars.map((p) => (
+          <section class="card">
+            <>
+              <h2>{p.t}</h2>
+              <p>{p.d}</p>
+            </>
+          </section>
+        ))
+      }
+    </div>
+    <CallToAction
+      href="https://www.linkedin.com/in/alehar/"
+      target="_blank"
+      rel="noopener noreferrer">Get in touch</CallToAction
+    >
+  </main>
+</BaseLayout>
+
+<style>
+  .lede {
+    margin: 0;
+    color: var(--gray-200);
+  }
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .card {
+    padding: 1rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+    background: var(--gradient-subtle);
+  }
+  .card h2 {
+    font-size: var(--text-md);
+    margin: 0 0 0.25rem;
+    color: var(--gray-0);
+  }
+  .card p {
+    margin: 0;
+    color: var(--gray-300);
+  }
+</style>
