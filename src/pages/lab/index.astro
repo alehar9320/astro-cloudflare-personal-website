@@ -1,0 +1,486 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Pill from '../../components/Pill.astro';
+import Icon from '../../components/Icon.astro';
+---
+
+<BaseLayout
+  title="Lab: Northern Lights Canvas | Alexander Härenstam"
+  description="Experimental interactive canvas featuring math-driven wave synthesis and pointer light refraction."
+>
+  <div class="wrapper stack gap-8">
+    <main id="main-content" class="stack gap-8">
+      <Hero
+        title="Interactive Canvas Lab"
+        tagline="Exploring mathematical wave dynamics, optical refraction, and fluid Northern Lights animations in vanilla TypeScript."
+        align="start"
+      >
+        <div class="roles">
+          <Pill><Icon icon="terminal-window" size="1.23em" /> Canvas Math</Pill>
+          <Pill><Icon icon="strategy" size="1.23em" /> Light Refraction</Pill>
+          <Pill><Icon icon="rocket-launch" size="1.23em" /> 60 FPS Target</Pill>
+        </div>
+      </Hero>
+
+      <section class="lab-card" aria-label="Northern Lights Interactive Canvas Viewer">
+        <div class="canvas-header">
+          <div class="canvas-title">
+            <span class="status-dot" id="status-dot"></span>
+            <span class="status-text" id="status-text">60 FPS Engine Active</span>
+          </div>
+          <div class="controls-toolbar" role="toolbar" aria-label="Canvas controls">
+            <button
+              id="toggle-anim-btn"
+              type="button"
+              class="control-btn"
+              aria-label="Pause or play aurora animation"
+            >
+              <span id="toggle-anim-label">Pause</span>
+            </button>
+            <button
+              id="speed-btn"
+              type="button"
+              class="control-btn"
+              aria-label="Toggle animation speed multiplier"
+            >
+              <span id="speed-label">Speed: 1.0x</span>
+            </button>
+            <button
+              id="reset-btn"
+              type="button"
+              class="control-btn"
+              aria-label="Reset light refraction origin"
+            >
+              Reset Refraction
+            </button>
+          </div>
+        </div>
+
+        <div class="canvas-wrapper">
+          <canvas id="aurora-lab-canvas" aria-label="Interactive Northern Lights wave visualization"
+          ></canvas>
+        </div>
+
+        <footer class="canvas-footer">
+          <p>
+            Move your cursor or touch the canvas to distort the aurora curtain through simulated
+            refractive light bending. Built with zero external dependencies.
+          </p>
+        </footer>
+      </section>
+    </main>
+  </div>
+</BaseLayout>
+
+<script>
+  import {
+    calculateAuroraWave,
+    refractPoint,
+    getOptimalParticleCount,
+    getEffectiveDpr,
+  } from '../../utils/aurora-math';
+
+  const canvas = document.getElementById('aurora-lab-canvas') as HTMLCanvasElement | null;
+  const toggleBtn = document.getElementById('toggle-anim-btn') as HTMLButtonElement | null;
+  const toggleLabel = document.getElementById('toggle-anim-label');
+  const speedBtn = document.getElementById('speed-btn') as HTMLButtonElement | null;
+  const speedLabel = document.getElementById('speed-label');
+  const resetBtn = document.getElementById('reset-btn') as HTMLButtonElement | null;
+  const statusDot = document.getElementById('status-dot');
+  const statusText = document.getElementById('status-text');
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let animationFrameId: number | null = null;
+    let isPaused = false;
+    let speedMultiplier = 1.0;
+    let time = 0;
+
+    // Pointer refraction coordinates (-1000 = inactive)
+    let pointerX = -1000;
+    let pointerY = -1000;
+    let targetPointerX = -1000;
+    let targetPointerY = -1000;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      isPaused = true;
+      if (statusText) statusText.textContent = 'Static View (Reduced Motion)';
+      if (statusDot) statusDot.classList.add('paused');
+      if (toggleLabel) toggleLabel.textContent = 'Play';
+    }
+
+    const resize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      const dpr = getEffectiveDpr(window.devicePixelRatio);
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const width = Math.floor(rect.width);
+      const height = Math.floor(rect.height || 400);
+
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      if (ctx) {
+        ctx.scale(dpr, dpr);
+      }
+      if (isPaused) {
+        renderFrame(0);
+      }
+    };
+
+    const renderFrame = (dt: number) => {
+      if (!ctx || !canvas || !canvas.parentElement) return;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height || 400;
+
+      // Smooth pointer interpolation
+      pointerX += (targetPointerX - pointerX) * 0.12;
+      pointerY += (targetPointerY - pointerY) * 0.12;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Deep marine background gradient
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
+      bgGrad.addColorStop(0, '#0a121e');
+      bgGrad.addColorStop(1, '#050a12');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      const isTouch = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+      const numPoints = getOptimalParticleCount(width, isTouch);
+
+      // Render 3 layered aurora waves with distinct hue refractions
+      const layers = [
+        {
+          colorStop1: 'rgba(0, 242, 254, 0.45)',
+          colorStop2: 'rgba(0, 210, 255, 0.05)',
+          freq: 1.8,
+          amp: height * 0.18,
+          phase: 0,
+          yOffset: height * 0.45,
+        },
+        {
+          colorStop1: 'rgba(0, 255, 170, 0.35)',
+          colorStop2: 'rgba(0, 242, 254, 0.03)',
+          freq: 2.3,
+          amp: height * 0.14,
+          phase: Math.PI * 0.6,
+          yOffset: height * 0.52,
+        },
+        {
+          colorStop1: 'rgba(74, 144, 226, 0.3)',
+          colorStop2: 'rgba(123, 97, 255, 0.02)',
+          freq: 1.2,
+          amp: height * 0.22,
+          phase: Math.PI * 1.2,
+          yOffset: height * 0.38,
+        },
+      ];
+
+      for (const layer of layers) {
+        ctx.beginPath();
+        ctx.moveTo(0, height);
+
+        for (let i = 0; i <= numPoints; i++) {
+          const normX = i / numPoints;
+          const rawX = normX * width;
+          const waveElevation = calculateAuroraWave(
+            normX,
+            time,
+            layer.freq,
+            layer.amp,
+            layer.phase
+          );
+          const rawY = layer.yOffset + waveElevation;
+
+          // Apply light refraction shift relative to cursor
+          const refracted = refractPoint(rawX, rawY, pointerX, pointerY, 160, 45);
+
+          if (i === 0) {
+            ctx.lineTo(refracted.x, refracted.y);
+          } else {
+            ctx.lineTo(refracted.x, refracted.y);
+          }
+        }
+
+        ctx.lineTo(width, height);
+        ctx.closePath();
+
+        const grad = ctx.createLinearGradient(0, layer.yOffset - layer.amp, 0, height);
+        grad.addColorStop(0, layer.colorStop1);
+        grad.addColorStop(1, layer.colorStop2);
+        ctx.fillStyle = grad;
+        ctx.fill();
+      }
+
+      // Draw subtle glow circle at active refraction pointer
+      if (pointerX > 0 && pointerX < width && pointerY > 0 && pointerY < height) {
+        ctx.beginPath();
+        ctx.arc(pointerX, pointerY, 80, 0, Math.PI * 2);
+        const glow = ctx.createRadialGradient(pointerX, pointerY, 0, pointerX, pointerY, 80);
+        glow.addColorStop(0, 'rgba(0, 242, 254, 0.25)');
+        glow.addColorStop(1, 'rgba(0, 242, 254, 0)');
+        ctx.fillStyle = glow;
+        ctx.fill();
+      }
+
+      if (!isPaused) {
+        time += dt * 0.0012 * speedMultiplier;
+      }
+    };
+
+    let lastTimestamp = performance.now();
+    const animate = (timestamp: number) => {
+      const dt = timestamp - lastTimestamp;
+      lastTimestamp = timestamp;
+
+      renderFrame(dt);
+
+      if (!isPaused) {
+        animationFrameId = requestAnimationFrame(animate);
+      }
+    };
+
+    // Pointer Event Handlers
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      targetPointerX = e.clientX - rect.left;
+      targetPointerY = e.clientY - rect.top;
+      if (isPaused) {
+        pointerX = targetPointerX;
+        pointerY = targetPointerY;
+        renderFrame(0);
+      }
+    };
+
+    const handlePointerLeave = () => {
+      targetPointerX = -1000;
+      targetPointerY = -1000;
+    };
+
+    // Control Buttons Handlers
+    const toggleAnimation = () => {
+      isPaused = !isPaused;
+      if (toggleLabel) {
+        toggleLabel.textContent = isPaused ? 'Play' : 'Pause';
+      }
+      if (statusText) {
+        statusText.textContent = isPaused ? 'Paused' : '60 FPS Engine Active';
+      }
+      if (statusDot) {
+        statusDot.classList.toggle('paused', isPaused);
+      }
+
+      if (!isPaused) {
+        lastTimestamp = performance.now();
+        animationFrameId = requestAnimationFrame(animate);
+      } else if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+    };
+
+    const toggleSpeed = () => {
+      if (speedMultiplier === 1.0) speedMultiplier = 1.5;
+      else if (speedMultiplier === 1.5) speedMultiplier = 2.0;
+      else speedMultiplier = 1.0;
+
+      if (speedLabel) {
+        speedLabel.textContent = `Speed: ${speedMultiplier.toFixed(1)}x`;
+      }
+    };
+
+    const resetRefraction = () => {
+      pointerX = -1000;
+      pointerY = -1000;
+      targetPointerX = -1000;
+      targetPointerY = -1000;
+      time = 0;
+      if (isPaused) {
+        renderFrame(0);
+      }
+    };
+
+    // Event Bindings
+    window.addEventListener('resize', resize);
+    canvas.addEventListener('pointermove', handlePointerMove);
+    canvas.addEventListener('pointerleave', handlePointerLeave);
+    toggleBtn?.addEventListener('click', toggleAnimation);
+    speedBtn?.addEventListener('click', toggleSpeed);
+    resetBtn?.addEventListener('click', resetRefraction);
+
+    // Initial setup
+    resize();
+    if (!isPaused) {
+      animationFrameId = requestAnimationFrame(animate);
+    }
+
+    // Lifecycle Teardown for Client-Side Navigation
+    const cleanup = () => {
+      if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+      window.removeEventListener('resize', resize);
+      canvas?.removeEventListener('pointermove', handlePointerMove);
+      canvas?.removeEventListener('pointerleave', handlePointerLeave);
+      toggleBtn?.removeEventListener('click', toggleAnimation);
+      speedBtn?.removeEventListener('click', toggleSpeed);
+      resetBtn?.removeEventListener('click', resetRefraction);
+    };
+
+    document.addEventListener('astro:before-swap', cleanup, { once: true });
+    window.addEventListener('pagehide', cleanup, { once: true });
+  }
+</script>
+
+<style>
+  .roles {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 0.5rem;
+  }
+
+  .lab-card {
+    display: flex;
+    flex-direction: column;
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 1.5rem;
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    backdrop-filter: blur(12px);
+  }
+
+  .canvas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid var(--gray-800);
+    background: hsla(var(--gray-999-basis), 0.4);
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .canvas-title {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    color: var(--gray-200);
+  }
+
+  .status-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #00f2fe;
+    box-shadow: 0 0 10px #00f2fe;
+    transition: background-color 0.3s ease;
+  }
+
+  .status-dot.paused {
+    background: var(--gray-500);
+    box-shadow: none;
+  }
+
+  .controls-toolbar {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+  }
+
+  .control-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.4rem 0.9rem;
+    font-size: var(--text-sm);
+    font-family: var(--font-brand);
+    font-weight: 500;
+    color: var(--gray-100);
+    background: hsla(var(--gray-800-basis), 0.6);
+    border: 1px solid var(--gray-700);
+    border-radius: 999rem;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.15s ease;
+  }
+
+  .control-btn:hover {
+    background: hsla(var(--gray-700-basis), 0.8);
+    border-color: var(--accent-light);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .control-btn:active {
+      transform: scale(0.96);
+    }
+  }
+
+  .control-btn:focus-visible {
+    outline: 2px solid var(--accent-light);
+    outline-offset: 2px;
+  }
+
+  .canvas-wrapper {
+    position: relative;
+    width: 100%;
+    height: 420px;
+    background: #050a12;
+    overflow: hidden;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  .canvas-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid var(--gray-800);
+    background: hsla(var(--gray-999-basis), 0.4);
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+  }
+
+  @media (max-width: 50em) {
+    .canvas-wrapper {
+      height: 320px;
+    }
+
+    .canvas-header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .controls-toolbar {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .lab-card {
+      border: 1px solid ButtonText;
+    }
+
+    .control-btn {
+      border: 1px solid ButtonText;
+    }
+  }
+</style>

@@ -29,7 +29,10 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
+    const zodSchema = schema as unknown as {
+      safeParse: (data: unknown) => { success: boolean; data?: unknown };
+    };
+    const result = zodSchema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
@@ -41,6 +44,12 @@ describe('content.config', () => {
 
   it('validates work schema with sample data', () => {
     const { schema } = collections.work;
+    const zodSchema = schema as unknown as {
+      safeParse: (data: unknown) => {
+        success: boolean;
+        data?: { title: string; publishDate: Date };
+      };
+    };
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -49,9 +58,9 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
+    const result = zodSchema.safeParse(sampleWork);
     expect(result.success).toBe(true);
-    if (result.success) {
+    if (result.success && result.data) {
       expect(result.data.title).toBe(sampleWork.title);
       expect(result.data.publishDate).toBeInstanceOf(Date);
     }
