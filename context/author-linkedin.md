@@ -67,7 +67,7 @@ Stand out to employers
 Enhance your profile, craft standout messages, and assess job fit with Premium.
 
 Try Premium for SEK 0
-1-month free trial. Cancel whenever. We’l remind you 7 days before your trial ends.
+1-month free trial. Cancel whenever. We’ll remind you 7 days before your trial ends.
 
 Dismiss premium promotion
 
@@ -390,7 +390,7 @@ Following
 Marc Randolph
 · 3rdThird degree connection
 Netflix Co-Founder, Entrepreneur, Mentor & Investor
-386,22 followers
+386,220 followers
 
 Following
 Show all Top Voices
@@ -453,7 +453,7 @@ Follow
 MillenniumIT ESP logo
 MillenniumIT ESP
 IT Services and IT Consulting
-70,693 followers70693 followers
+70,693 followers
 
 4 connections follow this page
 
