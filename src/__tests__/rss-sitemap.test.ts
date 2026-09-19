@@ -46,7 +46,7 @@ describe('RSS XML endpoint (src/pages/rss.xml.ts)', () => {
 
   it('generates valid RSS XML feed with properly escaped and sorted items', async () => {
     vi.spyOn(astroContent, 'getCollection').mockResolvedValue(
-      mockWorkEntries as unknown as Awaited<ReturnType<typeof astroContent.getCollection>>,
+      mockWorkEntries as unknown as Awaited<ReturnType<typeof astroContent.getCollection>>
     );
 
     const response = await getRss(createContext());
@@ -59,7 +59,7 @@ describe('RSS XML endpoint (src/pages/rss.xml.ts)', () => {
     expect(xml).toContain('<?xml version="1.0" encoding="UTF-8"?>');
     expect(xml).toContain('<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">');
     expect(xml).toContain(
-      '<title>Alexander Härenstam | Product Manager, Developer Experience at IFS</title>',
+      '<title>Alexander Härenstam | Product Manager, Developer Experience at IFS</title>'
     );
 
     // Check character escaping
@@ -87,7 +87,7 @@ describe('Sitemap XML endpoint (src/pages/sitemap.xml.ts)', () => {
 
   it('generates valid Sitemap XML with static paths and work collection items', async () => {
     vi.spyOn(astroContent, 'getCollection').mockResolvedValue(
-      mockWorkEntries as unknown as Awaited<ReturnType<typeof astroContent.getCollection>>,
+      mockWorkEntries as unknown as Awaited<ReturnType<typeof astroContent.getCollection>>
     );
 
     const response = await getSitemap(createContext('https://me.alehar.workers.dev/sitemap.xml'));
