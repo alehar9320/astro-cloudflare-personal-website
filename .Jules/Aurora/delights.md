@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - Paper Plane Fly | Signal: Behavioral | Lean Implementation: Added subtle 3px translate and -10deg rotation flight animation on hover to CallToAction SVG icons.
+
+- Insight: Behavioral hover signal on primary call-to-action buttons indicates user consideration; a micro-flight animation on the paper-plane icon enhances perceived responsiveness and delight.
+- User Target: Delight / Playful Confidence
+- Abort Triggers: None (verified via verification pipeline).
+- User Reaction: Pending synthetic feedback.

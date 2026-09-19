@@ -21,10 +21,11 @@ const {
 
 const flagsEntry = await getEntry('flags', 'config');
 const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
+const isPaperPlaneFlyEnabled = flagsEntry?.data.enable_paper_plane_fly_v1 ?? false;
 ---
 
 <a
-  class:list={[{ tactile: isTactileEnabled }]}
+  class:list={[{ tactile: isTactileEnabled, 'paper-plane-fly': isPaperPlaneFlyEnabled }]}
   href={href}
   target={target}
   rel={rel}
@@ -81,6 +82,12 @@ const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
     a:hover,
     a:focus-visible {
       transform: translateY(-2px);
+    }
+    a.paper-plane-fly :global(svg) {
+      transition: transform 0.3s ease-in-out;
+    }
+    a.paper-plane-fly:hover :global(svg) {
+      transform: translate(3px, -3px) rotate(-10deg);
     }
   }
 
