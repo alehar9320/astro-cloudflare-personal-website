@@ -71,6 +71,7 @@
     },
     "@actions/http-client": {
       "undici": "7.29.0"
-    }
+    },
+    "devalue": "5.9.1"
   }
 }
