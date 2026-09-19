@@ -41,3 +41,7 @@ Action: Updated `collectItems` in `src/utils/whats-new-glance.ts` to iterate ove
 2026-09-08 - Zero-Allocation Reverse Array Scan for Chat Follow-up Prompts
 Learning: Dynamic shallow array copying and array reversal (`[...messages].reverse().find(...)`) on every UI update creates unnecessary temporary heap allocations and garbage collection overhead in client-side scripts. Replacing array copy/reverse with a reverse indexed `for` loop eliminates dynamic array allocations completely and stops scanning as soon as the first matching element is found.
 Action: Refactored `showFollowUps()` in `src/components/Chat.astro` to use an indexed reverse `for` loop.
+
+2026-09-19 - Pre-Computed Tabular Column Indexing & Zero-Allocation Date Slicing
+Learning: Performing repeated `columns.indexOf(key)` scans (12 times per response) when parsing PostHog HogQL API tabular arrays creates unnecessary O(N) array iteration overhead on edge Workers. Pre-building a `Record<string, number>` hashtable index map once converts column lookups into O(1) constant-time property reads. Additionally, replacing `date.toISOString().split('T')[0]` with `date.toISOString().slice(0, 10)` in date utilities extracts ISO date strings directly without intermediate string array allocation.
+Action: Pre-build column index maps for tabular API response parsers and use `date.toISOString().slice(0, 10)` for YYYY-MM-DD extraction in edge utility functions.

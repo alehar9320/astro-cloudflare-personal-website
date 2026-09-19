@@ -176,7 +176,8 @@ export function formatReleaseDate(dateString: string | null): string {
     return 'Unknown date';
   }
 
-  return date.toISOString().split('T')[0];
+  // Extract YYYY-MM-DD date substring directly to avoid dynamic 2-element array allocation on edge runtimes
+  return date.toISOString().slice(0, 10);
 }
 
 /**
