@@ -35,18 +35,18 @@
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
     "@codecov/vite-plugin": "^2.0.1",
-    "@typescript-eslint/parser": "^8.68.0",
-    "@vitest/coverage-v8": "^4.1.11",
-    "@vitest/ui": "^4.1.2",
-    "eslint": "^10.9.1",
+    "@typescript-eslint/parser": "^8.70.0",
+    "@vitest/coverage-v8": "^5.0.0",
+    "@vitest/ui": "^5.0.0",
+    "eslint": "^10.10.0",
     "eslint-plugin-astro": "^3.1.0",
     "husky": "^9.1.7",
     "jsdom": "^30.0.1",
-    "lint-staged": "^17.4.1",
+    "lint-staged": "^17.5.1",
     "prettier": "^3.8.3",
     "prettier-plugin-astro": "^0.14.1",
-    "typescript-eslint": "^8.68.0",
-    "vitest": "^4.1.2"
+    "typescript-eslint": "^8.70.0",
+    "vitest": "^5.0.0"
   },
   "overrides": {
     "brace-expansion": "5.0.9",
