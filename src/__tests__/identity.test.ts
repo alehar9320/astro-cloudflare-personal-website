@@ -1393,7 +1393,7 @@ describe('identity copy', () => {
     expect(lidkoping).toContain('Early Android work, 2013');
     expect(lidkoping).not.toContain('management platform');
     expect(lidkoping).toContain('This is earlier work');
-    expect(lidkoping).toContain('/work/ifs-design-system/');
+    expect(lidkoping).not.toContain('/work/ifs-design-system/');
     expect(lidkoping).not.toContain('Product Manager');
     expect(lidkoping).not.toContain('mailto:');
     for (const page of [copilots, analytics, thesis, lidkoping]) {
