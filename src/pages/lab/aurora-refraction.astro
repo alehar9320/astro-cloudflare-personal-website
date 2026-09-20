@@ -1,0 +1,414 @@
+---
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Aurora Refraction Lab | Alexander Härenstam"
+  description="Interactive digital art experiment showcasing mathematical wave synthesis and pointer-driven light refraction on HTML5 Canvas."
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <header class="lab-header">
+      <Hero
+        title="Aurora Light Refraction Field"
+        tagline="Interactive Canvas Laboratory — Experiment #01"
+        align="start"
+      >
+        <p class="lab-intro">
+          A self-contained HTML5 Canvas visual experiment modeling Northern Lights ribbon waves and
+          cubic smoothstep optical refraction field equations.
+        </p>
+      </Hero>
+    </header>
+
+    <section class="lab-stage" aria-label="Interactive Canvas Experiment">
+      <div class="canvas-wrapper">
+        <canvas
+          id="aurora-refraction-canvas"
+          aria-label="Interactive Northern Lights Aurora Canvas Visualization"></canvas>
+        <div class="controls-overlay">
+          <button
+            id="aurora-toggle-btn"
+            type="button"
+            class="glass-btn"
+            aria-label="Pause or resume aurora animation"
+          >
+            Pause Animation
+          </button>
+          <span class="motion-badge" id="motion-status-badge">60 FPS · Active Field</span>
+        </div>
+      </div>
+      <div class="lab-meta">
+        <div class="meta-item">
+          <span class="meta-label">Visual Theme</span>
+          <span class="meta-value">Northern Lights (Marine Cyan / Emerald)</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Interaction Model</span>
+          <span class="meta-value">Pointer Displacement field · Cubic Smoothstep Falloff</span>
+        </div>
+        <div class="meta-item">
+          <span class="meta-label">Accessibility</span>
+          <span class="meta-value"
+            >Gated for <code>prefers-reduced-motion</code> &amp; Keyboard Controls</span
+          >
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import {
+    calculatePointerDisplacement,
+    calculateWaveHeight,
+    getMobileQualityScale,
+  } from '../../utils/aurora-math';
+
+  const canvas = document.getElementById('aurora-refraction-canvas') as HTMLCanvasElement | null;
+  const toggleBtn = document.getElementById('aurora-toggle-btn') as HTMLButtonElement | null;
+  const statusBadge = document.getElementById('motion-status-badge') as HTMLSpanElement | null;
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let animationFrameId: number;
+    let isRunning = true;
+    let time = 0;
+
+    let pointerX = -1000;
+    let pointerY = -1000;
+    let targetPointerX = -1000;
+    let targetPointerY = -1000;
+    let isPointerOver = false;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const resize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      const qualityScale = getMobileQualityScale(rect.width, dpr);
+
+      canvas.width = Math.floor(rect.width * dpr * qualityScale);
+      canvas.height = Math.floor(rect.height * dpr * qualityScale);
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+
+      targetPointerX = (e.clientX - rect.left) * scaleX;
+      targetPointerY = (e.clientY - rect.top) * scaleY;
+      isPointerOver = true;
+    };
+
+    const handlePointerLeave = () => {
+      isPointerOver = false;
+    };
+
+    const drawAuroraRibbon = (
+      timeSec: number,
+      yRatio: number,
+      frequency: number,
+      amplitude: number,
+      phase: number,
+      colorStops: { offset: number; color: string }[]
+    ) => {
+      if (!ctx || !canvas) return;
+
+      const baseCenterY = canvas.height * yRatio;
+      const step = Math.max(4, Math.floor(canvas.width / 120));
+      const refractionRadius = canvas.width * 0.22;
+
+      ctx.beginPath();
+      ctx.moveTo(0, canvas.height);
+
+      for (let x = 0; x <= canvas.width + step; x += step) {
+        const rawWave = calculateWaveHeight(x, timeSec, frequency, amplitude, phase);
+        let currentY = baseCenterY + rawWave;
+
+        if (isPointerOver) {
+          const disp = calculatePointerDisplacement(
+            pointerX,
+            pointerY,
+            x,
+            currentY,
+            refractionRadius
+          );
+          currentY += disp.dy;
+        }
+
+        if (x === 0) {
+          ctx.lineTo(x, currentY);
+        } else {
+          ctx.lineTo(x, currentY);
+        }
+      }
+
+      ctx.lineTo(canvas.width, canvas.height);
+      ctx.closePath();
+
+      const gradient = ctx.createLinearGradient(0, baseCenterY - amplitude, 0, canvas.height);
+      colorStops.forEach((stop) => gradient.addColorStop(stop.offset, stop.color));
+
+      ctx.fillStyle = gradient;
+      ctx.fill();
+    };
+
+    const render = () => {
+      if (!ctx || !canvas) return;
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Smooth pointer lerp
+      pointerX += (targetPointerX - pointerX) * 0.12;
+      pointerY += (targetPointerY - pointerY) * 0.12;
+
+      if (!prefersReducedMotion && isRunning) {
+        time += 0.012;
+      }
+
+      // Background subtle cyan glow
+      const bgGlow = ctx.createRadialGradient(
+        canvas.width * 0.5,
+        canvas.height * 0.4,
+        10,
+        canvas.width * 0.5,
+        canvas.height * 0.4,
+        canvas.width * 0.6
+      );
+      bgGlow.addColorStop(0, 'rgba(0, 242, 254, 0.08)');
+      bgGlow.addColorStop(0.6, 'rgba(15, 23, 42, 0.4)');
+      bgGlow.addColorStop(1, 'rgba(15, 23, 42, 0)');
+      ctx.fillStyle = bgGlow;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Ribbon 1: Deep Marine Emerald
+      drawAuroraRibbon(time * 0.8, 0.38, 0.003, canvas.height * 0.12, 0, [
+        { offset: 0, color: 'rgba(0, 242, 254, 0.35)' },
+        { offset: 0.5, color: 'rgba(79, 172, 254, 0.18)' },
+        { offset: 1, color: 'rgba(15, 23, 42, 0)' },
+      ]);
+
+      // Ribbon 2: Cyan Light Refraction
+      drawAuroraRibbon(time * 1.1, 0.48, 0.004, canvas.height * 0.14, Math.PI * 0.4, [
+        { offset: 0, color: 'rgba(0, 229, 255, 0.45)' },
+        { offset: 0.6, color: 'rgba(0, 150, 255, 0.15)' },
+        { offset: 1, color: 'rgba(15, 23, 42, 0)' },
+      ]);
+
+      // Ribbon 3: Northern Emerald Accent
+      drawAuroraRibbon(time * 0.9, 0.58, 0.0025, canvas.height * 0.1, Math.PI * 0.8, [
+        { offset: 0, color: 'rgba(56, 239, 125, 0.28)' },
+        { offset: 0.7, color: 'rgba(17, 153, 142, 0.12)' },
+        { offset: 1, color: 'rgba(15, 23, 42, 0)' },
+      ]);
+
+      // Render pointer refraction glow ring
+      if (isPointerOver) {
+        const aura = ctx.createRadialGradient(
+          pointerX,
+          pointerY,
+          0,
+          pointerX,
+          pointerY,
+          canvas.width * 0.18
+        );
+        aura.addColorStop(0, 'rgba(0, 242, 254, 0.25)');
+        aura.addColorStop(0.5, 'rgba(79, 172, 254, 0.08)');
+        aura.addColorStop(1, 'rgba(0, 242, 254, 0)');
+        ctx.fillStyle = aura;
+        ctx.beginPath();
+        ctx.arc(pointerX, pointerY, canvas.width * 0.18, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      if (isRunning && !prefersReducedMotion) {
+        animationFrameId = requestAnimationFrame(render);
+      }
+    };
+
+    const toggleAnimation = () => {
+      isRunning = !isRunning;
+      if (toggleBtn) {
+        toggleBtn.textContent = isRunning ? 'Pause Animation' : 'Resume Animation';
+      }
+      if (statusBadge) {
+        statusBadge.textContent = isRunning ? '60 FPS · Active Field' : 'Paused';
+      }
+      if (isRunning) {
+        render();
+      } else if (animationFrameId) {
+        cancelAnimationFrame(animationFrameId);
+      }
+    };
+
+    if (prefersReducedMotion) {
+      isRunning = false;
+      if (toggleBtn) toggleBtn.textContent = 'Motion Reduced (Static)';
+      if (statusBadge) statusBadge.textContent = 'Reduced Motion';
+    }
+
+    window.addEventListener('resize', resize);
+    canvas.addEventListener('pointermove', handlePointerMove);
+    canvas.addEventListener('pointerleave', handlePointerLeave);
+    if (toggleBtn) toggleBtn.addEventListener('click', toggleAnimation);
+
+    resize();
+    render();
+
+    // Lifecycle cleanup on page transitions (Astro before-swap)
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+        if (canvas) {
+          canvas.removeEventListener('pointermove', handlePointerMove);
+          canvas.removeEventListener('pointerleave', handlePointerLeave);
+        }
+        if (toggleBtn) toggleBtn.removeEventListener('click', toggleAnimation);
+      },
+      { once: true }
+    );
+  }
+</script>
+
+<style>
+  .lab-header {
+    margin-top: 1rem;
+  }
+
+  .lab-intro {
+    margin: 0;
+    max-width: 54ch;
+    font-size: var(--text-md);
+    color: var(--gray-300);
+    line-height: 1.5;
+  }
+
+  .lab-stage {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .canvas-wrapper {
+    position: relative;
+    width: 100%;
+    height: 420px;
+    border-radius: 1rem;
+    overflow: hidden;
+    background: radial-gradient(circle at 50% 30%, #0f172a 0%, #020617 100%);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.5);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  .controls-overlay {
+    position: absolute;
+    bottom: 1rem;
+    left: 1rem;
+    right: 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: none;
+  }
+
+  .glass-btn {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    min-height: 44px;
+    border-radius: 9999px;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: var(--gray-0);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.15s ease;
+  }
+
+  .glass-btn:hover {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: rgba(0, 242, 254, 0.5);
+  }
+
+  .glass-btn:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 2px;
+  }
+
+  .glass-btn:active {
+    transform: scale(0.96);
+  }
+
+  .motion-badge {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--gray-300);
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(6px);
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .lab-meta {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+  }
+
+  .meta-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 1rem;
+    border-radius: 0.75rem;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .meta-label {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--gray-400);
+  }
+
+  .meta-value {
+    font-size: var(--text-sm);
+    color: var(--gray-200);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .glass-btn:active {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 40em) {
+    .canvas-wrapper {
+      height: 320px;
+    }
+  }
+</style>
