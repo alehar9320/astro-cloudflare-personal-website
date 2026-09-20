@@ -7,10 +7,23 @@ const BANNED_NAME = /\b(palette|oracle|scribe|sentinel|vantage|bolt|jules)\b/gi;
 const SHA_ONE = /\b[a-f0-9]{7,40}\b/i;
 const SHA_ALL = /\b[a-f0-9]{7,40}\b/gi;
 const CONVENTIONAL = /\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/i;
+const CONVENTIONAL_GLOBAL = /\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/gi;
 const ENGINEERING_LEAK =
   /\bexec summary\b|\bof the latest github release\b|cloudflare:workers|\bnode stub\b|\bsessionstorage\b|\bdo not paint\b|\bexec box\b|\bon \/whats-new\b|\balias\b/i;
 const VISITOR_VERB =
   /^(open|tap|see|read|view|show|visit|browse|get|use|download|contact|inline)\b/i;
+
+// Hoisted static regexes for sanitization and safety checks to prevent dynamic compilation overhead (⚡ Bolt).
+const PAREN_ISSUE_NUM_REGEX = /\(#\d+\)/g;
+const HASH_ISSUE_NUM_REGEX = /#\d+/g;
+const ISSUE_NUM_WORDS_REGEX = /\bissue number\s+\d+\b/gi;
+const PUNCTUATION_SPACING_REGEX = /\s+([.,;:])/g;
+const LEADING_CHROME_REGEX = /^[\s:;\-]+/;
+const MULTI_SPACE_REGEX = /\s{2,}/g;
+const ISSUE_NUM_WORD_SEARCH = /\bissue number\b/i;
+const COMMIT_HASH_WORD_SEARCH = /\bcommit hash\b/i;
+const NON_BOUNDARY_HASH_SEARCH = /\B#\d+\b/;
+const METRIC_TOKENS_REGEX = /\b\d+(?:\.\d+)?x\b|\b\d+%\b|\broi\b|\bmillion\b|\bbillion\b/gi;
 
 /**
  * Evaluates whether a release item message is visitor-facing.
@@ -89,12 +102,13 @@ export function sentenceCount(text: string): number {
 }
 
 function metricTokens(text: string): string[] {
-  const matches = text.match(/\b\d+(?:\.\d+)?x\b|\b\d+%\b|\broi\b|\bmillion\b|\bbillion\b/gi);
+  const matches = text.match(METRIC_TOKENS_REGEX);
   return matches ? matches.map((token) => token.toLowerCase()) : [];
 }
 
 /**
  * Strips agent names, git SHAs, issue numbers, and conventional commit prefixes.
+ * Uses hoisted static RegExp constants to avoid dynamic compilation on every sanitization call (⚡ Bolt).
  * @param text - Raw text string to sanitize.
  * @returns Cleaned text string.
  */
@@ -102,19 +116,20 @@ export function stripExecBanned(text: string): string {
   return text
     .replace(BANNED_NAME, '')
     .replace(SHA_ALL, '')
-    .replace(/\(#\d+\)/g, '')
-    .replace(/#\d+/g, '')
-    .replace(/\bissue number\s+\d+\b/gi, '')
-    .replace(/\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/gi, '')
-    .replace(/\s+([.,;:])/g, '$1')
-    .replace(/^[\s:;\-]+/, '')
-    .replace(/\s{2,}/g, ' ')
+    .replace(PAREN_ISSUE_NUM_REGEX, '')
+    .replace(HASH_ISSUE_NUM_REGEX, '')
+    .replace(ISSUE_NUM_WORDS_REGEX, '')
+    .replace(CONVENTIONAL_GLOBAL, '')
+    .replace(PUNCTUATION_SPACING_REGEX, '$1')
+    .replace(LEADING_CHROME_REGEX, '')
+    .replace(MULTI_SPACE_REGEX, ' ')
     .trim();
 }
 
 /**
  * Validates generated release summary against safety and grounding rules.
  * Ensures sentence count is 2-4 sentences, no git leak/agent tokens, and metrics match source notes.
+ * Uses hoisted static RegExp constants for zero dynamic compilation overhead (⚡ Bolt).
  * @param summary - Candidate summary string.
  * @param source - Source release text for grounding checks.
  * @returns True if summary passes safety rules, false otherwise.
@@ -126,9 +141,9 @@ export function isSafeReleaseSummary(summary: string, source: string): boolean {
   if (count < 2 || count > 4) return false;
   if (
     SHA_ONE.test(text) ||
-    /\bissue number\b/i.test(text) ||
-    /\bcommit hash\b/i.test(text) ||
-    /\B#\d+\b/.test(text) ||
+    ISSUE_NUM_WORD_SEARCH.test(text) ||
+    COMMIT_HASH_WORD_SEARCH.test(text) ||
+    NON_BOUNDARY_HASH_SEARCH.test(text) ||
     CONVENTIONAL.test(text) ||
     ENGINEERING_LEAK.test(text)
   ) {
@@ -143,6 +158,7 @@ export function isSafeReleaseSummary(summary: string, source: string): boolean {
 
 /**
  * Sanitizes and validates candidate release summary text against source release notes.
+ * Uses hoisted static RegExp constants for zero dynamic compilation overhead (⚡ Bolt).
  * @param summary - Raw summary output from AI model.
  * @param source - Source release text to verify grounding.
  * @returns Sanitized summary string, or null if validation fails.
@@ -151,9 +167,9 @@ export function prepareReleaseSummary(summary: string, source: string): string |
   const original = summary.trim();
   if (
     SHA_ONE.test(original) ||
-    /\bissue number\b/i.test(original) ||
-    /\bcommit hash\b/i.test(original) ||
-    /\B#\d+\b/.test(original) ||
+    ISSUE_NUM_WORD_SEARCH.test(original) ||
+    COMMIT_HASH_WORD_SEARCH.test(original) ||
+    NON_BOUNDARY_HASH_SEARCH.test(original) ||
     CONVENTIONAL.test(original)
   ) {
     return null;

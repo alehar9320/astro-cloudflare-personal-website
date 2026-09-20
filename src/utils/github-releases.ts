@@ -162,8 +162,14 @@ export async function fetchGitHubReleases(
   }
 }
 
+// Hoisted static regexes for release body parsing to eliminate dynamic compilation GC overhead on Cloudflare Workers (⚡ Bolt).
+const HASH_PREFIX_REGEX = /^([a-f0-9]{7,40})\s+(.*)/i;
+const LIST_MARKER_REGEX = /^[-*+]\s+/;
+
 /**
  * Formats an ISO date string into a YYYY-MM-DD format.
+ * Optimization (⚡ Bolt): Uses slice(0, 10) instead of split('T')[0] to eliminate intermediate 2-element array allocation per date.
+ * Benchmark: Zero array allocation vs 1 array allocation per release date string.
  * @param {string | null} dateString - The raw date string from the API.
  * @returns {string} The formatted date, or 'Unknown date' if invalid.
  */
@@ -176,18 +182,19 @@ export function formatReleaseDate(dateString: string | null): string {
     return 'Unknown date';
   }
 
-  return date.toISOString().split('T')[0];
+  return date.toISOString().slice(0, 10);
 }
 
 /**
  * Parses a single changelog line into a ReleaseItem, extracting hashes and messages.
+ * Uses hoisted HASH_PREFIX_REGEX to avoid dynamic RegExp allocation per line (⚡ Bolt).
  * @param {string} line - A single line from the release body.
  * @returns {ReleaseItem} An object containing the message and optional commit metadata.
  */
 export function parseReleaseItem(line: string): ReleaseItem {
   const cleaned = line.trim();
-  // Matches a 7 to 40-character hex hash at the beginning
-  const hashMatch = cleaned.match(/^([a-f0-9]{7,40})\s+(.*)/i);
+  // Matches a 7 to 40-character hex hash at the beginning using hoisted static RegExp
+  const hashMatch = cleaned.match(HASH_PREFIX_REGEX);
 
   if (hashMatch) {
     const hash = hashMatch[1];
@@ -213,7 +220,7 @@ export function isPublicChangelogItem(item: ReleaseItem): boolean {
  * Splits a release body into individual, formatted ReleaseItem objects.
  * Filters for lines starting with list markers (-, *, +).
  * Drops Jules, agent-farm, and Johan-nits internals from the public list.
- * Uses pointer-based line scanning (`indexOf('\n', startPos)`) to eliminate dynamic line array allocations on edge runtimes.
+ * Uses pointer-based line scanning (`indexOf('\n', startPos)`) and hoisted LIST_MARKER_REGEX to eliminate dynamic allocations (⚡ Bolt).
  * @param {string} body - The full Markdown body of a GitHub release.
  * @returns {ReleaseItem[]} An array of parsed release items.
  */
@@ -235,9 +242,9 @@ export function splitReleaseBody(body: string): ReleaseItem[] {
     startPos = nextNewline + 1;
 
     const trimmed = line.trim();
-    if (!/^[-*+]\s+/.test(trimmed)) continue;
+    if (!LIST_MARKER_REGEX.test(trimmed)) continue;
 
-    const rawMessage = trimmed.replace(/^[-*+]\s+/, '');
+    const rawMessage = trimmed.replace(LIST_MARKER_REGEX, '');
     const item = parseReleaseItem(rawMessage);
     if (isPublicChangelogItem(item)) {
       items.push(item);
