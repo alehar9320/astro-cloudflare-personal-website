@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - Pill Gradient Hover Shift | Signal: Competitive | Lean Implementation: Added background-position shift on hover to Pill.astro gated behind enable_pill_gradient_v1 flag.
+
+- Insight: Interactive gradient shifts on badge and pill elements provide smooth visual responsiveness during hover without layout reflows or performance impact.
+- User Target: Joy
+- Abort Triggers: None (verified via build and test pipeline).
+- User Reaction: Pending synthetic feedback.
