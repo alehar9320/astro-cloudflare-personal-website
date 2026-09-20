@@ -20,3 +20,17 @@ declare module '*.txt?raw' {
   const content: string;
   export default content;
 }
+
+interface Element {
+  append(...nodes: (string | Node)[]): void;
+  prepend(...nodes: (string | Node)[]): void;
+}
+
+interface ParentNode {
+  append(...nodes: (string | Node)[]): void;
+  prepend(...nodes: (string | Node)[]): void;
+}
+
+declare const process: {
+  env: Record<string, string | undefined>;
+};

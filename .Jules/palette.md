@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-27 - CallToAction Touch Target Ergonomics & Forced Colors Accessibility
+
+**Learning:** Primary call-to-action buttons (such as `CallToAction.astro`) require explicit minimum touch target dimensions (`min-height: 44px; min-width: 44px; align-items: center;`) to guarantee WCAG 2.1 AA interactive tap target compliance across all viewports. Furthermore, in Windows High Contrast / forced-colors active mode, translucent or custom background colors are overridden by system defaults. Adding explicit system color borders (`border: 1px solid ButtonText;`) and hover/focus-visible highlights (`border-color: Highlight; color: HighlightText;`) under `@media (forced-colors: active)` ensures CTA boundaries remain clear and readable.
+
+**Action:** Enforced `align-items: center; min-height: 44px; min-width: 44px;` and added `@media (forced-colors: active)` support in `src/components/CallToAction.astro`.
+
 ## 2026-05-26 - Page Link Touch Target Ergonomics
 
 **Learning:** Section list links (such as `.earlier a` in `work.astro`) and standalone page action links (such as `.history-link` in `whats-new.astro` and `.hire-cta a`) often render as compact inline links on mobile viewports, failing WCAG 2.1 AA 44x44px minimum touch target requirements and risking mis-taps. Setting `display: inline-flex; align-items: center; min-height: 44px;` expands the interactive tap area without disrupting surrounding line rhythm.
