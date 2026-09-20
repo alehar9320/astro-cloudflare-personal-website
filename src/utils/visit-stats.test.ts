@@ -218,6 +218,54 @@ describe('parseVisitGlance', () => {
     expect(glance?.pageviews).toBe(100);
     expect(glance?.uniqueVisitors).toBe(15);
   });
+
+  it('correctly maps re-ordered columns in array rows via pre-computed hashtable lookup', () => {
+    const glance = parseVisitGlance({
+      columns: [
+        'unique_visitors',
+        'pageviews',
+        'unique_visitors_7d',
+        'pageviews_7d',
+        'first_seen',
+        'unique_visitors_1d',
+        'unique_visitors_1d_prev',
+        'unique_visitors_7d_prev',
+        'unique_visitors_30d',
+        'unique_visitors_30d_prev',
+      ],
+      results: [[12, 94, 8, 20, '2026-08-14T07:03:00.000Z', null, null, null, 50, 25]],
+    });
+    expect(glance).toEqual({
+      pageviews: 94,
+      uniqueVisitors: 12,
+      firstSeen: '2026-08-14T07:03:00.000Z',
+      pageviews7d: 20,
+      uniqueVisitors7d: 8,
+      uniqueVisitorsDoD: null,
+      uniqueVisitorsWoW: null,
+      uniqueVisitorsMoM: 100,
+      uniqueVisitorsYoY: null,
+    });
+  });
+
+  it('handles non-string items in columns array gracefully', () => {
+    const glance = parseVisitGlance({
+      columns: [
+        null,
+        'pageviews',
+        123,
+        'unique_visitors',
+        'first_seen',
+        'pageviews_7d',
+        'unique_visitors_7d',
+      ],
+      results: [['ignored', 100, 'ignored', 15, '2026-08-14T07:03:00.000Z', 30, 10]],
+    });
+    expect(glance?.pageviews).toBe(100);
+    expect(glance?.uniqueVisitors).toBe(15);
+    expect(glance?.pageviews7d).toBe(30);
+    expect(glance?.uniqueVisitors7d).toBe(10);
+  });
 });
 
 describe('formatFirstSeen', () => {
