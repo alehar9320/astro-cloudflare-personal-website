@@ -58,12 +58,40 @@ const shareUrl = shareUrlProp ?? canonicalUrl;
   title="Alexander Härenstam | Product Manager, Developer Experience at IFS"
   href="https://me.alehar.workers.dev/rss.xml"
 />
+<!-- Preload critical above-the-fold hero background images for fast LCP -->
+<link
+  rel="preload"
+  as="image"
+  href="/assets/backgrounds/bg-main-dark-800w.jpg"
+  media="(max-width: 49.99em)"
+/>
+<link
+  rel="preload"
+  as="image"
+  href="/assets/backgrounds/bg-main-dark-1440w.jpg"
+  media="(min-width: 50em)"
+/>
+
+<!-- Non-render-blocking Google Fonts loading (Stratus optimization) -->
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link
+  rel="preload"
+  as="style"
+  href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,700;1,400&family=Rubik:wght@500;600&display=swap"
+/>
+<link
   href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,700;1,400&family=Rubik:wght@500;600&display=swap"
   rel="stylesheet"
+  media="print"
+  onload="this.media='all'"
 />
+<noscript>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Public+Sans:ital,wght@0,400;0,700;1,400&family=Rubik:wght@500;600&display=swap"
+    rel="stylesheet"
+  />
+</noscript>
 <PostHog />
 <script is:inline>
   // This code is inlined in the head to make dark mode instant & blocking.
