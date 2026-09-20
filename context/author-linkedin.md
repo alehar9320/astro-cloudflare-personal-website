@@ -249,7 +249,7 @@ My thesis revolved around business model innovation, and the opportunities and b
 
 1. Academically mapping out what it means to transform a business with the help of digitalization.
 2. Studying a specific business case where digitalization was part of changing the business model.
-3. Identifying the gap between what theory stipulates and the business case at hand.Invativa is a specialist consulting company helping others create and improve their digital business. This is done by identifying how digital technology can be applied to improve the business model; digitalization. My thesis revolved around business model innovation, and the opportunities and barriers that digitalization creates. This was done by: 1) Academically mapping out what it means to transform a business with the help of digitalization. 2) Studying a specific business case where digitalization was part of changing the business model. 3) Identifying the gap between what theory stipulates and the business case at hand.…see more
+3. Identifying the gap between what theory stipulates and the business case at hand. Invativa is a specialist consulting company helping others create and improve their digital business. This is done by identifying how digital technology can be applied to improve the business model; digitalization. My thesis revolved around business model innovation, and the opportunities and barriers that digitalization creates. This was done by: 1) Academically mapping out what it means to transform a business with the help of digitalization. 2) Studying a specific business case where digitalization was part of changing the business model. 3) Identifying the gap between what theory stipulates and the business case at hand.…see more
    Ericsson logo
    Ericsson
    1 yr 3 mos
@@ -279,7 +279,7 @@ My thesis revolved around business model innovation, and the opportunities and b
 6. PWC - advanced Excel
 7. McKinsey&Company - case interview training
 8. IDI - emotional intelligence
-9. H&M - leadership.Activities and societies: I-Academy 2017. A training and development programme for Industrial Engineering and Management students in their 3rd to 5th year. Consists of six workshops during the spring. 1) NOVA - modern recruiting method 2) Trendie - future scenario planning 3) PWC - advanced Excel 4) McKinsey&Company - case interview training 5) IDI - emotional intelligence 6) H&M - leadership.
+9. H&M - leadership. Activities and societies: I-Academy 2017. A training and development programme for Industrial Engineering and Management students in their 3rd to 5th year. Consists of six workshops during the spring. 1) NOVA - modern recruiting method 2) Trendie - future scenario planning 3) PWC - advanced Excel 4) McKinsey&Company - case interview training 5) IDI - emotional intelligence 6) H&M - leadership.
    Through a combination of an advanced level of business management and economics in relation to engineering knowledge, students are trained in analyzing, understanding and skilfully managing innovation processes in companies and other areas of society. The programme focuses on how and why companies innovate to compete and how companies can reap financial returns from their investments in innovation.
    Chalmers University of Technology logo
    Chalmers University of Technology
