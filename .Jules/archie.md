@@ -1,0 +1,3 @@
+2026-03-30 - Codifying Workers-First ADRs and Master Tech Radar Index
+Learning: Lack of a standardized master ADR index (`docs/adr/README.md`) and Tech Radar (`docs/tech-radar.md`) left AI agents vulnerable to architectural drift, such as attempting legacy Cloudflare Pages builds or introducing runtime dependencies. Explicit AI Agent Directives in sequential ADRs bridge the context gap between human intent and autonomous agent execution.
+Action: Require explicit AI Agent Directives (Do / Don't) on all future ADRs and keep `docs/tech-radar.md` and `docs/adr/README.md` updated as the canonical source of truth for architectural boundaries.
