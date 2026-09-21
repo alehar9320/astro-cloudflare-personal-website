@@ -164,6 +164,9 @@ export async function fetchGitHubReleases(
 
 /**
  * Formats an ISO date string into a YYYY-MM-DD format.
+ * Optimization (⚡ Bolt): Uses `.slice(0, 10)` to extract the YYYY-MM-DD substring directly
+ * without intermediate two-element string array allocation (`.split('T')[0]`).
+ * Benchmark: Zero array allocations per date format call on Cloudflare Workers edge runtimes.
  * @param {string | null} dateString - The raw date string from the API.
  * @returns {string} The formatted date, or 'Unknown date' if invalid.
  */
@@ -176,8 +179,16 @@ export function formatReleaseDate(dateString: string | null): string {
     return 'Unknown date';
   }
 
-  return date.toISOString().split('T')[0];
+  return date.toISOString().slice(0, 10);
 }
+
+/**
+ * Static regular expressions hoisted to module constants.
+ * Optimization (⚡ Bolt): Hoisting static RegExp literals avoids dynamic RegExp compilation
+ * and GC allocation overhead on every line parsed during edge runtime execution.
+ */
+const HASH_COMMIT_PATTERN = /^([a-f0-9]{7,40})\s+(.*)/i;
+const LIST_MARKER_PATTERN = /^[-*+]\s+/;
 
 /**
  * Parses a single changelog line into a ReleaseItem, extracting hashes and messages.
@@ -186,8 +197,8 @@ export function formatReleaseDate(dateString: string | null): string {
  */
 export function parseReleaseItem(line: string): ReleaseItem {
   const cleaned = line.trim();
-  // Matches a 7 to 40-character hex hash at the beginning
-  const hashMatch = cleaned.match(/^([a-f0-9]{7,40})\s+(.*)/i);
+  // Matches a 7 to 40-character hex hash at the beginning using hoisted static RegExp
+  const hashMatch = cleaned.match(HASH_COMMIT_PATTERN);
 
   if (hashMatch) {
     const hash = hashMatch[1];
@@ -235,9 +246,9 @@ export function splitReleaseBody(body: string): ReleaseItem[] {
     startPos = nextNewline + 1;
 
     const trimmed = line.trim();
-    if (!/^[-*+]\s+/.test(trimmed)) continue;
+    if (!LIST_MARKER_PATTERN.test(trimmed)) continue;
 
-    const rawMessage = trimmed.replace(/^[-*+]\s+/, '');
+    const rawMessage = trimmed.replace(LIST_MARKER_PATTERN, '');
     const item = parseReleaseItem(rawMessage);
     if (isPublicChangelogItem(item)) {
       items.push(item);
