@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-27 - Portfolio Card Reduced Motion & Forced Colors Safeguards
+
+**Learning:** Interactive cards with hover transforms and shimmer micro-interactions (such as `PortfolioPreview.astro`) must explicitly override transforms (`transform: none`) and animation keyframes (`animation: none`) under `@media (prefers-reduced-motion: reduce)` to prevent motion sickness for sensitive users. Furthermore, declaring explicit system color borders (`border-color: CanvasText;` and `:hover`/`:focus-visible` `border-color: Highlight;`) inside `@media (forced-colors: active)` ensures card boundaries and interactive title overlays remain visible in Windows High Contrast / Forced Colors mode when translucent glassmorphic borders are overridden by the system OS.
+
+**Action:** Added `@media (prefers-reduced-motion: reduce)` and `@media (forced-colors: active)` rules to `src/components/PortfolioPreview.astro`.
+
 ## 2026-05-26 - Page Link Touch Target Ergonomics
 
 **Learning:** Section list links (such as `.earlier a` in `work.astro`) and standalone page action links (such as `.history-link` in `whats-new.astro` and `.hire-cta a`) often render as compact inline links on mobile viewports, failing WCAG 2.1 AA 44x44px minimum touch target requirements and risking mis-taps. Setting `display: inline-flex; align-items: center; min-height: 44px;` expands the interactive tap area without disrupting surrounding line rhythm.

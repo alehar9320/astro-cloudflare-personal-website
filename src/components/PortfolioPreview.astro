@@ -142,4 +142,28 @@ const isShimmerEnabled = flagsEntry?.data.portfolio_shimmer_v1 ?? false;
       border-radius: 0.9375rem;
     }
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    .card,
+    .card.tactile:active {
+      transition: none;
+      transform: none;
+    }
+
+    .card.shimmer:hover::after {
+      animation: none;
+    }
+  }
+
+  @media (forced-colors: active) {
+    .card,
+    .title {
+      border-color: CanvasText;
+    }
+
+    .card:hover,
+    .card:focus-visible {
+      border-color: Highlight;
+    }
+  }
 </style>
