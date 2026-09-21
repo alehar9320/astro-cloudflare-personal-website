@@ -1,0 +1,45 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Icon from '../../components/Icon.astro';
+import CallToAction from '../../components/CallToAction.astro';
+
+const flags = await getEntry('flags', 'config');
+if (!flags?.data.enable_operating_model) return Astro.redirect('/404/');
+
+const pillars = [
+  { t: 'Data-Informed Direction', d: 'Ground strategy in telemetry and measurable ROI.', i: 'strategy' as const },
+  { t: 'Rapid Experimentation', d: 'Deploy barebone MVPs to validate hypotheses early.', i: 'rocket-launch' as const },
+  { t: 'Developer Empowerment', d: 'Remove friction so engineers ship with confidence.', i: 'terminal-window' as const },
+];
+---
+
+<BaseLayout title="Operating Model | Product Manager, Developer Experience at IFS" description="Product Operating Model for DevEx and AI." robots="noindex">
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero title="Product Operating Model" tagline="Execution pillars across DevEx & Industrial AI." align="start" />
+    <div class="grid">
+      {pillars.map((p) => (
+        <section class="card">
+          <Icon icon={p.i} color="var(--accent-regular)" size="2.5rem" gradient />
+          <h2>{p.t}</h2>
+          <p>{p.d}</p>
+        </section>
+      ))}
+    </div>
+    <div class="actions">
+      <CallToAction href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer" data-hire-event="hire_cta_click" data-hire-surface="operating-model">Get in touch</CallToAction>
+      <p class="cta-hint">LinkedIn · replies from me</p>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .grid { display: grid; gap: 1.5rem; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
+  .card { padding: 1.5rem; border: 1px solid var(--gray-800); border-radius: 0.75rem; background: var(--gradient-subtle); }
+  .card h2 { font-size: var(--text-lg); margin: 1rem 0 0.5rem; color: var(--gray-0); }
+  .card p { color: var(--gray-300); line-height: 1.5; margin: 0; }
+  .actions { display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem; padding-bottom: var(--chat-fab-clearance); padding-right: var(--chat-fab-clearance); }
+  .cta-hint { margin: 0; font-size: var(--text-sm); color: var(--gray-300); font-weight: 400; }
+  @media (min-width: 50em) { .actions { padding-bottom: 0; padding-right: 0; } }
+</style>
