@@ -67,7 +67,7 @@ Stand out to employers
 Enhance your profile, craft standout messages, and assess job fit with Premium.
 
 Try Premium for SEK 0
-1-month free trial. Cancel whenever. We’l remind you 7 days before your trial ends.
+1-month free trial. Cancel whenever. We'll remind you 7 days before your trial ends.
 
 Dismiss premium promotion
 
@@ -309,7 +309,7 @@ Other contributors
 5
 Display OS
 Sep 2016 - Jan 2017
-Our vision is a future where we are more and more dependent upon information. Thus, we have created a platform that allows you to get all the information you need, in just a glance, right when you need it. No matter if it's displayed on your tv, your fridge or projected on your wall. This is all made possible by combining a user-friendly GUI with API:s from the world-wide web.
+Our vision is a future where we are more and more dependent upon information. Thus, we have created a platform that allows you to get all the information you need, in just a glance, right when you need it. No matter if it's displayed on your tv, your fridge or projected on your wall. This is all made possible by combining a user-friendly GUI with APIs from the world-wide web.
 Other contributors
 
 Show all 5 projects
