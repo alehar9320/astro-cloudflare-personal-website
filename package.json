@@ -50,6 +50,7 @@
   },
   "overrides": {
     "brace-expansion": "5.0.9",
+    "devalue": "5.9.1",
     "postcss": "8.5.26",
     "yaml": "2.8.3",
     "ws": "8.21.3",
