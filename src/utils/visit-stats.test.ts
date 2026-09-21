@@ -218,6 +218,17 @@ describe('parseVisitGlance', () => {
     expect(glance?.pageviews).toBe(100);
     expect(glance?.uniqueVisitors).toBe(15);
   });
+
+  it('correctly maps reordered columns using pre-computed hashtable lookup', () => {
+    const glance = parseVisitGlance({
+      columns: ['unique_visitors', 'pageviews', 'first_seen', 'unique_visitors_7d', 'pageviews_7d'],
+      results: [[15, 100, '2026-08-14T07:03:00.000Z', 10, 25]],
+    });
+    expect(glance?.pageviews).toBe(100);
+    expect(glance?.uniqueVisitors).toBe(15);
+    expect(glance?.pageviews7d).toBe(25);
+    expect(glance?.uniqueVisitors7d).toBe(10);
+  });
 });
 
 describe('formatFirstSeen', () => {

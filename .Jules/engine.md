@@ -29,3 +29,8 @@
 - **Edge Memory & Performance:** Refactored `splitReleaseBody` in `src/utils/github-releases.ts` and `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use pointer-based line scanning (`indexOf('\n', startPos)`), eliminating dynamic `body.split('\n')` string array allocations during SSR and API execution.
 - **Sentence Counting Optimization:** Refactored `sentenceCount` in `src/utils/release-summary.ts` from regex lookbehind `.split(/(?<=[.!?])\s+/)` into a single-pass character scanning loop. Added whitespace-aware sentence boundary detection to safely ignore dots inside version strings (`2026.08.15.1714`).
 - **Verification:** Added Vitest unit test cases across `release-summary.test.ts`, `visitor-changelog.test.ts`, and `github-releases.test.ts` covering version numbers, CRLF line endings, multiple trailing punctuation, and whitespace handling.
+
+## 2025-06-18 - Pre-Computed Hashtable Indexing for Tabular API Column Parsing
+
+- **Edge Memory & Performance:** Constructing a single `Record<string, number>` column lookup map before extracting fields from PostHog HogQL tabular API payloads replaces repeated O(N) `columns.indexOf(key)` array scans with O(1) constant-time hashtable property reads.
+- **Verification:** Added unit test coverage in `src/utils/visit-stats.test.ts` verifying reordered columns map correctly with zero lookup overhead.
