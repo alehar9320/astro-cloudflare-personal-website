@@ -1,4 +1,11 @@
-<div class="pill"><slot /></div>
+---
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+const isShiftEnabled = flagsEntry?.data.enable_pill_shift_v1 ?? false;
+---
+
+<div class:list={['pill', { shift: isShiftEnabled }]}><slot /></div>
 
 <style>
   .pill {
@@ -23,5 +30,12 @@
     background-size: 250% 100%;
     background-position: 0% 50%;
     box-shadow: var(--shadow-sm);
+    transition: background-position 0.5s ease;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pill.shift:hover {
+      background-position: 100% 50%;
+    }
   }
 </style>

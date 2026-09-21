@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - Pill Gradient Shift | Signal: Competitive | Lean Implementation: Added smooth background-position gradient shift on hover for tag pills controlled by enable_pill_shift_v1 flag.
+
+- Insight: Competitor analysis shows interactive tag elements feel far more tactile and responsive when subtle gradient transitions occur on hover.
+- User Target: Joy
+- Abort Triggers: None (verified via test and build pipeline).
+- User Reaction: Pending synthetic feedback.
