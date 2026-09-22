@@ -1,0 +1,115 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_operating_manual) return Astro.redirect('/404/');
+
+const linkedinHref = 'https://www.linkedin.com/in/alehar/';
+
+const principles = [
+  {
+    title: 'Outcome over Output',
+    text: 'Measure progress by user value and strategic business impact, not story points.',
+  },
+  {
+    title: 'Radical Transparency',
+    text: 'Share context early, communicate trade-offs openly, and maintain high trust.',
+  },
+  {
+    title: 'Developer Ergonomics',
+    text: 'Treat developer experience as a first-class product with measurable ROI.',
+  },
+];
+---
+
+<BaseLayout
+  title="Operating Manual | Product Manager, Developer Experience at IFS"
+  description="Product Manager, Developer Experience at IFS. Operating manual & leadership principles."
+  robots="noindex"
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero title="Operating Manual" align="start">
+      <p class="lede">How I lead product engineering teams, make decisions, and drive DevEx.</p>
+    </Hero>
+    <div class="grid">
+      {
+        principles.map(({ title, text }) => (
+          <div class="card">
+            <strong>{title}</strong>
+            <p>{text}</p>
+          </div>
+        ))
+      }
+    </div>
+    <div class="actions">
+      <CallToAction
+        href={linkedinHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-hire-event="hire_cta_click"
+        data-hire-surface="operating-manual"
+      >
+        Connect on LinkedIn
+      </CallToAction>
+      <p class="cta-hint">LinkedIn · replies from me</p>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .lede {
+    margin: 0;
+    color: var(--gray-200);
+    max-width: 46ch;
+  }
+
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
+  .card {
+    padding: 1rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+    background: var(--gradient-subtle);
+  }
+
+  .card strong {
+    display: block;
+    color: var(--gray-0);
+  }
+
+  .card p {
+    margin: 0.35rem 0 0;
+    color: var(--gray-300);
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    padding-bottom: var(--chat-fab-clearance);
+    padding-right: var(--chat-fab-clearance);
+  }
+
+  .cta-hint {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    font-weight: 400;
+  }
+
+  @media (min-width: 50em) {
+    .actions {
+      padding-bottom: 0;
+      padding-right: 0;
+    }
+  }
+</style>
