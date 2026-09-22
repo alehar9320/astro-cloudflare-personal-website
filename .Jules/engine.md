@@ -29,3 +29,9 @@
 - **Edge Memory & Performance:** Refactored `splitReleaseBody` in `src/utils/github-releases.ts` and `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use pointer-based line scanning (`indexOf('\n', startPos)`), eliminating dynamic `body.split('\n')` string array allocations during SSR and API execution.
 - **Sentence Counting Optimization:** Refactored `sentenceCount` in `src/utils/release-summary.ts` from regex lookbehind `.split(/(?<=[.!?])\s+/)` into a single-pass character scanning loop. Added whitespace-aware sentence boundary detection to safely ignore dots inside version strings (`2026.08.15.1714`).
 - **Verification:** Added Vitest unit test cases across `release-summary.test.ts`, `visitor-changelog.test.ts`, and `github-releases.test.ts` covering version numbers, CRLF line endings, multiple trailing punctuation, and whitespace handling.
+
+## 2025-06-18 - Zero-Allocation ISO Date Formatting & Direct Bullet Iteration
+
+- **Edge Memory & Performance:** Refactored `formatReleaseDate` in `src/utils/github-releases.ts` to extract YYYY-MM-DD substrings directly via `date.toISOString().slice(0, 10)`, eliminating intermediate two-element string array allocations (`.split('T')[0]`) on Cloudflare Workers edge runtimes.
+- **Changelog Glance Collection:** Refactored `collectItems` in `src/utils/whats-new-glance.ts` to iterate directly over parsed release bullets using a `for...of` loop instead of creating temporary mapping array objects (`.map()`), reducing GC churn during SSR evaluation of `/whats-new/`.
+- **Verification:** Added unit tests in `src/__tests__/whats-new-glance.test.ts` verifying unbulleted raw release bodies and verified 100% test pass across 369 unit test cases.

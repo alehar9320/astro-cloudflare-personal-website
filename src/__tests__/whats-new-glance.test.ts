@@ -190,4 +190,17 @@ describe('whats-new glance', () => {
     expect(glance.thisWeek).toEqual([]);
     expect(glance.groups).toEqual([]);
   });
+
+  it('handles unbulleted raw release bodies without creating intermediate array wrappers', () => {
+    const glance = buildWhatsNewGlance(
+      [
+        release({
+          body: 'feat: restore What’s New in the main menu',
+          publishedAt: '2026-08-19T12:00:00Z',
+        }),
+      ],
+      now
+    );
+    expect(glance.thisWeek).toEqual(['Restore What’s New in the main menu']);
+  });
 });

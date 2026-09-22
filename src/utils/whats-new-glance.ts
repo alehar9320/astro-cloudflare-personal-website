@@ -92,22 +92,25 @@ function collectItems(releases: SiteRelease[], nowMs: number): GlanceItem[] {
     if (age < 0 || age > MONTH_MS) continue;
 
     const bullets = splitReleaseBody(release.body);
-    const lines =
-      bullets.length > 0
-        ? bullets.map((item) => ({
-            raw: item.message,
-            title: item.message,
-          }))
-        : release.body.trim()
-          ? [{ raw: release.body, title: release.body }]
-          : [];
 
-    for (const line of lines) {
-      if (!isKeptVisitorLine(line.raw, line.title)) continue;
-      const key = line.title.toLowerCase();
-      if (seen.has(key)) continue;
-      seen.add(key);
-      items.push({ publishedMs, title: line.title });
+    if (bullets.length > 0) {
+      for (const item of bullets) {
+        const msg = item.message;
+        if (!isKeptVisitorLine(msg, msg)) continue;
+        const key = msg.toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        items.push({ publishedMs, title: msg });
+      }
+    } else {
+      const trimmedBody = release.body.trim();
+      if (trimmedBody && isKeptVisitorLine(trimmedBody, trimmedBody)) {
+        const key = trimmedBody.toLowerCase();
+        if (!seen.has(key)) {
+          seen.add(key);
+          items.push({ publishedMs, title: trimmedBody });
+        }
+      }
     }
   }
 
