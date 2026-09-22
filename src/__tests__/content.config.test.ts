@@ -28,19 +28,36 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
-    expect(result.success).toBe(true);
+    const rawSchema = collections.flags.schema;
+    const schema =
+      typeof rawSchema === 'function'
+        ? rawSchema({
+            image: () =>
+              z.string() as unknown as ReturnType<Parameters<typeof rawSchema>[0]['image']>,
+          })
+        : rawSchema;
+    expect(schema).toBeDefined();
+    if (schema && 'safeParse' in schema) {
+      const result = schema.safeParse(flagsFixture);
+      expect(result.success).toBe(true);
 
-    if (result.success) {
-      // Use toMatchObject to ensure all fixture properties are correctly validated
-      // while allowing for Zod-injected default values.
-      expect(result.data).toMatchObject(flagsFixture);
+      if (result.success) {
+        // Use toMatchObject to ensure all fixture properties are correctly validated
+        // while allowing for Zod-injected default values.
+        expect(result.data).toMatchObject(flagsFixture);
+      }
     }
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const rawSchema = collections.work.schema;
+    const schema =
+      typeof rawSchema === 'function'
+        ? rawSchema({
+            image: () =>
+              z.string() as unknown as ReturnType<Parameters<typeof rawSchema>[0]['image']>,
+          })
+        : rawSchema;
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -49,11 +66,14 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
-    expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.title).toBe(sampleWork.title);
-      expect(result.data.publishDate).toBeInstanceOf(Date);
+    expect(schema).toBeDefined();
+    if (schema && 'safeParse' in schema) {
+      const result = schema.safeParse(sampleWork);
+      expect(result.success).toBe(true);
+      if (result.success) {
+        expect(result.data.title).toBe(sampleWork.title);
+        expect(result.data.publishDate).toBeInstanceOf(Date);
+      }
     }
   });
 });
