@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - Social Icon Bounce | Signal: Competitive | Lean Implementation: Added scale(1.15) and -6deg rotation on hover to header social links in Nav.astro.
+
+- Insight: Interactive social icons in navigation bars provide immediate physical feedback and subtle playfulness during brand exploration.
+- User Target: Joy
+- Abort Triggers: None (verified via test and build pipeline).
+- User Reaction: Pending synthetic feedback.
