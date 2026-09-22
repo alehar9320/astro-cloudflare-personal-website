@@ -1,0 +1,69 @@
+---
+import AuroraCanvas from '../../components/AuroraCanvas.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Digital Art & Interactive Laboratory | Alexander Härenstam"
+  description="Experimental interactive canvas digital art, mathematical wave physics, and Northern Lights light refraction simulations."
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero
+      title="Interactive Digital Art Lab"
+      tagline="Experimental canvas simulations, multi-harmonic wave physics, and optical light refraction."
+      align="start"
+    />
+
+    <section class="lab-card" aria-label="Northern Lights Simulation">
+      <div class="lab-card-header">
+        <h2 class="lab-title">Northern Lights Light Refraction</h2>
+        <p class="lab-description">
+          A math-driven HTML5 canvas simulation combining multi-harmonic wave synthesis with cubic
+          smoothstep pointer refraction. Move your cursor or touch to distort the aurora ribbons.
+        </p>
+      </div>
+
+      <AuroraCanvas height={380} />
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .lab-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background: var(--gray-999-basis, rgba(10, 20, 35, 0.6));
+    border: 1px solid var(--gray-800, rgba(255, 255, 255, 0.1));
+    border-radius: 1.25rem;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .lab-card-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .lab-title {
+    font-size: var(--text-2xl, 1.75rem);
+    color: var(--gray-0, #fff);
+    margin: 0;
+  }
+
+  .lab-description {
+    font-size: var(--text-md, 1rem);
+    color: var(--gray-200, #ccc);
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  @media (forced-colors: active) {
+    .lab-card {
+      border: 1px solid ButtonText;
+    }
+  }
+</style>

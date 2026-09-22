@@ -1,0 +1,292 @@
+---
+interface Props {
+  height?: number;
+  interactive?: boolean;
+}
+
+const { height = 360, interactive = true } = Astro.props;
+---
+
+<div
+  class="aurora-canvas-container"
+  style={`--canvas-height: ${height}px`}
+  data-interactive={interactive ? 'true' : 'false'}
+>
+  <canvas id="aurora-interactive-canvas" class="aurora-canvas"></canvas>
+  <div class="aurora-controls">
+    <button
+      type="button"
+      id="aurora-toggle-btn"
+      class="aurora-btn"
+      aria-label="Pause Aurora animation"
+    >
+      <span id="aurora-toggle-text">Pause Motion</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  import {
+    calculateAuroraColor,
+    calculateAuroraWaveHeight,
+    calculateParticleStep,
+    calculateRefractedPoint,
+    getMobileScaleFactor,
+  } from '../utils/aurora-math';
+
+  const canvas = document.getElementById('aurora-interactive-canvas') as HTMLCanvasElement | null;
+  const toggleBtn = document.getElementById('aurora-toggle-btn') as HTMLButtonElement | null;
+  const toggleText = document.getElementById('aurora-toggle-text') as HTMLSpanElement | null;
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let animationFrameId: number = 0;
+    let isPaused = false;
+    let time = 0;
+
+    let pointerX = -1000;
+    let pointerY = -1000;
+
+    const isInteractive = canvas.parentElement?.dataset.interactive !== 'false';
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const resize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const rect = canvas.parentElement.getBoundingClientRect();
+
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+
+      if (ctx) {
+        ctx.scale(dpr, dpr);
+      }
+    };
+
+    const draw = () => {
+      if (!ctx || !canvas || !canvas.parentElement) return;
+
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+
+      ctx.clearRect(0, 0, width, height);
+
+      const scale = getMobileScaleFactor(width);
+      const step = calculateParticleStep(width);
+
+      // Render 3 overlapping Northern Lights wave ribbons
+      const ribbonConfigs = [
+        {
+          baseY: height * 0.35,
+          wavelength: 180 * scale,
+          amplitude: 35 * scale,
+          speed: 0.015,
+          colorVal: -0.6,
+          alpha: 0.35,
+        },
+        {
+          baseY: height * 0.5,
+          wavelength: 140 * scale,
+          amplitude: 45 * scale,
+          speed: 0.02,
+          colorVal: 0.1,
+          alpha: 0.45,
+        },
+        {
+          baseY: height * 0.65,
+          wavelength: 210 * scale,
+          amplitude: 30 * scale,
+          speed: 0.012,
+          colorVal: 0.8,
+          alpha: 0.3,
+        },
+      ];
+
+      for (const ribbon of ribbonConfigs) {
+        ctx.beginPath();
+        let isFirst = true;
+
+        for (let x = 0; x <= width + step; x += step) {
+          const rawY =
+            ribbon.baseY +
+            calculateAuroraWaveHeight(x, time * ribbon.speed, ribbon.wavelength, ribbon.amplitude);
+
+          const refracted = isInteractive
+            ? calculateRefractedPoint(x, rawY, pointerX, pointerY, 120 * scale, 25 * scale)
+            : { x, y: rawY };
+
+          if (isFirst) {
+            ctx.moveTo(refracted.x, refracted.y);
+            isFirst = false;
+          } else {
+            ctx.lineTo(refracted.x, refracted.y);
+          }
+        }
+
+        ctx.lineTo(width, height);
+        ctx.lineTo(0, height);
+        ctx.closePath();
+
+        const colorStr = calculateAuroraColor(ribbon.colorVal, ribbon.alpha);
+        ctx.fillStyle = colorStr;
+        ctx.fill();
+      }
+
+      if (!prefersReducedMotion && !isPaused) {
+        time += 1;
+        animationFrameId = requestAnimationFrame(draw);
+      }
+    };
+
+    const handlePointerMove = (e: MouseEvent | TouchEvent) => {
+      if (!canvas || !isInteractive) return;
+      const rect = canvas.getBoundingClientRect();
+      if ('touches' in e && e.touches.length > 0) {
+        pointerX = e.touches[0].clientX - rect.left;
+        pointerY = e.touches[0].clientY - rect.top;
+      } else if ('clientX' in e) {
+        pointerX = (e as MouseEvent).clientX - rect.left;
+        pointerY = (e as MouseEvent).clientY - rect.top;
+      }
+    };
+
+    const handlePointerLeave = () => {
+      pointerX = -1000;
+      pointerY = -1000;
+    };
+
+    const handleToggle = () => {
+      isPaused = !isPaused;
+      if (toggleText && toggleBtn) {
+        toggleText.textContent = isPaused ? 'Play Motion' : 'Pause Motion';
+        toggleBtn.setAttribute(
+          'aria-label',
+          isPaused ? 'Play Aurora animation' : 'Pause Aurora animation'
+        );
+      }
+      if (!isPaused) {
+        draw();
+      }
+    };
+
+    if (prefersReducedMotion) {
+      isPaused = true;
+      if (toggleText && toggleBtn) {
+        toggleText.textContent = 'Reduced Motion Active';
+        toggleBtn.disabled = true;
+      }
+    }
+
+    window.addEventListener('resize', resize, { passive: true });
+    if (isInteractive) {
+      canvas.addEventListener('mousemove', handlePointerMove, { passive: true });
+      canvas.addEventListener('touchmove', handlePointerMove, { passive: true });
+      canvas.addEventListener('mouseleave', handlePointerLeave, { passive: true });
+      canvas.addEventListener('touchend', handlePointerLeave, { passive: true });
+    }
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', handleToggle);
+    }
+
+    resize();
+    draw();
+
+    // Lifecycle cleanup for Astro page transitions (astro:before-swap)
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+        if (canvas) {
+          canvas.removeEventListener('mousemove', handlePointerMove);
+          canvas.removeEventListener('touchmove', handlePointerMove);
+          canvas.removeEventListener('mouseleave', handlePointerLeave);
+          canvas.removeEventListener('touchend', handlePointerLeave);
+        }
+        if (toggleBtn) {
+          toggleBtn.removeEventListener('click', handleToggle);
+        }
+      },
+      { once: true }
+    );
+  }
+</script>
+
+<style>
+  .aurora-canvas-container {
+    position: relative;
+    width: 100%;
+    height: var(--canvas-height, 360px);
+    border-radius: 1rem;
+    overflow: hidden;
+    background: radial-gradient(
+      ellipse at 50% 0%,
+      rgba(15, 43, 72, 0.4) 0%,
+      rgba(10, 20, 35, 0.8) 100%
+    );
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+  }
+
+  .aurora-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  .aurora-controls {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 2;
+  }
+
+  .aurora-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    font-size: var(--text-sm, 0.875rem);
+    font-weight: 500;
+    color: var(--gray-0, #fff);
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 999rem;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .aurora-btn:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.22);
+    border-color: rgba(255, 255, 255, 0.4);
+  }
+
+  .aurora-btn:focus-visible {
+    outline: 2px solid var(--accent-regular, #00e5ff);
+    outline-offset: 2px;
+  }
+
+  .aurora-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  @media (forced-colors: active) {
+    .aurora-canvas-container {
+      border: 1px solid ButtonText;
+    }
+    .aurora-btn {
+      border: 1px solid ButtonText;
+    }
+  }
+</style>
