@@ -1506,7 +1506,7 @@ interface ErrorEventErrorEventInit {
 declare class MessageEvent extends Event {
   constructor(type: string, initializer: MessageEventInit);
   /**
-   * The **`data`** read-only property of the The data sent by the message emitter; this can be any data type, depending on what originated this event.
+   * The **`data`** read-only property returns the data sent by the message emitter; this can be any data type, depending on what originated this event.
    *
    * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessageEvent/data)
    */
@@ -12116,7 +12116,7 @@ type StreamUrlUploadParams = {
    */
   meta?: Record<string, string>;
   /**
-   * Indicates whether the video can be a accessed using the id. When
+   * Indicates whether the video can be accessed using the id. When
    * set to `true`, a signed token must be generated with a signing key to view the
    * video.
    */
@@ -12296,7 +12296,7 @@ type StreamUpdateVideoParams = {
    */
   meta?: Record<string, string>;
   /**
-   * Indicates whether the video can be a accessed using the id. When
+   * Indicates whether the video can be accessed using the id. When
    * set to `true`, a signed token must be generated with a signing key to view the
    * video.
    */
