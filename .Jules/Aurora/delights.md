@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - CTA Icon Float | Signal: Competitive | Lean Implementation: Added subtle translate(2px, -2px) directional movement on hover to CallToAction SVG icons.
+
+- Insight: Motion directional cues on CTA buttons increase perceived responsiveness and intent clarity during hover interactions.
+- User Target: Joy
+- Abort Triggers: None (verified via test and build pipeline).
+- User Reaction: Pending synthetic feedback.
