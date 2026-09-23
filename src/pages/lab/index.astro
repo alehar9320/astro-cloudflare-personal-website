@@ -1,0 +1,95 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+---
+
+<BaseLayout
+  title="Digital Art & Canvas Laboratory | Alexander Härenstam"
+  description="Interactive digital art experiments, canvas graphics, and generative algorithms."
+>
+  <main class="wrapper stack gap-8">
+    <Hero
+      title="Digital Art Laboratory"
+      tagline="Interactive experiments, generative canvas art, and spatial light refractions."
+      align="start"
+    />
+
+    <section class="lab-grid" aria-label="Laboratory Experiments">
+      <a href="/lab/aurora/" class="lab-card">
+        <div class="card-content">
+          <p class="card-tag">HTML5 Canvas · Math & Physics</p>
+          <h2 class="card-title">Northern Lights Aurora</h2>
+          <p class="card-desc">
+            Compound wave math and pointer-driven cubic smoothstep light refraction rendering fluid
+            aurora borealis curtains.
+          </p>
+          <span class="card-link">Launch Experiment &rarr;</span>
+        </div>
+      </a>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .lab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1rem;
+  }
+
+  .lab-card {
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem;
+    text-decoration: none;
+    color: inherit;
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 1rem;
+    backdrop-filter: blur(12px);
+    transition:
+      transform 0.2s ease,
+      border-color 0.2s ease,
+      box-shadow 0.2s ease;
+  }
+
+  .lab-card:hover,
+  .lab-card:focus-visible {
+    transform: translateY(-2px);
+    border-color: var(--accent-regular, #00f2fe);
+    box-shadow: 0 8px 24px rgba(0, 242, 254, 0.15);
+  }
+
+  .lab-card:focus-visible {
+    outline: 2px solid var(--accent-regular, #00f2fe);
+    outline-offset: 4px;
+  }
+
+  .card-tag {
+    font-size: var(--text-sm, 0.875rem);
+    color: var(--accent-regular, #00f2fe);
+    font-weight: 500;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .card-title {
+    font-size: var(--text-xl, 1.25rem);
+    color: var(--gray-0, #fff);
+    margin: 0 0 0.5rem 0;
+  }
+
+  .card-desc {
+    font-size: var(--text-md, 1rem);
+    color: var(--gray-300, #a3abb2);
+    margin: 0 0 1rem 0;
+    line-height: 1.5;
+  }
+
+  .card-link {
+    font-size: var(--text-sm, 0.875rem);
+    color: var(--gray-0, #fff);
+    font-weight: 600;
+    margin-top: auto;
+  }
+</style>
