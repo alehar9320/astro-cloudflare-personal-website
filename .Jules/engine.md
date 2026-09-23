@@ -29,3 +29,10 @@
 - **Edge Memory & Performance:** Refactored `splitReleaseBody` in `src/utils/github-releases.ts` and `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use pointer-based line scanning (`indexOf('\n', startPos)`), eliminating dynamic `body.split('\n')` string array allocations during SSR and API execution.
 - **Sentence Counting Optimization:** Refactored `sentenceCount` in `src/utils/release-summary.ts` from regex lookbehind `.split(/(?<=[.!?])\s+/)` into a single-pass character scanning loop. Added whitespace-aware sentence boundary detection to safely ignore dots inside version strings (`2026.08.15.1714`).
 - **Verification:** Added Vitest unit test cases across `release-summary.test.ts`, `visitor-changelog.test.ts`, and `github-releases.test.ts` covering version numbers, CRLF line endings, multiple trailing punctuation, and whitespace handling.
+
+## 2025-06-18 - Pre-Computed Hashtable Indexing & Module-Level Intl Formatter Hoisting
+
+- **Pre-Computed Hashtable Indexing:** Refactored `parseVisitGlance` and `valueFromRow` in `src/utils/visit-stats.ts` to pre-compute a `Record<string, number>` column lookup map via a single direct loop over `columns`. Replaces 12 repeated $O(N)$ `columns.indexOf(key)` array scans with $O(1)$ constant-time property reads during PostHog HogQL response parsing on Cloudflare Workers edge runtimes.
+- **Module-Level Formatter Hoisting:** Hoisted `Intl.DateTimeFormat` instance in `formatFirstSeen` to a top-level constant `FIRST_SEEN_DATE_FORMATTER` in `src/utils/visit-stats.ts` to eliminate repeated ICU locale initialization and GC object allocation per call.
+- **Zero-Allocation ISO Date Formatting:** Updated `formatReleaseDate` in `src/utils/github-releases.ts` to use `date.toISOString().slice(0, 10)` instead of `date.toISOString().split('T')[0]`, eliminating dynamic two-element string array allocation.
+- **Verification:** Added Vitest unit test cases in `src/utils/visit-stats.test.ts` covering custom column order array rows and edge cases.

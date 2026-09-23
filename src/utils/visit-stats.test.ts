@@ -102,6 +102,21 @@ describe('parseVisitGlance', () => {
     });
   });
 
+  it('reads custom column-ordered array row with hashtable index lookup map', () => {
+    const glance = parseVisitGlance({
+      columns: ['unique_visitors_7d', 'first_seen', 'pageviews', 'unique_visitors', 'pageviews_7d'],
+      results: [[8, '2026-08-14T07:03:00.000Z', 94, 12, 20]],
+    });
+    expect(glance).toEqual({
+      pageviews: 94,
+      uniqueVisitors: 12,
+      firstSeen: '2026-08-14T07:03:00.000Z',
+      pageviews7d: 20,
+      uniqueVisitors7d: 8,
+      ...emptyPeriods,
+    });
+  });
+
   it('parses a zero row so the API can fail-open', () => {
     expect(
       parseVisitGlance({
