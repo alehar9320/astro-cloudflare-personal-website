@@ -21,3 +21,9 @@
 - [Insight 1: Tighter focus ring outline-offsets (2px) prevent focus ring overflow clipping on compact overlay toggles.]
 - [Insight 2: Gating active press scale transitions behind prefers-reduced-motion media queries respects accessibility preferences while preserving tactile visual feedback.]
 - [Delta: 17 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-16 - Pill Tactile Feedback | Signal: Competitive/Technical | Lean Implementation: Flagged CSS Scale Transition
+
+- [Insight 1: Adding press feedback (`transform: scale(0.96)`) to pill elements enhances tactile responsiveness when clicking project tags.]
+- [Insight 2: Scoping pill micro-interactions behind feature flags (`enable_pill_tactile_v1`) enables safe feature deployment without global risk.]
+- [Delta: 20 lines. Guardrails: All passed autonomously.]
