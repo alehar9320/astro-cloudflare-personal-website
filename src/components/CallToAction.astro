@@ -39,8 +39,11 @@ const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
   a {
     position: relative;
     display: flex;
+    align-items: center;
     place-content: center;
     text-align: center;
+    min-height: 44px;
+    min-width: 44px;
     padding: 0.56em 2em;
     gap: 0.8em;
     color: var(--accent-text-over);
@@ -111,6 +114,18 @@ const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
     a.tactile:active {
       transform: none;
       box-shadow: var(--shadow-sm);
+    }
+  }
+
+  @media (forced-colors: active) {
+    a {
+      border: 1px solid ButtonText;
+    }
+
+    a:hover,
+    a:focus-visible {
+      border-color: Highlight;
+      color: HighlightText;
     }
   }
 </style>
