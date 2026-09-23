@@ -41,3 +41,7 @@ Action: Updated `collectItems` in `src/utils/whats-new-glance.ts` to iterate ove
 2026-09-08 - Zero-Allocation Reverse Array Scan for Chat Follow-up Prompts
 Learning: Dynamic shallow array copying and array reversal (`[...messages].reverse().find(...)`) on every UI update creates unnecessary temporary heap allocations and garbage collection overhead in client-side scripts. Replacing array copy/reverse with a reverse indexed `for` loop eliminates dynamic array allocations completely and stops scanning as soon as the first matching element is found.
 Action: Refactored `showFollowUps()` in `src/components/Chat.astro` to use an indexed reverse `for` loop.
+
+2026-09-09 - Pre-Computed Column Hashtable & Formatter Hoisting
+Learning: Constructing a single `Record<string, number>` column lookup map before extracting fields from tabular API responses replaces repeated O(N) `columns.indexOf(key)` array scans with O(1) constant-time property lookups. Additionally, hoisting `Intl.DateTimeFormat` instances to module scope avoids re-creating formatters and reloading ICU locale data on every function call.
+Action: Pre-computed column lookup map in `parseVisitGlance` and hoisted `stockholmDateFormatter` in `src/utils/visit-stats.ts`.
