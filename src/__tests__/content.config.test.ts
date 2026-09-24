@@ -28,8 +28,22 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
-    const result = schema.safeParse(flagsFixture);
+    const rawSchema = collections.flags.schema;
+    const resolvedSchema =
+      typeof rawSchema === 'function'
+        ? rawSchema({
+            image: () =>
+              z.string() as unknown as Parameters<
+                typeof rawSchema
+              >[0]['image'] extends () => infer R
+                ? R
+                : never,
+          })
+        : rawSchema;
+    expect(resolvedSchema).toBeDefined();
+    if (!resolvedSchema) return;
+
+    const result = resolvedSchema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
     if (result.success) {
@@ -40,7 +54,21 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const rawSchema = collections.work.schema;
+    const resolvedSchema =
+      typeof rawSchema === 'function'
+        ? rawSchema({
+            image: () =>
+              z.string() as unknown as Parameters<
+                typeof rawSchema
+              >[0]['image'] extends () => infer R
+                ? R
+                : never,
+          })
+        : rawSchema;
+    expect(resolvedSchema).toBeDefined();
+    if (!resolvedSchema) return;
+
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -49,7 +77,7 @@ describe('content.config', () => {
       img: '/assets/sample.jpg',
       img_alt: 'Sample alt text',
     };
-    const result = schema.safeParse(sampleWork);
+    const result = resolvedSchema.safeParse(sampleWork);
     expect(result.success).toBe(true);
     if (result.success) {
       expect(result.data.title).toBe(sampleWork.title);
