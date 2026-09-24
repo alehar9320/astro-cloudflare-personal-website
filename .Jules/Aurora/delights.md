@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - CTA Icon Float | Signal: Competitive | Lean Implementation: Added subtle 3px flyout and 6deg tilt on hover for icons inside CallToAction buttons when feature flag enable_cta_icon_float_v1 is active.
+
+- Insight: Competitive signal from interactive CTA design shows that micro-animations on directional icons increase action clarity and perceived responsiveness.
+- User Target: Joy
+- Abort Triggers: None (verified via build pipeline and test suite).
+- User Reaction: Pending synthetic feedback.
