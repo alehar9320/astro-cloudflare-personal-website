@@ -162,8 +162,16 @@ export async function fetchGitHubReleases(
   }
 }
 
+// Hoisted static regular expressions for edge runtime optimization.
+// Hoisting RegExp literals prevents dynamic instantiation & GC allocation overhead on every line parse.
+const HASH_MATCH_REGEX = /^([a-f0-9]{7,40})\s+(.*)/i;
+const INTERNAL_CHANGELOG_ITEM = /\bjules\b|\bagent[- ]farm\b|\bjohan nits\b/i;
+const BULLET_PREFIX_REGEX = /^[-*+]\s+/;
+
 /**
  * Formats an ISO date string into a YYYY-MM-DD format.
+ * Optimization: Uses `.slice(0, 10)` instead of `.split('T')[0]` to extract the YYYY-MM-DD substring directly
+ * without temporary two-element string array allocation on edge runtimes.
  * @param {string | null} dateString - The raw date string from the API.
  * @returns {string} The formatted date, or 'Unknown date' if invalid.
  */
@@ -176,7 +184,7 @@ export function formatReleaseDate(dateString: string | null): string {
     return 'Unknown date';
   }
 
-  return date.toISOString().split('T')[0];
+  return date.toISOString().slice(0, 10);
 }
 
 /**
@@ -186,8 +194,8 @@ export function formatReleaseDate(dateString: string | null): string {
  */
 export function parseReleaseItem(line: string): ReleaseItem {
   const cleaned = line.trim();
-  // Matches a 7 to 40-character hex hash at the beginning
-  const hashMatch = cleaned.match(/^([a-f0-9]{7,40})\s+(.*)/i);
+  // Matches a 7 to 40-character hex hash at the beginning using hoisted static RegExp
+  const hashMatch = cleaned.match(HASH_MATCH_REGEX);
 
   if (hashMatch) {
     const hash = hashMatch[1];
@@ -203,8 +211,6 @@ export function parseReleaseItem(line: string): ReleaseItem {
   };
 }
 
-const INTERNAL_CHANGELOG_ITEM = /\bjules\b|\bagent[- ]farm\b|\bjohan nits\b/i;
-
 export function isPublicChangelogItem(item: ReleaseItem): boolean {
   return !INTERNAL_CHANGELOG_ITEM.test(item.message);
 }
@@ -213,7 +219,8 @@ export function isPublicChangelogItem(item: ReleaseItem): boolean {
  * Splits a release body into individual, formatted ReleaseItem objects.
  * Filters for lines starting with list markers (-, *, +).
  * Drops Jules, agent-farm, and Johan-nits internals from the public list.
- * Uses pointer-based line scanning (`indexOf('\n', startPos)`) to eliminate dynamic line array allocations on edge runtimes.
+ * Uses pointer-based line scanning (`indexOf('\n', startPos)`) to eliminate dynamic line array allocations
+ * and hoisted static regexes (`BULLET_PREFIX_REGEX`) to prevent dynamic RegExp re-instantiation per line on edge runtimes.
  * @param {string} body - The full Markdown body of a GitHub release.
  * @returns {ReleaseItem[]} An array of parsed release items.
  */
@@ -235,9 +242,9 @@ export function splitReleaseBody(body: string): ReleaseItem[] {
     startPos = nextNewline + 1;
 
     const trimmed = line.trim();
-    if (!/^[-*+]\s+/.test(trimmed)) continue;
+    if (!BULLET_PREFIX_REGEX.test(trimmed)) continue;
 
-    const rawMessage = trimmed.replace(/^[-*+]\s+/, '');
+    const rawMessage = trimmed.replace(BULLET_PREFIX_REGEX, '');
     const item = parseReleaseItem(rawMessage);
     if (isPublicChangelogItem(item)) {
       items.push(item);
