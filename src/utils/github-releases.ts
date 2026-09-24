@@ -176,7 +176,7 @@ export function formatReleaseDate(dateString: string | null): string {
     return 'Unknown date';
   }
 
-  return date.toISOString().split('T')[0];
+  return date.toISOString().slice(0, 10);
 }
 
 /**

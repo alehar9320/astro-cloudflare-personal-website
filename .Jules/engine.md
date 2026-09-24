@@ -29,3 +29,10 @@
 - **Edge Memory & Performance:** Refactored `splitReleaseBody` in `src/utils/github-releases.ts` and `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use pointer-based line scanning (`indexOf('\n', startPos)`), eliminating dynamic `body.split('\n')` string array allocations during SSR and API execution.
 - **Sentence Counting Optimization:** Refactored `sentenceCount` in `src/utils/release-summary.ts` from regex lookbehind `.split(/(?<=[.!?])\s+/)` into a single-pass character scanning loop. Added whitespace-aware sentence boundary detection to safely ignore dots inside version strings (`2026.08.15.1714`).
 - **Verification:** Added Vitest unit test cases across `release-summary.test.ts`, `visitor-changelog.test.ts`, and `github-releases.test.ts` covering version numbers, CRLF line endings, multiple trailing punctuation, and whitespace handling.
+
+## 2025-06-18 - Hashtable Column Indexing, Intl Hoisting & Zero-Allocation ISO Date Formatting
+
+- **Pre-Computed Column Map:** Refactored `parseVisitGlance` in `src/utils/visit-stats.ts` to construct a pre-computed `Record<string, number>` hashtable index for tabular HogQL PostHog API responses, replacing 12 repeated $O(N)$ `columns.indexOf(key)` array scans with $O(1)$ constant-time property lookups.
+- **Intl Formatter Hoisting:** Hoisted `STOCKHOLM_DATE_FORMATTER = new Intl.DateTimeFormat('en-GB', ...)` to module scope in `src/utils/visit-stats.ts`, eliminating repeated ICU locale initialization and object allocations on `formatFirstSeen` calls.
+- **Zero-Allocation ISO Date Formatting:** Updated `formatReleaseDate` in `src/utils/github-releases.ts` to use `.slice(0, 10)` instead of `.split('T')[0]`, extracting the date substring directly without intermediate 2-element array allocation.
+- **Verification:** Verified all 368 unit tests in Vitest test suite pass clean.
