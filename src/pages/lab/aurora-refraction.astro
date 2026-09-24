@@ -1,0 +1,259 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Aurora Refraction Lab | Alexander Härenstam"
+  description="Interactive Northern Lights wave light refraction experiment powered by HTML5 Canvas and cubic smoothstep attenuation."
+>
+  <main id="main-content" class="wrapper lab-wrapper stack gap-8">
+    <header class="lab-header stack gap-2">
+      <nav class="back-link">
+        <a href="/">← Back to portfolio</a>
+      </nav>
+      <h1 class="title">Aurora Refraction Canvas</h1>
+      <p class="description">
+        Interactive Northern Lights refraction wave simulator. Move your pointer over the canvas to
+        distort light field curves using cubic smoothstep falloff.
+      </p>
+    </header>
+
+    <section class="canvas-card" aria-label="Interactive Aurora Refraction Field">
+      <div class="interactive-container">
+        <canvas
+          id="aurora-refraction-canvas"
+          role="img"
+          aria-label="Interactive Northern Lights wave refraction animation canvas"></canvas>
+        <div class="canvas-fallback" aria-hidden="true">
+          <span>Interactive wave visual rendering active.</span>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import { computeAuroraWave, cubicSmoothstep, getOptimizedDpr } from '../../utils/aurora-math';
+
+  const canvas = document.getElementById('aurora-refraction-canvas') as HTMLCanvasElement | null;
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let animationFrameId: number;
+    const startTime = performance.now();
+
+    // Interactive pointer focal point coordinates
+    let pointerX = -1000;
+    let pointerY = -1000;
+    let activePointer = false;
+
+    // Check accessibility configuration
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const resize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      const dpr = getOptimizedDpr(window.devicePixelRatio || 1);
+      const width = canvas.parentElement.clientWidth || 800;
+      const height = 450;
+
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      if (ctx) {
+        ctx.scale(dpr, dpr);
+      }
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      pointerX = e.clientX - rect.left;
+      pointerY = e.clientY - rect.top;
+      activePointer = true;
+    };
+
+    const handlePointerLeave = () => {
+      activePointer = false;
+      pointerX = -1000;
+      pointerY = -1000;
+    };
+
+    const draw = () => {
+      if (!ctx || !canvas || !canvas.parentElement) return;
+
+      const width = canvas.parentElement.clientWidth || 800;
+      const height = 450;
+      const time = (performance.now() - startTime) * 0.001;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Northern Lights gradient backdrop
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
+      bgGrad.addColorStop(0, 'rgba(2, 6, 23, 0.95)');
+      bgGrad.addColorStop(0.5, 'rgba(15, 23, 42, 0.9)');
+      bgGrad.addColorStop(1, 'rgba(2, 6, 23, 0.95)');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      // Wave layers configuration (Marine Blue, Cyan, Emerald Tints)
+      const layers = [
+        { color: 'rgba(6, 182, 212, 0.35)', baseY: height * 0.45, freq: 0.004, amp: 35 },
+        { color: 'rgba(2, 132, 199, 0.45)', baseY: height * 0.55, freq: 0.006, amp: 45 },
+        { color: 'rgba(16, 185, 129, 0.25)', baseY: height * 0.65, freq: 0.003, amp: 30 },
+      ];
+
+      const step = Math.max(2, Math.floor(width / 200));
+
+      layers.forEach((layer) => {
+        ctx.beginPath();
+        ctx.moveTo(0, height);
+
+        for (let x = 0; x <= width + step; x += step) {
+          const waveOffset = prefersReducedMotion
+            ? computeAuroraWave(x, 0, layer.freq, layer.amp)
+            : computeAuroraWave(x, time, layer.freq, layer.amp);
+
+          let y = layer.baseY + waveOffset;
+
+          // Pointer light refraction displacement using cubic smoothstep falloff
+          if (activePointer) {
+            const dx = x - pointerX;
+            const dy = y - pointerY;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            const radius = 140;
+            const intensity = cubicSmoothstep(dist, radius);
+
+            if (intensity > 0) {
+              const refractY = (pointerY < y ? -1 : 1) * intensity * 50;
+              y += refractY;
+            }
+          }
+
+          if (x === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+
+        ctx.lineTo(width, height);
+        ctx.lineTo(0, height);
+        ctx.closePath();
+
+        ctx.fillStyle = layer.color;
+        ctx.fill();
+      });
+
+      // Pointer glow aura refraction spotlight
+      if (activePointer) {
+        const glowRadius = 120;
+        const radialGrad = ctx.createRadialGradient(
+          pointerX,
+          pointerY,
+          0,
+          pointerX,
+          pointerY,
+          glowRadius
+        );
+        radialGrad.addColorStop(0, 'rgba(6, 182, 212, 0.3)');
+        radialGrad.addColorStop(0.5, 'rgba(2, 132, 199, 0.15)');
+        radialGrad.addColorStop(1, 'rgba(2, 132, 199, 0)');
+
+        ctx.fillStyle = radialGrad;
+        ctx.beginPath();
+        ctx.arc(pointerX, pointerY, glowRadius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      if (!prefersReducedMotion) {
+        animationFrameId = requestAnimationFrame(draw);
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden && !prefersReducedMotion) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = requestAnimationFrame(draw);
+      }
+    };
+
+    window.addEventListener('resize', resize, { passive: true });
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    canvas.addEventListener('pointermove', handlePointerMove, { passive: true });
+    canvas.addEventListener('pointerleave', handlePointerLeave, { passive: true });
+
+    resize();
+    draw();
+
+    // Clean up when navigating away (Astro client lifecycle teardown)
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        if (canvas) {
+          canvas.removeEventListener('pointermove', handlePointerMove);
+          canvas.removeEventListener('pointerleave', handlePointerLeave);
+        }
+      },
+      { once: true }
+    );
+  }
+</script>
+
+<style>
+  .lab-wrapper {
+    padding-block: 2rem 4rem;
+  }
+
+  .back-link a {
+    color: var(--gray-300);
+    text-decoration: none;
+    font-size: var(--text-sm);
+  }
+
+  .back-link a:hover {
+    color: var(--gray-0);
+  }
+
+  .description {
+    color: var(--gray-300);
+    max-width: 60ch;
+  }
+
+  .canvas-card {
+    position: relative;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  }
+
+  .interactive-container {
+    width: 100%;
+    height: 450px;
+    position: relative;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+    cursor: crosshair;
+  }
+
+  .canvas-fallback {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    font-size: var(--text-xs);
+    color: var(--gray-400);
+    pointer-events: none;
+  }
+</style>
