@@ -23,5 +23,26 @@
     background-size: 250% 100%;
     background-position: 0% 50%;
     box-shadow: var(--shadow-sm);
+    transition:
+      background-position 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+      box-shadow 0.4s ease,
+      transform 0.2s ease;
+  }
+
+  .pill:hover,
+  .pill:focus-within {
+    background-position: 100% 50%;
+    box-shadow: var(--shadow-md);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pill {
+      transition: none;
+    }
+
+    .pill:hover,
+    .pill:focus-within {
+      background-position: 0% 50%;
+    }
   }
 </style>
