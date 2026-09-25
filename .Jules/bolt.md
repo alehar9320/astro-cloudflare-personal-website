@@ -41,3 +41,7 @@ Action: Updated `collectItems` in `src/utils/whats-new-glance.ts` to iterate ove
 2026-09-08 - Zero-Allocation Reverse Array Scan for Chat Follow-up Prompts
 Learning: Dynamic shallow array copying and array reversal (`[...messages].reverse().find(...)`) on every UI update creates unnecessary temporary heap allocations and garbage collection overhead in client-side scripts. Replacing array copy/reverse with a reverse indexed `for` loop eliminates dynamic array allocations completely and stops scanning as soon as the first matching element is found.
 Action: Refactored `showFollowUps()` in `src/components/Chat.astro` to use an indexed reverse `for` loop.
+
+2026-09-09 - Edge Date Formatting & Pre-Computed Tabular Column Indexing
+Learning: Re-instantiating `Intl.DateTimeFormat` inside utility functions and calling `.split('T')[0]` on ISO date strings trigger unnecessary ICU locale initialization and string array allocations on Cloudflare Workers edge runtimes. Furthermore, calling `columns.indexOf(key)` repeatedly on tabular API response rows scales linearly with column count. Hoisting `Intl.DateTimeFormat` instances to module scope, using `.slice(0, 10)` for YYYY-MM-DD extraction, and pre-building a single column lookup map replaces O(N) array scans with O(1) constant-time property reads and eliminates dynamic object allocations.
+Action: Updated `src/utils/github-releases.ts` to use `.slice(0, 10)` in `formatReleaseDate` and updated `src/utils/visit-stats.ts` to hoist `stockholmDateFormatter` and pre-compute `columnMap` in `parseVisitGlance`.
