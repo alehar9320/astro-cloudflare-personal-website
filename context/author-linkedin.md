@@ -398,7 +398,7 @@ Profile language
 Svenska
 
 Public profile & URL
-ww.linkedin.com/in/alehar
+www.linkedin.com/in/alehar
 
 Who your viewers also viewed
 Private to you Private to you
