@@ -29,3 +29,9 @@
 - **Edge Memory & Performance:** Refactored `splitReleaseBody` in `src/utils/github-releases.ts` and `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use pointer-based line scanning (`indexOf('\n', startPos)`), eliminating dynamic `body.split('\n')` string array allocations during SSR and API execution.
 - **Sentence Counting Optimization:** Refactored `sentenceCount` in `src/utils/release-summary.ts` from regex lookbehind `.split(/(?<=[.!?])\s+/)` into a single-pass character scanning loop. Added whitespace-aware sentence boundary detection to safely ignore dots inside version strings (`2026.08.15.1714`).
 - **Verification:** Added Vitest unit test cases across `release-summary.test.ts`, `visitor-changelog.test.ts`, and `github-releases.test.ts` covering version numbers, CRLF line endings, multiple trailing punctuation, and whitespace handling.
+
+## 2025-06-18 - Pre-Computed Column Indexing & Zero-Allocation Date Substring Formatting
+
+- **Pre-Computed Column Indexing:** Refactored `parseVisitGlance` in `src/utils/visit-stats.ts` to construct a single `columnIndexMap: Record<string, number>` hashtable before tabular field extraction, replacing repeated $O(N)$ `columns.indexOf(key)` scans across 12 metric fields with $O(1)$ constant-time property lookups.
+- **Formatter & Substring Hoisting:** Hoisted `SWEDEN_DATE_FORMATTER` (`Intl.DateTimeFormat`) to module-level scope in `src/utils/visit-stats.ts`. Updated `formatReleaseDate` in `src/utils/github-releases.ts` to use `.toISOString().slice(0, 10)` instead of `.split('T')[0]`, eliminating two-element string array allocations on Cloudflare Workers edge runtimes.
+- **Verification:** Added Vitest unit test coverage in `src/utils/visit-stats.test.ts` verifying out-of-order column array parsing. Passed full test suite (`npm run test`), lint, formatting, and production build checks.
