@@ -5,6 +5,18 @@ import { defineCollection } from 'astro:content';
 import { collections } from '../content.config';
 import flagsFixture from '../content/flags/config.json';
 
+interface ZodParsable {
+  safeParse: (data: unknown) => { success: boolean; data?: unknown };
+}
+
+function getSchema(collectionObj: { schema?: unknown }): ZodParsable {
+  const s = collectionObj.schema;
+  if (typeof s === 'function') {
+    return s({ image: () => z.string() }) as ZodParsable;
+  }
+  return s as ZodParsable;
+}
+
 describe('content.config', () => {
   it('exercises infrastructure mocks', () => {
     const schema = z.object({ test: z.string() });
@@ -28,7 +40,7 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
+    const schema = getSchema(collections.flags);
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -40,7 +52,7 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const schema = getSchema(collections.work);
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -51,9 +63,10 @@ describe('content.config', () => {
     };
     const result = schema.safeParse(sampleWork);
     expect(result.success).toBe(true);
-    if (result.success) {
-      expect(result.data.title).toBe(sampleWork.title);
-      expect(result.data.publishDate).toBeInstanceOf(Date);
+    if (result.success && result.data && typeof result.data === 'object') {
+      const data = result.data as Record<string, unknown>;
+      expect(data.title).toBe(sampleWork.title);
+      expect(data.publishDate).toBeInstanceOf(Date);
     }
   });
 });
