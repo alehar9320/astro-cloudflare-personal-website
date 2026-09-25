@@ -1,0 +1,3 @@
+2026-03-29 - Codification of Workers-First Architecture and ADR Master Governance
+Learning: The codebase possessed well-established implicit architectural patterns (Cloudflare Workers + Assets, dual-target Render testing, Zod schemas, Vanilla CSS) that lacked formal governance artifacts, creating context gaps for incoming AI agents and risk of architectural drift.
+Action: Formally codify unwritten conventions into Accepted ADRs (`0001`, `0002`) with explicit AI Agent Directives, index them in `docs/adr/README.md`, and establish `docs/tech-radar.md` to provide deterministic ground-truth boundaries for all agent personas.
