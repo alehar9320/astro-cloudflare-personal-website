@@ -1,4 +1,11 @@
-<div class="pill"><slot /></div>
+---
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+const isPillGradientEnabled = flagsEntry?.data.enable_pill_gradient_v1 ?? false;
+---
+
+<div class:list={['pill', { 'gradient-shift': isPillGradientEnabled }]}><slot /></div>
 
 <style>
   .pill {
@@ -23,5 +30,19 @@
     background-size: 250% 100%;
     background-position: 0% 50%;
     box-shadow: var(--shadow-sm);
+    transition: background-position 0.4s ease;
+  }
+
+  .pill.gradient-shift:hover {
+    background-position: 100% 50%;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pill {
+      transition: none;
+    }
+    .pill.gradient-shift:hover {
+      background-position: 0% 50%;
+    }
   }
 </style>
