@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-27 - High Contrast Forced-Colors CTA & Touch Ergonomics
+
+**Learning:** Translucent glassmorphic action buttons (`CallToAction.astro`) and callout containers (`ContactCTA.astro`) lose background boundaries when rendered under Windows High Contrast Mode / forced-colors active mode. Explicitly setting system color borders (`border: 1px solid ButtonText;` on button elements and `border-color: CanvasText;` on containers) along with hover/focus state overrides (`border-color: Highlight; color: HighlightText;`) guarantees high contrast readability. Additionally, enforcing `min-height: 44px; min-width: 44px; align-items: center; box-sizing: border-box;` directly in `CallToAction.astro` guarantees WCAG 2.1 AA touch target compliance across all CTA instances.
+
+**Action:** Updated `CallToAction.astro` to enforce 44x44px minimum touch target dimensions with `align-items: center;` and added `@media (forced-colors: active)` high contrast system border/hover rules to `CallToAction.astro` and `ContactCTA.astro`.
+
 ## 2026-05-26 - Page Link Touch Target Ergonomics
 
 **Learning:** Section list links (such as `.earlier a` in `work.astro`) and standalone page action links (such as `.history-link` in `whats-new.astro` and `.hire-cta a`) often render as compact inline links on mobile viewports, failing WCAG 2.1 AA 44x44px minimum touch target requirements and risking mis-taps. Setting `display: inline-flex; align-items: center; min-height: 44px;` expands the interactive tap area without disrupting surrounding line rhythm.
