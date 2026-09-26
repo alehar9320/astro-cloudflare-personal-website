@@ -1,0 +1,362 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Icon from '../../components/Icon.astro';
+---
+
+<BaseLayout
+  title="Interactive Aurora Canvas Laboratory | Alexander Härenstam"
+  description="Experimental HTML5 canvas wave dynamics simulation demonstrating Northern Lights light refraction and mathematical animations."
+>
+  <main class="wrapper stack gap-8" style="margin-top: 3rem;">
+    <Hero
+      title="Creative Lab: Aurora Waves"
+      tagline="Interactive math-driven Northern Lights light refraction canvas simulation."
+      align="start"
+    />
+
+    <section class="lab-card" aria-label="Interactive Aurora Canvas Simulation">
+      <div class="canvas-header">
+        <div class="canvas-badge">
+          <Icon icon="sparkles" size="1.2rem" color="var(--accent-regular)" />
+          <span>60fps Hardware Accelerated</span>
+        </div>
+        <button
+          id="toggle-anim-btn"
+          type="button"
+          class="control-btn"
+          aria-label="Pause interactive canvas animation"
+        >
+          <span id="btn-icon">⏸</span>
+          <span id="btn-text">Pause Animation</span>
+        </button>
+      </div>
+
+      <div class="canvas-viewport">
+        <canvas id="aurora-lab-canvas" aria-label="Interactive aurora wave simulation"></canvas>
+        <div id="reduced-motion-notice" class="reduced-motion-overlay" hidden>
+          <p>Animation paused to respect reduced motion preference.</p>
+        </div>
+      </div>
+
+      <footer class="canvas-footer">
+        <p>
+          Move cursor or touch across the canvas to distort light wave field using cubic smoothstep
+          attenuation.
+        </p>
+      </footer>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import {
+    calculateAuroraWaveHeight,
+    cubicSmoothstepFalloff,
+    interpolateAuroraColor,
+  } from '../../utils/aurora-math';
+
+  const canvas = document.getElementById('aurora-lab-canvas') as HTMLCanvasElement | null;
+  const toggleBtn = document.getElementById('toggle-anim-btn') as HTMLButtonElement | null;
+  const btnIcon = document.getElementById('btn-icon');
+  const btnText = document.getElementById('btn-text');
+  const reducedMotionNotice = document.getElementById('reduced-motion-notice');
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let animationFrameId: number = 0;
+    let isPlaying = true;
+    let time = 0;
+
+    // Interactive pointer state
+    const pointer = {
+      x: -1000,
+      y: -1000,
+      targetX: -1000,
+      targetY: -1000,
+      active: false,
+    };
+
+    // Reduced motion media query check
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const resize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      if (ctx) ctx.scale(dpr, dpr);
+    };
+
+    const renderFrame = () => {
+      if (!ctx || !canvas || !canvas.parentElement) return;
+
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Smooth pointer interpolation
+      pointer.x += (pointer.targetX - pointer.x) * 0.1;
+      pointer.y += (pointer.targetY - pointer.y) * 0.1;
+
+      // Adapt wave rendering resolution to viewport width for 60fps maintenance on mobile
+      const isMobile = width < 768;
+      const step = isMobile ? 8 : 4;
+      const waveCount = isMobile ? 3 : 5;
+
+      const baseWaveY = height * 0.55;
+
+      for (let waveIndex = 0; waveIndex < waveCount; waveIndex++) {
+        const layerProgress = waveIndex / (waveCount - 1 || 1);
+        const waveAmplitude = 25 + waveIndex * 12;
+        const waveFreq = 0.006 - waveIndex * 0.0008;
+        const wavePhase = waveIndex * 1.2;
+
+        ctx.beginPath();
+        ctx.moveTo(0, height);
+
+        for (let x = 0; x <= width + step; x += step) {
+          let y =
+            baseWaveY +
+            calculateAuroraWaveHeight(x, time, waveFreq, waveAmplitude, wavePhase) -
+            waveIndex * 18;
+
+          // Pointer light displacement using cubic smoothstep falloff
+          if (pointer.active) {
+            const dist = Math.hypot(x - pointer.x, y - pointer.y);
+            const falloff = cubicSmoothstepFalloff(dist, 160);
+            y -= falloff * 45;
+          }
+
+          if (x === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+
+        ctx.lineTo(width, height);
+        ctx.lineTo(0, height);
+        ctx.closePath();
+
+        const color = interpolateAuroraColor(layerProgress, 0.25 + layerProgress * 0.2);
+        const gradient = ctx.createLinearGradient(0, baseWaveY - 100, 0, height);
+        gradient.addColorStop(0, `rgba(${color.r}, ${color.g}, ${color.b}, ${color.a})`);
+        gradient.addColorStop(1, `rgba(${color.r}, ${color.g}, ${color.b}, 0)`);
+
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      }
+    };
+
+    const animate = () => {
+      if (!isPlaying) return;
+      time += 0.02;
+      renderFrame();
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    const startAnimation = () => {
+      if (prefersReducedMotion.matches) {
+        isPlaying = false;
+        if (reducedMotionNotice) reducedMotionNotice.hidden = false;
+        if (toggleBtn) toggleBtn.hidden = true;
+        renderFrame();
+        return;
+      }
+
+      isPlaying = true;
+      if (btnIcon) btnIcon.textContent = '⏸';
+      if (btnText) btnText.textContent = 'Pause Animation';
+      if (toggleBtn) toggleBtn.setAttribute('aria-label', 'Pause interactive canvas animation');
+      cancelAnimationFrame(animationFrameId);
+      animationFrameId = requestAnimationFrame(animate);
+    };
+
+    const pauseAnimation = () => {
+      isPlaying = false;
+      cancelAnimationFrame(animationFrameId);
+      if (btnIcon) btnIcon.textContent = '▶';
+      if (btnText) btnText.textContent = 'Play Animation';
+      if (toggleBtn) toggleBtn.setAttribute('aria-label', 'Play interactive canvas animation');
+    };
+
+    // Pointer Event Listeners
+    const onPointerMove = (e: PointerEvent) => {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      pointer.targetX = e.clientX - rect.left;
+      pointer.targetY = e.clientY - rect.top;
+      pointer.active = true;
+    };
+
+    const onPointerLeave = () => {
+      pointer.active = false;
+    };
+
+    // Tab visibility handling
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(animationFrameId);
+      } else if (isPlaying && !prefersReducedMotion.matches) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = requestAnimationFrame(animate);
+      }
+    };
+
+    // Reduced Motion Preference Change
+    const onMotionPreferenceChange = (e: MediaQueryListEvent) => {
+      if (e.matches) {
+        pauseAnimation();
+        if (reducedMotionNotice) reducedMotionNotice.hidden = false;
+        if (toggleBtn) toggleBtn.hidden = true;
+      } else {
+        if (reducedMotionNotice) reducedMotionNotice.hidden = true;
+        if (toggleBtn) toggleBtn.hidden = false;
+        startAnimation();
+      }
+    };
+
+    // Toggle button handler
+    const onToggleClick = () => {
+      if (isPlaying) {
+        pauseAnimation();
+      } else {
+        startAnimation();
+      }
+    };
+
+    // Event Bindings
+    window.addEventListener('resize', resize);
+    canvas.addEventListener('pointermove', onPointerMove);
+    canvas.addEventListener('pointerleave', onPointerLeave);
+    document.addEventListener('visibilitychange', onVisibilityChange);
+    if (toggleBtn) toggleBtn.addEventListener('click', onToggleClick);
+
+    if (prefersReducedMotion.addEventListener) {
+      prefersReducedMotion.addEventListener('change', onMotionPreferenceChange);
+    }
+
+    // Teardown listener for Astro client-side routing
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+        if (canvas) {
+          canvas.removeEventListener('pointermove', onPointerMove);
+          canvas.removeEventListener('pointerleave', onPointerLeave);
+        }
+        document.removeEventListener('visibilitychange', onVisibilityChange);
+        if (toggleBtn) toggleBtn.removeEventListener('click', onToggleClick);
+        if (prefersReducedMotion.removeEventListener) {
+          prefersReducedMotion.removeEventListener('change', onMotionPreferenceChange);
+        }
+      },
+      { once: true }
+    );
+
+    // Initial setup
+    resize();
+    startAnimation();
+  }
+</script>
+
+<style>
+  .lab-card {
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 1.25rem;
+    padding: 1.5rem;
+    box-shadow: var(--shadow-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+
+  .canvas-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  .canvas-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999rem;
+    background: hsla(var(--gray-999-basis), 0.5);
+    border: 1px solid var(--gray-800);
+    font-size: var(--text-sm);
+    color: var(--gray-200);
+  }
+
+  .control-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 44px;
+    min-width: 44px;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--gray-700);
+    background: var(--gray-900);
+    color: var(--gray-100);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+
+  .control-btn:hover,
+  .control-btn:focus-visible {
+    background: var(--gray-800);
+    border-color: var(--accent-regular);
+    outline: 2px solid var(--accent-light);
+    outline-offset: 2px;
+  }
+
+  .canvas-viewport {
+    position: relative;
+    width: 100%;
+    height: 380px;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: var(--gray-999);
+    border: 1px solid var(--gray-800);
+    touch-action: none;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
+  .reduced-motion-overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.6);
+    color: var(--gray-200);
+    padding: 1rem;
+    text-align: center;
+    font-size: var(--text-md);
+  }
+
+  .canvas-footer {
+    font-size: var(--text-sm);
+    color: var(--gray-400);
+    margin: 0;
+  }
+</style>
