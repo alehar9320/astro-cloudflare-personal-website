@@ -38,3 +38,17 @@
 - Verified that all example configuration files use generic placeholders.
 - Expanded `.dev.vars.example` to include all environment variables used across the codebase (PostHog, GitHub, Codecov).
 - Verified build and test integrity after template updates.
+
+## 2026-03-30 - GripTight: Environment & Configuration Security Baseline
+
+| Verified Template   | Corrected Keys                                                                    | Validation State   |
+| :------------------ | :-------------------------------------------------------------------------------- | :----------------- |
+| `.dev.vars.example` | `POSTHOG_PERSONAL_API_KEY`, `POSTHOG_PROJECT_ID`, `POSTHOG_QUERY_HOST` | Verified (Generic) |
+| `wrangler.jsonc`    | None                                                                              | Verified           |
+| `render.yaml`       | None                                                                              | Verified           |
+
+**Notes:**
+
+- Audited configuration templates across the repository.
+- Expanded `.dev.vars.example` to include server-side PostHog variables required by `/api/visits` endpoint.
+- Verified secret leak prevention: no active secrets found in templates or committed files.
