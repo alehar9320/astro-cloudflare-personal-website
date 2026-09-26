@@ -1,0 +1,102 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_user_manual) return Astro.redirect('/404/');
+
+const items = [
+  {
+    t: 'Async-first clarity',
+    s: 'Write specs upfront. Clear written decisions scale faster than meetings.',
+  },
+  { t: 'Empirical feedback', s: 'Short feedback loops with real telemetry beat opinions.' },
+  {
+    t: 'Autonomy & ownership',
+    s: 'Clear guardrails, outcome goals, and radical trust drive dependable shipping.',
+  },
+];
+---
+
+<BaseLayout
+  title="Working with me | Product Manager, Developer Experience at IFS"
+  description="Product Manager, Developer Experience at IFS. Operating principles guide."
+  robots="noindex"
+>
+  <main id="main-content" class="wrapper stack gap-10">
+    <Hero title="Working with me" align="start">
+      <p class="lede">
+        Product Manager, Developer Experience at IFS. A lightweight guide to how I collaborate and
+        make decisions.
+      </p>
+    </Hero>
+    <div class="grid">
+      {
+        items.map(({ t, s }) => (
+          <div class="card">
+            <>
+              <strong>{t}</strong>
+              <p>{s}</p>
+            </>
+          </div>
+        ))
+      }
+    </div>
+    <div class="actions">
+      <CallToAction
+        href="https://www.linkedin.com/in/alehar/"
+        target="_blank"
+        rel="noopener noreferrer">Get in touch</CallToAction
+      >
+      <p class="cta-hint">LinkedIn · replies from me</p>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .lede {
+    margin: 0;
+    color: var(--gray-200);
+    max-width: 46ch;
+  }
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .card {
+    padding: 1rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+    background: var(--gradient-subtle);
+  }
+  .card strong {
+    display: block;
+    color: var(--gray-0);
+  }
+  .card p {
+    margin: 0.35rem 0 0;
+    color: var(--gray-300);
+  }
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    padding-bottom: var(--chat-fab-clearance);
+    padding-right: var(--chat-fab-clearance);
+  }
+  .cta-hint {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+  }
+  @media (min-width: 50em) {
+    .actions {
+      padding-bottom: 0;
+      padding-right: 0;
+    }
+  }
+</style>
