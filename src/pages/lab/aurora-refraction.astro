@@ -1,0 +1,462 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Aurora Refraction Lab | Alexander Härenstam"
+  description="Interactive Northern Lights canvas refraction experiment with cubic smoothstep optical light scattering."
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <header class="lab-header">
+      <p class="lab-tag">Experimental Canvas Lab</p>
+      <h1 class="lab-title">Aurora Refraction Dynamics</h1>
+      <p class="lab-subtitle">
+        Interactive light refraction canvas driven by multi-harmonic sine waves and cubic smoothstep
+        attenuation.
+      </p>
+    </header>
+
+    <section class="canvas-card" aria-label="Interactive Canvas Renderer">
+      <div class="canvas-wrapper">
+        <canvas
+          id="aurora-refraction-canvas"
+          aria-label="Interactive Northern Lights Canvas Animation"
+          role="img"></canvas>
+        <div class="canvas-overlay">
+          <div class="status-badge" id="canvas-status">
+            <span class="status-dot"></span>
+            <span class="status-text">Initializing 60fps...</span>
+          </div>
+          <div class="control-actions">
+            <button
+              id="pause-toggle-btn"
+              type="button"
+              class="control-btn"
+              aria-label="Pause or Resume Aurora Animation (Hotkey: Space or M)"
+            >
+              Pause [Space]
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="controls-panel">
+        <div class="metric-group">
+          <span class="metric-label">Interaction Mode:</span>
+          <span class="metric-value">Pointer Light Refraction</span>
+        </div>
+        <div class="metric-group">
+          <span class="metric-label">Fallback Status:</span>
+          <span class="metric-value" id="motion-preference">Full Motion Enabled</span>
+        </div>
+        <div class="metric-group">
+          <span class="metric-label">Teardown Pipeline:</span>
+          <span class="metric-value">astro:before-swap ready</span>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import {
+    calculateAuroraWave,
+    calculatePointerDisplacement,
+    getCanvasViewportScale,
+  } from '../../utils/aurora-math';
+
+  function initAuroraLab() {
+    const canvas = document.getElementById('aurora-refraction-canvas') as HTMLCanvasElement | null;
+    if (!canvas || canvas.dataset.initialized === 'true') return;
+    canvas.dataset.initialized = 'true';
+
+    const statusText = document.querySelector('#canvas-status .status-text');
+    const statusDot = document.querySelector('#canvas-status .status-dot') as HTMLElement | null;
+    const pauseBtn = document.getElementById('pause-toggle-btn') as HTMLButtonElement | null;
+    const motionPref = document.getElementById('motion-preference');
+
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animId: number | null = null;
+    let isPaused = false;
+    const startTime = performance.now();
+    let pointerX = -9999;
+    let pointerY = -9999;
+    let isPointerActive = false;
+
+    // Accessibility check: prefers-reduced-motion
+    const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const isReducedMotion = reducedMotionQuery.matches;
+
+    if (motionPref) {
+      motionPref.textContent = isReducedMotion ? 'Reduced Motion (Static)' : 'Full Motion Active';
+    }
+
+    const resizeCanvas = () => {
+      const container = canvas.parentElement;
+      if (!container) return;
+      const width = container.clientWidth;
+      const height = container.clientHeight || 420;
+      const { dpr } = getCanvasViewportScale(width, window.devicePixelRatio);
+
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+
+      ctx.scale(dpr, dpr);
+      if (isReducedMotion || isPaused) {
+        drawFrame(performance.now(), true);
+      }
+    };
+
+    const drawFrame = (now: number, staticOnly = false) => {
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      if (!width || !height) return;
+
+      const elapsed = now - startTime;
+      ctx.clearRect(0, 0, width, height);
+
+      // Deep marine gradient background
+      const bgGrad = ctx.createLinearGradient(0, 0, width, height);
+      bgGrad.addColorStop(0, '#091322');
+      bgGrad.addColorStop(0.5, '#0e1d35');
+      bgGrad.addColorStop(1, '#08111e');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      // Render 3 layering aurora waves
+      const waveLayers = [
+        { color: 'rgba(56, 189, 248, 0.35)', freq: 0.006, speed: 0.0012, amp: 35, yRatio: 0.4 },
+        { color: 'rgba(45, 212, 191, 0.28)', freq: 0.004, speed: 0.0008, amp: 45, yRatio: 0.55 },
+        { color: 'rgba(129, 140, 248, 0.22)', freq: 0.008, speed: 0.0015, amp: 28, yRatio: 0.7 },
+      ];
+
+      waveLayers.forEach((layer) => {
+        ctx.beginPath();
+        const baseOffsetY = height * layer.yRatio;
+
+        ctx.moveTo(0, height);
+        const step = 8;
+        for (let x = 0; x <= width + step; x += step) {
+          const waveElevation = calculateAuroraWave(x, elapsed, layer.freq, layer.speed, layer.amp);
+          let currentY = baseOffsetY + waveElevation;
+
+          // Pointer light refraction displacement
+          if (isPointerActive) {
+            const { dy } = calculatePointerDisplacement(x, currentY, pointerX, pointerY, 180);
+            currentY += dy;
+          }
+
+          if (x === 0) {
+            ctx.lineTo(x, currentY);
+          } else {
+            ctx.lineTo(x, currentY);
+          }
+        }
+
+        ctx.lineTo(width, height);
+        ctx.closePath();
+
+        const waveGrad = ctx.createLinearGradient(0, baseOffsetY - layer.amp * 2, 0, height);
+        waveGrad.addColorStop(0, layer.color);
+        waveGrad.addColorStop(1, 'rgba(10, 20, 35, 0)');
+        ctx.fillStyle = waveGrad;
+        ctx.fill();
+      });
+
+      // Render subtle optical glow dot at pointer position
+      if (isPointerActive && pointerX > 0 && pointerY > 0) {
+        const glowRadius = 70;
+        const pointerGrad = ctx.createRadialGradient(
+          pointerX,
+          pointerY,
+          0,
+          pointerX,
+          pointerY,
+          glowRadius
+        );
+        pointerGrad.addColorStop(0, 'rgba(56, 189, 248, 0.45)');
+        pointerGrad.addColorStop(0.5, 'rgba(45, 212, 191, 0.15)');
+        pointerGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+        ctx.fillStyle = pointerGrad;
+        ctx.beginPath();
+        ctx.arc(pointerX, pointerY, glowRadius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      if (!staticOnly && !isPaused && !isReducedMotion) {
+        animId = requestAnimationFrame(drawFrame);
+      }
+    };
+
+    const startLoop = () => {
+      if (isReducedMotion) {
+        if (statusText) statusText.textContent = 'Reduced Motion Active';
+        if (statusDot) statusDot.style.backgroundColor = 'var(--gray-300)';
+        drawFrame(performance.now(), true);
+        return;
+      }
+
+      if (animId !== null) cancelAnimationFrame(animId);
+      isPaused = false;
+      if (statusText) statusText.textContent = 'Active (60fps)';
+      if (statusDot) statusDot.style.backgroundColor = '#34d399';
+      if (pauseBtn) pauseBtn.textContent = 'Pause [Space]';
+      animId = requestAnimationFrame(drawFrame);
+    };
+
+    const stopLoop = () => {
+      if (animId !== null) {
+        cancelAnimationFrame(animId);
+        animId = null;
+      }
+      isPaused = true;
+      if (statusText) statusText.textContent = 'Paused';
+      if (statusDot) statusDot.style.backgroundColor = '#f59e0b';
+      if (pauseBtn) pauseBtn.textContent = 'Resume [Space]';
+    };
+
+    const toggleLoop = () => {
+      if (isPaused || animId === null) {
+        startLoop();
+      } else {
+        stopLoop();
+      }
+    };
+
+    // Event Handlers
+    const handlePointerMove = (e: PointerEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      pointerX = e.clientX - rect.left;
+      pointerY = e.clientY - rect.top;
+      isPointerActive = true;
+    };
+
+    const handlePointerLeave = () => {
+      isPointerActive = false;
+    };
+
+    const handleKeydown = (e: KeyboardEvent) => {
+      if (e.key === ' ' || e.key === 'm' || e.key === 'M') {
+        if (
+          document.activeElement?.tagName !== 'INPUT' &&
+          document.activeElement?.tagName !== 'TEXTAREA'
+        ) {
+          e.preventDefault();
+          toggleLoop();
+        }
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        if (animId !== null) {
+          cancelAnimationFrame(animId);
+          animId = null;
+        }
+      } else if (!isPaused && !isReducedMotion) {
+        startLoop();
+      }
+    };
+
+    // Attach Listeners
+    window.addEventListener('resize', resizeCanvas);
+    canvas.addEventListener('pointermove', handlePointerMove);
+    canvas.addEventListener('pointerleave', handlePointerLeave);
+    window.addEventListener('keydown', handleKeydown);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    if (pauseBtn) pauseBtn.addEventListener('click', toggleLoop);
+
+    // Initial setup
+    resizeCanvas();
+    startLoop();
+
+    // Lifecycle Teardown for Astro client-side navigation
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        if (animId !== null) cancelAnimationFrame(animId);
+        canvas.dataset.initialized = 'false';
+        window.removeEventListener('resize', resizeCanvas);
+        canvas.removeEventListener('pointermove', handlePointerMove);
+        canvas.removeEventListener('pointerleave', handlePointerLeave);
+        window.removeEventListener('keydown', handleKeydown);
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        if (pauseBtn) pauseBtn.removeEventListener('click', toggleLoop);
+      },
+      { once: true }
+    );
+  }
+
+  // Initialize on page load and client swap
+  initAuroraLab();
+  document.addEventListener('astro:page-load', initAuroraLab);
+</script>
+
+<style>
+  .lab-header {
+    margin-top: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .lab-tag {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--accent-regular);
+    margin: 0;
+  }
+
+  .lab-title {
+    font-size: var(--text-3xl);
+    font-weight: 700;
+    color: var(--gray-0);
+    margin: 0;
+  }
+
+  .lab-subtitle {
+    font-size: var(--text-md);
+    color: var(--gray-200);
+    margin: 0;
+    max-width: 55ch;
+  }
+
+  .canvas-card {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    border-radius: 1rem;
+    border: 1px solid var(--gray-800);
+    background: var(--gray-999-basement, rgba(15, 23, 42, 0.6));
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 1.25rem;
+    box-shadow: var(--shadow-md);
+  }
+
+  .canvas-wrapper {
+    position: relative;
+    width: 100%;
+    height: 420px;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+    cursor: crosshair;
+  }
+
+  .canvas-overlay {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    right: 0.75rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    pointer-events: none;
+  }
+
+  .canvas-overlay > * {
+    pointer-events: auto;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 9999px;
+    background: rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    font-size: var(--text-xs);
+    color: var(--gray-100);
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #34d399;
+    transition: background-color 0.2s ease;
+  }
+
+  .control-btn {
+    padding: 0.4rem 0.85rem;
+    min-height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    background: rgba(15, 23, 42, 0.8);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: var(--gray-0);
+    font-size: var(--text-xs);
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .control-btn:hover,
+  .control-btn:focus-visible {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: var(--accent-regular);
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 2px;
+  }
+
+  .controls-panel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid var(--gray-800);
+  }
+
+  .metric-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+  }
+
+  .metric-label {
+    font-size: var(--text-xs);
+    color: var(--gray-400);
+  }
+
+  .metric-value {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--gray-100);
+  }
+
+  @media (max-width: 600px) {
+    .canvas-wrapper {
+      height: 320px;
+    }
+
+    .canvas-overlay {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+  }
+</style>
