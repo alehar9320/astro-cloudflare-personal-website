@@ -10,6 +10,17 @@ Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hi
 
 # Kinetic Journal ⚡
 
+## 2026-08-29 - Portfolio Card Image Scale & Depth Micro-Interaction | Signal: Flat static images on project cards | Lean Implementation: Hardware-accelerated image scaling and title elevation
+
+- **Action:**
+  - Enhanced `src/components/PortfolioPreview.astro` with hardware-accelerated image scaling (`transform: scale(1.03)`) on card `:hover` and `:focus-visible`.
+  - Added subtle title pill elevation (`transform: translateY(-2px)`) on card interaction.
+  - Added strict `prefers-reduced-motion: reduce` reset (`transition: none; transform: none;`) to safeguard accessibility.
+  - Added `@media (forced-colors: active)` structural border enforcement (`border: 1px solid CanvasText;`).
+- **Snippets & Micro-Interactions:**
+  - Image Zoom: `transform: scale(1.03)` with `transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)`
+  - Title Elevation: `transform: translateY(-2px)` with `transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)`
+
 ## 2026-08-29 - CTA glass abort | Signal: closed #772/#667 | Lean Implementation: HARD ABORT CallToAction glassmorphism and micro-states
 
 ## 2025-05-15 - Interactive Glassmorphism for Skills Section
