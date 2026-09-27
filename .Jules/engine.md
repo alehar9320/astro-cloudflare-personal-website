@@ -29,3 +29,9 @@
 - **Edge Memory & Performance:** Refactored `splitReleaseBody` in `src/utils/github-releases.ts` and `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use pointer-based line scanning (`indexOf('\n', startPos)`), eliminating dynamic `body.split('\n')` string array allocations during SSR and API execution.
 - **Sentence Counting Optimization:** Refactored `sentenceCount` in `src/utils/release-summary.ts` from regex lookbehind `.split(/(?<=[.!?])\s+/)` into a single-pass character scanning loop. Added whitespace-aware sentence boundary detection to safely ignore dots inside version strings (`2026.08.15.1714`).
 - **Verification:** Added Vitest unit test cases across `release-summary.test.ts`, `visitor-changelog.test.ts`, and `github-releases.test.ts` covering version numbers, CRLF line endings, multiple trailing punctuation, and whitespace handling.
+
+## 2025-06-18 - Hashtable Column Lookup & Hoisted Date Formatting
+
+- **Edge Memory & Performance:** Pre-computed a `Record<string, number>` hashtable lookup map in `parseVisitGlance` in `src/utils/visit-stats.ts` to replace repeated $O(N)$ `columns.indexOf(...)` array scans per row field with $O(1)$ constant-time property lookups on PostHog HogQL responses.
+- **Allocation & ICU Initialization:** Hoisted `Intl.DateTimeFormat` in `formatFirstSeen` to module-level scope to eliminate repeated ICU locale initialization and GC object allocation on every request in Cloudflare Workers edge runtimes.
+- **Verification:** Added Vitest unit test cases in `src/utils/visit-stats.test.ts` verifying reordered column arrays, non-string headers, and ISO date formatting.

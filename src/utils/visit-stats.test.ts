@@ -218,6 +218,54 @@ describe('parseVisitGlance', () => {
     expect(glance?.pageviews).toBe(100);
     expect(glance?.uniqueVisitors).toBe(15);
   });
+
+  it('correctly maps arbitrary reordered column names via hashtable index lookup', () => {
+    const glance = parseVisitGlance({
+      columns: [
+        'unique_visitors_7d',
+        'first_seen',
+        'pageviews',
+        'unique_visitors',
+        'pageviews_7d',
+        'unique_visitors_1d',
+        'unique_visitors_1d_prev',
+        'unique_visitors_7d_prev',
+        'unique_visitors_30d',
+        'unique_visitors_30d_prev',
+        'unique_visitors_365d',
+        'unique_visitors_365d_prev',
+      ],
+      results: [[8, '2026-08-14T07:03:00.000Z', 94, 12, 20, 10, 8, 4, 30, 20, 300, 200]],
+    });
+    expect(glance?.pageviews).toBe(94);
+    expect(glance?.uniqueVisitors).toBe(12);
+    expect(glance?.firstSeen).toBe('2026-08-14T07:03:00.000Z');
+    expect(glance?.pageviews7d).toBe(20);
+    expect(glance?.uniqueVisitors7d).toBe(8);
+    expect(glance?.uniqueVisitorsDoD).toBe(25);
+    expect(glance?.uniqueVisitorsWoW).toBe(100);
+    expect(glance?.uniqueVisitorsMoM).toBe(50);
+    expect(glance?.uniqueVisitorsYoY).toBe(50);
+  });
+
+  it('ignores non-string column values in columns array gracefully', () => {
+    const glance = parseVisitGlance({
+      columns: [
+        null,
+        123,
+        'pageviews',
+        'unique_visitors',
+        'first_seen',
+        'pageviews_7d',
+        'unique_visitors_7d',
+      ],
+      results: [[0, 0, 94, 12, '2026-08-14T07:03:00.000Z', 20, 8]],
+    });
+    expect(glance?.pageviews).toBe(94);
+    expect(glance?.uniqueVisitors).toBe(12);
+    expect(glance?.pageviews7d).toBe(20);
+    expect(glance?.uniqueVisitors7d).toBe(8);
+  });
 });
 
 describe('formatFirstSeen', () => {
