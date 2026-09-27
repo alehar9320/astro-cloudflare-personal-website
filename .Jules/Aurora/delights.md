@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - Pill Hover Shift | Signal: Competitive & Technical | Lean Implementation: Added background gradient shift and subtle -1px translateY shift on hover in Pill.astro.
+
+- Insight: Gradient shift on hover provides responsive micro-interaction feedback without layout reflows or performance impact.
+- User Target: Delight / Perceived Quality
+- Abort Triggers: None (verified via Vitest and build pipeline).
+- User Reaction: Pending synthetic feedback.
