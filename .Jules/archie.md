@@ -1,0 +1,3 @@
+2026-09-27 - Architectural Governance, Tech Radar & Static Feature Flags
+Learning: Codifying implicit repository conventions (such as static feature toggling via Astro content collections and environment isolation between Cloudflare Workers and Node/Render) into formal ADRs with explicit "Directives for AI Agents" drastically reduces agent drift, prevents unnecessary runtime dependencies, and reinforces strict type safety across multi-agent workflows.
+Action: Require explicit AI Agent Directives (Do / Don't) for all new ADRs and maintain the Tech Radar rings (Adopt, Trial, Assess, Hold) to guide future autonomous PRs.
