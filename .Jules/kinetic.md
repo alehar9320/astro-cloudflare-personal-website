@@ -12,6 +12,18 @@ Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hi
 
 ## 2026-08-29 - CTA glass abort | Signal: closed #772/#667 | Lean Implementation: HARD ABORT CallToAction glassmorphism and micro-states
 
+## 2026-09-28 - Card Image Zoom & Spatial Depth Shift
+
+- **Signal:** Portfolio preview cards lacked interactive spatial depth separation between background media and title badge foreground.
+- **Action:**
+  - Upgraded `.card img` in `src/components/PortfolioPreview.astro` with hardware-accelerated `transform: scale(1.05)` on hover/focus-visible using `cubic-bezier(0.22, 1, 0.36, 1)` easing.
+  - Implemented subtle foreground elevation on `.card .title` (`transform: translateY(-2px)`) to establish distinct z-axis depth layers.
+  - Ensured WCAG 2.1 AA accessibility compliance via `@media (prefers-reduced-motion: reduce)` overrides (`transform: none`).
+- **Tokens/Snippets Added:**
+  - Scale Affordance: `scale(1.05)`
+  - Title Depth Lift: `translateY(-2px)`
+  - Motion Easing: `cubic-bezier(0.22, 1, 0.36, 1)`
+
 ## 2025-05-15 - Interactive Glassmorphism for Skills Section
 
 - **Signal:** Standardized skills box lacked interactive affordance and depth.
