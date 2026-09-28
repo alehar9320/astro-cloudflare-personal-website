@@ -67,7 +67,7 @@ Stand out to employers
 Enhance your profile, craft standout messages, and assess job fit with Premium.
 
 Try Premium for SEK 0
-1-month free trial. Cancel whenever. We’l remind you 7 days before your trial ends.
+1-month free trial. Cancel whenever. We'll remind you 7 days before your trial ends.
 
 Dismiss premium promotion
 
@@ -398,7 +398,7 @@ Profile language
 Svenska
 
 Public profile & URL
-ww.linkedin.com/in/alehar
+www.linkedin.com/in/alehar
 
 Who your viewers also viewed
 Private to you Private to you
