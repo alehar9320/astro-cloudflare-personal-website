@@ -186,6 +186,9 @@ const currentYear = new Date().getFullYear();
   }
 
   footer a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     color: var(--gray-400);
     text-decoration: 1px solid underline transparent;
     text-underline-offset: 0.25em;
@@ -206,6 +209,7 @@ const currentYear = new Date().getFullYear();
   .group {
     display: flex;
     flex-direction: column;
+    align-items: center;
     gap: 0.5rem;
   }
 
@@ -242,6 +246,11 @@ const currentYear = new Date().getFullYear();
   }
 
   .colophon {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: center;
+    gap: 0 0.25rem;
     position: relative;
     overflow: visible;
     font-size: 0.75rem;
