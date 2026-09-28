@@ -121,15 +121,18 @@ export function parseVisitGlance(payload: unknown): VisitGlance | null {
   };
 }
 
+/* Optimization (⚡ Bolt): Hoist Intl.DateTimeFormat to module scope to avoid repeated ICU locale initialization and dynamic GC object allocation on every function call in edge runtimes. Benchmark: 0 temporary Intl object allocations per formatting call. */
+const STOCKHOLM_DATE_FORMATTER = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Europe/Stockholm',
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+});
+
 export function formatFirstSeen(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '';
-  return new Intl.DateTimeFormat('en-GB', {
-    timeZone: 'Europe/Stockholm',
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  }).format(d);
+  return STOCKHOLM_DATE_FORMATTER.format(d);
 }
 
 export function formatVisitGlance(glance: VisitGlance): {

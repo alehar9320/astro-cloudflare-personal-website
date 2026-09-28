@@ -41,3 +41,7 @@ Action: Updated `collectItems` in `src/utils/whats-new-glance.ts` to iterate ove
 2026-09-08 - Zero-Allocation Reverse Array Scan for Chat Follow-up Prompts
 Learning: Dynamic shallow array copying and array reversal (`[...messages].reverse().find(...)`) on every UI update creates unnecessary temporary heap allocations and garbage collection overhead in client-side scripts. Replacing array copy/reverse with a reverse indexed `for` loop eliminates dynamic array allocations completely and stops scanning as soon as the first matching element is found.
 Action: Refactored `showFollowUps()` in `src/components/Chat.astro` to use an indexed reverse `for` loop.
+
+2026-09-09 - Module-Level Hoisting for Edge DateTimeFormat Instances
+Learning: Instantiating `Intl.DateTimeFormat` dynamically inside utility functions triggers ICU locale initialization and temporary heap object allocations on every function execution in Cloudflare Workers edge runtimes. Hoisting the `Intl.DateTimeFormat` instance to top-level module scope reuses a single immutable formatter across all requests, eliminating dynamic GC overhead.
+Action: Hoisted `STOCKHOLM_DATE_FORMATTER` to module scope in `src/utils/visit-stats.ts`.
