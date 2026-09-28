@@ -121,15 +121,17 @@ export function parseVisitGlance(payload: unknown): VisitGlance | null {
   };
 }
 
+const firstSeenFormatter = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Europe/Stockholm',
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+});
+
 export function formatFirstSeen(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '';
-  return new Intl.DateTimeFormat('en-GB', {
-    timeZone: 'Europe/Stockholm',
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  }).format(d);
+  return firstSeenFormatter.format(d);
 }
 
 export function formatVisitGlance(glance: VisitGlance): {

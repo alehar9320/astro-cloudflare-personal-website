@@ -58,13 +58,24 @@ const THEMES: Theme[] = [
   },
 ];
 
-export function isKeptVisitorLine(raw: string, visitorTitle: string): boolean {
+export function isKeptVisitorLine(raw: string, visitorTitle: string = raw): boolean {
   const title = visitorTitle.trim();
   if (!title) return false;
-  if (SHA_OR_VERSION_ONLY.test(title) || SHA_OR_VERSION_ONLY.test(raw.trim())) return false;
-  if (DROP_PATTERN.test(raw) || DROP_PATTERN.test(title)) return false;
-  if (isVisitorFacingBullet(title) || isVisitorFacingBullet(raw.trim())) return true;
-  return VISIBLE_SURFACE.test(title) || VISIBLE_SURFACE.test(raw);
+  if (SHA_OR_VERSION_ONLY.test(title)) return false;
+  if (DROP_PATTERN.test(title)) return false;
+
+  const isSame = raw === visitorTitle;
+  const rawTrimmed = isSame ? title : raw.trim();
+
+  if (!isSame && (SHA_OR_VERSION_ONLY.test(rawTrimmed) || DROP_PATTERN.test(raw))) {
+    return false;
+  }
+
+  if (isVisitorFacingBullet(title) || (!isSame && isVisitorFacingBullet(rawTrimmed))) {
+    return true;
+  }
+
+  return VISIBLE_SURFACE.test(title) || (!isSame && VISIBLE_SURFACE.test(raw));
 }
 
 function themeFor(title: string): Theme | null {
@@ -76,9 +87,8 @@ function themeFor(title: string): Theme | null {
 
 /**
  * Collects and filters visitor-facing release items within the last 30 days.
- * Optimization (⚡ Bolt): Iterates over raw releases directly and avoids re-running
- * `toVisitorChangelogTitle` on bullet messages that were already transformed by `toVisitorRelease`.
- * Benchmark: Eliminates intermediate `releases.map()` array allocation and redundant regex transforms per release bullet.
+ * Optimization (⚙️ Engine): Processes `splitReleaseBody` items directly or evaluates
+ * `release.body` without intermediate mapped array allocations ({ raw, title } objects).
  */
 function collectItems(releases: SiteRelease[], nowMs: number): GlanceItem[] {
   const items: GlanceItem[] = [];
@@ -92,22 +102,24 @@ function collectItems(releases: SiteRelease[], nowMs: number): GlanceItem[] {
     if (age < 0 || age > MONTH_MS) continue;
 
     const bullets = splitReleaseBody(release.body);
-    const lines =
-      bullets.length > 0
-        ? bullets.map((item) => ({
-            raw: item.message,
-            title: item.message,
-          }))
-        : release.body.trim()
-          ? [{ raw: release.body, title: release.body }]
-          : [];
-
-    for (const line of lines) {
-      if (!isKeptVisitorLine(line.raw, line.title)) continue;
-      const key = line.title.toLowerCase();
-      if (seen.has(key)) continue;
-      seen.add(key);
-      items.push({ publishedMs, title: line.title });
+    if (bullets.length > 0) {
+      for (let i = 0; i < bullets.length; i++) {
+        const title = bullets[i].message;
+        if (!isKeptVisitorLine(title, title)) continue;
+        const key = title.toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        items.push({ publishedMs, title });
+      }
+    } else {
+      const title = release.body.trim();
+      if (title && isKeptVisitorLine(title, title)) {
+        const key = title.toLowerCase();
+        if (!seen.has(key)) {
+          seen.add(key);
+          items.push({ publishedMs, title });
+        }
+      }
     }
   }
 

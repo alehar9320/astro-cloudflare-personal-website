@@ -23,6 +23,11 @@ function kept(raw: string): boolean {
 }
 
 describe('whats-new glance', () => {
+  it('handles single-argument default parameter in isKeptVisitorLine', () => {
+    expect(isKeptVisitorLine('restore What’s New in the main menu')).toBe(true);
+    expect(isKeptVisitorLine('No documented changes.')).toBe(false);
+  });
+
   it('drops JSON-LD, GITHUB_TOKEN, empty notes, and twin-context-only lines', () => {
     expect(kept('feat: add Product Manager to the analytics JSON-LD WebPage name (#604)')).toBe(
       false

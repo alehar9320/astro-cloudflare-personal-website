@@ -29,3 +29,9 @@
 - **Edge Memory & Performance:** Refactored `splitReleaseBody` in `src/utils/github-releases.ts` and `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use pointer-based line scanning (`indexOf('\n', startPos)`), eliminating dynamic `body.split('\n')` string array allocations during SSR and API execution.
 - **Sentence Counting Optimization:** Refactored `sentenceCount` in `src/utils/release-summary.ts` from regex lookbehind `.split(/(?<=[.!?])\s+/)` into a single-pass character scanning loop. Added whitespace-aware sentence boundary detection to safely ignore dots inside version strings (`2026.08.15.1714`).
 - **Verification:** Added Vitest unit test cases across `release-summary.test.ts`, `visitor-changelog.test.ts`, and `github-releases.test.ts` covering version numbers, CRLF line endings, multiple trailing punctuation, and whitespace handling.
+
+## 2025-06-18 - Module-Level Intl.DateTimeFormat Hoisting & Zero-Allocation Glance Extraction
+
+- **Edge Memory & ICU Optimization:** Hoisted `firstSeenFormatter` (`Intl.DateTimeFormat`) in `src/utils/visit-stats.ts` to module scope, avoiding repeated ICU locale initialization and dynamic GC object allocations on every request in Cloudflare Workers edge runtimes.
+- **Allocation Reduction:** Refactored `collectItems` and `isKeptVisitorLine` in `src/utils/whats-new-glance.ts` to process `splitReleaseBody` items directly without intermediate mapped array/object allocations (`{ raw, title }`), and added default parameters to eliminate duplicate regex execution when single arguments are passed.
+- **Verification:** Updated `src/__tests__/whats-new-glance.test.ts` and verified `src/utils/visit-stats.test.ts` with 369 Vitest unit tests passing across 21 test suites.
