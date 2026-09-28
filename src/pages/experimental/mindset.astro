@@ -1,0 +1,71 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Icon from '../../components/Icon.astro';
+
+const flags = await getEntry('flags', 'config');
+if (!flags?.data.enable_execution_mindset) return Astro.redirect('/404/');
+
+const pillars = [
+  {
+    t: 'Frictionless DevEx',
+    d: 'Eliminate developer papercuts to accelerate cycle velocity.',
+    i: 'terminal-window' as const,
+  },
+  {
+    t: 'Strategic Simplicity',
+    d: 'Prioritize barebone primitives over complex dynamic abstractions.',
+    i: 'strategy' as const,
+  },
+  {
+    t: 'Measurable Velocity',
+    d: 'Deliver clear ROI and observable performance impact early.',
+    i: 'rocket-launch' as const,
+  },
+];
+---
+
+<BaseLayout title="Execution Mindset" description="Product management principles.">
+  <main class="wrapper stack gap-8" style="margin-top: 4rem;">
+    <Hero
+      title="Execution Mindset"
+      tagline="Core principles guiding product architecture."
+      align="start"
+    />
+    <div class="grid">
+      {
+        pillars.map((p) => (
+          <section class="card">
+            <Icon icon={p.i} color="var(--accent-regular)" size="2.5rem" gradient />
+            <h2>{p.t}</h2>
+            <p>{p.d}</p>
+          </section>
+        ))
+      }
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+  .card {
+    padding: 2rem;
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 0.75rem;
+  }
+  .card h2 {
+    font-size: var(--text-xl);
+    margin: 1rem 0 0.5rem;
+    color: var(--gray-0);
+  }
+  .card p {
+    color: var(--gray-300);
+    line-height: 1.5;
+  }
+</style>
