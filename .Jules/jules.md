@@ -21,3 +21,9 @@
 - [Insight 1: Tighter focus ring outline-offsets (2px) prevent focus ring overflow clipping on compact overlay toggles.]
 - [Insight 2: Gating active press scale transitions behind prefers-reduced-motion media queries respects accessibility preferences while preserving tactile visual feedback.]
 - [Delta: 17 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-16 - Skills Section Tactile Feedback | Signal: Technical/UX | Lean Implementation: Flagged CSS Active Press Response
+
+- [Insight 1: Hardware-accelerated `:active` press transforms on feature containers give immediate physical response on touch viewports.]
+- [Insight 2: Gating tactile animations behind `enable_skills_tactile_v1` and `prefers-reduced-motion` ensures zero regressions for accessibility.]
+- [Delta: 10 lines. Guardrails: All passed autonomously.]

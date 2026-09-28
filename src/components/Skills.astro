@@ -2,9 +2,12 @@
 import Icon from './Icon.astro';
 import { getEntry } from 'astro:content';
 const flagsEntry = await getEntry('flags', 'config');
+const isTactileEnabled = flagsEntry?.data.enable_skills_tactile_v1 ?? false;
 ---
 
-<section class={`box skills ${flagsEntry?.data.enable_skills_pulse_v1 ? 'pulse-enabled' : ''}`}>
+<section
+  class={`box skills ${flagsEntry?.data.enable_skills_pulse_v1 ? 'pulse-enabled' : ''} ${isTactileEnabled ? 'tactile-v1' : ''}`}
+>
   <div class="stack gap-2 lg:gap-4">
     <Icon icon="rocket-launch" color="var(--accent-regular)" size="2.5rem" gradient />
     <h2>Driving Growth & ROI</h2>
@@ -90,6 +93,9 @@ const flagsEntry = await getEntry('flags', 'config');
   @media (prefers-reduced-motion: no-preference) {
     .pulse-enabled .stack:hover :global(svg) {
       animation: pulse 0.6s ease;
+    }
+    .box.tactile-v1:active {
+      transform: translateY(1px) scale(0.99);
     }
   }
   @keyframes pulse {
