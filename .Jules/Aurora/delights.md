@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-09-28 - Pill Tactile Micro-Interaction | Signal: Competitive | Lean Implementation: Added subtle gradient shift & hover lift on Pill component gated by enable_pill_tactile_v1 flag.
+
+- Insight: Interactive technology tags with smooth linear gradient shifts and elevation feedback enhance perceived tactile quality and delight on portfolio project pages.
+- User Target: Delight / Joy
+- Abort Triggers: None (verified via test and build pipeline).
+- User Reaction: Pending synthetic feedback.
