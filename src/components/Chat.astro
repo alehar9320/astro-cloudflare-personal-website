@@ -958,7 +958,7 @@
     chatMessages?.querySelectorAll('.chat-followups').forEach((el) => el.remove());
   }
 
-  function bindChipSubmit(root: ParentNode) {
+  function bindChipSubmit(root: Element | ParentNode) {
     root.querySelectorAll('button').forEach((button) => {
       button.addEventListener('click', () => {
         if (!(chatForm instanceof HTMLFormElement) || !chatInput) return;
@@ -1086,11 +1086,11 @@
     }
 
     // LinkedIn confirm is unstacked: title + one primary only (no quiet line).
-    if (isLinkedIn) {
-      article.append(title, open);
-    } else {
-      article.append(title, line, open);
+    article.appendChild(title);
+    if (!isLinkedIn) {
+      article.appendChild(line);
     }
+    article.appendChild(open);
     chatMessages.appendChild(article);
     chatMessages.scrollTo(0, chatMessages.scrollHeight);
   }

@@ -28,7 +28,13 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
+    const rawSchema = collections.flags.schema;
+    const mockImage = (() => z.string()) as unknown as Parameters<
+      Extract<typeof rawSchema, (...args: never[]) => unknown>
+    >[0]['image'];
+    const schema = typeof rawSchema === 'function' ? rawSchema({ image: mockImage }) : rawSchema;
+    expect(schema).toBeDefined();
+    if (!schema) return;
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -40,7 +46,13 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const rawSchema = collections.work.schema;
+    const mockImage = (() => z.string()) as unknown as Parameters<
+      Extract<typeof rawSchema, (...args: never[]) => unknown>
+    >[0]['image'];
+    const schema = typeof rawSchema === 'function' ? rawSchema({ image: mockImage }) : rawSchema;
+    expect(schema).toBeDefined();
+    if (!schema) return;
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',

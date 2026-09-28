@@ -110,7 +110,7 @@ const currentYear = new Date().getFullYear();
         last7d.textContent = '';
         first.textContent = '';
         visitStats.hidden = false;
-        document.body.append(panel);
+        document.body.appendChild(panel);
 
         const place = () => {
           const box = trigger.getBoundingClientRect();

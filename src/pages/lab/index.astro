@@ -1,0 +1,96 @@
+---
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Digital Laboratory | Alexander Härenstam"
+  description="Experimental creative canvas visualizers and mathematical micro-interactions."
+  robots="noindex"
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero
+      title="Digital Laboratory"
+      tagline="Experimental creative code, interactive canvas visualizers, and mathematical algorithms."
+      align="start"
+    />
+
+    <section class="lab-grid" aria-label="Laboratory Experiments">
+      <article class="lab-card">
+        <div class="lab-card-content">
+          <p class="lab-eyebrow">HTML5 Canvas / Math</p>
+          <h2 class="lab-title">Aurora Waves & Refraction</h2>
+          <p class="lab-description">
+            Interactive Northern Lights wave visualizer with cubic smoothstep pointer light
+            refraction and adaptive 60fps mobile scaling.
+          </p>
+          <a href="/lab/aurora-waves/" class="lab-link">Launch Experiment &rarr;</a>
+        </div>
+      </article>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .lab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .lab-card {
+    background: hsla(var(--gray-999-basis), 0.6);
+    border: 1px solid var(--gray-800);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    transition: border-color var(--theme-transition);
+  }
+
+  .lab-card:hover,
+  .lab-card:focus-within {
+    border-color: var(--accent-regular);
+  }
+
+  .lab-eyebrow {
+    font-size: var(--text-xs);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--accent-regular);
+    font-weight: 600;
+    margin: 0 0 0.5rem 0;
+  }
+
+  .lab-title {
+    font-size: var(--text-lg);
+    color: var(--gray-0);
+    margin: 0 0 0.5rem 0;
+  }
+
+  .lab-description {
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    margin: 0 0 1.25rem 0;
+    line-height: 1.5;
+  }
+
+  .lab-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--accent-regular);
+    text-decoration: none;
+    transition: color var(--theme-transition);
+  }
+
+  .lab-link:hover,
+  .lab-link:focus-visible {
+    color: var(--gray-0);
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 4px;
+    border-radius: 0.25rem;
+  }
+</style>
