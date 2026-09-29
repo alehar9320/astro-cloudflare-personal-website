@@ -33,4 +33,4 @@ Master's thesis at Chalmers University of Technology in 2017 on business model i
 
 Opportunities showed up as reach, scale, and data for decisions. Barriers were mostly organizational.
 
-<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>
+<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch</a>
