@@ -12,6 +12,15 @@
   - **Testing:** Vitest
   - **Linting & Formatting:** ESLint, Prettier
 
+### Documentation map
+
+Engineering source of truth lives in this repo. The [GitHub Wiki](https://github.com/alehar9320/astro-cloudflare-personal-website/wiki) is a map only (no visitor essays). GitHub Pages stays off.
+
+- [README.md](./README.md): Human front door (what this is, how to run, how prod deploys).
+- [docs/](./docs/): ADRs, MCP setup, Zod guidelines, inspirations. No `docs/README.md` on main — do not reopen closed [#911](https://github.com/alehar9320/astro-cloudflare-personal-website/pull/911).
+- [SECURITY.md](./SECURITY.md): Vulnerability reports via LinkedIn only.
+- [GitHub Releases](https://github.com/alehar9320/astro-cloudflare-personal-website/releases): Canonical changelog (`CHANGELOG.md` is a stub; visitor rewrite is `/whats-new/`).
+
 ## 2. Architecture & Patterns
 
 ### Directory Map
