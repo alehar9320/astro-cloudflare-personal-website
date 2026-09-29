@@ -1160,12 +1160,16 @@ describe('identity copy', () => {
     expect(copilots).not.toContain('mailto:');
   });
 
-  it('lets the user behavior analytics case include a visible Get in touch on LinkedIn CTA', () => {
-    const analytics = readFileSync('src/content/work/user-behavior-analytics.md', 'utf8');
-    expect(analytics).toContain(
+  it('keeps analytics case body free of in-body Get in touch; hire stays chrome (#1111)', () => {
+    const md = readFileSync('src/content/work/user-behavior-analytics.md', 'utf8');
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(md).not.toContain(
       '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
     );
-    expect(analytics).not.toContain('mailto:');
+    expect(md).not.toContain('mailto:');
+    const mainEnd = slug.indexOf('</main>');
+    const ctaAt = slug.indexOf('<ContactCTA />');
+    expect(ctaAt).toBeGreaterThan(mainEnd);
 
     const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
     const work = readFileSync('src/pages/work.astro', 'utf8');
@@ -1187,7 +1191,7 @@ describe('identity copy', () => {
     expect(analytics).toContain('capturing usage');
     expect(analytics).toContain('product teams can see what customers actually do');
     expect(analytics).toContain('Roadmap decisions rest on that usage');
-    expect(analytics).toContain(
+    expect(analytics).not.toContain(
       '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
     );
     expect(analytics).not.toContain('mailto:');
