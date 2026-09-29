@@ -836,10 +836,18 @@
   /* Desktop open = one sheet. Form is flush footer, not a second foldup.
      is:inline so this beats later .chat-form { width: 100% } and LightningCSS. */
   @media (min-width: 50em) {
+    .chat-container.is-docked .chat-form,
     .chat-container.is-open .chat-window,
-    .chat-container.is-prominent .chat-window {
+    .chat-container.is-prominent .chat-window,
+    .chat-container.is-open .chat-form,
+    .chat-container.is-prominent .chat-form {
       width: min(52rem, calc(100vw - 3rem));
       max-width: min(52rem, calc(100vw - 3rem));
+      margin-inline: auto;
+    }
+
+    .chat-container.is-open .chat-window,
+    .chat-container.is-prominent .chat-window {
       border-radius: 1rem 1rem 0 0;
       margin-bottom: 0;
       box-shadow: none;
@@ -848,8 +856,6 @@
 
     .chat-container.is-open .chat-form,
     .chat-container.is-prominent .chat-form {
-      width: min(52rem, calc(100vw - 3rem));
-      max-width: min(52rem, calc(100vw - 3rem));
       border-radius: 0;
       box-shadow: none;
       margin-top: 0;
