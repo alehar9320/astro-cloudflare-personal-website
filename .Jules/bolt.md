@@ -41,3 +41,7 @@ Action: Updated `collectItems` in `src/utils/whats-new-glance.ts` to iterate ove
 2026-09-08 - Zero-Allocation Reverse Array Scan for Chat Follow-up Prompts
 Learning: Dynamic shallow array copying and array reversal (`[...messages].reverse().find(...)`) on every UI update creates unnecessary temporary heap allocations and garbage collection overhead in client-side scripts. Replacing array copy/reverse with a reverse indexed `for` loop eliminates dynamic array allocations completely and stops scanning as soon as the first matching element is found.
 Action: Refactored `showFollowUps()` in `src/components/Chat.astro` to use an indexed reverse `for` loop.
+
+2026-09-09 - Date Formatting & Intl Instance Hoisting
+Learning: Calling `date.toISOString().split('T')[0]` allocates an unnecessary 2-element array on every formatted release date call, whereas `.slice(0, 10)` extracts the YYYY-MM-DD substring directly. Additionally, instantiating `new Intl.DateTimeFormat(...)` inside date formatting helper functions re-initializes ICU locale logic and creates dynamic GC heap objects on every request. Hoisting `Intl.DateTimeFormat` instances to module scope eliminates re-initialization and GC overhead on edge runtimes.
+Action: Updated `formatReleaseDate` in `src/utils/github-releases.ts` to use `.slice(0, 10)` and hoisted `STOCKHOLM_DATE_FORMATTER` in `src/utils/visit-stats.ts` to module scope.
