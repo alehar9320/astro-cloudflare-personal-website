@@ -2807,4 +2807,17 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('keeps footer text links with a visible focus ring', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(footer).toMatch(
+      /footer a:focus-visible\s*\{[\s\S]*?outline:\s*2px\s+solid\s+var\(--accent-regular\);[\s\S]*?outline-offset:\s*4px;/
+    );
+    expect(footer).toContain('href="/whats-new/"');
+    expect(footer).toContain('href="/this-site/"');
+    expect(footer).toContain('href="/roadmap/"');
+    expect(footer).toContain('href="/okr/"');
+    expect(footer).toContain('https://www.linkedin.com/in/alehar/');
+    expect(footer).not.toContain('mailto:');
+  });
 });
