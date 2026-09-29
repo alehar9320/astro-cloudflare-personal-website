@@ -27,4 +27,3 @@ Since February 2025, I work with IFS engineering teams in Greater Stockholm as P
 
 Internal AI coding copilots for IFS engineering teams.
 
-<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>
