@@ -1,0 +1,3 @@
+2026-03-30 - Codification of ADR 0002 and Ground-Truth Tech Radar
+Learning: Unwritten architectural patterns (such as static JSON feature flags validated via Zod content collections) lead to agent drift when subagents introduce fragmented flag implementations or external SDK dependencies. Establishing explicit AI Directives in ADRs and maintaining a central Tech Radar provides strict ground-truth context across all autonomous execution runs.
+Action: Require every new accepted architectural pattern to be codified as an ADR with explicit AI Agent Directives and updated on the Tech Radar during Archie cycles.
