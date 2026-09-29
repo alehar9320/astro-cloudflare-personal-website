@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-09-29 - Social Link Bounce | Signal: Competitive | Lean Implementation: Added subtle translateY(-2px) scale(1.08) hover lift to social navigation links in Nav.astro.
+
+- Insight: Micro-interactions on header social links improve perceived responsiveness and delight when users explore external links.
+- User Target: Joy
+- Abort Triggers: None (verified via test and build pipeline).
+- User Reaction: Pending synthetic feedback.
