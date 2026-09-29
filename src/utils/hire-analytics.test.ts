@@ -146,6 +146,26 @@ describe('hire-analytics', () => {
     expect(window.dataLayer).toEqual([{ event: 'hire_cta_click', surface: 'nav' }]);
   });
 
+
+  it('records linkedin_click surface footer and Contact card for Footer LinkedIn (#1118)', () => {
+    const capture = vi.fn();
+    window.posthog = { capture };
+    document.body.innerHTML =
+      '<a href="https://www.linkedin.com/in/alehar/" data-hire-event="linkedin_click"' +
+      ' data-hire-surface="footer">LinkedIn</a>';
+    const a = document.querySelector('a')!;
+    expect(a.getAttribute('data-hire-event')).toBe('linkedin_click');
+    expect(a.getAttribute('data-hire-surface')).toBe('footer');
+    a.click();
+    expect(window.dataLayer).toEqual([{ event: 'linkedin_click', surface: 'footer' }]);
+    expect(capture).toHaveBeenCalledWith(HIRE_CONTACT_ACTION, { surface: 'footer' });
+  });
+
+  it('accepts trackHireEvent with surface footer (#1118)', () => {
+    expect(() => trackHireEvent('linkedin_click', 'footer')).not.toThrow();
+    expect(window.dataLayer).toEqual([{ event: 'linkedin_click', surface: 'footer' }]);
+  });
+
   it('fail-opens when PostHog is missing or throws', () => {
     delete window.posthog;
     document.body.innerHTML =
