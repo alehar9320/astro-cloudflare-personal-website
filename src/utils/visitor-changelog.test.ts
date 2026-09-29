@@ -27,12 +27,40 @@ describe('visitor-changelog utilities', () => {
     it('collapses multiple whitespace characters', () => {
       expect(stripChangelogChrome('feat:   multiple   spaces  ')).toBe('multiple spaces');
     });
+
+    it('stripChangelogChrome removes all trailing (#N) groups (#1163)', () => {
+      expect(stripChangelogChrome('Raise home Read the case 44x44 hit-box clear of dock (#817) (#999)')).toBe(
+        'Raise home Read the case 44x44 hit-box clear of dock'
+      );
+    });
   });
 
   describe('toVisitorChangelogTitle', () => {
     it('returns empty string for empty input', () => {
       expect(toVisitorChangelogTitle('')).toBe('');
       expect(toVisitorChangelogTitle('   ')).toBe('');
+    });
+
+    it('maps locked visitor changelog row PR_864 (#1163)', () => {
+      expect(toVisitorChangelogTitle('Fix biography IFS Design System proof link hit target and mobile dock clearance (#864)')).toBe('Biography proof links are easier to tap, including on phones');
+    });
+    it('maps locked visitor changelog row PR_825 (#1163)', () => {
+      expect(toVisitorChangelogTitle('Quiet Contact hire line to LinkedIn; no twin-mouth (#825)')).toBe('Contact sends hire interest to LinkedIn — one clear path');
+    });
+    it('maps locked visitor changelog row PR_823 (#1163)', () => {
+      expect(toVisitorChangelogTitle('Cold-land Work/case so shared proof is a real site entry (#823)')).toBe('Shared Work links open the case as a real site entry');
+    });
+    it('maps locked visitor changelog row PR_819 (#1163)', () => {
+      expect(toVisitorChangelogTitle('What’s New: denser desktop Last-30 so lines clear composer (#819)')).toBe('What’s New fits more updates above the chat dock on desktop');
+    });
+    it('maps locked visitor changelog row PR_817 raise (#1163)', () => {
+      expect(toVisitorChangelogTitle('Raise home Read the case 44x44 hit-box clear of dock (#817)')).toBe('Home “Read the case” stays clear of the chat dock');
+    });
+    it('maps locked visitor changelog row PR_817 keep (#1163)', () => {
+      expect(toVisitorChangelogTitle('Keep home Read the case clear of the docked composer (#817)')).toBe('Home “Read the case” stays clear of the chat dock');
+    });
+    it('maps locked visitor changelog row PR_803 (#1163)', () => {
+      expect(toVisitorChangelogTitle('Hire tracking is live (#803)')).toBe('Hire interest tracking is live');
     });
 
     it('looks up known PR numbers', () => {
