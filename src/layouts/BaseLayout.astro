@@ -15,9 +15,10 @@ interface Props {
   shareUrl?: string | undefined;
   canonicalUrl?: string | undefined;
   robots?: string | undefined;
+  showAurora?: boolean;
 }
 
-const { title, description, ogTitle, shareUrl, canonicalUrl, robots } = Astro.props;
+const { title, description, ogTitle, shareUrl, canonicalUrl, robots, showAurora = false } = Astro.props;
 ---
 
 <html lang="en">
@@ -36,10 +37,12 @@ const { title, description, ogTitle, shareUrl, canonicalUrl, robots } = Astro.pr
     <a href="#main-content" class="sr-only focus-visible">Skip to content</a>
 
     <div class="stack backgrounds">
-      <div class="aurora" aria-hidden="true">
-        <span class="aurora-wash aurora-wash-a"></span>
-        <span class="aurora-wash aurora-wash-b"></span>
-      </div>
+      {showAurora && (
+        <div class="aurora" aria-hidden="true">
+          <span class="aurora-wash aurora-wash-a"></span>
+          <span class="aurora-wash aurora-wash-b"></span>
+        </div>
+      )}
       <Nav />
       <slot />
       <Footer />
