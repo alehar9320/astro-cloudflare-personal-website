@@ -25,7 +25,7 @@ const meta = 'H2 2026 · baselines frozen 29 Aug 2026 · current refreshed weekl
               return (
                 <article class="kr" aria-labelledby={`${kr.id}-label`}>
                   <p class="kr-head">
-                    <span id={`${kr.id}-label`}>{kr.label}</span>
+                    <span id={`${kr.id}-label`} title={kr.tooltip}>{kr.label}</span>
                     <span class="kr-window">{kr.window}</span>
                   </p>
                   <dl class="kr-cols">
