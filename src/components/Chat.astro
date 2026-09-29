@@ -377,6 +377,11 @@
       width: 100%;
     }
 
+    .chat-container.is-open #chat-live,
+    .chat-container.is-prominent #chat-live {
+      display: none;
+    }
+
     /* Phone talking = full page only after is-open. First paint stays docked. */
     .chat-container.is-open:not(.is-prominent) {
       inset: 0;
