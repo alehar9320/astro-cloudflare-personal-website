@@ -1,0 +1,169 @@
+---
+// Interactive Northern Lights Refraction Canvas
+---
+
+<canvas class="aurora-canvas" aria-hidden="true"></canvas>
+
+<script>
+  import { calculateWaveY, type PointerState, type WaveConfig } from '../utils/aurora-math';
+
+  function initAuroraCanvas() {
+    const canvas = document.querySelector('.aurora-canvas') as HTMLCanvasElement | null;
+    if (!canvas) return;
+    if (canvas.dataset.initialized === 'true') return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) return;
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    canvas.dataset.initialized = 'true';
+
+    let animationFrameId: number | null = null;
+    let time = 0;
+    const pointer: PointerState = { x: -1000, y: -1000, active: false };
+
+    const getDpr = () => Math.min(window.devicePixelRatio || 1, 2);
+
+    const resize = () => {
+      if (!canvas) return;
+      const parent = canvas.parentElement;
+      const width = parent?.clientWidth || window.innerWidth;
+      const height = parent?.clientHeight || window.innerHeight;
+      const dpr = getDpr();
+
+      canvas.width = Math.floor(width * dpr);
+      canvas.height = Math.floor(height * dpr);
+      canvas.style.width = `${width}px`;
+      canvas.style.height = `${height}px`;
+    };
+
+    const waves: WaveConfig[] = [
+      { baseY: 0.22, amplitude: 26, frequency: 0.0035, speed: 0.0012, phase: 0 },
+      { baseY: 0.32, amplitude: 34, frequency: 0.0028, speed: 0.0009, phase: Math.PI / 3 },
+      { baseY: 0.42, amplitude: 20, frequency: 0.0045, speed: 0.0014, phase: Math.PI / 1.5 },
+    ];
+
+    const draw = () => {
+      if (!ctx || !canvas) return;
+      const dpr = getDpr();
+      const cssWidth = canvas.width / dpr;
+      const cssHeight = canvas.height / dpr;
+
+      ctx.save();
+      ctx.scale(dpr, dpr);
+      ctx.clearRect(0, 0, cssWidth, cssHeight);
+
+      time += 16;
+      const step = cssWidth < 768 ? 8 : 4;
+
+      waves.forEach((wave, idx) => {
+        const config = { ...wave, baseY: wave.baseY * cssHeight };
+        ctx.beginPath();
+        ctx.moveTo(0, calculateWaveY(0, time, config, pointer));
+
+        for (let x = step; x <= cssWidth; x += step) {
+          const y = calculateWaveY(x, time, config, pointer);
+          ctx.lineTo(x, y);
+        }
+
+        ctx.lineTo(cssWidth, cssHeight);
+        ctx.lineTo(0, cssHeight);
+        ctx.closePath();
+
+        const gradient = ctx.createLinearGradient(
+          0,
+          config.baseY - 40,
+          cssWidth,
+          config.baseY + 120
+        );
+        if (idx === 0) {
+          gradient.addColorStop(0, 'rgba(0, 242, 254, 0.09)');
+          gradient.addColorStop(1, 'rgba(79, 172, 254, 0)');
+        } else if (idx === 1) {
+          gradient.addColorStop(0, 'rgba(112, 0, 255, 0.07)');
+          gradient.addColorStop(1, 'rgba(0, 198, 255, 0)');
+        } else {
+          gradient.addColorStop(0, 'rgba(79, 172, 254, 0.08)');
+          gradient.addColorStop(1, 'rgba(112, 0, 255, 0)');
+        }
+
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      });
+
+      ctx.restore();
+
+      if (!document.hidden && canvas.dataset.initialized === 'true') {
+        animationFrameId = requestAnimationFrame(draw);
+      }
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      pointer.x = e.clientX - rect.left;
+      pointer.y = e.clientY - rect.top;
+      pointer.active = true;
+    };
+
+    const handlePointerLeave = () => {
+      pointer.active = false;
+    };
+
+    const handleVisibilityChange = () => {
+      if (!document.hidden && canvas.dataset.initialized === 'true') {
+        if (animationFrameId !== null) cancelAnimationFrame(animationFrameId);
+        animationFrameId = requestAnimationFrame(draw);
+      } else if (document.hidden && animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
+        animationFrameId = null;
+      }
+    };
+
+    window.addEventListener('resize', resize, { passive: true });
+    window.addEventListener('pointermove', handlePointerMove, { passive: true });
+    document.addEventListener('mouseleave', handlePointerLeave, { passive: true });
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    resize();
+    draw();
+
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        if (animationFrameId !== null) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+        }
+        window.removeEventListener('resize', resize);
+        window.removeEventListener('pointermove', handlePointerMove);
+        document.removeEventListener('mouseleave', handlePointerLeave);
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        canvas.dataset.initialized = 'false';
+      },
+      { once: true }
+    );
+  }
+
+  initAuroraCanvas();
+  document.addEventListener('astro:page-load', initAuroraCanvas);
+</script>
+
+<style>
+  .aurora-canvas {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.85;
+  }
+
+  @media (forced-colors: active) {
+    .aurora-canvas {
+      display: none;
+    }
+  }
+</style>
