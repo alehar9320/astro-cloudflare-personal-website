@@ -88,8 +88,22 @@ export function sentenceCount(text: string): number {
   return count;
 }
 
+/* Optimization (⚡ Bolt): Hoist static regexes to avoid dynamic RegExp construction on edge release summary validation.
+   Benchmark: Eliminates redundant regex compilations and memory allocations per summary check. */
+const METRIC_TOKENS_REGEX = /\b\d+(?:\.\d+)?x\b|\b\d+%\b|\broi\b|\bmillion\b|\bbillion\b/gi;
+const PR_PAREN_NUM_REGEX = /\(#\d+\)/g;
+const HASH_NUM_REGEX = /#\d+/g;
+const ISSUE_NUM_REGEX = /\bissue number\s+\d+\b/gi;
+const PUNCT_SPACES_REGEX = /\s+([.,;:])/g;
+const LEADING_PUNCT_REGEX = /^[\s:;\-]+/;
+const MULTI_SPACES_REGEX = /\s{2,}/g;
+
+const ISSUE_NUMBER_TEST = /\bissue number\b/i;
+const COMMIT_HASH_TEST = /\bcommit hash\b/i;
+const HASH_ISSUE_TEST = /\B#\d+\b/;
+
 function metricTokens(text: string): string[] {
-  const matches = text.match(/\b\d+(?:\.\d+)?x\b|\b\d+%\b|\broi\b|\bmillion\b|\bbillion\b/gi);
+  const matches = text.match(METRIC_TOKENS_REGEX);
   return matches ? matches.map((token) => token.toLowerCase()) : [];
 }
 
@@ -102,13 +116,13 @@ export function stripExecBanned(text: string): string {
   return text
     .replace(BANNED_NAME, '')
     .replace(SHA_ALL, '')
-    .replace(/\(#\d+\)/g, '')
-    .replace(/#\d+/g, '')
-    .replace(/\bissue number\s+\d+\b/gi, '')
-    .replace(/\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/gi, '')
-    .replace(/\s+([.,;:])/g, '$1')
-    .replace(/^[\s:;\-]+/, '')
-    .replace(/\s{2,}/g, ' ')
+    .replace(PR_PAREN_NUM_REGEX, '')
+    .replace(HASH_NUM_REGEX, '')
+    .replace(ISSUE_NUM_REGEX, '')
+    .replace(CONVENTIONAL, '')
+    .replace(PUNCT_SPACES_REGEX, '$1')
+    .replace(LEADING_PUNCT_REGEX, '')
+    .replace(MULTI_SPACES_REGEX, ' ')
     .trim();
 }
 
@@ -126,9 +140,9 @@ export function isSafeReleaseSummary(summary: string, source: string): boolean {
   if (count < 2 || count > 4) return false;
   if (
     SHA_ONE.test(text) ||
-    /\bissue number\b/i.test(text) ||
-    /\bcommit hash\b/i.test(text) ||
-    /\B#\d+\b/.test(text) ||
+    ISSUE_NUMBER_TEST.test(text) ||
+    COMMIT_HASH_TEST.test(text) ||
+    HASH_ISSUE_TEST.test(text) ||
     CONVENTIONAL.test(text) ||
     ENGINEERING_LEAK.test(text)
   ) {
@@ -151,9 +165,9 @@ export function prepareReleaseSummary(summary: string, source: string): string |
   const original = summary.trim();
   if (
     SHA_ONE.test(original) ||
-    /\bissue number\b/i.test(original) ||
-    /\bcommit hash\b/i.test(original) ||
-    /\B#\d+\b/.test(original) ||
+    ISSUE_NUMBER_TEST.test(original) ||
+    COMMIT_HASH_TEST.test(original) ||
+    HASH_ISSUE_TEST.test(original) ||
     CONVENTIONAL.test(original)
   ) {
     return null;
