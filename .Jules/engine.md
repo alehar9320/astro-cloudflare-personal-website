@@ -29,3 +29,9 @@
 - **Edge Memory & Performance:** Refactored `splitReleaseBody` in `src/utils/github-releases.ts` and `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use pointer-based line scanning (`indexOf('\n', startPos)`), eliminating dynamic `body.split('\n')` string array allocations during SSR and API execution.
 - **Sentence Counting Optimization:** Refactored `sentenceCount` in `src/utils/release-summary.ts` from regex lookbehind `.split(/(?<=[.!?])\s+/)` into a single-pass character scanning loop. Added whitespace-aware sentence boundary detection to safely ignore dots inside version strings (`2026.08.15.1714`).
 - **Verification:** Added Vitest unit test cases across `release-summary.test.ts`, `visitor-changelog.test.ts`, and `github-releases.test.ts` covering version numbers, CRLF line endings, multiple trailing punctuation, and whitespace handling.
+
+## 2025-06-18 - Module-Level Intl.DateTimeFormat Hoisting & String-Slice ISO Date Formatting
+
+- **Edge Memory & ICU Optimization:** Hoisted `STOCKHOLM_DATE_FORMATTER` (`new Intl.DateTimeFormat('en-GB', ...)`) to module scope in `src/utils/visit-stats.ts`, eliminating dynamic ICU locale re-initialization and GC allocations per visit formatting call in Cloudflare Workers edge runtimes.
+- **Allocation Reduction:** Refactored `formatReleaseDate` in `src/utils/github-releases.ts` from `date.toISOString().split('T')[0]` to zero-allocation `date.toISOString().slice(0, 10)`, eliminating dynamic 2-element array allocations during release date formatting.
+- **Verification:** Updated Vitest unit tests in `src/utils/visit-stats.test.ts` and `src/__tests__/github-releases.test.ts` covering date string slicing, invalid inputs, and timezone consistency.

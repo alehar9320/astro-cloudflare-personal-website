@@ -223,10 +223,15 @@ describe('parseVisitGlance', () => {
 describe('formatFirstSeen', () => {
   it('returns empty string for invalid dates', () => {
     expect(formatFirstSeen('invalid-date')).toBe('');
+    expect(formatFirstSeen('')).toBe('');
   });
 
-  it('formats valid ISO date strings in Stockholm time', () => {
-    expect(formatFirstSeen('2026-05-03T18:34:08.880Z')).toContain('2026');
+  it('formats valid ISO date strings in Stockholm time consistently', () => {
+    const dateStr = '2026-05-03T18:34:08.880Z';
+    const formatted1 = formatFirstSeen(dateStr);
+    const formatted2 = formatFirstSeen(dateStr);
+    expect(formatted1).toContain('2026');
+    expect(formatted1).toBe(formatted2);
   });
 });
 
