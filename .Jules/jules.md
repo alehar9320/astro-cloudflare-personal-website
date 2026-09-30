@@ -21,3 +21,9 @@
 - [Insight 1: Tighter focus ring outline-offsets (2px) prevent focus ring overflow clipping on compact overlay toggles.]
 - [Insight 2: Gating active press scale transitions behind prefers-reduced-motion media queries respects accessibility preferences while preserving tactile visual feedback.]
 - [Delta: 17 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-16 - Pill Gradient Micro-Interaction | Signal: Technical/Competitive | Lean Implementation: Flagged CSS Gradient Shift + Motion Gate
+
+- [Insight 1: Animating background-position across 250% gradient width on hover provides responsive visual feedback without layout reflows.]
+- [Insight 2: Gating hover gradient shifts behind static feature flags (`enable_pill_gradient_v1`) enables zero-risk isolated deployment.]
+- [Delta: 25 lines. Guardrails: All passed autonomously.]
