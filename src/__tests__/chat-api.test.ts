@@ -151,7 +151,7 @@ describe('chat API', () => {
   it('returns the exact 2x/30x proof for any IFS design-system question', async () => {
     const ai = createAi();
     const response = await postChat(
-      { messages: [{ role: 'user', content: 'Tell me about the IFS design system' }] },
+      { messages: [{ role: 'user', content: 'Tell me about the IFS Design System' }] },
       ai
     );
 
