@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-27 - Footer Navigation Link Touch Target Ergonomics & DOM Method Type Parity
+
+**Learning:** Declaring `display: inline-flex; align-items: center; min-height: 44px;` on `footer a` in `Footer.astro` expands the interactive touch targets of footer navigation, social, and location links to satisfy WCAG 2.1 AA 44x44px requirements on mobile viewports without altering desktop line flow. Additionally, substituting `.appendChild(...)` for `.append(...)` in Astro script tags avoids TypeScript diagnostic collisions when Wrangler worker configuration global element types override multi-argument DOM `.append` methods.
+
+**Action:** Added `display: inline-flex; align-items: center; min-height: 44px;` to `footer a` in `src/components/Footer.astro` and replaced `.append(panel)` with `.appendChild(panel)`.
+
 ## 2026-05-26 - Page Link Touch Target Ergonomics
 
 **Learning:** Section list links (such as `.earlier a` in `work.astro`) and standalone page action links (such as `.history-link` in `whats-new.astro` and `.hire-cta a`) often render as compact inline links on mobile viewports, failing WCAG 2.1 AA 44x44px minimum touch target requirements and risking mis-taps. Setting `display: inline-flex; align-items: center; min-height: 44px;` expands the interactive tap area without disrupting surrounding line rhythm.
