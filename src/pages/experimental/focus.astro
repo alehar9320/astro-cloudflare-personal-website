@@ -1,0 +1,53 @@
+---
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_focus_areas) return Astro.redirect('/404/');
+
+const items = [
+  { t: 'Developer Experience', d: 'AI coding copilots and developer tooling.' },
+  { t: 'Industrial AI', d: 'Enterprise requirements into AI capabilities.' },
+  { t: 'Design Systems', d: 'Scalable UI delivering up to 2x faster velocity.' },
+];
+---
+
+<BaseLayout title="Focus Areas" description="Strategic focus areas." robots="noindex">
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero title="Strategic Focus Areas" align="start" />
+    <div class="grid">
+      {
+        items.map(({ t, d }) => (
+          <div class="card">
+            <>
+              <strong>{t}</strong>
+              <p>{d}</p>
+            </>
+          </div>
+        ))
+      }
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .card {
+    padding: 1rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+    background: var(--gradient-subtle);
+  }
+  .card strong {
+    color: var(--gray-0);
+  }
+  .card p {
+    margin: 0.35rem 0 0;
+    color: var(--gray-300);
+  }
+</style>
