@@ -199,6 +199,8 @@ describe('github releases utility', () => {
 
   it('formats ISO dates for display and guards invalid inputs', () => {
     expect(formatReleaseDate('2026-04-06T14:00:00Z')).toBe('2026-04-06');
+    expect(formatReleaseDate('2028-02-29T23:59:59.999Z')).toBe('2028-02-29');
+    expect(formatReleaseDate('')).toBe('Unknown date');
     expect(formatReleaseDate('not-a-date')).toBe('Unknown date');
     expect(formatReleaseDate(null)).toBe('Unknown date');
   });
