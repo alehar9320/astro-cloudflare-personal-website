@@ -28,7 +28,9 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
+    const rawSchema = collections.flags.schema;
+    const schema =
+      typeof rawSchema === 'function' ? rawSchema({ image: () => z.string() }) : rawSchema;
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -40,7 +42,9 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const rawSchema = collections.work.schema;
+    const schema =
+      typeof rawSchema === 'function' ? rawSchema({ image: () => z.string() }) : rawSchema;
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
@@ -55,5 +59,21 @@ describe('content.config', () => {
       expect(result.data.title).toBe(sampleWork.title);
       expect(result.data.publishDate).toBeInstanceOf(Date);
     }
+  });
+
+  it('rejects work schema when img_alt is empty string', () => {
+    const rawSchema = collections.work.schema;
+    const schema =
+      typeof rawSchema === 'function' ? rawSchema({ image: () => z.string() }) : rawSchema;
+    const sampleWork = {
+      title: 'Sample Work',
+      description: 'A sample description',
+      publishDate: '2025-01-01',
+      tags: ['tag1'],
+      img: '/assets/sample.jpg',
+      img_alt: '',
+    };
+    const result = schema.safeParse(sampleWork);
+    expect(result.success).toBe(false);
   });
 });
