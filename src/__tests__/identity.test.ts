@@ -2807,4 +2807,11 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('verifies PortfolioPreview has hardware-accelerated image zoom and prefers-reduced-motion safeguard', () => {
+    const preview = readFileSync('src/components/PortfolioPreview.astro', 'utf8');
+    expect(preview).toContain('transform: scale(1.03)');
+    expect(preview).toContain('transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1)');
+    expect(preview).toContain('@media (prefers-reduced-motion: reduce)');
+  });
 });

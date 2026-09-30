@@ -10,6 +10,16 @@ Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hi
 
 # Kinetic Journal ⚡
 
+## 2026-08-30 - Portfolio Card Image Zoom & Reduced Motion Safeguard
+
+- **Signal:** Portfolio preview cards lacked internal spatial depth on hover/focus and required explicit prefers-reduced-motion reset controls.
+- **Action:**
+  - Added hardware-accelerated image zoom (`transform: scale(1.03)`) with smooth `cubic-bezier(0.22, 1, 0.36, 1)` transitions in `PortfolioPreview.astro`.
+  - Added `@media (prefers-reduced-motion: reduce)` media query overrides to disable transforms and shimmer animations when reduced motion is preferred.
+- **Tokens/Snippets Added:**
+  - Card Image Zoom: `transform: scale(1.03); transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1);`
+  - Accessibility Guard: `@media (prefers-reduced-motion: reduce)`
+
 ## 2026-08-29 - CTA glass abort | Signal: closed #772/#667 | Lean Implementation: HARD ABORT CallToAction glassmorphism and micro-states
 
 ## 2025-05-15 - Interactive Glassmorphism for Skills Section
