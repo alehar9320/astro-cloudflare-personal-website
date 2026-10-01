@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-27 - CallToAction Touch Target Ergonomics & High Contrast Mode Accessibility
+
+**Learning:** CallToAction buttons used across primary conversion surfaces (such as hero sections, 404 error pages, and footer contact CTAs) require explicit minimum dimensions (`min-height: 44px; min-width: 44px; align-items: center;`) to guarantee WCAG 2.1 AA touch target compliance across viewports. Furthermore, adding explicit system color borders (`border: 1px solid ButtonText;`) and hover/focus-visible states (`border-color: Highlight; color: HighlightText;`) under `@media (forced-colors: active)` ensures CTA buttons remain distinct and fully usable when glassmorphic backgrounds are overridden in Windows High Contrast Mode.
+
+**Action:** Added `align-items: center; min-height: 44px; min-width: 44px;` to `a` and added `@media (forced-colors: active)` system border and highlight states in `src/components/CallToAction.astro`.
+
 ## 2026-05-26 - Page Link Touch Target Ergonomics
 
 **Learning:** Section list links (such as `.earlier a` in `work.astro`) and standalone page action links (such as `.history-link` in `whats-new.astro` and `.hire-cta a`) often render as compact inline links on mobile viewports, failing WCAG 2.1 AA 44x44px minimum touch target requirements and risking mis-taps. Setting `display: inline-flex; align-items: center; min-height: 44px;` expands the interactive tap area without disrupting surrounding line rhythm.
