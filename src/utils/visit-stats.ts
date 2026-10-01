@@ -10,6 +10,9 @@ export type VisitGlance = {
   uniqueVisitorsYoY: number | null;
 };
 
+type PeriodMetricKey =
+  'uniqueVisitorsDoD' | 'uniqueVisitorsWoW' | 'uniqueVisitorsMoM' | 'uniqueVisitorsYoY';
+
 export const POSTHOG_SOURCE_LABEL = 'Unique visitors from PostHog (EU)';
 export const POSTHOG_SOURCE_TITLE = 'Source: PostHog, eu.posthog.com';
 
@@ -121,15 +124,21 @@ export function parseVisitGlance(payload: unknown): VisitGlance | null {
   };
 }
 
+const STOCKHOLM_DATE_FORMATTER = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Europe/Stockholm',
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+});
+
+function formatVisitorWord(count: number): string {
+  return `${count} visitor${count === 1 ? '' : 's'}`;
+}
+
 export function formatFirstSeen(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '';
-  return new Intl.DateTimeFormat('en-GB', {
-    timeZone: 'Europe/Stockholm',
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  }).format(d);
+  return STOCKHOLM_DATE_FORMATTER.format(d);
 }
 
 export function formatVisitGlance(glance: VisitGlance): {
@@ -137,14 +146,13 @@ export function formatVisitGlance(glance: VisitGlance): {
   last7d: string;
   firstSeen: string;
 } {
-  const visitors = (count: number) => `${count} visitor${count === 1 ? '' : 's'}`;
   const seen = formatFirstSeen(glance.firstSeen) || glance.firstSeen;
   const last7d =
     glance.pageviews7d === 0 && glance.uniqueVisitors7d === 0
       ? 'No visits in the last 7 days'
-      : `${formatPageviewCount(glance.pageviews7d)} · ${visitors(glance.uniqueVisitors7d)} in the last 7 days`;
+      : `${formatPageviewCount(glance.pageviews7d)} · ${formatVisitorWord(glance.uniqueVisitors7d)} in the last 7 days`;
   return {
-    all: `${formatPageviewCount(glance.pageviews)} · ${visitors(glance.uniqueVisitors)}`,
+    all: `${formatPageviewCount(glance.pageviews)} · ${formatVisitorWord(glance.uniqueVisitors)}`,
     last7d,
     firstSeen: `First seen ${seen}`,
   };
@@ -164,15 +172,17 @@ export const PERIOD_WORDS = {
   YoY: 'year over year',
 } as const;
 
+const PERIOD_PROPERTIES: ReadonlyArray<readonly [keyof typeof PERIOD_WORDS, PeriodMetricKey]> = [
+  ['DoD', 'uniqueVisitorsDoD'],
+  ['WoW', 'uniqueVisitorsWoW'],
+  ['MoM', 'uniqueVisitorsMoM'],
+  ['YoY', 'uniqueVisitorsYoY'],
+] as const;
+
 export function formatColophonVisits(glance: VisitGlance): string {
   const parts = [formatUniqueVisitorCount(glance.uniqueVisitors)];
-  const periods: Array<[keyof typeof PERIOD_WORDS, number | null]> = [
-    ['DoD', glance.uniqueVisitorsDoD],
-    ['WoW', glance.uniqueVisitorsWoW],
-    ['MoM', glance.uniqueVisitorsMoM],
-    ['YoY', glance.uniqueVisitorsYoY],
-  ];
-  for (const [label, value] of periods) {
+  for (const [label, key] of PERIOD_PROPERTIES) {
+    const value = glance[key];
     if (value === null || !Number.isFinite(value)) continue;
     parts.push(`${label} ${formatSignedPercent(value)}`);
   }
@@ -181,13 +191,8 @@ export function formatColophonVisits(glance: VisitGlance): string {
 
 export function formatColophonVisitsTitle(glance: VisitGlance): string {
   const parts = [formatUniqueVisitorCount(glance.uniqueVisitors)];
-  const periods: Array<[keyof typeof PERIOD_WORDS, number | null]> = [
-    ['DoD', glance.uniqueVisitorsDoD],
-    ['WoW', glance.uniqueVisitorsWoW],
-    ['MoM', glance.uniqueVisitorsMoM],
-    ['YoY', glance.uniqueVisitorsYoY],
-  ];
-  for (const [label, value] of periods) {
+  for (const [label, key] of PERIOD_PROPERTIES) {
+    const value = glance[key];
     if (value === null || !Number.isFinite(value)) continue;
     parts.push(`${label} ${PERIOD_WORDS[label]} ${formatSignedPercent(value)}`);
   }

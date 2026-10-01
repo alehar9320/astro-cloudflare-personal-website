@@ -227,6 +227,7 @@ describe('formatFirstSeen', () => {
 
   it('formats valid ISO date strings in Stockholm time', () => {
     expect(formatFirstSeen('2026-05-03T18:34:08.880Z')).toContain('2026');
+    expect(formatFirstSeen('2026-06-11T10:00:00.000Z')).toBe('11 Jun 2026');
   });
 });
 

@@ -29,3 +29,9 @@
 - **Edge Memory & Performance:** Refactored `splitReleaseBody` in `src/utils/github-releases.ts` and `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use pointer-based line scanning (`indexOf('\n', startPos)`), eliminating dynamic `body.split('\n')` string array allocations during SSR and API execution.
 - **Sentence Counting Optimization:** Refactored `sentenceCount` in `src/utils/release-summary.ts` from regex lookbehind `.split(/(?<=[.!?])\s+/)` into a single-pass character scanning loop. Added whitespace-aware sentence boundary detection to safely ignore dots inside version strings (`2026.08.15.1714`).
 - **Verification:** Added Vitest unit test cases across `release-summary.test.ts`, `visitor-changelog.test.ts`, and `github-releases.test.ts` covering version numbers, CRLF line endings, multiple trailing punctuation, and whitespace handling.
+
+## 2025-06-18 - Module-Level Intl.DateTimeFormat Hoisting & Allocation-Free Formatting Utilities
+
+- **Edge Memory & Performance:** Hoisted `STOCKHOLM_DATE_FORMATTER` (`new Intl.DateTimeFormat('en-GB', ...)`) to module scope in `src/utils/visit-stats.ts`, eliminating repeated ICU locale initialization and `Intl.DateTimeFormat` object instantiations on Cloudflare Workers edge runtimes.
+- **Allocation Reduction:** Hoisted `formatVisitorWord` and static `PERIOD_PROPERTIES` tuple array in `src/utils/visit-stats.ts` to eliminate dynamic array and closure allocations during `formatVisitGlance`, `formatColophonVisits`, and `formatColophonVisitsTitle` executions. Replaced `date.toISOString().split('T')[0]` with `date.toISOString().slice(0, 10)` in `formatReleaseDate` in `src/utils/github-releases.ts` to avoid 2-element string array allocation per formatted date string.
+- **Verification:** Updated Vitest unit test suites in `src/utils/visit-stats.test.ts` and `src/__tests__/github-releases.test.ts` covering Stockholm locale formatting, ISO date slicing, and period metric calculations.
