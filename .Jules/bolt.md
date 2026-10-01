@@ -41,3 +41,7 @@ Action: Updated `collectItems` in `src/utils/whats-new-glance.ts` to iterate ove
 2026-09-08 - Zero-Allocation Reverse Array Scan for Chat Follow-up Prompts
 Learning: Dynamic shallow array copying and array reversal (`[...messages].reverse().find(...)`) on every UI update creates unnecessary temporary heap allocations and garbage collection overhead in client-side scripts. Replacing array copy/reverse with a reverse indexed `for` loop eliminates dynamic array allocations completely and stops scanning as soon as the first matching element is found.
 Action: Refactored `showFollowUps()` in `src/components/Chat.astro` to use an indexed reverse `for` loop.
+
+2026-10-01 - ISO Date Formatting String Slicing
+Learning: Splitting ISO-8601 date strings via `.split('T')[0]` allocates a temporary 2-element array and extra string object on every call. Using `.slice(0, 10)` directly extracts the YYYY-MM-DD substring without heap array allocation, reducing garbage collection pressure on edge runtimes.
+Action: Updated `formatReleaseDate` in `src/utils/github-releases.ts` to use `.slice(0, 10)` instead of `.split('T')[0]`.
