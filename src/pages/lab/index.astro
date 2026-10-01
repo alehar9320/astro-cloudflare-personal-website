@@ -1,0 +1,253 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+---
+
+<BaseLayout
+  title="Interactive Lab | Alexander Härenstam"
+  description="Experimental interactive canvas and WebGL visual laboratory."
+  robots="noindex"
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero
+      title="Interactive Visual Lab"
+      tagline="Prism 👩‍🚀 — Northern Lights Canvas Refraction Experiment"
+      align="start"
+    />
+
+    <section class="lab-container" aria-label="Interactive Canvas Experiment">
+      <p class="lab-description">
+        Move your pointer over the canvas below to trigger fluid light refraction through the
+        harmonic Northern Lights wave curtain.
+      </p>
+
+      <div class="canvas-wrapper">
+        <canvas id="prism-aurora-canvas" aria-label="Interactive Northern Lights waves canvas"
+        ></canvas>
+        <div class="canvas-fallback" id="canvas-fallback">
+          <p>Motion graphics reduced based on your system motion preference.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import { calculateAuroraWaveHeight, calculateRefractionOffset } from '../../utils/aurora-math';
+
+  function initPrismCanvas() {
+    const canvas = document.getElementById('prism-aurora-canvas') as HTMLCanvasElement | null;
+    if (!canvas) return;
+
+    if (canvas.dataset.initialized === 'true') return;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const fallbackEl = document.getElementById('canvas-fallback');
+
+    if (prefersReducedMotion) {
+      if (fallbackEl) fallbackEl.style.display = 'block';
+      canvas.style.display = 'none';
+      return;
+    }
+
+    canvas.dataset.initialized = 'true';
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    let animationFrameId: number;
+    let pointerX = -1000;
+    let pointerY = -1000;
+
+    const resize = () => {
+      const rect = canvas.parentElement?.getBoundingClientRect();
+      if (!rect) return;
+      canvas.width = rect.width;
+      canvas.height = rect.height;
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      pointerX = e.clientX - rect.left;
+      pointerY = e.clientY - rect.top;
+    };
+
+    const handlePointerLeave = () => {
+      pointerX = -1000;
+      pointerY = -1000;
+    };
+
+    const draw = (time: number) => {
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const w = canvas.width;
+      const h = canvas.height;
+      const centerY = h * 0.5;
+
+      // Render dark cyan/marine background glow
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
+      bgGrad.addColorStop(0, 'rgba(11, 19, 43, 0.9)');
+      bgGrad.addColorStop(0.5, 'rgba(28, 37, 65, 0.95)');
+      bgGrad.addColorStop(1, 'rgba(11, 19, 43, 0.9)');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, w, h);
+
+      // Render 3 layered Aurora wave curtains
+      const layers = [
+        {
+          color: 'rgba(0, 229, 255, 0.35)',
+          amplitude: 40,
+          wavelength: 250,
+          speed: 0.8,
+          offsetY: -30,
+        },
+        {
+          color: 'rgba(56, 189, 248, 0.25)',
+          amplitude: 55,
+          wavelength: 320,
+          speed: 1.1,
+          offsetY: 0,
+        },
+        {
+          color: 'rgba(167, 139, 250, 0.20)',
+          amplitude: 30,
+          wavelength: 200,
+          speed: 0.6,
+          offsetY: 30,
+        },
+      ];
+
+      for (const layer of layers) {
+        ctx.beginPath();
+        ctx.fillStyle = layer.color;
+
+        let firstPoint = true;
+        const step = Math.max(4, Math.floor(w / 120)); // Keep vertex count performant (60fps target)
+
+        for (let x = 0; x <= w + step; x += step) {
+          const baseY = centerY + layer.offsetY;
+          const waveVal = calculateAuroraWaveHeight(
+            x,
+            time,
+            layer.wavelength,
+            layer.amplitude,
+            layer.speed
+          );
+
+          const targetY = baseY + waveVal;
+          const { dx, dy } = calculateRefractionOffset(pointerX, pointerY, x, targetY, 140, 28);
+
+          const finalX = x + dx;
+          const finalY = targetY + dy;
+
+          if (firstPoint) {
+            ctx.moveTo(finalX, finalY);
+            firstPoint = false;
+          } else {
+            ctx.lineTo(finalX, finalY);
+          }
+        }
+
+        ctx.lineTo(w, h);
+        ctx.lineTo(0, h);
+        ctx.closePath();
+        ctx.fill();
+      }
+
+      // Draw subtle interactive lens highlight around pointer
+      if (pointerX > 0 && pointerY > 0) {
+        const lensGrad = ctx.createRadialGradient(pointerX, pointerY, 0, pointerX, pointerY, 140);
+        lensGrad.addColorStop(0, 'rgba(125, 211, 252, 0.25)');
+        lensGrad.addColorStop(0.5, 'rgba(56, 189, 248, 0.08)');
+        lensGrad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+        ctx.fillStyle = lensGrad;
+        ctx.beginPath();
+        ctx.arc(pointerX, pointerY, 140, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      if (!document.hidden) {
+        animationFrameId = requestAnimationFrame(draw);
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(animationFrameId);
+      } else {
+        animationFrameId = requestAnimationFrame(draw);
+      }
+    };
+
+    window.addEventListener('resize', resize);
+    canvas.addEventListener('pointermove', handlePointerMove);
+    canvas.addEventListener('pointerleave', handlePointerLeave);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    resize();
+    animationFrameId = requestAnimationFrame(draw);
+
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+        canvas.removeEventListener('pointermove', handlePointerMove);
+        canvas.removeEventListener('pointerleave', handlePointerLeave);
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        canvas.dataset.initialized = 'false';
+      },
+      { once: true }
+    );
+  }
+
+  document.addEventListener('astro:page-load', initPrismCanvas);
+  if (document.readyState === 'complete') {
+    initPrismCanvas();
+  } else {
+    window.addEventListener('DOMContentLoaded', initPrismCanvas, { once: true });
+  }
+</script>
+
+<style>
+  .lab-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .lab-description {
+    margin: 0;
+    color: var(--gray-200);
+    font-size: var(--text-md);
+  }
+
+  .canvas-wrapper {
+    position: relative;
+    width: 100%;
+    height: 420px;
+    border-radius: 1rem;
+    overflow: hidden;
+    border: 1px solid var(--gray-800);
+    background: var(--gray-999);
+    box-shadow: var(--shadow-sm);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+    cursor: crosshair;
+  }
+
+  .canvas-fallback {
+    display: none;
+    padding: 2rem;
+    color: var(--gray-300);
+    font-size: var(--text-sm);
+    text-align: center;
+  }
+</style>
