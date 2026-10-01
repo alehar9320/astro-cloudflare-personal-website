@@ -1,0 +1,67 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import CallToAction from '../../components/CallToAction.astro';
+
+const flags = await getEntry('flags', 'config');
+if (!flags?.data.enable_product_playbook) return Astro.redirect('/404/');
+
+const pillars = [
+  { t: 'Continuous Discovery', d: 'Validate user problems with data & feedback before building.' },
+  { t: 'Systems Over Silos', d: 'Architect reusable primitives & APIs to scale dev velocity.' },
+  { t: 'Measurable Value', d: 'Deliver quantifiable business ROI & high-impact outcomes.' },
+];
+---
+
+<BaseLayout
+  title="Product Playbook"
+  description="Product Management decision frameworks."
+  robots="noindex"
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero
+      title="Product Playbook"
+      tagline="Decision frameworks for product strategy."
+      align="start"
+    />
+    <div class="grid">
+      {
+        pillars.map((p) => (
+          <div class="card">
+            <strong>{p.t}</strong>
+            <p>{p.d}</p>
+          </div>
+        ))
+      }
+    </div>
+    <CallToAction
+      href="https://www.linkedin.com/in/alehar/"
+      target="_blank"
+      rel="noopener noreferrer">Get in touch</CallToAction
+    >
+  </main>
+</BaseLayout>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+  .card {
+    padding: 1rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+    background: var(--gradient-subtle);
+  }
+  .card strong {
+    display: block;
+    color: var(--gray-0);
+  }
+  .card p {
+    margin: 0.25rem 0 0;
+    color: var(--gray-300);
+    font-size: var(--text-sm);
+  }
+</style>
