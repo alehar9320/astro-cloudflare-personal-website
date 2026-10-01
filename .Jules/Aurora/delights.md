@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - CTA Icon Shift | Signal: Competitive | Lean Implementation: Added subtle translate(3px, -2px) rotate(8deg) transformation on hover/focus to nested SVG icons in CallToAction.astro.
+
+- Insight: Competitive analysis across modern tech product landing pages shows that responsive CTA icon shifts on hover/focus increase perceived clickability and tactile clarity.
+- User Target: Delight
+- Abort Triggers: None (verified via test and build pipeline).
+- User Reaction: Pending synthetic feedback.
