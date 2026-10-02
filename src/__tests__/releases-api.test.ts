@@ -1,4 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
+import * as cloudflareWorkers from 'cloudflare:workers';
 import { GET } from '../pages/api/releases';
 import * as githubReleases from '../utils/github-releases';
 import { LATEST_RELEASE_SNAPSHOT } from '../data/latest-release';
@@ -55,5 +56,18 @@ describe('releases API route', () => {
 
     const json = await response.json();
     expect(json).toEqual([toVisitorRelease(LATEST_RELEASE_SNAPSHOT)]);
+  });
+
+  it('handles readEnv exceptions gracefully when worker env getter throws', async () => {
+    vi.spyOn(cloudflareWorkers, 'env', 'get').mockImplementation(() => {
+      throw new Error('Worker env error');
+    });
+    vi.spyOn(githubReleases, 'fetchGitHubReleases').mockResolvedValue([mockRelease]);
+
+    const response = await GET(createContext());
+    expect(response.status).toBe(200);
+
+    const json = await response.json();
+    expect(json).toEqual([toVisitorRelease(mockRelease)]);
   });
 });

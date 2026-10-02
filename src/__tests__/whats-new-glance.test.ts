@@ -34,6 +34,20 @@ describe('whats-new glance', () => {
     expect(kept('fix: name What’s New GitHub links by release version (#628)')).toBe(false);
   });
 
+  it('skips releases with invalid publishedAt date strings', () => {
+    const glance = buildWhatsNewGlance(
+      [
+        release({
+          body: '- 3a39e72 feat: dock chat composer to the bottom edge and use the stage (#618)',
+          publishedAt: 'invalid-date-string',
+        }),
+      ],
+      now
+    );
+    expect(glance.thisWeek).toEqual([]);
+    expect(glance.groups).toEqual([]);
+  });
+
   it('keeps visitor-facing chat, What’s New, and work-case notes', () => {
     expect(kept('feat: dock chat composer to the bottom edge and use the stage (#618)')).toBe(true);
     expect(kept('feat: restore What’s New in the main menu')).toBe(true);

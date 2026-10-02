@@ -29,6 +29,7 @@ describe('exploreCardForQuestion', () => {
     expect(exploreCardForQuestion("What was the Chalmers master's thesis?")).toEqual(
       EXPLORE_CARDS.thesis
     );
+    expect(exploreCardForQuestion('industrial cases')).toBeNull();
   });
 
   it('keeps action cards on published routes and LinkedIn confirm on the hire path', () => {

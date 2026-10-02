@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 
+import * as cloudflareWorkers from 'cloudflare:workers';
 import { env as workerEnv } from 'cloudflare:workers';
 import { POST, type ChatEnv } from '../pages/api/chat';
 import { DESIGN_SYSTEM_CHIP, DESIGN_SYSTEM_PROOF, LINKEDIN_HIRE_REPLY } from '../utils/chat-logic';
@@ -48,6 +49,8 @@ function createAi(stream = new ReadableStream()): MockAi {
 
 describe('chat API', () => {
   beforeEach(() => {
+    vi.useRealTimers();
+    vi.restoreAllMocks();
     const bindings = workerEnv as ChatEnv;
     delete bindings.AI;
     delete bindings.CHAT_STORE;
@@ -182,6 +185,25 @@ describe('chat API', () => {
     await expect(readJson(response)).resolves.toEqual({
       error: 'Chat is currently unavailable. Please try again later.',
     });
+  });
+
+  it('returns 503 when readChatEnv throws an exception', async () => {
+    const envSpy = vi.spyOn(cloudflareWorkers, 'env', 'get').mockImplementation(() => {
+      throw new Error('Env binding error');
+    });
+
+    try {
+      const request = createRequest({ messages: [{ role: 'user', content: 'Hello' }] });
+      const context = { request, locals: {} } as unknown as ChatPostContext;
+      const response = await POST(context);
+
+      expect(response.status).toBe(503);
+      await expect(readJson(response)).resolves.toEqual({
+        error: 'Chat is currently unavailable. Please try again later.',
+      });
+    } finally {
+      envSpy.mockRestore();
+    }
   });
 
   it('returns 400 for invalid JSON', async () => {
@@ -366,6 +388,28 @@ describe('chat API', () => {
     expect(response.headers.get('X-Chat-Daily-Limit')).toBe('500');
     expect(response.headers.get('X-Chat-Daily-Remaining')).toBe('497');
     expect(ai.run.mock.invocationCallOrder[0]).toBeLessThan(put.mock.invocationCallOrder[0]);
+  });
+
+  it('uses expirationTtl fallback when within 60 seconds of UTC midnight', async () => {
+    vi.setSystemTime(new Date('2026-03-30T23:59:30.000Z'));
+    const ai = createAi();
+    const get = vi.fn().mockResolvedValue('1');
+    const put = vi.fn();
+    const store = { get, put } as unknown as KVNamespace;
+    const env = { AI: ai, CHAT_STORE: store };
+
+    const response = await POST(
+      createContext(
+        createRequest(
+          { messages: [{ role: 'user', content: 'Hello near midnight' }] },
+          { 'cf-connecting-ip': '203.0.113.10' }
+        ),
+        env
+      )
+    );
+
+    expect(response.status).toBe(200);
+    expect(put).toHaveBeenCalledWith('chat-daily:2026-03-30', '2', { expirationTtl: 86400 });
   });
 
   it('resets and starts the rate limit counter at one when a malformed count (NaN) exists', async () => {
@@ -570,10 +614,6 @@ describe('chat API', () => {
       (call) => call[0]?.event === 'chat_api_run_error'
     )?.[0];
     expect(loggedError).toBeDefined();
-    // String(error) might prepend "Error: " in some environments even for non-Error objects if caught?
-    // Wait, if it's a string, String('AI unavailable') is 'AI unavailable'.
-    // Let's check why it received "Error: AI unavailable".
-    // Ah, if ai.run is mocked to reject with a string, and it's caught in a try/catch.
     expect(loggedError.error).toContain('AI unavailable');
   });
 

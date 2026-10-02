@@ -30,7 +30,6 @@ describe('hire-analytics', () => {
   });
 
   it('does not throw when dataLayer is missing', () => {
-    // @ts-expect-error -- dataLayer is optional on Window
     delete window.dataLayer;
     expect(() => trackHireEvent('linkedin_click', 'contact_cta')).not.toThrow();
   });
@@ -62,6 +61,21 @@ describe('hire-analytics', () => {
       { event: 'hire_cta_click', surface: 'hero' },
       { event: 'linkedin_click', surface: 'contact_cta' },
     ]);
+  });
+
+  it('handles posthog capture throwing an error gracefully', () => {
+    window.posthog = {
+      capture: () => {
+        throw new Error('Posthog capture failure');
+      },
+    };
+    document.body.innerHTML =
+      '<a href="https://linkedin.com" data-hire-event="linkedin_click"' +
+      ' data-hire-surface="contact_cta">Get in touch</a>';
+
+    expect(() => {
+      document.querySelector('a')!.click();
+    }).not.toThrow();
   });
 
   it('ignores chat_opened and chat_message_sent on the delegated handler', () => {

@@ -13,4 +13,9 @@ describe('cloudflare:workers Node stub', () => {
     expect(env.AI).toBeUndefined();
     expect(env.CHAT_STORE).toBeUndefined();
   });
+
+  it('returns undefined when property key is a symbol', () => {
+    const symKey = Symbol('test') as unknown as string;
+    expect(env[symKey]).toBeUndefined();
+  });
 });
