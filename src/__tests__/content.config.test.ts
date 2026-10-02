@@ -28,7 +28,9 @@ describe('content.config', () => {
   });
 
   it('validates flags fixture against schema', async () => {
-    const { schema } = collections.flags;
+    const { schema: rawSchema } = collections.flags;
+    const schema =
+      typeof rawSchema === 'function' ? rawSchema({ image: () => z.string() } as any) : rawSchema;
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -40,7 +42,9 @@ describe('content.config', () => {
   });
 
   it('validates work schema with sample data', () => {
-    const { schema } = collections.work;
+    const { schema: rawSchema } = collections.work;
+    const schema =
+      typeof rawSchema === 'function' ? rawSchema({ image: () => z.string() } as any) : rawSchema;
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',

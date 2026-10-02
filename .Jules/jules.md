@@ -21,3 +21,9 @@
 - [Insight 1: Tighter focus ring outline-offsets (2px) prevent focus ring overflow clipping on compact overlay toggles.]
 - [Insight 2: Gating active press scale transitions behind prefers-reduced-motion media queries respects accessibility preferences while preserving tactile visual feedback.]
 - [Delta: 17 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-16 - Tag Pill Tactile Elevation | Signal: Technical/Competitive | Lean Implementation: Feature Flagged CSS Transition
+
+- [Insight 1: Smooth gradient position shifts combined with subtle translateY elevation give tag pills visual depth without layout reflow.]
+- [Insight 2: Gating pill micro-interactions behind static Zod-validated feature flags (`enable_pill_tactile_v1`) keeps component states predictable and safely togglable.]
+- [Delta: 18 lines. Guardrails: All passed autonomously.]
