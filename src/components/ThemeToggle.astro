@@ -105,7 +105,7 @@ const isTactileEnabled = flagsEntry?.data.enable_theme_toggle_tactile_v1 ?? fals
 
       const button = this.querySelector('button')!;
 
-      /** Set the theme to dark/light mode. */
+      /** Sets the theme to dark or light mode. */
       const setTheme = (dark: boolean) => {
         document.documentElement.classList[dark ? 'add' : 'remove']('theme-dark');
         button.setAttribute('aria-pressed', String(dark));
