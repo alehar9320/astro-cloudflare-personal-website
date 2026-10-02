@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - CTA Icon Shift | Signal: Competitive | Lean Implementation: Added translate(2px, -2px) shift on hover/focus to SVG icons inside CallToAction.astro.
+
+- Insight: Micro-interactions on CTA icons provide visual directionality and responsiveness, increasing click intent and perceived polish.
+- User Target: Joy
+- Abort Triggers: None (gated behind feature flag enable_cta_icon_shift_v1 and prefers-reduced-motion check).
+- User Reaction: Pending synthetic feedback.
