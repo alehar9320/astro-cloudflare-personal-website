@@ -1,0 +1,70 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import CallToAction from '../../components/CallToAction.astro';
+
+const flags = await getEntry('flags', 'config');
+if (!flags?.data.enable_devex_framework) return Astro.redirect('/404/');
+
+const pillars = [
+  { t: 'Developer Flow', d: 'Minimizing friction in developer workflows.' },
+  { t: 'Design System Scale', d: 'Driving UI consistency across product suites.' },
+  { t: 'Industrial AI', d: 'Embedding domain-aware copilots into enterprise systems.' },
+];
+---
+
+<BaseLayout title="DevEx Framework" description="Core DevEx principles." robots="noindex">
+  <main
+    class="wrapper stack gap-8"
+    style="margin-top: 2rem; padding-bottom: var(--chat-fab-clearance);"
+  >
+    <Hero
+      title="DevEx Framework"
+      tagline="Pillars for scaling developer platforms."
+      align="start"
+    />
+    <div class="grid">
+      {
+        pillars.map((p) => (
+          <section class="card">
+            <h2>{p.t}</h2>
+            <p>{p.d}</p>
+          </section>
+        ))
+      }
+    </div>
+    <CallToAction
+      href="https://www.linkedin.com/in/alehar/"
+      target="_blank"
+      rel="noopener noreferrer"
+      data-hire-surface="devex-framework"
+    >
+      Get in touch
+    </CallToAction>
+  </main>
+</BaseLayout>
+
+<style>
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .card {
+    padding: 1.25rem;
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+  }
+  .card h2 {
+    font-size: var(--text-lg);
+    margin: 0 0 0.25rem;
+    color: var(--gray-0);
+  }
+  .card p {
+    margin: 0;
+    color: var(--gray-300);
+    font-size: var(--text-sm);
+  }
+</style>
