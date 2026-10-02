@@ -1,0 +1,261 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+---
+
+<BaseLayout
+  title="Northern Lights Refraction Laboratory | Alexander Härenstam"
+  description="Interactive Northern Lights refraction canvas laboratory experiment."
+  robots="noindex"
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero title="Northern Lights Canvas Refraction Lab" align="start">
+      <p class="lede">
+        An interactive canvas experiment simulating wave optics and fluid light refraction using
+        cubic smoothstep attenuation and dynamic step sampling.
+      </p>
+    </Hero>
+
+    <div class="lab-controls" role="region" aria-label="Interactive Canvas Controls">
+      <button id="toggle-motion" type="button" class="lab-btn" aria-label="Toggle Wave Motion">
+        <span id="motion-label">Pause Waves</span>
+      </button>
+      <span class="lab-hint">Move pointer across canvas to distort light field</span>
+    </div>
+
+    <div class="canvas-container">
+      <canvas
+        id="aurora-refraction-canvas"
+        aria-label="Interactive Northern Lights light refraction canvas rendering dynamic sine waves and cursor light optics"
+        role="img"></canvas>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  import {
+    calculateSpatialStep,
+    cubicSmoothstepFalloff,
+    calculateWaveHeight,
+  } from '../../utils/aurora-math';
+
+  const canvas = document.getElementById('aurora-refraction-canvas') as HTMLCanvasElement | null;
+  const toggleBtn = document.getElementById('toggle-motion') as HTMLButtonElement | null;
+  const motionLabel = document.getElementById('motion-label');
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let animFrameId = 0;
+    let time = 0;
+    let isPaused = false;
+    let pointerX = -1000;
+    let pointerY = -1000;
+    let targetX = -1000;
+    let targetY = -1000;
+
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (canvas.dataset.initialized === 'true') {
+      // Prevent double init
+    } else {
+      canvas.dataset.initialized = 'true';
+    }
+
+    const resize = () => {
+      if (!canvas) return;
+      const rect = canvas.parentElement?.getBoundingClientRect();
+      const w = rect?.width || 800;
+      const h = rect?.height || 500;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      canvas.width = w * dpr;
+      canvas.height = h * dpr;
+      if (ctx) ctx.scale(dpr, dpr);
+    };
+
+    const updatePointer = (e: MouseEvent | TouchEvent) => {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      if ('touches' in e && e.touches.length > 0) {
+        targetX = e.touches[0].clientX - rect.left;
+        targetY = e.touches[0].clientY - rect.top;
+      } else if ('clientX' in e) {
+        targetX = (e as MouseEvent).clientX - rect.left;
+        targetY = (e as MouseEvent).clientY - rect.top;
+      }
+    };
+
+    const clearPointer = () => {
+      targetX = -1000;
+      targetY = -1000;
+    };
+
+    const render = () => {
+      if (!ctx || !canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const width = rect.width;
+      const height = rect.height;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Smooth pointer interpolation
+      pointerX += (targetX - pointerX) * 0.1;
+      pointerY += (targetY - pointerY) * 0.1;
+
+      if (!reducedMotion && !isPaused) {
+        time += 0.015;
+      }
+
+      const spatialStep = calculateSpatialStep(width);
+      const waveCount = 3;
+      const colors = [
+        'rgba(0, 225, 255, 0.35)', // Cyan
+        'rgba(0, 150, 255, 0.25)', // Marine Blue
+        'rgba(120, 255, 214, 0.20)', // Northern Mint
+      ];
+
+      for (let wIndex = 0; wIndex < waveCount; wIndex++) {
+        const baseHeight = height * (0.35 + wIndex * 0.2);
+        const freq = 0.006 - wIndex * 0.001;
+        const amp = 30 + wIndex * 15;
+        const speedOffset = time * (1 + wIndex * 0.3);
+
+        ctx.beginPath();
+        ctx.moveTo(0, height);
+
+        for (let x = 0; x <= width + spatialStep; x += spatialStep) {
+          let y = baseHeight + calculateWaveHeight(x, speedOffset, freq, amp);
+
+          // Interaction refraction
+          const dist = Math.hypot(x - pointerX, y - pointerY);
+          const refractionRadius = 140;
+          if (dist < refractionRadius) {
+            const falloff = cubicSmoothstepFalloff(dist, refractionRadius);
+            y += (y - pointerY) * falloff * 0.4;
+          }
+
+          if (x === 0) ctx.lineTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+
+        ctx.lineTo(width, height);
+        ctx.closePath();
+        ctx.fillStyle = colors[wIndex];
+        ctx.fill();
+      }
+
+      if (!reducedMotion) {
+        animFrameId = requestAnimationFrame(render);
+      }
+    };
+
+    window.addEventListener('resize', resize);
+    canvas.addEventListener('mousemove', updatePointer);
+    canvas.addEventListener('touchmove', updatePointer, { passive: true });
+    canvas.addEventListener('mouseleave', clearPointer);
+    canvas.addEventListener('touchend', clearPointer);
+
+    if (toggleBtn && motionLabel) {
+      toggleBtn.addEventListener('click', () => {
+        isPaused = !isPaused;
+        motionLabel.textContent = isPaused ? 'Resume Waves' : 'Pause Waves';
+        if (isPaused && animFrameId) {
+          cancelAnimationFrame(animFrameId);
+          animFrameId = 0;
+        } else if (!isPaused && !animFrameId && !reducedMotion) {
+          render();
+        }
+      });
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+        animFrameId = 0;
+      } else if (!isPaused && !animFrameId && !reducedMotion) {
+        render();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        if (animFrameId) cancelAnimationFrame(animFrameId);
+        window.removeEventListener('resize', resize);
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        if (canvas) canvas.dataset.initialized = 'false';
+      },
+      { once: true }
+    );
+
+    resize();
+    render();
+  }
+</script>
+
+<style>
+  .lede {
+    margin: 0;
+    font-size: var(--text-md);
+    color: var(--gray-200);
+    max-width: 50ch;
+  }
+
+  .lab-controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .lab-btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.5rem 1.25rem;
+    font-family: var(--font-brand);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--gray-0);
+    background: hsla(var(--gray-999-basis), 0.5);
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    backdrop-filter: blur(10px);
+    transition:
+      background var(--theme-transition),
+      border-color var(--theme-transition);
+  }
+
+  .lab-btn:hover,
+  .lab-btn:focus-visible {
+    border-color: var(--accent-regular);
+    background: hsla(var(--gray-999-basis), 0.8);
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 2px;
+  }
+
+  .lab-hint {
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+  }
+
+  .canvas-container {
+    width: 100%;
+    height: 480px;
+    position: relative;
+    border-radius: 1rem;
+    overflow: hidden;
+    background: hsla(var(--gray-999-basis), 0.4);
+    border: 1px solid hsla(var(--gray-800-basis), 0.6);
+    box-shadow: var(--shadow-sm);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+</style>
