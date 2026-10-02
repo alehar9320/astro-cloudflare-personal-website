@@ -4,14 +4,62 @@ import Hero from '../components/Hero.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 
 const linkedinHref = 'https://www.linkedin.com/in/alehar/';
+const pageTitle = 'Get in touch | Product Manager, Developer Experience at IFS';
+const dek = 'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+
+const schema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'ContactPage',
+      '@id': 'https://me.alehar.workers.dev/contact/#webpage',
+      url: 'https://me.alehar.workers.dev/contact/',
+      name: pageTitle,
+      description: dek,
+      about: {
+        '@type': 'Person',
+        '@id': 'https://me.alehar.workers.dev/#person',
+        name: 'Alexander Härenstam',
+        jobTitle: 'Product Manager, Developer Experience at IFS',
+        sameAs: ['https://www.linkedin.com/in/alehar/'],
+      },
+      breadcrumb: {
+        '@type': 'BreadcrumbList',
+        itemListElement: [
+          {
+            '@type': 'ListItem',
+            position: 1,
+            name: 'Home',
+            item: 'https://me.alehar.workers.dev/',
+          },
+          {
+            '@type': 'ListItem',
+            position: 2,
+            name: 'Get in touch',
+            item: 'https://me.alehar.workers.dev/contact/',
+          },
+        ],
+      },
+      publisher: {
+        '@type': 'Person',
+        '@id': 'https://me.alehar.workers.dev/#person',
+        name: 'Alexander Härenstam',
+      },
+    },
+  ],
+};
 ---
 
-<BaseLayout
-  title="Get in touch | Product Manager, Developer Experience at IFS"
-  description="Product Manager, Developer Experience at IFS. Get in touch on LinkedIn."
->
+<BaseLayout title={pageTitle} description={dek}>
+  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
   <main id="main-content" class="wrapper stack gap-8">
     <Hero title="Get in touch" align="start">
+      <div class="tldr-box">
+        <p>
+          <strong>TL;DR:</strong> Alexander Härenstam is a Product Manager, Developer Experience at IFS
+          based in Stockholm, Sweden. Connect directly via LinkedIn for collaboration or inquiries.
+        </p>
+      </div>
       <p class="availability">Product Manager, Developer Experience at IFS.</p>
       <div class="actions">
         <CallToAction
