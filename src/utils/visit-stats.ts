@@ -121,15 +121,17 @@ export function parseVisitGlance(payload: unknown): VisitGlance | null {
   };
 }
 
+const STOCKHOLM_DATE_FORMATTER = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Europe/Stockholm',
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+});
+
 export function formatFirstSeen(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '';
-  return new Intl.DateTimeFormat('en-GB', {
-    timeZone: 'Europe/Stockholm',
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  }).format(d);
+  return STOCKHOLM_DATE_FORMATTER.format(d);
 }
 
 export function formatVisitGlance(glance: VisitGlance): {
@@ -164,15 +166,19 @@ export const PERIOD_WORDS = {
   YoY: 'year over year',
 } as const;
 
+const PERIOD_KEYS: ReadonlyArray<keyof typeof PERIOD_WORDS> = ['DoD', 'WoW', 'MoM', 'YoY'];
+
 export function formatColophonVisits(glance: VisitGlance): string {
   const parts = [formatUniqueVisitorCount(glance.uniqueVisitors)];
-  const periods: Array<[keyof typeof PERIOD_WORDS, number | null]> = [
-    ['DoD', glance.uniqueVisitorsDoD],
-    ['WoW', glance.uniqueVisitorsWoW],
-    ['MoM', glance.uniqueVisitorsMoM],
-    ['YoY', glance.uniqueVisitorsYoY],
-  ];
-  for (const [label, value] of periods) {
+  const periodValues: Record<keyof typeof PERIOD_WORDS, number | null> = {
+    DoD: glance.uniqueVisitorsDoD,
+    WoW: glance.uniqueVisitorsWoW,
+    MoM: glance.uniqueVisitorsMoM,
+    YoY: glance.uniqueVisitorsYoY,
+  };
+  for (let i = 0; i < PERIOD_KEYS.length; i++) {
+    const label = PERIOD_KEYS[i];
+    const value = periodValues[label];
     if (value === null || !Number.isFinite(value)) continue;
     parts.push(`${label} ${formatSignedPercent(value)}`);
   }
@@ -181,13 +187,15 @@ export function formatColophonVisits(glance: VisitGlance): string {
 
 export function formatColophonVisitsTitle(glance: VisitGlance): string {
   const parts = [formatUniqueVisitorCount(glance.uniqueVisitors)];
-  const periods: Array<[keyof typeof PERIOD_WORDS, number | null]> = [
-    ['DoD', glance.uniqueVisitorsDoD],
-    ['WoW', glance.uniqueVisitorsWoW],
-    ['MoM', glance.uniqueVisitorsMoM],
-    ['YoY', glance.uniqueVisitorsYoY],
-  ];
-  for (const [label, value] of periods) {
+  const periodValues: Record<keyof typeof PERIOD_WORDS, number | null> = {
+    DoD: glance.uniqueVisitorsDoD,
+    WoW: glance.uniqueVisitorsWoW,
+    MoM: glance.uniqueVisitorsMoM,
+    YoY: glance.uniqueVisitorsYoY,
+  };
+  for (let i = 0; i < PERIOD_KEYS.length; i++) {
+    const label = PERIOD_KEYS[i];
+    const value = periodValues[label];
     if (value === null || !Number.isFinite(value)) continue;
     parts.push(`${label} ${PERIOD_WORDS[label]} ${formatSignedPercent(value)}`);
   }

@@ -223,10 +223,12 @@ describe('parseVisitGlance', () => {
 describe('formatFirstSeen', () => {
   it('returns empty string for invalid dates', () => {
     expect(formatFirstSeen('invalid-date')).toBe('');
+    expect(formatFirstSeen('')).toBe('');
   });
 
   it('formats valid ISO date strings in Stockholm time', () => {
     expect(formatFirstSeen('2026-05-03T18:34:08.880Z')).toContain('2026');
+    expect(formatFirstSeen('2025-01-01T00:00:00.000Z')).toMatch(/2025/);
   });
 });
 
