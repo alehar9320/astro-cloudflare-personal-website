@@ -108,7 +108,11 @@ export const GET: APIRoute = async () => {
       });
 
       if (!response.ok) {
-        console.error({ event: 'visits_query_failed' });
+        console.error({
+          event: 'visits_query_failed',
+          status: response.status,
+          statusText: response.statusText,
+        });
         return empty204();
       }
 

@@ -73,11 +73,17 @@ describe('visits API', () => {
     const bindings = workerEnv as VisitEnv;
     bindings.POSTHOG_PERSONAL_API_KEY = 'test-key';
     const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
-    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(new Response(null, { status: 500 }));
+    vi.spyOn(globalThis, 'fetch').mockResolvedValueOnce(
+      new Response(null, { status: 500, statusText: 'Internal Server Error' })
+    );
 
     const response = await GET({} as Parameters<typeof GET>[0]);
     expect(response.status).toBe(204);
-    expect(errorSpy).toHaveBeenCalledWith({ event: 'visits_query_failed' });
+    expect(errorSpy).toHaveBeenCalledWith({
+      event: 'visits_query_failed',
+      status: 500,
+      statusText: 'Internal Server Error',
+    });
   });
 
   it('handles json parse error on response payload', async () => {
