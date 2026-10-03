@@ -1,4 +1,10 @@
-<div class="pill"><slot /></div>
+---
+import { getEntry } from 'astro:content';
+const flagsEntry = await getEntry('flags', 'config');
+const isShineEnabled = flagsEntry?.data.enable_pill_shine_v1 ?? false;
+---
+
+<div class:list={['pill', { shine: isShineEnabled }]}><slot /></div>
 
 <style>
   .pill {
@@ -23,5 +29,17 @@
     background-size: 250% 100%;
     background-position: 0% 50%;
     box-shadow: var(--shadow-sm);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pill {
+      transition:
+        transform 0.2s ease,
+        background-position 0.4s ease;
+    }
+    .pill.shine:hover {
+      transform: translateY(-2px);
+      background-position: 100% 50%;
+    }
   }
 </style>

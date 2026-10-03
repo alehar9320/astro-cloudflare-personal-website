@@ -6,3 +6,9 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - Pill Shine | Signal: Perceived Quality | Lean Implementation: Added subtle hover lift and gradient sheen shift to Pill component gated by enable_pill_shine_v1 feature flag.
+- Insight: Micro-interactions on badge/pill elements improve visual feedback and visual texture without causing layout shifts.
+- User Target: Delight & Perceived Quality
+- Abort Triggers: None
+- User Reaction: Pending synthetic feedback.
