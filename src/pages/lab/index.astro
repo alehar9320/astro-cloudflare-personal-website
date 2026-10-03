@@ -1,0 +1,106 @@
+---
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Interactive Visual Laboratory | Alexander Härenstam"
+  description="Experimental canvas and WebGL interactive visual experiments, lightfields, and math-driven animations."
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <header class="hero">
+      <Hero
+        title="Interactive Visual Laboratory"
+        tagline="Experimental HTML5 canvas, lightfield refractions, and mathematical animations."
+        align="start"
+      />
+    </header>
+
+    <section class="lab-grid" aria-label="Laboratory Experiments">
+      <article class="lab-card">
+        <div class="lab-card-body">
+          <p class="lab-eyebrow">HTML5 Canvas · Math Simulation</p>
+          <h2 class="lab-title">Northern Lights Aurora Lightfield</h2>
+          <p class="lab-desc">
+            Multi-harmonic sine wave superposition coupled with cubic smoothstep pointer refraction
+            and adaptive spatial step sampling.
+          </p>
+          <a class="lab-link" href="/lab/aurora/">Launch Experiment →</a>
+        </div>
+      </article>
+    </section>
+  </main>
+</BaseLayout>
+
+<style>
+  .lab-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+    gap: 1.5rem;
+    padding-bottom: 3rem;
+  }
+
+  .lab-card {
+    position: relative;
+    padding: 1.5rem;
+    border-radius: 1rem;
+    background: hsla(var(--gray-999-basis), 0.5);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--gray-800);
+    transition:
+      border-color var(--theme-transition),
+      transform var(--theme-transition);
+  }
+
+  .lab-card:hover {
+    border-color: var(--accent-regular);
+    transform: translateY(-2px);
+  }
+
+  .lab-card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .lab-eyebrow {
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--accent-light);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  .lab-title {
+    font-size: var(--text-xl);
+    font-weight: 600;
+    color: var(--gray-0);
+    margin: 0;
+  }
+
+  .lab-desc {
+    font-size: var(--text-md);
+    color: var(--gray-200);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .lab-link {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    margin-top: 0.5rem;
+    font-size: var(--text-md);
+    font-weight: 600;
+    color: var(--accent-regular);
+    text-decoration: none;
+  }
+
+  .lab-link:hover,
+  .lab-link:focus-visible {
+    text-decoration: underline;
+    color: var(--accent-light);
+  }
+</style>
