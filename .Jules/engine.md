@@ -29,3 +29,10 @@
 - **Edge Memory & Performance:** Refactored `splitReleaseBody` in `src/utils/github-releases.ts` and `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use pointer-based line scanning (`indexOf('\n', startPos)`), eliminating dynamic `body.split('\n')` string array allocations during SSR and API execution.
 - **Sentence Counting Optimization:** Refactored `sentenceCount` in `src/utils/release-summary.ts` from regex lookbehind `.split(/(?<=[.!?])\s+/)` into a single-pass character scanning loop. Added whitespace-aware sentence boundary detection to safely ignore dots inside version strings (`2026.08.15.1714`).
 - **Verification:** Added Vitest unit test cases across `release-summary.test.ts`, `visitor-changelog.test.ts`, and `github-releases.test.ts` covering version numbers, CRLF line endings, multiple trailing punctuation, and whitespace handling.
+
+## 2025-06-18 - Module-Level Intl Hoisting & O(1) Column Mapping for Edge Analytics
+
+- **Module-Level Intl Hoisting:** Hoisted `Intl.DateTimeFormat` (`stockholmDateFormatter`) to module scope in `src/utils/visit-stats.ts`, eliminating ICU locale initialization overhead and GC allocations on every `formatFirstSeen` invocation during SSR and visits API calls.
+- **O(1) Column Mapping:** Refactored `parseVisitGlance` to construct a `Map<string, number>` (`columnIndexMap`) when parsing column-ordered array rows, replacing repeated linear `Array.prototype.indexOf` searches per row field with $O(1)$ map lookups.
+- **Allocation Reduction:** Updated `formatColophonVisits` and `formatColophonVisitsTitle` to avoid dynamic 4-element tuple array allocations on every call.
+- **Verification:** Added Vitest unit tests in `src/utils/visit-stats.test.ts` covering out-of-order column array parsing, multi-period formatting, and repeated date formatting calls with the hoisted Intl formatter.

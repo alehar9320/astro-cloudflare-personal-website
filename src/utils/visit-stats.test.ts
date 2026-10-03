@@ -102,6 +102,27 @@ describe('parseVisitGlance', () => {
     });
   });
 
+  it('reads an arbitrary column-ordered array row using O(1) map indexing', () => {
+    const glance = parseVisitGlance({
+      columns: [
+        'unique_visitors_7d',
+        'pageviews_7d',
+        'first_seen',
+        'unique_visitors',
+        'pageviews',
+        'unique_visitors_30d',
+        'unique_visitors_30d_prev',
+      ],
+      results: [[8, 20, '2026-08-14T07:03:00.000Z', 12, 94, 50, 25]],
+    });
+    expect(glance?.pageviews).toBe(94);
+    expect(glance?.uniqueVisitors).toBe(12);
+    expect(glance?.firstSeen).toBe('2026-08-14T07:03:00.000Z');
+    expect(glance?.pageviews7d).toBe(20);
+    expect(glance?.uniqueVisitors7d).toBe(8);
+    expect(glance?.uniqueVisitorsMoM).toBe(100);
+  });
+
   it('parses a zero row so the API can fail-open', () => {
     expect(
       parseVisitGlance({
@@ -228,6 +249,13 @@ describe('formatFirstSeen', () => {
   it('formats valid ISO date strings in Stockholm time', () => {
     expect(formatFirstSeen('2026-05-03T18:34:08.880Z')).toContain('2026');
   });
+
+  it('formats consistently across multiple sequential invocations', () => {
+    const res1 = formatFirstSeen('2026-01-15T12:00:00.000Z');
+    const res2 = formatFirstSeen('2026-01-15T12:00:00.000Z');
+    expect(res1).toBe(res2);
+    expect(res1).toMatch(/15 Jan 2026/);
+  });
 });
 
 describe('formatVisitGlance', () => {
@@ -272,6 +300,16 @@ describe('formatColophonVisits', () => {
   it('leads with unique visitors and does not repeat up to on every token', () => {
     expect(formatColophonVisits(glance)).toBe(
       'up to 12 unique visitors · DoD +25% · WoW -10% · YoY 0%'
+    );
+  });
+
+  it('formats all 4 period changes when present', () => {
+    const fullGlance = {
+      ...glance,
+      uniqueVisitorsMoM: 15,
+    };
+    expect(formatColophonVisits(fullGlance)).toBe(
+      'up to 12 unique visitors · DoD +25% · WoW -10% · MoM +15% · YoY 0%'
     );
   });
 
