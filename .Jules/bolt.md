@@ -41,3 +41,7 @@ Action: Updated `collectItems` in `src/utils/whats-new-glance.ts` to iterate ove
 2026-09-08 - Zero-Allocation Reverse Array Scan for Chat Follow-up Prompts
 Learning: Dynamic shallow array copying and array reversal (`[...messages].reverse().find(...)`) on every UI update creates unnecessary temporary heap allocations and garbage collection overhead in client-side scripts. Replacing array copy/reverse with a reverse indexed `for` loop eliminates dynamic array allocations completely and stops scanning as soon as the first matching element is found.
 Action: Refactored `showFollowUps()` in `src/components/Chat.astro` to use an indexed reverse `for` loop.
+
+2026-09-09 - Module-Level Intl.DateTimeFormat Hoisting & Fast DOM Insertion
+Learning: Dynamically instantiating `new Intl.DateTimeFormat(...)` on every date formatting call triggers repeated ICU locale initialization and heap allocations on edge runtimes and client UI renders. Hoisting `Intl.DateTimeFormat` instances to module scope eliminates this overhead. In addition, using single-node `appendChild` over `append` bypasses multi-argument type checks and rest-parameter parsing in DOM operations.
+Action: Hoisted `FIRST_SEEN_FORMATTER` to module-level scope in `src/utils/visit-stats.ts` and updated `Footer.astro` to use `appendChild(panel)`.
