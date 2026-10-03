@@ -21,3 +21,9 @@
 - [Insight 1: Tighter focus ring outline-offsets (2px) prevent focus ring overflow clipping on compact overlay toggles.]
 - [Insight 2: Gating active press scale transitions behind prefers-reduced-motion media queries respects accessibility preferences while preserving tactile visual feedback.]
 - [Delta: 17 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-16 - Pill Micro-Interaction Tactile Feedback | Signal: Technical/UX | Lean Implementation: Flagged CSS Transform :active
+
+- [Insight 1: Adding active press transform feedback (`transform: translateY(1px) scale(0.98)`) to Pill tag elements gives instant tactile physical feedback on touch and click devices.]
+- [Insight 2: Isolating component enhancements behind static Zod-validated content collection feature flags (`enable_pill_tactile_v1`) allows safe feature rollout without breaking existing layouts.]
+- [Delta: 18 lines. Guardrails: All passed autonomously.]
