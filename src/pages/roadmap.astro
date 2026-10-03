@@ -124,6 +124,11 @@ const schema = {
     border-radius: 0.25rem;
   }
 
+  .proof-card:hover .proof-affordance,
+  .proof-card:focus-visible .proof-affordance {
+    color: var(--gray-0);
+  }
+
   .proof-eyebrow {
     margin: 0;
     font-size: var(--text-sm);
@@ -156,6 +161,12 @@ const schema = {
     color: var(--gray-300);
     text-decoration: underline;
     text-underline-offset: 0.2em;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    min-width: 44px;
+    box-sizing: border-box;
+    transition: color var(--theme-transition);
   }
 
   @media (min-width: 50em) {

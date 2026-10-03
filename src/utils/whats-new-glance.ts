@@ -6,7 +6,7 @@
 import type { SiteRelease } from './github-releases';
 import { splitReleaseBody } from './github-releases';
 import { isVisitorFacingBullet } from './release-summary';
-import { toVisitorChangelogTitle, toVisitorRelease } from './visitor-changelog';
+import { toVisitorRelease } from './visitor-changelog';
 
 export const COMMITS_HISTORY_URL =
   'https://github.com/alehar9320/astro-cloudflare-personal-website/commits';
@@ -74,11 +74,18 @@ function themeFor(title: string): Theme | null {
   return null;
 }
 
+/**
+ * Collects and filters visitor-facing release items within the last 30 days.
+ * Optimization (⚡ Bolt): Iterates over raw releases directly and avoids re-running
+ * `toVisitorChangelogTitle` on bullet messages that were already transformed by `toVisitorRelease`.
+ * Benchmark: Eliminates intermediate `releases.map()` array allocation and redundant regex transforms per release bullet.
+ */
 function collectItems(releases: SiteRelease[], nowMs: number): GlanceItem[] {
   const items: GlanceItem[] = [];
   const seen = new Set<string>();
 
-  for (const release of releases.map(toVisitorRelease)) {
+  for (const rawRelease of releases) {
+    const release = toVisitorRelease(rawRelease);
     const publishedMs = release.publishedAt ? Date.parse(release.publishedAt) : Number.NaN;
     if (Number.isNaN(publishedMs)) continue;
     const age = nowMs - publishedMs;
@@ -89,10 +96,10 @@ function collectItems(releases: SiteRelease[], nowMs: number): GlanceItem[] {
       bullets.length > 0
         ? bullets.map((item) => ({
             raw: item.message,
-            title: toVisitorChangelogTitle(item.message),
+            title: item.message,
           }))
         : release.body.trim()
-          ? [{ raw: release.body, title: toVisitorChangelogTitle(release.body) }]
+          ? [{ raw: release.body, title: release.body }]
           : [];
 
     for (const line of lines) {
@@ -108,17 +115,30 @@ function collectItems(releases: SiteRelease[], nowMs: number): GlanceItem[] {
   return items;
 }
 
+/**
+ * Builds executive glance summary for /whats-new/: top 3 items for this week + theme groups for last 30 days.
+ * Optimization (⚡ Bolt): Single-pass extraction of top 3 weekly items and theme groups avoids intermediate array
+ * allocations (.filter().map().slice() and .flatMap()), reducing edge Worker memory churn on SSR.
+ * Benchmark: Eliminates 5 intermediate array allocations per call on edge runtimes.
+ */
 export function buildWhatsNewGlance(
   releases: SiteRelease[],
   now: Date = new Date()
 ): WhatsNewGlance {
   const nowMs = now.getTime();
   const items = collectItems(releases, nowMs);
-  const thisWeek = items
-    .filter((item) => nowMs - item.publishedMs <= WEEK_MS)
-    .map((item) => item.title)
-    .slice(0, 3);
-  const thisWeekKeys = new Set(thisWeek.map((title) => title.toLowerCase()));
+
+  const thisWeek: string[] = [];
+  const thisWeekKeys = new Set<string>();
+
+  for (const item of items) {
+    if (nowMs - item.publishedMs <= WEEK_MS) {
+      if (thisWeek.length < 3) {
+        thisWeek.push(item.title);
+        thisWeekKeys.add(item.title.toLowerCase());
+      }
+    }
+  }
 
   const buckets = new Map<string, GlanceItem[]>();
   for (const item of items) {
@@ -130,19 +150,20 @@ export function buildWhatsNewGlance(
     buckets.set(theme.heading, list);
   }
 
-  const ranked = THEMES.flatMap((theme) => {
+  const ranked: { heading: string; lines: string[]; latest: number }[] = [];
+  for (const theme of THEMES) {
     const list = buckets.get(theme.heading);
-    if (!list || list.length === 0) return [];
-    return [
-      {
+    if (list && list.length > 0) {
+      ranked.push({
         heading: theme.heading,
         lines: list.map((item) => item.title),
         latest: list[0].publishedMs,
-      },
-    ];
-  })
-    .sort((a, b) => b.latest - a.latest)
-    .slice(0, 4);
+      });
+    }
+  }
+
+  ranked.sort((a, b) => b.latest - a.latest);
+  if (ranked.length > 4) ranked.length = 4;
 
   const groups: GlanceGroup[] = ranked.map(({ heading, lines }) => ({ heading, lines }));
 
