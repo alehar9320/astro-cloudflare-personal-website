@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - CTA Icon Shift | Signal: Competitive | Lean Implementation: Added subtle 3px translateX on hover/focus to CTA icons in CallToAction.astro.
+
+- Insight: Micro-interaction directional shifts on Call-To-Action buttons provide dynamic visual affordance and enhance perceived responsiveness.
+- User Target: Delight & Confidence
+- Abort Triggers: None (verified via verification pipeline and build checks).
+- User Reaction: Pending synthetic feedback.
