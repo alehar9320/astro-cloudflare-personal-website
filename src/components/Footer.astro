@@ -110,7 +110,7 @@ const currentYear = new Date().getFullYear();
         last7d.textContent = '';
         first.textContent = '';
         visitStats.hidden = false;
-        document.body.append(panel);
+        document.body.appendChild(panel);
 
         const place = () => {
           const box = trigger.getBoundingClientRect();
@@ -186,6 +186,9 @@ const currentYear = new Date().getFullYear();
   }
 
   footer a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     color: var(--gray-400);
     text-decoration: 1px solid underline transparent;
     text-underline-offset: 0.25em;

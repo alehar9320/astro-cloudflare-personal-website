@@ -21,3 +21,9 @@
 - [Insight 1: Tighter focus ring outline-offsets (2px) prevent focus ring overflow clipping on compact overlay toggles.]
 - [Insight 2: Gating active press scale transitions behind prefers-reduced-motion media queries respects accessibility preferences while preserving tactile visual feedback.]
 - [Delta: 17 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-16 - Footer Ergonomics & DOM Append | Signal: Technical/Accessibility | Lean Implementation: Touch Min-Height + Single-Node Append
+
+- [Insight 1: Setting `min-height: 44px` with `inline-flex` alignment on footer links ensures WCAG 2.1 AA touch target ergonomics without breaking inline layout flow.]
+- [Insight 2: Replacing multi-argument `.append()` with `.appendChild()` on client-side script nodes resolves Wrangler Cloudflare Worker type definition collisions.]
+- [Delta: 4 lines. Guardrails: All passed autonomously.]
