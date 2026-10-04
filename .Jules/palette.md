@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-27 - Mobile Navigation Drawer Touch Target Ergonomics & Feedback
+
+**Learning:** Navigation links (`.link`) and social icon links (`.social`) in mobile drawer menus (`src/components/Nav.astro`) often render as compact inline elements on touch viewports, failing WCAG 2.1 AA 44x44px minimum touch target guidelines and risking mis-taps. Declaring `display: inline-flex; align-items: center; min-height: 44px; padding: 0.5rem 1rem; border-radius: 0.5rem;` on navigation links and `min-width: 44px; min-height: 44px; align-items: center; justify-content: center;` on icon links satisfies WCAG 2.1 AA standards, while applying `background-color: var(--accent-subtle-overlay)` on `:hover` and `:focus-visible` provides clear visual interaction feedback.
+
+**Action:** Updated `.link` and `.social` in `src/components/Nav.astro` to enforce 44x44px minimum touch target dimensions and hover/focus-visible background overlay transitions.
+
 ## 2026-05-26 - Page Link Touch Target Ergonomics
 
 **Learning:** Section list links (such as `.earlier a` in `work.astro`) and standalone page action links (such as `.history-link` in `whats-new.astro` and `.hire-cta a`) often render as compact inline links on mobile viewports, failing WCAG 2.1 AA 44x44px minimum touch target requirements and risking mis-taps. Setting `display: inline-flex; align-items: center; min-height: 44px;` expands the interactive tap area without disrupting surrounding line rhythm.
