@@ -87,10 +87,10 @@ describe('parseVisitGlance', () => {
     expect(glance?.uniqueVisitorsYoY).toBeNull();
   });
 
-  it('reads a column-ordered array row', () => {
+  it('reads a column-ordered array row using O(1) column map indexing', () => {
     const glance = parseVisitGlance({
-      columns: ['pageviews', 'unique_visitors', 'first_seen', 'pageviews_7d', 'unique_visitors_7d'],
-      results: [[94, 12, '2026-08-14T07:03:00.000Z', 20, 8]],
+      columns: ['unique_visitors', 'pageviews', 'first_seen', 'unique_visitors_7d', 'pageviews_7d'],
+      results: [[12, 94, '2026-08-14T07:03:00.000Z', 8, 20]],
     });
     expect(glance).toEqual({
       pageviews: 94,

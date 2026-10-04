@@ -61,10 +61,18 @@ const THEMES: Theme[] = [
 export function isKeptVisitorLine(raw: string, visitorTitle: string): boolean {
   const title = visitorTitle.trim();
   if (!title) return false;
-  if (SHA_OR_VERSION_ONLY.test(title) || SHA_OR_VERSION_ONLY.test(raw.trim())) return false;
-  if (DROP_PATTERN.test(raw) || DROP_PATTERN.test(title)) return false;
-  if (isVisitorFacingBullet(title) || isVisitorFacingBullet(raw.trim())) return true;
-  return VISIBLE_SURFACE.test(title) || VISIBLE_SURFACE.test(raw);
+  const rawTrimmed = raw === visitorTitle ? title : raw.trim();
+
+  if (SHA_OR_VERSION_ONLY.test(title)) return false;
+  if (raw !== visitorTitle && SHA_OR_VERSION_ONLY.test(rawTrimmed)) return false;
+
+  if (DROP_PATTERN.test(title)) return false;
+  if (raw !== visitorTitle && DROP_PATTERN.test(rawTrimmed)) return false;
+
+  if (isVisitorFacingBullet(title)) return true;
+  if (raw !== visitorTitle && isVisitorFacingBullet(rawTrimmed)) return true;
+
+  return VISIBLE_SURFACE.test(title) || (raw !== visitorTitle && VISIBLE_SURFACE.test(rawTrimmed));
 }
 
 function themeFor(title: string): Theme | null {
@@ -76,9 +84,8 @@ function themeFor(title: string): Theme | null {
 
 /**
  * Collects and filters visitor-facing release items within the last 30 days.
- * Optimization (⚡ Bolt): Iterates over raw releases directly and avoids re-running
- * `toVisitorChangelogTitle` on bullet messages that were already transformed by `toVisitorRelease`.
- * Benchmark: Eliminates intermediate `releases.map()` array allocation and redundant regex transforms per release bullet.
+ * Optimization: Direct iteration over `splitReleaseBody(release.body)` bullets eliminates intermediate
+ * `{ raw, title }` object allocations and per-release array mappings on Cloudflare Workers edge runtimes.
  */
 function collectItems(releases: SiteRelease[], nowMs: number): GlanceItem[] {
   const items: GlanceItem[] = [];
@@ -92,22 +99,24 @@ function collectItems(releases: SiteRelease[], nowMs: number): GlanceItem[] {
     if (age < 0 || age > MONTH_MS) continue;
 
     const bullets = splitReleaseBody(release.body);
-    const lines =
-      bullets.length > 0
-        ? bullets.map((item) => ({
-            raw: item.message,
-            title: item.message,
-          }))
-        : release.body.trim()
-          ? [{ raw: release.body, title: release.body }]
-          : [];
-
-    for (const line of lines) {
-      if (!isKeptVisitorLine(line.raw, line.title)) continue;
-      const key = line.title.toLowerCase();
-      if (seen.has(key)) continue;
-      seen.add(key);
-      items.push({ publishedMs, title: line.title });
+    if (bullets.length > 0) {
+      for (const item of bullets) {
+        const msg = item.message;
+        if (!isKeptVisitorLine(msg, msg)) continue;
+        const key = msg.toLowerCase();
+        if (seen.has(key)) continue;
+        seen.add(key);
+        items.push({ publishedMs, title: msg });
+      }
+    } else {
+      const trimmedBody = release.body.trim();
+      if (trimmedBody && isKeptVisitorLine(trimmedBody, trimmedBody)) {
+        const key = trimmedBody.toLowerCase();
+        if (!seen.has(key)) {
+          seen.add(key);
+          items.push({ publishedMs, title: trimmedBody });
+        }
+      }
     }
   }
 
@@ -117,9 +126,8 @@ function collectItems(releases: SiteRelease[], nowMs: number): GlanceItem[] {
 
 /**
  * Builds executive glance summary for /whats-new/: top 3 items for this week + theme groups for last 30 days.
- * Optimization (⚡ Bolt): Single-pass extraction of top 3 weekly items and theme groups avoids intermediate array
- * allocations (.filter().map().slice() and .flatMap()), reducing edge Worker memory churn on SSR.
- * Benchmark: Eliminates 5 intermediate array allocations per call on edge runtimes.
+ * Optimization: Reuses lowercased key calculations and performs direct Map bucket mutations to eliminate
+ * intermediate string lowercasing operations and dynamic empty array allocations during SSR execution.
  */
 export function buildWhatsNewGlance(
   releases: SiteRelease[],
@@ -142,12 +150,16 @@ export function buildWhatsNewGlance(
 
   const buckets = new Map<string, GlanceItem[]>();
   for (const item of items) {
-    if (thisWeekKeys.has(item.title.toLowerCase())) continue;
+    const key = item.title.toLowerCase();
+    if (thisWeekKeys.has(key)) continue;
     const theme = themeFor(item.title);
     if (!theme) continue;
-    const list = buckets.get(theme.heading) ?? [];
+    let list = buckets.get(theme.heading);
+    if (!list) {
+      list = [];
+      buckets.set(theme.heading, list);
+    }
     if (list.length < 2) list.push(item);
-    buckets.set(theme.heading, list);
   }
 
   const ranked: { heading: string; lines: string[]; latest: number }[] = [];

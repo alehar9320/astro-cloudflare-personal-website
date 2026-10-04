@@ -190,4 +190,23 @@ describe('whats-new glance', () => {
     expect(glance.thisWeek).toEqual([]);
     expect(glance.groups).toEqual([]);
   });
+
+  it('handles isKeptVisitorLine with identical raw and visitorTitle strings efficiently', () => {
+    const title = 'open the visit glance on tap at 375';
+    expect(isKeptVisitorLine(title, title)).toBe(true);
+    expect(isKeptVisitorLine('No documented changes.', 'No documented changes.')).toBe(false);
+  });
+
+  it('parses single-line release bodies without bullet lists', () => {
+    const glance = buildWhatsNewGlance(
+      [
+        release({
+          body: 'dock chat composer to the bottom edge and use the stage',
+          publishedAt: '2026-08-19T22:32:23Z',
+        }),
+      ],
+      now
+    );
+    expect(glance.thisWeek).toContain('dock chat composer to the bottom edge and use the stage');
+  });
 });

@@ -29,3 +29,10 @@
 - **Edge Memory & Performance:** Refactored `splitReleaseBody` in `src/utils/github-releases.ts` and `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use pointer-based line scanning (`indexOf('\n', startPos)`), eliminating dynamic `body.split('\n')` string array allocations during SSR and API execution.
 - **Sentence Counting Optimization:** Refactored `sentenceCount` in `src/utils/release-summary.ts` from regex lookbehind `.split(/(?<=[.!?])\s+/)` into a single-pass character scanning loop. Added whitespace-aware sentence boundary detection to safely ignore dots inside version strings (`2026.08.15.1714`).
 - **Verification:** Added Vitest unit test cases across `release-summary.test.ts`, `visitor-changelog.test.ts`, and `github-releases.test.ts` covering version numbers, CRLF line endings, multiple trailing punctuation, and whitespace handling.
+
+## 2025-06-18 - Module-Level Formatter Hoisting, O(1) Column Mapping & Direct Bullet Iteration
+
+- **Edge Memory & Formatting Optimization:** Hoisted `Intl.DateTimeFormat` (`FIRST_SEEN_FORMATTER`) to module-level scope in `src/utils/visit-stats.ts`, eliminating repeated ICU locale re-initialization and GC allocations per request on Cloudflare Workers edge runtimes.
+- **Dataset Column Lookup Optimization:** Refactored `parseVisitGlance` in `src/utils/visit-stats.ts` to pre-construct an indexed `columnMap: Map<string, number>`, converting $O(N)$ linear `Array.prototype.indexOf` searches per field into $O(1)$ Map lookups.
+- **Allocation & Regex Reduction:** Refactored `collectItems` and `isKeptVisitorLine` in `src/utils/whats-new-glance.ts` to iterate directly over release bullets without intermediate `{ raw, title }` object allocations or duplicate regex evaluations when `raw === visitorTitle`.
+- **Verification:** Updated and expanded Vitest test suites in `src/__tests__/whats-new-glance.test.ts` and `src/utils/visit-stats.test.ts`.
