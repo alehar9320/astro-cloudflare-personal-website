@@ -1,0 +1,31 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_focus_areas) return Astro.redirect('/404/');
+
+const items = [
+  'Developer Experience & Design Systems',
+  'Industrial AI & Automation',
+  'Product Strategy & Metrics',
+];
+---
+
+<BaseLayout title="Focus areas" description="Strategic focus areas." robots="noindex">
+  <main class="wrapper stack gap-8" style="margin-top: 4rem;">
+    <Hero title="Strategic focus areas" align="start">
+      <p style="color: var(--gray-200);">Product Manager, DevEx at IFS.</p>
+    </Hero>
+    <ul>{items.map((i) => <li style="color: var(--gray-200); margin-bottom: 0.5rem;">{i}</li>)}</ul>
+    <CallToAction
+      href="https://www.linkedin.com/in/alehar/"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      Get in touch
+    </CallToAction>
+  </main>
+</BaseLayout>
