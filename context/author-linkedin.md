@@ -364,7 +364,7 @@ Show all 28 courses
 Honors & awards
 Google Developer Challenge Scholarship: Front-End Web Developer track
 Issued by Udacity · Nov 2017
-Scholarship from Udacity, sponsored by Google. Focused on Front-End web development. Granted access to a Udacity course which seeks to give students the knowledge of how to turn digital design mockups into static webpages and how to build a responsive portfolio site to showcase your work.
+Scholarship from Udacity, sponsored by Google. Focused on Front-End web development. Granted access to a Udacity course which seeks to give students the knowledge of how to turn digital design mockups into static webpages and how to build a responsive portfolio site to showcase their work.
 Participant East Sweden Hack 2016
 Issued by East Sweden Hack · Sep 2016
 As the team leader and initiator, me and my chosen team applied for and participated in East Sweden Hack 2016 as one out of twenty teams. Unfortunately we did not win, but it was still a great experience of going from ideation to an actual product, involving both hardware and software.
