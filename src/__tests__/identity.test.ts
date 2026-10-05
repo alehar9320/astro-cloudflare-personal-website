@@ -2807,4 +2807,14 @@ describe('identity copy', () => {
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
   });
+
+  it('exposes window.posthog after idle init so hire Contact card can capture (#hire-ph)', () => {
+    const ph = readFileSync('src/components/PostHog.astro', 'utf8');
+    expect(ph).toContain("await import('posthog-js')");
+    expect(ph).toContain('posthog.init(');
+    expect(ph).toMatch(/window\.posthog\s*=\s*posthog/);
+    expect(ph).toContain('PUBLIC_POSTHOG_KEY');
+    expect(ph).toContain('requestIdleCallback');
+    expect(ph).not.toMatch(/^import\s+.*from\s+['"]posthog-js['"]/m);
+  });
 });
