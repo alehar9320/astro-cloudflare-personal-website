@@ -10,6 +10,19 @@ Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hi
 
 # Kinetic Journal ⚡
 
+## 2026-10-05 - Interactive Northern Lights Micro-Interaction for Pill Tags
+
+- **Signal:** Project category pills lacked dynamic visual feedback on hover.
+- **Action:**
+  - Enhanced `.pill` in `src/components/Pill.astro` with hardware-accelerated micro-interaction hover state.
+  - Implemented smooth linear gradient position shift (`background-position: 100% 50%`) and subtle elevation (`translateY(-1px)`).
+  - Added ambient cyan glow (`0 4px 12px hsla(210, 100%, 45%, 0.25)`) aligned with the "Northern Lights" theme.
+  - Included `@media (prefers-reduced-motion: reduce)` override for WCAG 2.1 AA accessibility compliance.
+- **Tokens Added:**
+  - Ambient Glow: `hsla(210, 100%, 45%, 0.25)`
+  - Affordance: `translateY(-1px)`
+  - Motion Override: `prefers-reduced-motion: reduce`
+
 ## 2026-08-29 - CTA glass abort | Signal: closed #772/#667 | Lean Implementation: HARD ABORT CallToAction glassmorphism and micro-states
 
 ## 2025-05-15 - Interactive Glassmorphism for Skills Section
