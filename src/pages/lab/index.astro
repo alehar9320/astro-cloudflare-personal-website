@@ -1,0 +1,380 @@
+---
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Aurora Refraction Lab | Alexander Härenstam"
+  description="Experimental Northern Lights canvas animation exploring dynamic spatial step sampling and fluid light refraction physics."
+  robots="noindex, nofollow"
+>
+  <div class="stack gap-20 wrapper">
+    <Hero
+      title="Aurora Refraction Lab"
+      tagline="Interactive Northern Lights wave refraction experiment engineered with pure TypeScript physics."
+      align="center"
+    />
+
+    <main id="main-content" class="lab-container">
+      <div class="glass-card">
+        <header class="lab-header">
+          <div class="status-badge">
+            <span class="status-dot"></span>
+            <span class="status-text">60 FPS Dynamic Engine</span>
+          </div>
+          <div class="lab-controls">
+            <button
+              id="pause-toggle-btn"
+              type="button"
+              class="control-btn"
+              aria-label="Pause or play aurora animation"
+            >
+              <span id="pause-btn-text">Pause Engine</span>
+            </button>
+          </div>
+        </header>
+
+        <div class="canvas-viewport">
+          <canvas id="aurora-refraction-canvas" data-initialized="false"></canvas>
+          <div id="motion-notice" class="motion-notice sr-only" role="status"></div>
+        </div>
+
+        <footer class="lab-footer">
+          <p class="instruction">
+            <kbd>Pointer</kbd> Refract light waves &nbsp;|&nbsp;
+            <kbd>Space</kbd> or <kbd>P</kbd> Pause/Resume animation
+          </p>
+        </footer>
+      </div>
+    </main>
+  </div>
+</BaseLayout>
+
+<script>
+  import {
+    calculatePointerInfluence,
+    calculateWaveY,
+    getSpatialStep,
+    refractColor,
+    rgbaString,
+  } from '../../utils/aurora-math';
+
+  function initAuroraLab() {
+    const canvas = document.getElementById('aurora-refraction-canvas') as HTMLCanvasElement | null;
+    if (!canvas) return;
+
+    if (canvas.dataset.initialized === 'true') return;
+    canvas.dataset.initialized = 'true';
+
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    const pauseBtn = document.getElementById('pause-toggle-btn');
+    const pauseBtnText = document.getElementById('pause-btn-text');
+    const motionNotice = document.getElementById('motion-notice');
+
+    let animationFrameId: number | null = null;
+    let isPaused = false;
+    let time = 0;
+    let pointerX = -1000;
+    let pointerY = -1000;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      isPaused = true;
+      if (pauseBtnText) pauseBtnText.textContent = 'Resume Engine';
+      if (motionNotice) {
+        motionNotice.textContent = 'Animation paused automatically for reduced motion preference.';
+      }
+    }
+
+    const resize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = Math.floor(rect.width * dpr);
+      canvas.height = Math.floor(rect.height * dpr);
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      pointerX = (e.clientX - rect.left) * dpr;
+      pointerY = (e.clientY - rect.top) * dpr;
+    };
+
+    const handlePointerLeave = () => {
+      pointerX = -1000;
+      pointerY = -1000;
+    };
+
+    const togglePause = () => {
+      isPaused = !isPaused;
+      if (pauseBtnText) {
+        pauseBtnText.textContent = isPaused ? 'Resume Engine' : 'Pause Engine';
+      }
+      if (!isPaused && !animationFrameId) {
+        render();
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === ' ' || e.key.toLowerCase() === 'p') {
+        if (document.activeElement?.tagName !== 'BUTTON') {
+          e.preventDefault();
+          togglePause();
+        }
+      }
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        if (animationFrameId !== null) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+        }
+      } else if (!isPaused && !animationFrameId) {
+        render();
+      }
+    };
+
+    const render = () => {
+      if (!ctx || !canvas) return;
+
+      const w = canvas.width;
+      const h = canvas.height;
+      if (w === 0 || h === 0) return;
+
+      ctx.clearRect(0, 0, w, h);
+
+      // Deep space marine gradient background
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, h);
+      bgGrad.addColorStop(0, 'rgba(5, 15, 30, 0.95)');
+      bgGrad.addColorStop(1, 'rgba(10, 25, 45, 0.98)');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, w, h);
+
+      const spatialStep = getSpatialStep(w / (window.devicePixelRatio || 1));
+      const waveCount = 3;
+      const baseMidY = h * 0.5;
+
+      if (!isPaused) {
+        time += 0.015;
+      }
+
+      for (let waveIdx = 0; waveIdx < waveCount; waveIdx++) {
+        const amplitude = h * (0.12 + waveIdx * 0.04);
+        const frequency = (0.002 + waveIdx * 0.0008) / (window.devicePixelRatio || 1);
+        const phase = waveIdx * 1.8;
+
+        ctx.beginPath();
+        let first = true;
+
+        for (let x = 0; x <= w + spatialStep; x += spatialStep) {
+          const rawWaveY = baseMidY + calculateWaveY(x, time, frequency, amplitude, phase);
+          const pointerInfluence = calculatePointerInfluence(
+            pointerX,
+            pointerY,
+            x,
+            rawWaveY,
+            140 * (window.devicePixelRatio || 1)
+          );
+
+          const distortedY = rawWaveY - pointerInfluence * 45;
+
+          if (first) {
+            ctx.moveTo(x, distortedY);
+            first = false;
+          } else {
+            ctx.lineTo(x, distortedY);
+          }
+        }
+
+        ctx.lineTo(w, h);
+        ctx.lineTo(0, h);
+        ctx.closePath();
+
+        const t = 0.3 + waveIdx * 0.35;
+        const color = refractColor(t, 0.25 + waveIdx * 0.15);
+
+        const grad = ctx.createLinearGradient(0, baseMidY - amplitude, 0, h);
+        grad.addColorStop(0, rgbaString(color));
+        grad.addColorStop(1, 'rgba(10, 37, 64, 0.02)');
+
+        ctx.fillStyle = grad;
+        ctx.fill();
+
+        ctx.lineWidth = 2 * (window.devicePixelRatio || 1);
+        ctx.strokeStyle = rgbaString(refractColor(t + 0.2, 0.6));
+        ctx.stroke();
+      }
+
+      if (!isPaused) {
+        animationFrameId = requestAnimationFrame(render);
+      } else {
+        animationFrameId = null;
+      }
+    };
+
+    window.addEventListener('resize', resize);
+    window.addEventListener('pointermove', handlePointerMove);
+    window.addEventListener('pointerleave', handlePointerLeave);
+    window.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    if (pauseBtn) {
+      pauseBtn.addEventListener('click', togglePause);
+    }
+
+    resize();
+    render();
+
+    // astro:before-swap teardown logic
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        if (animationFrameId !== null) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+        }
+        window.removeEventListener('resize', resize);
+        window.removeEventListener('pointermove', handlePointerMove);
+        window.removeEventListener('pointerleave', handlePointerLeave);
+        window.removeEventListener('keydown', handleKeyDown);
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        if (pauseBtn) {
+          pauseBtn.removeEventListener('click', togglePause);
+        }
+        if (canvas) {
+          canvas.dataset.initialized = 'false';
+        }
+      },
+      { once: true }
+    );
+  }
+
+  // Initialize on page load and page transitions
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initAuroraLab();
+  } else {
+    document.addEventListener('DOMContentLoaded', initAuroraLab, { once: true });
+  }
+
+  document.addEventListener('astro:page-load', initAuroraLab);
+</script>
+
+<style>
+  .lab-container {
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    margin-bottom: 3rem;
+  }
+
+  .glass-card {
+    width: 100%;
+    max-width: 960px;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 1.25rem;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .lab-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(10, 15, 30, 0.4);
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--text-sm);
+    color: var(--gray-200);
+    font-family: var(--font-brand);
+  }
+
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #00f2fe;
+    box-shadow: 0 0 8px #00f2fe;
+  }
+
+  .control-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.4rem 0.9rem;
+    border-radius: 0.5rem;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    color: var(--gray-100);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .control-btn:hover,
+  .control-btn:focus-visible {
+    background: rgba(0, 242, 254, 0.15);
+    border-color: rgba(0, 242, 254, 0.4);
+    outline: none;
+  }
+
+  .canvas-viewport {
+    position: relative;
+    width: 100%;
+    height: 420px;
+    background: #050f1e;
+  }
+
+  #aurora-refraction-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  .lab-footer {
+    padding: 0.9rem 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    background: rgba(10, 15, 30, 0.4);
+    text-align: center;
+  }
+
+  .instruction {
+    font-size: var(--text-xs, 0.8rem);
+    color: var(--gray-300);
+    margin: 0;
+  }
+
+  kbd {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0.25rem;
+    padding: 0.15rem 0.4rem;
+    font-family: var(--font-mono, monospace);
+    font-size: 0.75rem;
+    color: var(--gray-100);
+  }
+
+  @media (max-width: 600px) {
+    .canvas-viewport {
+      height: 320px;
+    }
+  }
+</style>
