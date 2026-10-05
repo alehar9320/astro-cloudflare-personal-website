@@ -41,3 +41,7 @@ Action: Updated `collectItems` in `src/utils/whats-new-glance.ts` to iterate ove
 2026-09-08 - Zero-Allocation Reverse Array Scan for Chat Follow-up Prompts
 Learning: Dynamic shallow array copying and array reversal (`[...messages].reverse().find(...)`) on every UI update creates unnecessary temporary heap allocations and garbage collection overhead in client-side scripts. Replacing array copy/reverse with a reverse indexed `for` loop eliminates dynamic array allocations completely and stops scanning as soon as the first matching element is found.
 Action: Refactored `showFollowUps()` in `src/components/Chat.astro` to use an indexed reverse `for` loop.
+
+2026-10-05 - Module-Level Intl.DateTimeFormat Hoisting & O(1) Column Map Indexing
+Learning: Constructing new `Intl.DateTimeFormat` instances inside formatting helper functions creates redundant ICU locale initializations and object allocations on every request in Cloudflare Workers edge runtimes. Hoisting the formatter instance to module scope eliminates per-call allocation overhead. Furthermore, replacing linear `Array.prototype.indexOf` array scans per row field with an O(1) `Map<string, number>` constructed once per dataset payload reduces column resolution complexity from O(12 * N) to O(12) map lookups.
+Action: Hoisted `stockholmDateFormatter` to module scope and updated `parseVisitGlance` in `src/utils/visit-stats.ts` to use a pre-constructed column index Map.
