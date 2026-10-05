@@ -29,3 +29,10 @@
 - **Edge Memory & Performance:** Refactored `splitReleaseBody` in `src/utils/github-releases.ts` and `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use pointer-based line scanning (`indexOf('\n', startPos)`), eliminating dynamic `body.split('\n')` string array allocations during SSR and API execution.
 - **Sentence Counting Optimization:** Refactored `sentenceCount` in `src/utils/release-summary.ts` from regex lookbehind `.split(/(?<=[.!?])\s+/)` into a single-pass character scanning loop. Added whitespace-aware sentence boundary detection to safely ignore dots inside version strings (`2026.08.15.1714`).
 - **Verification:** Added Vitest unit test cases across `release-summary.test.ts`, `visitor-changelog.test.ts`, and `github-releases.test.ts` covering version numbers, CRLF line endings, multiple trailing punctuation, and whitespace handling.
+
+## 2025-06-18 - Module-Level Formatter Hoisting & O(1) Column Map Indexing
+
+- **Edge Memory & Performance:** Hoisted `STOCKHOLM_DATE_FORMATTER` (`Intl.DateTimeFormat`) in `src/utils/visit-stats.ts` to module-level scope, avoiding repeated ICU locale initialization and GC object allocation on every visitor statistics request.
+- **O(1) Dataset Parsing:** Refactored `parseVisitGlance` in `src/utils/visit-stats.ts` to pre-construct `columnIndexMap` (`Map<string, number>`) from array-structured dataset column names once per payload, converting 12 linear $O(N)$ `columns.indexOf(...)` lookups into $O(1)$ Map accesses per row field.
+- **Allocation Reduction:** Refactored `formatReleaseDate` in `src/utils/github-releases.ts` from `date.toISOString().split('T')[0]` to `date.toISOString().slice(0, 10)`, eliminating intermediate 2-element string array allocations during ISO date formatting.
+- **Verification:** Verified all 368 unit tests in Vitest and full verification pipeline (`npm run lint`, `npm run format`, `npm run build`).
