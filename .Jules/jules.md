@@ -21,3 +21,9 @@
 - [Insight 1: Tighter focus ring outline-offsets (2px) prevent focus ring overflow clipping on compact overlay toggles.]
 - [Insight 2: Gating active press scale transitions behind prefers-reduced-motion media queries respects accessibility preferences while preserving tactile visual feedback.]
 - [Delta: 17 lines. Guardrails: All passed autonomously.]
+
+## 2026-06-16 - Pill Interactive Gradient Tactile | Signal: Competitive/Technical | Lean Implementation: Flagged CSS Gradient Shift
+
+- [Insight 1: Animating background-position on pill badges with pre-sized gradient stops provides rich interactive feedback without JS bundle overhead.]
+- [Insight 2: Scoping tactile micro-interactions behind feature flags (`enable_pill_tactile_v1`) and prefers-reduced-motion guarantees zero accessibility regression.]
+- [Delta: 22 lines. Guardrails: All passed autonomously.]
