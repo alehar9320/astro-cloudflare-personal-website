@@ -268,8 +268,15 @@ const schema = {
     }
   }
 
-  /* ~800px-tall desktop: 44×44 Read the case clears dock ≥16 (#812 restack) */
+  /* ~768–832px-tall desktop: hire + proof clear docked FAB ≥16 (#1070 / #812) */
   @media (min-width: 50em) and (max-height: 52em) {
+    .first-screen {
+      /* Pack from top so centered layout cannot push proof into FAB band */
+      justify-content: flex-start;
+      padding-top: 0.5rem;
+      gap: 0.35rem;
+    }
+
     :global(body.has-prominent-chat) .first-screen {
       padding-top: 0;
       gap: 0.25rem;
@@ -308,6 +315,11 @@ const schema = {
 
     .proof-outcome {
       font-size: var(--text-lg);
+    }
+
+    /* Defer bridge on short first view — hire + proof stay above --chat-fab-clearance */
+    .hero-bridge {
+      display: none;
     }
   }
 
