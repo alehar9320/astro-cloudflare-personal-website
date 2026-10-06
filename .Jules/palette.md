@@ -1,5 +1,23 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-26 - Page Link Touch Target Ergonomics
+
+**Learning:** Section list links (such as `.earlier a` in `work.astro`) and standalone page action links (such as `.history-link` in `whats-new.astro` and `.hire-cta a`) often render as compact inline links on mobile viewports, failing WCAG 2.1 AA 44x44px minimum touch target requirements and risking mis-taps. Setting `display: inline-flex; align-items: center; min-height: 44px;` expands the interactive tap area without disrupting surrounding line rhythm.
+
+**Action:** Added `display: inline-flex; align-items: center; min-height: 44px;` to `:global(.history-link)` in `whats-new.astro` and `.earlier a` / `.hire-cta a` in `work.astro`.
+
+## 2026-05-25 - Theme Toggle Touch Target Ergonomics & Focus Containment
+
+**Learning:** Compact pill controls located within constrained header/navigation layouts (such as `ThemeToggle.astro` in `Nav.astro`) require explicit minimum dimensions (`min-width: 44px; min-height: 44px; align-items: center; justify-content: center;`) to satisfy WCAG 2.1 AA touch target standards on mobile viewports. Furthermore, switching from positive `outline-offset: 2px` to negative inset focus containment (`outline-offset: -2px`) prevents the focus ring from overflowing outer header borders or clipping against adjacent layout elements during keyboard navigation.
+
+**Action:** Enforced `min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;` and `outline-offset: -2px` for `button:focus-visible` in `src/components/ThemeToggle.astro`.
+
+## 2026-05-24 - Focus-Visible Standardization & Mobile Touch Target Ergonomics
+
+**Learning:** Replacing raw `:focus` pseudo-classes with `:focus-visible` across footer version links (`.version-link`) and accessibility skip links (`.sr-only.focus-visible`) prevents sticky, persistent focus rings during mouse click interactions while preserving essential keyboard focus indicators. Furthermore, declaring explicit `min-height: 44px; display: inline-flex; align-items: center;` on interactive colophon triggers (`.visit-trigger`) ensures mobile touch targets comply with WCAG 2.1 AA requirements on touch viewports without causing layout shift.
+
+**Action:** Updated `.version-link` in `Footer.astro` and `.sr-only.focus-visible` in `BaseLayout.astro` to use `:focus-visible`. Added `min-height: 44px; display: inline-flex; align-items: center;` to `.visit-trigger` in `Footer.astro`.
+
 ## 2026-05-23 - Compact Overlay Control Focus Containment & Touch Target Standard
 
 **Learning:** Compact overlay controls inside constrained components (such as `.chat-clear`, `.chat-close`, and suggestion chips in `Chat.astro`) require tight focus ring containment (`outline-offset: 2px`) to prevent focus outlines from overflowing overlay bounds or clipping against scroll container edges. Furthermore, ensuring all action controls maintain WCAG touch target dimensions (`min-height: 44px; min-width: 44px`) with `display: inline-flex; align-items: center; justify-content: center;` and gated tactile feedback (`transform: scale(0.96)`) under `@media (prefers-reduced-motion: no-preference)` delivers an accessible, highly responsive experience across touch and keyboard interactions.

@@ -199,6 +199,7 @@ function titleCaseFirst(text: string): string {
 
 const INTERNAL_CHANGELOG_ITEM =
   /\bjules\b|\bagent[- ]farm\b|\bjohan nits\b|\bengine\b|\bbolt\b|\bgoogle-labs-jules\b|\bprune\b|\bparser\b/i;
+const BULLET_PREFIX = /^[-*+]\s+/;
 
 /**
  * Visitor sentence for a changelog item. Lookup known shipped PRs, else sanitize.
@@ -225,21 +226,41 @@ export function toVisitorChangelogTitle(raw: string): string {
 
 /**
  * Rewrite a GitHub release body so list items are visitor copy, not SHA + feat + (#PR).
+ * Optimization: Uses pointer-based line scanning (`indexOf('\n', startPos)`) and a single-pass
+ * transformation loop to eliminate `body.split('\n')` array allocations and dual iteration overhead on edge SSR requests.
  */
 export function toVisitorReleaseBody(body: string): string {
-  const items = body
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => /^[-*+]\s+/.test(line))
-    .map((line) => line.replace(/^[-*+]\s+/, ''))
-    .filter((message) => !INTERNAL_CHANGELOG_ITEM.test(message));
+  const result: string[] = [];
+  let startPos = 0;
+  const len = body.length;
 
-  if (items.length === 0) {
+  while (startPos < len) {
+    let nextNewline = body.indexOf('\n', startPos);
+    if (nextNewline === -1) {
+      nextNewline = len;
+    }
+
+    let line = body.slice(startPos, nextNewline);
+    if (line.endsWith('\r')) {
+      line = line.slice(0, -1);
+    }
+    startPos = nextNewline + 1;
+
+    const trimmed = line.trim();
+    if (!BULLET_PREFIX.test(trimmed)) continue;
+
+    const message = trimmed.replace(BULLET_PREFIX, '');
+    if (!INTERNAL_CHANGELOG_ITEM.test(message)) {
+      result.push(`- ${toVisitorChangelogTitle(message)}`);
+    }
+  }
+
+  if (result.length === 0) {
     const trimmed = body.trim();
     return trimmed ? toVisitorChangelogTitle(trimmed) : '';
   }
 
-  return items.map((message) => `- ${toVisitorChangelogTitle(message)}`).join('\n');
+  return result.join('\n');
 }
 
 /**

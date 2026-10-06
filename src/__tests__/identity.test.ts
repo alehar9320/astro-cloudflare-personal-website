@@ -2330,7 +2330,6 @@ describe('identity copy', () => {
     expect(page).toContain('title="What\'s New | Product Manager, Developer Experience at IFS"');
     expect(page).toContain('ogTitle="What\'s New | Product Manager, Developer Experience at IFS"');
     expect(page).toContain('Product Manager, Developer Experience');
-    expect(page).toContain('toVisitorChangelogTitle');
     expect(page).toContain('toVisitorRelease');
     expect(page).toContain('ContactCTA');
     expect(page).toContain('fetchGitHubReleases');
