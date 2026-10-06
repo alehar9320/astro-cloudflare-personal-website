@@ -10,6 +10,8 @@
  *   No localhost / *-me.alehar.workers.dev preview hosts.
  * - Contact-card: $autocapture with element href containing linkedin.com OR element text
  *   containing "Get in touch", same host + Linux-exclude. Unique persons.
+ * - PR Success: repo:alehar9320/astro-cloudflare-personal-website is:pr base:main;
+ *   success = merged / (merged + unmerged closed). Nick-locked 2026-09-04 CEST.
  */
 
 export type ProgressDirection = 'up' | 'down' | 'none';
@@ -26,6 +28,7 @@ export type KeyResult = {
   target: number;
   direction: ProgressDirection;
   note?: string;
+  tooltip?: string;
 };
 
 export type Objective = {
@@ -104,6 +107,19 @@ export const OBJECTIVES: readonly Objective[] = [
         target: 8,
         direction: 'none',
         note: "August's 200 merges in 30 days was a farm spike — target is steady weeks, not that peak",
+      },
+      {
+        id: 'KR3.2',
+        label: 'PR Success',
+        window: '7 days',
+        tooltip: 'Opened PRs that merged. Human and AI changes.',
+        baselineLabel: '47%',
+        currentLabel: '41%',
+        targetLabel: '—',
+        baseline: 47,
+        current: 41,
+        target: 0,
+        direction: 'none',
       },
     ],
     supporting: ['At least half of weekly merges visitor-facing, for 8 weeks before year-end'],
