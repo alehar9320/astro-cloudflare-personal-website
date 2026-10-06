@@ -29,3 +29,8 @@
 - **Edge Memory & Performance:** Refactored `splitReleaseBody` in `src/utils/github-releases.ts` and `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use pointer-based line scanning (`indexOf('\n', startPos)`), eliminating dynamic `body.split('\n')` string array allocations during SSR and API execution.
 - **Sentence Counting Optimization:** Refactored `sentenceCount` in `src/utils/release-summary.ts` from regex lookbehind `.split(/(?<=[.!?])\s+/)` into a single-pass character scanning loop. Added whitespace-aware sentence boundary detection to safely ignore dots inside version strings (`2026.08.15.1714`).
 - **Verification:** Added Vitest unit test cases across `release-summary.test.ts`, `visitor-changelog.test.ts`, and `github-releases.test.ts` covering version numbers, CRLF line endings, multiple trailing punctuation, and whitespace handling.
+
+## 2025-06-18 - O(1) Column Map Indexing & Allocation-Free Date Formatting
+
+- **O(1) Column Indexing:** Refactored `parseVisitGlance` in `src/utils/visit-stats.ts` to pre-construct a `Map<string, number>` once per payload from column name arrays. Replaced repeated $O(N)$ `columns.indexOf(key)` array searches across 12 row fields with $O(1)$ map index lookups.
+- **Allocation-Free Date Formatting:** Refactored `formatReleaseDate` in `src/utils/github-releases.ts` to use `date.toISOString().slice(0, 10)` instead of `.split('T')[0]`, eliminating dynamic intermediate string array allocations on Cloudflare Workers V8 edge runtimes.
