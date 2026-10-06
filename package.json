@@ -66,7 +66,7 @@
     "dompurify": "3.4.16",
     "@babel/core": "7.29.7",
     "@opentelemetry/core": "2.10.0",
-    "sharp": "0.35.4",
+    "sharp": "0.35.5",
     "source-map-js": "1.2.2",
     "postcss-selector-parser": "7.1.6",
     "smol-toml": "1.9.0",
