@@ -7,8 +7,7 @@ A collection of high-quality personal websites and portfolios to draw inspiratio
 - **[Addy Osmani](https://addyosmani.com/)**
   Great example of performance, clear typography, and a focus on writing and projects.
 - **[Lee Robinson](https://leerob.io/)**
-  Excellent execution of a modern developer portfolio, integrating a blog, guestbook, and metrics dashboard with a clean, minimalistic aesthetic.
-
+  Excellent execution of a modern developer portfolio, integrating a blog, guestbook, and metrics dashboard with a clean, minimalist aesthetic.
 - **[Paco Coursey](https://paco.me/)**
   Outstanding micro-interactions, dark mode handling, and a highly polished, minimal design.
 
