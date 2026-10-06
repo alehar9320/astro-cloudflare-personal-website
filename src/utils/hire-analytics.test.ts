@@ -146,7 +146,6 @@ describe('hire-analytics', () => {
     expect(window.dataLayer).toEqual([{ event: 'hire_cta_click', surface: 'nav' }]);
   });
 
-
   it('records linkedin_click surface footer and Contact card for Footer LinkedIn (#1118)', () => {
     const capture = vi.fn();
     window.posthog = { capture };
