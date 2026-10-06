@@ -38,6 +38,35 @@ describe('visits API', () => {
     expect(response.status).toBe(204);
   });
 
+  it('returns 204 and logs error when project ID is invalid', async () => {
+    const bindings = workerEnv as VisitEnv;
+    bindings.POSTHOG_PERSONAL_API_KEY = 'test-key';
+    bindings.POSTHOG_PROJECT_ID = 'invalid-id-xyz';
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const response = await GET({} as Parameters<typeof GET>[0]);
+    expect(response.status).toBe(204);
+    expect(errorSpy).toHaveBeenCalledWith({ event: 'visits_invalid_project_id' });
+  });
+
+  it('returns 204 and logs error when query host is invalid or non-HTTPS', async () => {
+    const bindings = workerEnv as VisitEnv;
+    bindings.POSTHOG_PERSONAL_API_KEY = 'test-key';
+    bindings.POSTHOG_QUERY_HOST = 'http://insecure.host.com';
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const response = await GET({} as Parameters<typeof GET>[0]);
+    expect(response.status).toBe(204);
+    expect(errorSpy).toHaveBeenCalledWith({ event: 'visits_invalid_host' });
+
+    bindings.POSTHOG_QUERY_HOST = 'not-a-valid-url';
+    errorSpy.mockClear();
+
+    const response2 = await GET({} as Parameters<typeof GET>[0]);
+    expect(response2.status).toBe(204);
+    expect(errorSpy).toHaveBeenCalledWith({ event: 'visits_invalid_host' });
+  });
+
   it('logs structured telemetry on query failure and outer catch failure', async () => {
     const bindings = workerEnv as VisitEnv;
     bindings.POSTHOG_PERSONAL_API_KEY = 'test-key';
