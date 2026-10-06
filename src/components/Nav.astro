@@ -343,10 +343,23 @@ const isCurrentPage = (href: string) => {
   }
 
   .link {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
     color: var(--gray-300);
     text-decoration: none;
-    transition: transform var(--theme-transition);
+    transition:
+      color var(--theme-transition),
+      background-color var(--theme-transition),
+      transform var(--theme-transition);
+  }
+
+  .link:hover,
+  .link:focus-visible {
+    color: var(--gray-100);
+    background-color: var(--accent-subtle-overlay);
   }
 
   .link:active {
@@ -509,15 +522,6 @@ const isCurrentPage = (href: string) => {
     .link {
       padding: 0.5rem 1rem;
       border-radius: 999rem;
-      transition:
-        color var(--theme-transition),
-        background-color var(--theme-transition);
-    }
-
-    .link:hover,
-    .link:focus-visible {
-      color: var(--gray-100);
-      background-color: var(--accent-subtle-overlay);
     }
 
     .link[aria-current='page'] {
