@@ -1,0 +1,38 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flag = await getEntry('flags', 'config');
+if (!flag?.data.enable_devex_framework) return Astro.redirect('/404/');
+
+const pillars = [
+  { t: 'Velocity', d: 'Eliminating build and workflow friction.' },
+  { t: 'Cohesion', d: 'Standardizing UI design systems and API contracts.' },
+  { t: 'Impact', d: 'Tracking adoption, satisfaction, and productivity.' },
+];
+---
+
+<BaseLayout
+  title="DevEx Framework | Alexander Härenstam"
+  description="DevEx pillars."
+  robots="noindex"
+>
+  <main class="wrapper stack gap-4">
+    <h1>DevEx Framework</h1>
+    <p>Core pillars driving developer experience and platform adoption:</p>
+    <ul>
+      {
+        pillars.map((p) => (
+          <li>
+            <strong>{p.t}:</strong> {p.d}
+          </li>
+        ))
+      }
+    </ul>
+    <p>
+      <a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer"
+        >LinkedIn</a
+      > · replies from me
+    </p>
+  </main>
+</BaseLayout>
