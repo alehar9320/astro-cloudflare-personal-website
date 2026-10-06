@@ -23,5 +23,17 @@
     background-size: 250% 100%;
     background-position: 0% 50%;
     box-shadow: var(--shadow-sm);
+    transition:
+      background-position var(--theme-transition),
+      box-shadow var(--theme-transition),
+      transform var(--theme-transition);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .pill:hover {
+      background-position: 100% 50%;
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
   }
 </style>

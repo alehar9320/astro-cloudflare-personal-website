@@ -137,10 +137,25 @@ const schema = {
   .this-week,
   .last-30 {
     background: var(--gradient-subtle);
+    backdrop-filter: blur(16px) saturate(140%);
+    -webkit-backdrop-filter: blur(16px) saturate(140%);
     border: 1px solid var(--gray-800);
     border-radius: 1.5rem;
     padding: 1.5rem 2rem;
     box-shadow: var(--shadow-sm);
+    transition:
+      transform var(--theme-transition),
+      box-shadow var(--theme-transition),
+      border-color var(--theme-transition);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .this-week:hover,
+    .last-30:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+      border-color: var(--accent-overlay);
+    }
   }
 
   .this-week h2,
