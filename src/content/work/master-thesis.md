@@ -33,4 +33,6 @@ Master's thesis at Chalmers University of Technology in 2017 on business model i
 
 Opportunities showed up as reach, scale, and data for decisions. Barriers were mostly organizational.
 
+<p class="case-continue"><a href="/work/ifs-design-system/">Continue to the IFS Design System case</a></p>
+
 <a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>
