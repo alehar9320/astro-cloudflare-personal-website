@@ -25,10 +25,10 @@
   "dependencies": {
     "@astrojs/cloudflare": "^14.2.3",
     "@astrojs/node": "^11.1.4",
-    "@sentry/astro": "^10.72.0",
-    "@sentry/cloudflare": "^10.72.0",
+    "@sentry/astro": "^10.75.3",
+    "@sentry/cloudflare": "^10.75.3",
     "astro": "^7.2.9",
-    "posthog-js": "^1.372.6",
+    "posthog-js": "^1.434.17",
     "wrangler": "^4.127.1",
     "zod": "^4.5.4"
   },
@@ -66,7 +66,7 @@
     "dompurify": "3.4.16",
     "@babel/core": "7.29.7",
     "@opentelemetry/core": "2.10.0",
-    "sharp": "0.35.4",
+    "sharp": "0.35.5",
     "source-map-js": "1.2.2",
     "postcss-selector-parser": "7.1.6",
     "smol-toml": "1.9.0",
