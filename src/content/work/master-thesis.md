@@ -27,7 +27,7 @@ What digitalization does to a business model, including a case where digitalizat
 
 ## Approach
 
-Master's thesis at Chalmers University of Technology in 2017 on business model innovation and digitalization. It mapped what digitalization does to business models, studied one case, and compared that to the literature.
+Master's thesis at Chalmers University of Technology in 2017 on business model innovation and digitalization.
 
 ## Outcome
 
