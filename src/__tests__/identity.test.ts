@@ -2842,4 +2842,16 @@ describe('identity copy', () => {
     expect(footer).toContain('https://www.linkedin.com/in/alehar/');
     expect(footer).not.toContain('mailto:');
   });
+
+  it('keeps nav text links with a visible focus ring', () => {
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    expect(nav).toMatch(
+      /\.link:focus-visible\s*\{[\s\S]*?outline:\s*2px\s+solid\s+var\(--accent-regular\);[\s\S]*?outline-offset:\s*4px;/
+    );
+    expect(nav).toContain('class="link"');
+    expect(nav).toContain("href: '/work/'");
+    expect(nav).toContain("href: '/biography/'");
+    expect(nav).toContain("href: '/contact/'");
+    expect(nav).not.toContain('mailto:');
+  });
 });
