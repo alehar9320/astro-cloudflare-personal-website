@@ -164,6 +164,9 @@ export async function fetchGitHubReleases(
 
 /**
  * Formats an ISO date string into a YYYY-MM-DD format.
+ * Optimization (⚡ Bolt): Uses `.slice(0, 10)` instead of `.split('T')[0]` to extract YYYY-MM-DD
+ * directly from the ISO string without intermediate 2-element array allocations.
+ * Benchmark: Eliminates intermediate array creation per date formatting call.
  * @param {string | null} dateString - The raw date string from the API.
  * @returns {string} The formatted date, or 'Unknown date' if invalid.
  */
@@ -176,7 +179,7 @@ export function formatReleaseDate(dateString: string | null): string {
     return 'Unknown date';
   }
 
-  return date.toISOString().split('T')[0];
+  return date.toISOString().slice(0, 10);
 }
 
 /**

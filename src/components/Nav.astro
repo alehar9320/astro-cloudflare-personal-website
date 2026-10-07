@@ -42,13 +42,17 @@ const iconLinks: {
   },
 ];
 
+/**
+ * Optimization (⚡ Bolt): Normalize active pathname once per component render rather than inside isCurrentPage loop.
+ * Benchmark: Saves 9 redundant string normalization and regex replace calls per page render across textLink iterations.
+ */
+let currentPath = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
+if (currentPath.at(0) !== '/') currentPath = '/' + currentPath;
+if (currentPath.at(-1) !== '/') currentPath += '/';
+
 /** Test if a link is pointing to the current page. */
-const isCurrentPage = (href: string) => {
-  let pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
-  if (pathname.at(0) !== '/') pathname = '/' + pathname;
-  if (pathname.at(-1) !== '/') pathname += '/';
-  return pathname === href || (href !== '/' && pathname.startsWith(href));
-};
+const isCurrentPage = (href: string) =>
+  currentPath === href || (href !== '/' && currentPath.startsWith(href));
 ---
 
 <nav aria-label="Main">

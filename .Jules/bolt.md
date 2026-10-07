@@ -41,3 +41,7 @@ Action: Updated `collectItems` in `src/utils/whats-new-glance.ts` to iterate ove
 2026-09-08 - Zero-Allocation Reverse Array Scan for Chat Follow-up Prompts
 Learning: Dynamic shallow array copying and array reversal (`[...messages].reverse().find(...)`) on every UI update creates unnecessary temporary heap allocations and garbage collection overhead in client-side scripts. Replacing array copy/reverse with a reverse indexed `for` loop eliminates dynamic array allocations completely and stops scanning as soon as the first matching element is found.
 Action: Refactored `showFollowUps()` in `src/components/Chat.astro` to use an indexed reverse `for` loop.
+
+2026-09-09 - Zero-Allocation ISO Date Slicing & Hoisted Pathname Normalization
+Learning: Using `.split('T')[0]` on ISO date strings allocates a temporary 2-element array per call, whereas `.slice(0, 10)` extracts `YYYY-MM-DD` directly without intermediate heap allocations. Additionally, normalizing active `Astro.url.pathname` inside loop functions (e.g. `isCurrentPage`) causes redundant regex and string replace operations across iterations during page renders; hoisting normalization outside the loop executes it once per component render.
+Action: Updated `formatReleaseDate` in `src/utils/github-releases.ts` to use `.slice(0, 10)` and hoisted pathname normalization in `src/components/Nav.astro`.
