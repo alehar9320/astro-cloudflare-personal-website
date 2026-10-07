@@ -7,6 +7,7 @@ import Icon from '../../components/Icon.astro';
 import NotFoundContent from '../../components/NotFoundContent.astro';
 import Pill from '../../components/Pill.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { safeJsonLd } from '../../utils/safe-json-ld';
 
 interface Props {
   entry?: CollectionEntry<'work'>;
@@ -121,7 +122,7 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
   ogTitle={shareTitle}
   robots={robots}
 >
-  {schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />}
+  {schema && <script is:inline type="application/ld+json" set:html={safeJsonLd(schema)} />}
   {
     entry ? (
       <div class="stack gap-20">
