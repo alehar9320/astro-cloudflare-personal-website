@@ -91,16 +91,25 @@ describe('visitor-changelog utilities', () => {
       expect(output).toBe('- Add public feature');
     });
 
+    it('filters out Palette bot titles and unit test coverage items', () => {
+      const paletteStr =
+        '🎨 Palette: Standardize Chat Overlay Control Touch Targets and Focus States';
+      const testCoverageStr = 'Expand unit test coverage for visitor-changelog utilities';
+      const input = `- ${paletteStr}\n- ${testCoverageStr}\n- feat: add public feature`;
+      const output = toVisitorReleaseBody(input);
+      expect(output).toBe('- Add public feature');
+      expect(output).not.toContain('Palette');
+      expect(output).not.toContain('visitor-changelog utilities');
+    });
+
     it('falls back to toVisitorChangelogTitle if body contains no bullet items', () => {
       const input = 'a1b2c3d feat: add a live RSS feed for the work (#520)';
       expect(toVisitorReleaseBody(input)).toBe('RSS feed of the work');
     });
 
-    it('falls back to toVisitorChangelogTitle if all bullet items are filtered as internal', () => {
+    it('returns empty string if all bullet items are filtered as internal', () => {
       const input = '- chore(jules): internal update\n- refactor(engine): backend tweak';
-      expect(toVisitorReleaseBody(input)).toBe(
-        '- chore(jules): internal update\n- refactor(engine): backend tweak'
-      );
+      expect(toVisitorReleaseBody(input)).toBe('');
     });
   });
 
