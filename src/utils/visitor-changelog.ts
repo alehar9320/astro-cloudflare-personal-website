@@ -201,8 +201,8 @@ function titleCaseFirst(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-const INTERNAL_CHANGELOG_ITEM =
-  /\bjules\b|\bagent[- ]farm\b|\bjohan nits\b|\bengine\b|\bbolt\b|\bgoogle-labs-jules\b|\bprune\b|\bparser\b/i;
+export const INTERNAL_CHANGELOG_ITEM =
+  /\b(palette|oracle|scribe|sentinel|vantage|bolt|jules|kinetic|engine|prism|apex|aurora|janitor|observabilityclerk|stuntdouble|stunt[- ]double|archie)\b|\bcontent:\s*|[🎨🔮✍️🛡️🔍⚡🐱⚙️👩‍🚀👨‍💼❤️🧹📋🎭🏛️🧑‍🎓]|\bagent[- ]farm\b|\bgoogle-labs-jules\b|\bjohan nits\b|\bprune\b|\bparser\b|\bunit[- ]test\b|\bcoverage\b|\bvisitor[- ]changelog\b|\btest[- ]only\b|\bvitest\b|\bplaywright\b/i;
 const BULLET_PREFIX = /^[-*+]\s+/;
 
 /**
@@ -236,6 +236,7 @@ export function toVisitorChangelogTitle(raw: string): string {
 export function toVisitorReleaseBody(body: string): string {
   const result: string[] = [];
   let startPos = 0;
+  let hadBullets = false;
   const len = body.length;
 
   while (startPos < len) {
@@ -253,6 +254,7 @@ export function toVisitorReleaseBody(body: string): string {
     const trimmed = line.trim();
     if (!BULLET_PREFIX.test(trimmed)) continue;
 
+    hadBullets = true;
     const message = trimmed.replace(BULLET_PREFIX, '');
     if (!INTERNAL_CHANGELOG_ITEM.test(message)) {
       result.push(`- ${toVisitorChangelogTitle(message)}`);
@@ -260,8 +262,11 @@ export function toVisitorReleaseBody(body: string): string {
   }
 
   if (result.length === 0) {
+    if (hadBullets) return '';
     const trimmed = body.trim();
-    return trimmed ? toVisitorChangelogTitle(trimmed) : '';
+    return trimmed && !INTERNAL_CHANGELOG_ITEM.test(trimmed)
+      ? toVisitorChangelogTitle(trimmed)
+      : '';
   }
 
   return result.join('\n');
