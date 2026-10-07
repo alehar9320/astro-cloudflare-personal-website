@@ -1,10 +1,17 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-27 - Forced-Colors Mode Structural Borders for ContactCTA
+
+**Learning:** Translucent glassmorphism borders declared with `hsla(...)` colors inside structural callout sections (such as `aside` in `ContactCTA.astro`) disappear entirely when rendered under Windows High Contrast / Forced Colors mode, leaving section boundaries invisible. Declaring `border-color: CanvasText;` within `@media (forced-colors: active)` ensures structural borders remain crisp and defined in high contrast viewports.
+
+**Action:** Added `@media (forced-colors: active)` border-color fallback for `aside` in `src/components/ContactCTA.astro`.
+
 ## 2026-05-27 - Action CTA Touch Target Ergonomics on Fallback Pages
 
 **Learning:** Primary action triggers and call-to-action buttons nested in container wrappers (such as `.cta-container` in `NotFoundContent.astro`) require explicit WCAG 2.1 AA 44x44px touch target bounds (`min-height: 44px; min-width: 44px;`) across touch viewports to prevent mis-taps when placed adjacent to secondary action hints or links.
 
 **Action:** Enforced `min-height: 44px; min-width: 44px;` for `:global(a)` inside `.cta-container` in `src/components/NotFoundContent.astro`.
+
 
 ## 2026-05-26 - Page Link Touch Target Ergonomics
 
