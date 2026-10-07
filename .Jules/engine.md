@@ -29,3 +29,9 @@
 - **Edge Memory & Performance:** Refactored `splitReleaseBody` in `src/utils/github-releases.ts` and `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to use pointer-based line scanning (`indexOf('\n', startPos)`), eliminating dynamic `body.split('\n')` string array allocations during SSR and API execution.
 - **Sentence Counting Optimization:** Refactored `sentenceCount` in `src/utils/release-summary.ts` from regex lookbehind `.split(/(?<=[.!?])\s+/)` into a single-pass character scanning loop. Added whitespace-aware sentence boundary detection to safely ignore dots inside version strings (`2026.08.15.1714`).
 - **Verification:** Added Vitest unit test cases across `release-summary.test.ts`, `visitor-changelog.test.ts`, and `github-releases.test.ts` covering version numbers, CRLF line endings, multiple trailing punctuation, and whitespace handling.
+
+## 2025-06-18 - O(1) Column Map Indexing & Zero-Allocation Date Slicing
+
+- **Edge Memory & Performance:** Refactored `parseVisitGlance` in `src/utils/visit-stats.ts` to pre-construct a `Map<string, number>` (`columnMap`) once per array payload, converting repeated $O(N)$ linear `columns.indexOf(key)` array searches across 12 field lookups into $O(1)$ hash map accesses.
+- **Zero-Allocation Slicing:** Updated `formatReleaseDate` in `src/utils/github-releases.ts` to replace `date.toISOString().split('T')[0]` with `date.toISOString().slice(0, 10)`, extracting `YYYY-MM-DD` without allocating 2-element intermediate string arrays.
+- **Verification:** Updated unit test suites in `visit-stats.test.ts` and `github-releases.test.ts` covering shuffled column arrays, non-string column metadata, and edge ISO date formatting assertions.
