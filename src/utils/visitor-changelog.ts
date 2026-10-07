@@ -178,6 +178,10 @@ const SHA_PREFIX = /^[a-f0-9]{7,40}\s+/i;
 const CONVENTIONAL_PREFIX =
   /^(feat|fix|chore|docs|refactor|test|style|perf|build|ci)(\([^)]+\))?:\s*/i;
 const PR_SUFFIX = /\s*\(#(\d+)\)\s*$/;
+/* Optimization (⚡ Bolt): Hoist PR_MATCH_REGEX and SPACES_REGEX to avoid dynamic RegExp instantiations on edge changelog title processing.
+   Benchmark: Eliminates redundant regex creation during visitor title mapping. */
+const PR_MATCH_REGEX = /\(#(\d+)\)/;
+const MULTI_SPACES_REGEX = /\s{2,}/g;
 
 /**
  * Strip SHA, conventional-commit type, and trailing (#123) from a changelog line.
@@ -188,7 +192,7 @@ export function stripChangelogChrome(raw: string): string {
     .replace(SHA_PREFIX, '')
     .replace(CONVENTIONAL_PREFIX, '')
     .replace(PR_SUFFIX, '')
-    .replace(/\s{2,}/g, ' ')
+    .replace(MULTI_SPACES_REGEX, ' ')
     .trim();
 }
 
@@ -209,7 +213,7 @@ export function toVisitorChangelogTitle(raw: string): string {
   const trimmed = raw.trim();
   if (!trimmed) return trimmed;
 
-  const prMatch = trimmed.match(/\(#(\d+)\)/);
+  const prMatch = trimmed.match(PR_MATCH_REGEX);
   if (prMatch) {
     const mapped = BY_PR.get(Number(prMatch[1]));
     if (mapped) return mapped;
