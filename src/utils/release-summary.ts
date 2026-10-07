@@ -7,6 +7,8 @@ const BANNED_NAME = /\b(palette|oracle|scribe|sentinel|vantage|bolt|jules)\b/gi;
 const SHA_ONE = /\b[a-f0-9]{7,40}\b/i;
 const SHA_ALL = /\b[a-f0-9]{7,40}\b/gi;
 const CONVENTIONAL = /\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/i;
+/** Global variant for stripping every conventional prefix (`.replace` with `/g`); keep `CONVENTIONAL` non-global for stateless `.test`. */
+const CONVENTIONAL_ALL = /\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/gi;
 const ENGINEERING_LEAK =
   /\bexec summary\b|\bof the latest github release\b|cloudflare:workers|\bnode stub\b|\bsessionstorage\b|\bdo not paint\b|\bexec box\b|\bon \/whats-new\b|\balias\b/i;
 const VISITOR_VERB =
@@ -119,7 +121,7 @@ export function stripExecBanned(text: string): string {
     .replace(PR_PAREN_NUM_REGEX, '')
     .replace(HASH_NUM_REGEX, '')
     .replace(ISSUE_NUM_REGEX, '')
-    .replace(CONVENTIONAL, '')
+    .replace(CONVENTIONAL_ALL, '')
     .replace(PUNCT_SPACES_REGEX, '$1')
     .replace(LEADING_PUNCT_REGEX, '')
     .replace(MULTI_SPACES_REGEX, ' ')
