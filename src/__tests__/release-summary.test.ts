@@ -10,6 +10,7 @@ import {
   prepareReleaseSummary,
   releaseSummaryKey,
   releaseSummaryPrompt,
+  sentenceCount,
 } from '../utils/release-summary';
 
 type GetContext = Parameters<typeof GET>[0];
@@ -117,6 +118,29 @@ describe('prepareReleaseSummary', () => {
         source
       )
     ).toBe(null);
+  });
+});
+
+describe('sentenceCount', () => {
+  it('returns 0 for empty or whitespace-only strings', () => {
+    expect(sentenceCount('')).toBe(0);
+    expect(sentenceCount('   \n\t  ')).toBe(0);
+  });
+
+  it('correctly counts sentences without splitting on version numbers or decimals', () => {
+    expect(
+      sentenceCount(
+        'The latest release is 2026.08.15.1714. Visitors can now view the glance. More is on this page.'
+      )
+    ).toBe(3);
+  });
+
+  it('handles multiple trailing punctuation and no terminal punctuation', () => {
+    expect(sentenceCount('First sentence. Second sentence?! Third sentence')).toBe(3);
+  });
+
+  it('handles CRLF and trailing whitespace', () => {
+    expect(sentenceCount('First sentence.\r\nSecond sentence.\r\n   ')).toBe(2);
   });
 });
 

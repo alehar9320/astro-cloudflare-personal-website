@@ -178,6 +178,10 @@ const SHA_PREFIX = /^[a-f0-9]{7,40}\s+/i;
 const CONVENTIONAL_PREFIX =
   /^(feat|fix|chore|docs|refactor|test|style|perf|build|ci)(\([^)]+\))?:\s*/i;
 const PR_SUFFIX = /\s*\(#(\d+)\)\s*$/;
+/* Optimization (⚡ Bolt): Hoist PR_MATCH_REGEX and SPACES_REGEX to avoid dynamic RegExp instantiations on edge changelog title processing.
+   Benchmark: Eliminates redundant regex creation during visitor title mapping. */
+const PR_MATCH_REGEX = /\(#(\d+)\)/;
+const MULTI_SPACES_REGEX = /\s{2,}/g;
 
 /**
  * Strip SHA, conventional-commit type, and trailing (#123) from a changelog line.
@@ -188,7 +192,7 @@ export function stripChangelogChrome(raw: string): string {
     .replace(SHA_PREFIX, '')
     .replace(CONVENTIONAL_PREFIX, '')
     .replace(PR_SUFFIX, '')
-    .replace(/\s{2,}/g, ' ')
+    .replace(MULTI_SPACES_REGEX, ' ')
     .trim();
 }
 
@@ -209,7 +213,7 @@ export function toVisitorChangelogTitle(raw: string): string {
   const trimmed = raw.trim();
   if (!trimmed) return trimmed;
 
-  const prMatch = trimmed.match(/\(#(\d+)\)/);
+  const prMatch = trimmed.match(PR_MATCH_REGEX);
   if (prMatch) {
     const mapped = BY_PR.get(Number(prMatch[1]));
     if (mapped) return mapped;
@@ -226,33 +230,40 @@ export function toVisitorChangelogTitle(raw: string): string {
 
 /**
  * Rewrite a GitHub release body so list items are visitor copy, not SHA + feat + (#PR).
- * Optimization (⚡ Bolt): Uses a single-pass loop with hoisted static regexes instead of
- * multi-pass .split().map().filter() array chains, eliminating intermediate array allocations during edge SSR requests.
- * Benchmark: Eliminates 5 intermediate array allocations per release body on edge runtimes.
+ * Optimization: Uses pointer-based line scanning (`indexOf('\n', startPos)`) and a single-pass
+ * transformation loop to eliminate `body.split('\n')` array allocations and dual iteration overhead on edge SSR requests.
  */
 export function toVisitorReleaseBody(body: string): string {
-  const lines = body.split('\n');
-  const items: string[] = [];
+  const result: string[] = [];
+  let startPos = 0;
+  const len = body.length;
 
-  for (const line of lines) {
+  while (startPos < len) {
+    let nextNewline = body.indexOf('\n', startPos);
+    if (nextNewline === -1) {
+      nextNewline = len;
+    }
+
+    let line = body.slice(startPos, nextNewline);
+    if (line.endsWith('\r')) {
+      line = line.slice(0, -1);
+    }
+    startPos = nextNewline + 1;
+
     const trimmed = line.trim();
     if (!BULLET_PREFIX.test(trimmed)) continue;
 
     const message = trimmed.replace(BULLET_PREFIX, '');
     if (!INTERNAL_CHANGELOG_ITEM.test(message)) {
-      items.push(message);
+      result.push(`- ${toVisitorChangelogTitle(message)}`);
     }
   }
 
-  if (items.length === 0) {
+  if (result.length === 0) {
     const trimmed = body.trim();
     return trimmed ? toVisitorChangelogTitle(trimmed) : '';
   }
 
-  const result: string[] = [];
-  for (const message of items) {
-    result.push(`- ${toVisitorChangelogTitle(message)}`);
-  }
   return result.join('\n');
 }
 
