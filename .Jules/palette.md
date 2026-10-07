@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-27 - Navigation Link Touch Target Ergonomics
+
+**Learning:** Main menu text links (`.link`) and header social icons (`.social`) in `Nav.astro` can fail WCAG 2.1 AA 44x44px minimum touch target requirements when rendered on mobile devices. Standardizing `.link` with `display: inline-flex; align-items: center; min-height: 44px;` and `.social` with `min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;` prevents mis-taps on touch devices while preserving desktop layout alignment.
+
+**Action:** Added `display: inline-flex; align-items: center; min-height: 44px;` to `.link` and `min-width: 44px; min-height: 44px; align-items: center; justify-content: center;` to `.social` in `src/components/Nav.astro`.
+
 ## 2026-05-27 - Forced-Colors Mode Structural Borders for ContactCTA
 
 **Learning:** Translucent glassmorphism borders declared with `hsla(...)` colors inside structural callout sections (such as `aside` in `ContactCTA.astro`) disappear entirely when rendered under Windows High Contrast / Forced Colors mode, leaving section boundaries invisible. Declaring `border-color: CanvasText;` within `@media (forced-colors: active)` ensures structural borders remain crisp and defined in high contrast viewports.
