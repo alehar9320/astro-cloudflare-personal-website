@@ -27,3 +27,9 @@
 - [Insight 1: When release notes contain bullet points that are all filtered out as internal, falling back to raw body transformation leaks un-bulleted internal titles to visitor views.]
 - [Insight 2: Sharing `INTERNAL_CHANGELOG_ITEM` between `visitor-changelog.ts` and `whats-new-glance.ts` guarantees consistent agent name and test-only filtering across both executive glance and full release body rendering.]
 - [Delta: ~25 lines. Guardrails: All unit tests passed.]
+
+## 2026-08-27 - Pill Component Tactile Micro-Interaction | Signal: Competitive/Technical | Lean Implementation: Flagged CSS Motion Gate + Hardware Press
+
+- [Insight 1: Reusable UI pills/tags lack tactile elevation on hover/press, creating visual feedback asymmetry compared to primary action controls.]
+- [Insight 2: Scoping hardware-accelerated transform feedback (`translateY(-1px)` / `translateY(1px) scale(0.98)`) behind feature flags (`enable_pill_tactile_v1`) and `@media (prefers-reduced-motion: no-preference)` delivers tactile delight without layout shifts or accessibility degradation.]
+- [Delta: ~18 lines total across 3 files. Guardrails: Passed autonomously.]
