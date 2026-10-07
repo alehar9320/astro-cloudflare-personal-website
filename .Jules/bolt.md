@@ -37,3 +37,7 @@ Action: Refactored `toVisitorReleaseBody` in `src/utils/visitor-changelog.ts` to
 2026-09-07 - Single-Pass Glance Construction & Zero Redundant Title Transforms
 Learning: Passing releases through `releases.map(toVisitorRelease)` inside utility helper `collectItems` creates an extra shallow array allocation. Re-invoking `toVisitorChangelogTitle` on bullet messages already transformed by `toVisitorRelease` performs redundant regex evaluation and Map lookup passes. Furthermore, chaining `.filter().map().slice()` and `.flatMap()` during glance aggregation forces 5 intermediate array allocations per SSR request.
 Action: Updated `collectItems` in `src/utils/whats-new-glance.ts` to iterate over releases directly and use pre-transformed bullet titles, and refactored `buildWhatsNewGlance` to construct weekly items and theme groups in single-pass loops.
+
+2026-09-08 - Zero-Allocation Reverse Array Scan for Chat Follow-up Prompts
+Learning: Dynamic shallow array copying and array reversal (`[...messages].reverse().find(...)`) on every UI update creates unnecessary temporary heap allocations and garbage collection overhead in client-side scripts. Replacing array copy/reverse with a reverse indexed `for` loop eliminates dynamic array allocations completely and stops scanning as soon as the first matching element is found.
+Action: Refactored `showFollowUps()` in `src/components/Chat.astro` to use an indexed reverse `for` loop.
