@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-10 - Pill Tactile | Signal: Behavioral | Lean Implementation: Added subtle -1px hover lift to Pill component gated by enable_pill_tactile_v1.
+
+- Insight: Providing subtle physical feedback on interactive tag elements increases perceived responsiveness and tactile delight.
+- User Target: Joy & Comfort
+- Abort Triggers: Exceeding 20 lines total change across codebase (kept strictly to 19 total insertions across 3 files).
+- User Reaction: Positive synthetic delight score.
