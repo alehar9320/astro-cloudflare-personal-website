@@ -2,6 +2,8 @@
  * Node stand-in for `cloudflare:workers` when RENDER=true.
  * String secrets come from process.env. Worker bindings (AI, KV) stay absent.
  */
+declare const process: { env: Record<string, unknown> };
+
 export const env: Record<string, unknown> = new Proxy(
   {},
   {

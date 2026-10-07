@@ -81,6 +81,24 @@ describe('github releases utility', () => {
     );
   });
 
+  it('logs validation failure when /api/releases returns invalid JSON schema in browser', async () => {
+    vi.stubGlobal('window', {});
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: async () => [{ invalid: 'data' }],
+    });
+
+    const result = await fetchGitHubReleases(fetchMock as typeof fetch);
+
+    expect(result).toEqual([]);
+    expect(consoleSpy).toHaveBeenCalledWith(
+      expect.objectContaining({
+        event: 'github_releases_validation_failed',
+      })
+    );
+  });
+
   it('handles API validation failure', async () => {
     const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
     const fetchMock = vi.fn().mockResolvedValue({
