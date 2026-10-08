@@ -10,6 +10,17 @@ Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hi
 
 # Kinetic Journal ⚡
 
+## 2026-03-31 - Portfolio Preview Image Parallax Zoom
+
+- **Signal:** Portfolio project preview cards translated upward on hover, but internal preview images remained static, lacking motion depth.
+- **Action:**
+  - Added smooth, hardware-accelerated image zoom transition (`transform: scale(1.04)`) to `img` in `src/components/PortfolioPreview.astro` on `.card:hover` and `.card:focus-visible`.
+  - Used `transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)` matching card translation easing for cohesive motion feel.
+  - Ensured WCAG compliance by gating image zoom transform inside `@media (prefers-reduced-motion: no-preference)`.
+- **Tokens/Snippets Added:**
+  - Card Image Zoom: `scale(1.04)`
+  - Transition Easing: `cubic-bezier(0.22, 1, 0.36, 1)`
+
 ## 2026-08-29 - CTA glass abort | Signal: closed #772/#667 | Lean Implementation: HARD ABORT CallToAction glassmorphism and micro-states
 
 ## 2025-05-15 - Interactive Glassmorphism for Skills Section
