@@ -1,0 +1,367 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import Icon from '../../components/Icon.astro';
+---
+
+<BaseLayout
+  title="Aurora Canvas Lab | Experimental Visuals"
+  description="Experimental interactive HTML5 Canvas Northern Lights refraction visualizer."
+  robots="noindex"
+>
+  <main class="wrapper stack gap-8" style="margin-top: 4rem;">
+    <Hero
+      title="Canvas Laboratory"
+      tagline="Interactive Northern Lights refraction & multi-wave canvas physics."
+      align="start"
+    />
+
+    <div class="lab-card">
+      <div class="lab-header">
+        <div class="status-badge">
+          <span class="pulse-dot"></span>
+          <span id="fps-counter">60 FPS Target</span>
+        </div>
+        <p class="theme-label">Theme: Northern Lights</p>
+      </div>
+
+      <div class="canvas-container">
+        <canvas id="aurora-lab-canvas" aria-label="Interactive Northern Lights Canvas Visualizer"
+        ></canvas>
+      </div>
+
+      <div class="controls-bar" role="toolbar" aria-label="Canvas Interactive Controls">
+        <button id="ctrl-play" class="ctrl-btn" type="button" aria-label="Pause Animation">
+          <Icon icon="terminal-window" size="1.2rem" />
+          <span id="ctrl-play-label">Pause</span>
+        </button>
+
+        <button id="ctrl-mode" class="ctrl-btn" type="button" aria-label="Switch Mode: Dual">
+          <span id="ctrl-mode-label">Mode: Dual</span>
+        </button>
+
+        <button id="ctrl-speed" class="ctrl-btn" type="button" aria-label="Speed: 1x">
+          <span id="ctrl-speed-label">Speed: 1.0x</span>
+        </button>
+      </div>
+
+      <p class="lab-instructions">
+        <strong>Interaction:</strong> Move cursor/touch across the canvas to refract light particles.
+        Press <kbd>Space</kbd> to toggle playback.
+      </p>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  import {
+    calculateAuroraWave,
+    computeSpatialStep,
+    createParticlePool,
+    getNorthernLightsColor,
+    updateParticlePositions,
+  } from '../../utils/aurora-canvas';
+
+  const canvas = document.getElementById('aurora-lab-canvas') as HTMLCanvasElement | null;
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    const playBtn = document.getElementById('ctrl-play');
+    const playLabel = document.getElementById('ctrl-play-label');
+    const modeBtn = document.getElementById('ctrl-mode');
+    const modeLabel = document.getElementById('ctrl-mode-label');
+    const speedBtn = document.getElementById('ctrl-speed');
+    const speedLabel = document.getElementById('ctrl-speed-label');
+
+    let animId: number = 0;
+    let isPlaying = true;
+    let visualMode: 'dual' | 'waves' | 'particles' = 'dual';
+    let speedMult = 1.0;
+    let time = 0;
+
+    const cursor = { x: -1000, y: -1000, active: false };
+
+    // Reduced motion check
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReducedMotion) {
+      isPlaying = false;
+      if (playLabel) playLabel.textContent = 'Play (Motion Reduced)';
+    }
+
+    // Set canvas dimensions
+    let width = 800;
+    let height = 400;
+    let spatialStep = 8;
+    let particles = createParticlePool(60, width, height);
+
+    const resize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      width = canvas.parentElement.clientWidth || 800;
+      height = Math.min(500, Math.max(300, Math.floor(width * 0.45)));
+      canvas.width = width;
+      canvas.height = height;
+      spatialStep = computeSpatialStep(width);
+      particles = createParticlePool(Math.floor(width / 14), width, height);
+    };
+
+    const render = () => {
+      if (!ctx || !canvas) return;
+      ctx.clearRect(0, 0, width, height);
+
+      // Background gradient
+      const bgGrad = ctx.createLinearGradient(0, 0, 0, height);
+      bgGrad.addColorStop(0, '#050c1a');
+      bgGrad.addColorStop(1, '#0a192f');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      // 1. Draw Wave Superposition Streams
+      if (visualMode === 'dual' || visualMode === 'waves') {
+        const waveCount = 3;
+        for (let w = 0; w < waveCount; w++) {
+          const amplitude = 25 + w * 12;
+          const speed = (0.015 + w * 0.008) * speedMult;
+          const wavelength = 0.006 - w * 0.001;
+          const phase = w * 1.5;
+          const yCenter = height * (0.35 + w * 0.18);
+
+          ctx.beginPath();
+          ctx.moveTo(0, height);
+
+          for (let x = 0; x <= width + spatialStep; x += spatialStep) {
+            const yOffset = calculateAuroraWave(x, time, wavelength, amplitude, speed, phase);
+            ctx.lineTo(x, yCenter + yOffset);
+          }
+
+          ctx.lineTo(width, height);
+          ctx.closePath();
+
+          const waveGrad = ctx.createLinearGradient(0, yCenter - amplitude, 0, height);
+          waveGrad.addColorStop(0, getNorthernLightsColor(w, 0.25));
+          waveGrad.addColorStop(1, getNorthernLightsColor(w + 1, 0.02));
+          ctx.fillStyle = waveGrad;
+          ctx.fill();
+        }
+      }
+
+      // 2. Draw Light Refraction Particles
+      if (visualMode === 'dual' || visualMode === 'particles') {
+        if (isPlaying) {
+          updateParticlePositions(particles, cursor, width, height, speedMult);
+        }
+
+        for (let i = 0; i < particles.length; i++) {
+          const p = particles[i];
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          ctx.fillStyle = getNorthernLightsColor(p.colorIndex, 0.75);
+          ctx.shadowBlur = 8;
+          ctx.shadowColor = getNorthernLightsColor(p.colorIndex, 0.9);
+          ctx.fill();
+        }
+        ctx.shadowBlur = 0; // reset
+      }
+
+      if (isPlaying) {
+        time += 1.0;
+        animId = requestAnimationFrame(render);
+      }
+    };
+
+    // Controls
+    const togglePlay = () => {
+      isPlaying = !isPlaying;
+      if (playLabel) playLabel.textContent = isPlaying ? 'Pause' : 'Play';
+      if (playBtn)
+        playBtn.setAttribute('aria-label', isPlaying ? 'Pause Animation' : 'Play Animation');
+      if (isPlaying) render();
+    };
+
+    const cycleMode = () => {
+      if (visualMode === 'dual') visualMode = 'waves';
+      else if (visualMode === 'waves') visualMode = 'particles';
+      else visualMode = 'dual';
+
+      const modeName = visualMode.charAt(0).toUpperCase() + visualMode.slice(1);
+      if (modeLabel) modeLabel.textContent = `Mode: ${modeName}`;
+      if (modeBtn) modeBtn.setAttribute('aria-label', `Switch Mode: ${modeName}`);
+      if (!isPlaying) render();
+    };
+
+    const cycleSpeed = () => {
+      if (speedMult === 1.0) speedMult = 1.5;
+      else if (speedMult === 1.5) speedMult = 0.5;
+      else speedMult = 1.0;
+
+      if (speedLabel) speedLabel.textContent = `Speed: ${speedMult.toFixed(1)}x`;
+      if (speedBtn) speedBtn.setAttribute('aria-label', `Speed: ${speedMult.toFixed(1)}x`);
+    };
+
+    // Event Listeners
+    playBtn?.addEventListener('click', togglePlay);
+    modeBtn?.addEventListener('click', cycleMode);
+    speedBtn?.addEventListener('click', cycleSpeed);
+
+    const onMouseMove = (e: MouseEvent) => {
+      const rect = canvas.getBoundingClientRect();
+      cursor.x = e.clientX - rect.left;
+      cursor.y = e.clientY - rect.top;
+      cursor.active = true;
+    };
+
+    const onMouseLeave = () => {
+      cursor.active = false;
+    };
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space' && document.activeElement?.tagName !== 'BUTTON') {
+        e.preventDefault();
+        togglePlay();
+      }
+    };
+
+    canvas.addEventListener('mousemove', onMouseMove);
+    canvas.addEventListener('mouseleave', onMouseLeave);
+    window.addEventListener('keydown', onKeyDown);
+    window.addEventListener('resize', resize);
+
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(animId);
+      } else if (isPlaying) {
+        animId = requestAnimationFrame(render);
+      }
+    };
+
+    document.addEventListener('visibilitychange', onVisibilityChange);
+
+    // Lifecycle Teardown
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        isPlaying = false;
+        cancelAnimationFrame(animId);
+        window.removeEventListener('resize', resize);
+        window.removeEventListener('keydown', onKeyDown);
+        document.removeEventListener('visibilitychange', onVisibilityChange);
+      },
+      { once: true }
+    );
+
+    // Initial launch
+    resize();
+    render();
+  }
+</script>
+
+<style>
+  .lab-card {
+    padding: 1.5rem;
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    backdrop-filter: blur(12px);
+  }
+
+  .lab-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    background: rgba(0, 210, 255, 0.1);
+    border: 1px solid rgba(0, 210, 255, 0.3);
+    border-radius: 9999px;
+    font-size: var(--text-xs);
+    color: var(--accent-regular);
+    font-weight: 500;
+  }
+
+  .pulse-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--accent-regular);
+    box-shadow: 0 0 8px var(--accent-regular);
+  }
+
+  .theme-label {
+    font-size: var(--text-xs);
+    color: var(--gray-400);
+  }
+
+  .canvas-container {
+    width: 100%;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid var(--gray-800);
+    background: #050c1a;
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: auto;
+    touch-action: none;
+    cursor: crosshair;
+  }
+
+  .controls-bar {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .ctrl-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    min-height: 44px;
+    border-radius: 0.5rem;
+    background: var(--gray-900);
+    border: 1px solid var(--gray-700);
+    color: var(--gray-100);
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .ctrl-btn:hover {
+    background: var(--gray-800);
+    border-color: var(--accent-regular);
+    color: var(--gray-0);
+  }
+
+  .ctrl-btn:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 2px;
+  }
+
+  .lab-instructions {
+    font-size: var(--text-xs);
+    color: var(--gray-400);
+    line-height: 1.5;
+  }
+
+  kbd {
+    padding: 0.1rem 0.35rem;
+    background: var(--gray-800);
+    border: 1px solid var(--gray-700);
+    border-radius: 0.25rem;
+    font-family: monospace;
+    font-size: 0.85em;
+    color: var(--gray-200);
+  }
+</style>
