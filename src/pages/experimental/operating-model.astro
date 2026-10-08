@@ -1,0 +1,84 @@
+---
+import { getEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+import CallToAction from '../../components/CallToAction.astro';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_operating_model) return Astro.redirect('/404/');
+
+const linkedinHref = 'https://www.linkedin.com/in/alehar/';
+
+const pillars = [
+  {
+    title: 'Empowered Teams',
+    description: 'Cross-functional alignment focused on customer outcomes rather than output velocity.',
+  },
+  {
+    title: 'Continuous Discovery',
+    description: 'Constant customer feedback loops to validate value and usability before scaling code.',
+  },
+  {
+    title: 'Value Delivery',
+    description: 'Iterative, measurable releases that directly drive business metrics and product capabilities.',
+  },
+];
+---
+
+<BaseLayout
+  title="Product Operating Model | Personal Portfolio"
+  description="Core pillars of modern product team operating model."
+  robots="noindex"
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero title="Product Operating Model" align="start">
+      <p class="lede">How empowered product teams build products customers love.</p>
+    </Hero>
+    <div class="grid">
+      {
+        pillars.map((p) => (
+          <section class="card">
+            <h2>{p.title}</h2>
+            <p>{p.description}</p>
+          </section>
+        ))
+      }
+    </div>
+    <div class="actions">
+      <CallToAction href={linkedinHref} target="_blank" rel="noopener noreferrer">
+        Connect on LinkedIn
+      </CallToAction>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .lede {
+    color: var(--gray-200);
+    max-width: 46ch;
+  }
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .card {
+    padding: 1.5rem;
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+  }
+  .card h2 {
+    font-size: var(--text-lg);
+    color: var(--gray-0);
+    margin-bottom: 0.5rem;
+  }
+  .card p {
+    color: var(--gray-300);
+    line-height: 1.5;
+    margin: 0;
+  }
+  .actions {
+    margin-top: 1rem;
+  }
+</style>
