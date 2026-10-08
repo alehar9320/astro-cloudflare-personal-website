@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-28 - Footer Navigation Link Touch Target Ergonomics
+
+**Learning:** Standalone navigation and social links in `Footer.astro` (`.colophon a`, `.socials a`) require explicit WCAG 2.1 AA 44x44px minimum touch target dimensions (`min-height: 44px; display: inline-flex; align-items: center;`) on mobile viewports. Applying flex touch dimensions globally to `footer a` corrupts inline paragraph text flow (such as location links in `p a`), so touch target sizing must be scoped strictly to standalone navigation containers (`.colophon a`, `.socials a`).
+
+**Action:** Targeted `.colophon a` and `.socials a` with `display: inline-flex; align-items: center; min-height: 44px;` in `src/components/Footer.astro`.
+
 ## 2026-05-27 - Navigation Link Touch Target Ergonomics
 
 **Learning:** Main menu text links (`.link`) and header social icons (`.social`) in `Nav.astro` can fail WCAG 2.1 AA 44x44px minimum touch target requirements when rendered on mobile devices. Standardizing `.link` with `display: inline-flex; align-items: center; min-height: 44px;` and `.social` with `min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;` prevents mis-taps on touch devices while preserving desktop layout alignment.
