@@ -27,3 +27,9 @@
 - [Insight 1: When release notes contain bullet points that are all filtered out as internal, falling back to raw body transformation leaks un-bulleted internal titles to visitor views.]
 - [Insight 2: Sharing `INTERNAL_CHANGELOG_ITEM` between `visitor-changelog.ts` and `whats-new-glance.ts` guarantees consistent agent name and test-only filtering across both executive glance and full release body rendering.]
 - [Delta: ~25 lines. Guardrails: All unit tests passed.]
+
+## 2026-08-27 - Portfolio Preview Image Zoom | Signal: Competitive/Technical | Lean Implementation: Scoped Hardware-Accelerated CSS Scale Transform
+
+- [Insight 1: Hardware-accelerated image scaling (`transform: scale(1.04)`) on hover/focus provides subtle tactile depth without layout repaints or CLS.]
+- [Insight 2: Gating hover scale transforms within `@media (prefers-reduced-motion: no-preference)` maintains WCAG accessibility compliance.]
+- [Delta: 8 lines. Guardrails: All passed autonomously.]
