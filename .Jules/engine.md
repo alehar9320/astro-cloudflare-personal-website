@@ -35,3 +35,9 @@
 - **Edge Memory & GC Allocation:** Hoisted static regular expression literal patterns in `src/utils/chat-explore.ts` to module scope constants (`SUPPRESS_PATTERN`, `LINKEDIN_PATTERN`, `DESIGN_SYSTEM_PATTERN`, `COPILOTS_PATTERN`, `ANALYTICS_PATTERN`, `THESIS_PATTERN`, `BIOGRAPHY_PATTERN`, `CASES_PATTERN`, `WORK_PATTERN`).
 - **Performance:** Eliminates dynamic `RegExp` compilation and dynamic string allocations on every avatar chat message question query in Cloudflare Workers edge runtimes.
 - **Verification:** Added unit test coverage in `src/utils/chat-explore.test.ts` for suppression logic, keyword variations, edge cases, and empty strings. All tests pass cleanly.
+
+## 2025-06-25 - O(1) Column Indexing & Zero-Allocation Date Slicing
+
+- **O(1) Column Map Indexing:** Pre-constructed a `Map<string, number>` in `parseVisitGlance` (`src/utils/visit-stats.ts`) once per payload and passed it to `valueFromRow`, converting 12 dynamic $O(N)$ `columns.indexOf(...)` linear array searches per row into $O(1)$ map lookups when parsing PostHog HogQL API results.
+- **Zero-Allocation Date Slicing:** Refactored `formatReleaseDate` in `src/utils/github-releases.ts` to use `.slice(0, 10)` instead of `.split('T')[0]`, eliminating intermediate 2-element string array allocations on Cloudflare Workers edge V8 runtimes.
+- **Verification:** Added unit test coverage in `src/utils/visit-stats.test.ts` for out-of-order column map indexing and verified all 378 Vitest unit tests pass cleanly.
