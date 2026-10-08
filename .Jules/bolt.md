@@ -45,3 +45,7 @@ Action: Refactored `showFollowUps()` in `src/components/Chat.astro` to use an in
 2026-09-08 - Hoist Static Regexes Across Edge Utilities
 Learning: Declaring inline RegExp literals inside repeatedly executed edge functions (`splitReleaseBody`, `toVisitorChangelogTitle`, `stripExecBanned`, `isSafeReleaseSummary`) forces JavaScript engines on Cloudflare Workers edge runtimes to re-instantiate RegExp objects on every function call, triggering dynamic allocations and garbage collection overhead. Hoisting static regular expressions to module-level constants eliminates object instantiation and reduces GC pressure per edge request.
 Action: Hoisted static RegExp literals in `src/utils/github-releases.ts`, `src/utils/visitor-changelog.ts`, and `src/utils/release-summary.ts`.
+
+2026-09-09 - Hoist Pathname Normalization in Nav Frontmatter
+Learning: Re-evaluating URL pathname string manipulations (`replace`, `.at(0)`, `.at(-1)`) inside helper functions iterated over multiple navigation links in Astro components causes duplicate CPU work during SSR page rendering. Normalizing `Astro.url.pathname` once at the component frontmatter level eliminates redundant string transformations per header render.
+Action: Hoisted `Astro.url.pathname` normalization to top-level frontmatter in `src/components/Nav.astro`.
