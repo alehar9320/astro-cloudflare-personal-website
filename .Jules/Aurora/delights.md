@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - Pill Glow Micro-Interaction | Signal: Technical | Lean Implementation: Added subtle gradient shift and translateY(-1px) on hover to Pill component behind enable_pill_glow_v1 flag.
+
+- Insight: Case study tag pills provide tactile visual feedback when interactive, enhancing perceived depth and polish.
+- User Target: Joy
+- Abort Triggers: None (verified via test and build pipeline).
+- User Reaction: Pending synthetic feedback.
