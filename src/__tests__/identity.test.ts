@@ -1514,7 +1514,7 @@ describe('identity copy', () => {
     const head = readFileSync('src/components/MainHead.astro', 'utf8');
     const bio = readFileSync('src/pages/biography.astro', 'utf8');
     const shareDescription =
-      'Biography of Alexander Härenstam, Product Manager, Developer Experience at IFS. Eight years at IFS; software engineering and innovation degrees from Chalmers.';
+      'Biography of Alexander Härenstam, Product Manager, Developer Experience at IFS. Eight years at IFS. Software engineering and innovation management at Chalmers.';
     expect(bio).toContain(`description="${shareDescription}"`);
     expect(bio).toContain('title="Biography | Product Manager, Developer Experience at IFS"');
     expect(bio).toContain('https://www.linkedin.com/in/alehar/');
@@ -1531,7 +1531,7 @@ describe('identity copy', () => {
     const shareDescription =
       'Alexander Härenstam, Product Manager, Developer Experience at IFS. Design systems, developer platforms, and Industrial AI copilots.';
     const contactDescription =
-      'How to reach Alexander Härenstam, Product Manager, Developer Experience at IFS: on LinkedIn.';
+      'Reach Alexander Härenstam, Product Manager, Developer Experience at IFS, on LinkedIn.';
     expect(home).toContain('ogTitle="Product Manager, Developer Experience at IFS"');
     expect(home).toContain(`description="${shareDescription}"`);
     expect(contact).toContain(`description="${contactDescription}"`);
@@ -1667,7 +1667,7 @@ describe('identity copy', () => {
     const homeDescription =
       'Alexander Härenstam, Product Manager, Developer Experience at IFS. Design systems, developer platforms, and Industrial AI copilots.';
     const bioDescription =
-      'Biography of Alexander Härenstam, Product Manager, Developer Experience at IFS. Eight years at IFS; software engineering and innovation degrees from Chalmers.';
+      'Biography of Alexander Härenstam, Product Manager, Developer Experience at IFS. Eight years at IFS. Software engineering and innovation management at Chalmers.';
     expect(home).toContain("'@type': 'WebPage'");
     expect(home).toContain(
       `'@type': 'WebPage',
