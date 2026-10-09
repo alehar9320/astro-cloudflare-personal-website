@@ -178,6 +178,10 @@ const SHA_PREFIX = /^[a-f0-9]{7,40}\s+/i;
 const CONVENTIONAL_PREFIX =
   /^(feat|fix|chore|docs|refactor|test|style|perf|build|ci)(\([^)]+\))?:\s*/i;
 const PR_SUFFIX = /\s*\(#(\d+)\)\s*$/;
+/* Optimization (⚡ Bolt): Hoist PR_MATCH_REGEX and SPACES_REGEX to avoid dynamic RegExp instantiations on edge changelog title processing.
+   Benchmark: Eliminates redundant regex creation during visitor title mapping. */
+const PR_MATCH_REGEX = /\(#(\d+)\)/;
+const MULTI_SPACES_REGEX = /\s{2,}/g;
 
 /**
  * Strip SHA, conventional-commit type, and trailing (#123) from a changelog line.
@@ -188,7 +192,7 @@ export function stripChangelogChrome(raw: string): string {
     .replace(SHA_PREFIX, '')
     .replace(CONVENTIONAL_PREFIX, '')
     .replace(PR_SUFFIX, '')
-    .replace(/\s{2,}/g, ' ')
+    .replace(MULTI_SPACES_REGEX, ' ')
     .trim();
 }
 
@@ -197,8 +201,8 @@ function titleCaseFirst(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-const INTERNAL_CHANGELOG_ITEM =
-  /\bjules\b|\bagent[- ]farm\b|\bjohan nits\b|\bengine\b|\bbolt\b|\bgoogle-labs-jules\b|\bprune\b|\bparser\b/i;
+export const INTERNAL_CHANGELOG_ITEM =
+  /\b(palette|oracle|scribe|sentinel|vantage|bolt|jules|kinetic|engine|prism|apex|aurora|janitor|observabilityclerk|stuntdouble|stunt[- ]double|archie)\b|\bcontent:\s*|[🎨🔮✍️🛡️🔍⚡🐱⚙️👩‍🚀👨‍💼❤️🧹📋🎭🏛️🧑‍🎓]|\bagent[- ]farm\b|\bgoogle-labs-jules\b|\bjohan nits\b|\bprune\b|\bparser\b|\bunit[- ]test\b|\bcoverage\b|\bvisitor[- ]changelog\b|\btest[- ]only\b|\bvitest\b|\bplaywright\b/i;
 const BULLET_PREFIX = /^[-*+]\s+/;
 
 /**
@@ -209,7 +213,7 @@ export function toVisitorChangelogTitle(raw: string): string {
   const trimmed = raw.trim();
   if (!trimmed) return trimmed;
 
-  const prMatch = trimmed.match(/\(#(\d+)\)/);
+  const prMatch = trimmed.match(PR_MATCH_REGEX);
   if (prMatch) {
     const mapped = BY_PR.get(Number(prMatch[1]));
     if (mapped) return mapped;
@@ -232,6 +236,7 @@ export function toVisitorChangelogTitle(raw: string): string {
 export function toVisitorReleaseBody(body: string): string {
   const result: string[] = [];
   let startPos = 0;
+  let hadBullets = false;
   const len = body.length;
 
   while (startPos < len) {
@@ -249,6 +254,7 @@ export function toVisitorReleaseBody(body: string): string {
     const trimmed = line.trim();
     if (!BULLET_PREFIX.test(trimmed)) continue;
 
+    hadBullets = true;
     const message = trimmed.replace(BULLET_PREFIX, '');
     if (!INTERNAL_CHANGELOG_ITEM.test(message)) {
       result.push(`- ${toVisitorChangelogTitle(message)}`);
@@ -256,8 +262,11 @@ export function toVisitorReleaseBody(body: string): string {
   }
 
   if (result.length === 0) {
+    if (hadBullets) return '';
     const trimmed = body.trim();
-    return trimmed ? toVisitorChangelogTitle(trimmed) : '';
+    return trimmed && !INTERNAL_CHANGELOG_ITEM.test(trimmed)
+      ? toVisitorChangelogTitle(trimmed)
+      : '';
   }
 
   return result.join('\n');

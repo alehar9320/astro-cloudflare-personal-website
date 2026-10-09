@@ -6,7 +6,7 @@
 import type { SiteRelease } from './github-releases';
 import { splitReleaseBody } from './github-releases';
 import { isVisitorFacingBullet } from './release-summary';
-import { toVisitorRelease } from './visitor-changelog';
+import { INTERNAL_CHANGELOG_ITEM, toVisitorRelease } from './visitor-changelog';
 
 export const COMMITS_HISTORY_URL =
   'https://github.com/alehar9320/astro-cloudflare-personal-website/commits';
@@ -15,7 +15,7 @@ const WEEK_MS = 7 * 24 * 60 * 60 * 1000;
 const MONTH_MS = 30 * 24 * 60 * 60 * 1000;
 
 const DROP_PATTERN =
-  /\bjson-ld\b|\bgithub[_-]?token\b|\btwin[- ]context\b|\bauthor linkedin context\b|\bno documented changes\b|latest banner from the first card|github links by release version|\bengine\b|\bbolt\b|\bjules\b|\bgoogle-labs-jules\b|\bagent[- ]farm\b|\bprune\b|\bparser\b/i;
+  /\bjson-ld\b|\bgithub[_-]?token\b|\btwin[- ]context\b|\bauthor linkedin context\b|\bno documented changes\b|latest banner from the first card|github links by release version|\bengine\b|\bbolt\b|\bjules\b|\bgoogle-labs-jules\b|\bagent[- ]farm\b|\bprune\b|\bparser\b|\bpalette\b|\boracle\b|\bscribe\b|\bsentinel\b|\bvantage\b|\bkinetic\b|\bprism\b|\bapex\b|\baurora\b|\bjanitor\b|\bobservabilityclerk\b|\bstuntdouble\b|\bstunt[- ]double\b|\barchie\b|[🎨🔮✍️🛡️🔍⚡🐱⚙️👩‍🚀👨‍💼❤️🧹📋🎭🏛️🧑‍🎓]|\bunit[- ]test\b|\bcoverage\b|\bvisitor[- ]changelog\b|\btest[- ]only\b|\bvitest\b|\bplaywright\b/i;
 
 const SHA_OR_VERSION_ONLY = /^(?:[a-f0-9]{7,40}|\d{4}\.\d{2}\.\d{2}\.\d{4})$/i;
 
@@ -62,7 +62,14 @@ export function isKeptVisitorLine(raw: string, visitorTitle: string): boolean {
   const title = visitorTitle.trim();
   if (!title) return false;
   if (SHA_OR_VERSION_ONLY.test(title) || SHA_OR_VERSION_ONLY.test(raw.trim())) return false;
-  if (DROP_PATTERN.test(raw) || DROP_PATTERN.test(title)) return false;
+  if (
+    DROP_PATTERN.test(raw) ||
+    DROP_PATTERN.test(title) ||
+    INTERNAL_CHANGELOG_ITEM.test(raw) ||
+    INTERNAL_CHANGELOG_ITEM.test(title)
+  ) {
+    return false;
+  }
   if (isVisitorFacingBullet(title) || isVisitorFacingBullet(raw.trim())) return true;
   return VISIBLE_SURFACE.test(title) || VISIBLE_SURFACE.test(raw);
 }

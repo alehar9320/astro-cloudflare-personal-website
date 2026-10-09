@@ -40,6 +40,33 @@ describe('whats-new glance', () => {
     expect(kept('open the visit glance on tap at 375 (#461)')).toBe(true);
   });
 
+  it('drops live bot-titled and test-only strings from glance and Last-30 grouping', () => {
+    const paletteStr =
+      '🎨 Palette: Standardize Chat Overlay Control Touch Targets and Focus States';
+    const testCoverageStr = 'Expand unit test coverage for visitor-changelog utilities';
+
+    expect(kept(paletteStr)).toBe(false);
+    expect(kept(testCoverageStr)).toBe(false);
+    expect(isKeptVisitorLine(paletteStr, paletteStr)).toBe(false);
+    expect(isKeptVisitorLine(testCoverageStr, testCoverageStr)).toBe(false);
+
+    const glance = buildWhatsNewGlance(
+      [
+        release({
+          body: `- ${paletteStr}\n- ${testCoverageStr}\n- 3a39e72 feat: dock chat composer to the bottom edge and use the stage (#618)`,
+          publishedAt: '2026-08-15T12:00:00Z',
+        }),
+      ],
+      now
+    );
+
+    const allPainted = [...glance.thisWeek, ...glance.groups.flatMap((g) => g.lines)].join('\n');
+    expect(allPainted).not.toContain(paletteStr);
+    expect(allPainted).not.toContain(testCoverageStr);
+    expect(allPainted).not.toMatch(/Palette|visitor-changelog utilities/i);
+    expect(allPainted).toMatch(/composer/i);
+  });
+
   it('drops Engine / Bolt / Jules farm, prune, and parser noise', () => {
     expect(kept('feat: Engine prune of the overlay parser work (#812)')).toBe(false);
     expect(kept('9ef3e5b feat: Bolt layout tweak for the agent farm (#813)')).toBe(false);
