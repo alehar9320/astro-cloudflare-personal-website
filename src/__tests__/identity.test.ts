@@ -1096,7 +1096,7 @@ describe('identity copy', () => {
   it('lets the IFS Design System case include a visible Get in touch on LinkedIn CTA', () => {
     const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
     expect(ds).toContain(
-      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer" data-hire-event="hire_cta_click" data-hire-surface="case_study">Get in touch on LinkedIn</a>'
     );
     expect(ds).not.toContain('mailto:');
 
@@ -1120,7 +1120,7 @@ describe('identity copy', () => {
     expect(ds).toContain('up to 30x');
     expect(ds).toContain('Zeroheight');
     expect(ds).toContain(
-      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer" data-hire-event="hire_cta_click" data-hire-surface="case_study">Get in touch on LinkedIn</a>'
     );
     expect(ds).not.toContain('mailto:');
   });
@@ -2622,7 +2622,7 @@ describe('identity copy', () => {
     expect(home).not.toContain('ds-first');
     expect(ds).not.toContain('mailto:');
     expect(ds).toContain(
-      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer" data-hire-event="hire_cta_click" data-hire-surface="case_study">Get in touch on LinkedIn</a>'
     );
   });
 
@@ -2775,7 +2775,7 @@ describe('identity copy', () => {
     expect(slug).toContain("import ContactCTA from '../../components/ContactCTA.astro';");
     expect(slug).not.toContain('mailto:');
     expect(ds).toContain(
-      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer" data-hire-event="hire_cta_click" data-hire-surface="case_study">Get in touch on LinkedIn</a>'
     );
     expect(ds).not.toContain('mailto:');
     expect(work).toContain('class="proof-card"');
@@ -2980,5 +2980,18 @@ describe('/work/ Earlier work ends on the normal section rhythm (#1109 follow-up
     expect(earlierRule).toContain('display: flex;');
     expect(earlierRule).not.toContain('padding-bottom: var(--chat-fab-clearance)');
     expect(earlierRule).toContain('padding-right: var(--chat-fab-clearance);');
+  });
+});
+
+describe('IFS Design System case Get in touch is counted as hire (#979)', () => {
+  const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
+  const analytics = readFileSync('src/utils/hire-analytics.ts', 'utf8');
+
+  it('tags the in-body LinkedIn Get in touch with hire_cta_click / case_study', () => {
+    const link = ds.match(/<a [^>]*>Get in touch on LinkedIn<\/a>/)?.[0] ?? '';
+    expect(link).toMatch(/\bhref="https:\/\/www\.linkedin\.com\/in\/alehar\/"/);
+    expect(link).toContain('data-hire-event="hire_cta_click"');
+    expect(link).toContain('data-hire-surface="case_study"');
+    expect(analytics).toContain("| 'case_study'");
   });
 });
