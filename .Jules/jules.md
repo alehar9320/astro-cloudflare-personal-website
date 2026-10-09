@@ -27,3 +27,9 @@
 - [Insight 1: When release notes contain bullet points that are all filtered out as internal, falling back to raw body transformation leaks un-bulleted internal titles to visitor views.]
 - [Insight 2: Sharing `INTERNAL_CHANGELOG_ITEM` between `visitor-changelog.ts` and `whats-new-glance.ts` guarantees consistent agent name and test-only filtering across both executive glance and full release body rendering.]
 - [Delta: ~25 lines. Guardrails: All unit tests passed.]
+
+## 2026-08-27 - Pill Badge Gradient Sweep | Signal: Technical/Competitive | Lean Implementation: Flagged CSS Sweep + Reduced Motion Fallback
+
+- [Insight 1: Animating background-position (100% 50%) along with subtle translateY hover elevation on gradient pill badges enhances interactive affordance without CLS or JS runtime cost.]
+- [Insight 2: Scoping visual sweeps behind `enable_pill_sweep_v1` feature flag and `prefers-reduced-motion` ensures strict accessibility and feature flag isolation.]
+- [Delta: 25 lines. Guardrails: All passed autonomously.]
