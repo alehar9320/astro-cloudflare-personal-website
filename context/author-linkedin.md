@@ -1,5 +1,7 @@
 # Alexander Härenstam LinkedIn Profile
 
+> **Redacted public-profile scrape.** Logged-in and private LinkedIn UI (owner-only controls, private boxes and analytics, network suggestions, messaging, viewer follow state) was removed in #1639 and its follow-up. Everything under `context/` is locked by `src/__tests__/context-privacy.test.ts`.
+
 Alexander Härenstam
 (He/Him)
 Product @IFS | Developer Experience
@@ -114,7 +116,6 @@ Consumer AI experiences are great, but it's when it's rolled out for hard-to-sol
 …more
 View Christian Pedersen’s graphic link
 Christian Pedersen
-• FollowingPremium • Following
 Chief Product Officer @ IFS | Leader in Industrial AI
 200+ AI-based capabilities now available in IFS Cloud 25R1! With hashtag#IndustrialAI and sustainability at its core, this new release incorporates agentic industrial AI capabilities that enable customers to rapidly drive value from Industrial AI at scale.
 
@@ -144,7 +145,7 @@ IFS is a double-digit growth company in the enterprise software industry.
 
 As Product Manager for Developer Experience at IFS, I set the strategy for the tools and platforms that empower internal engineering teams, global partners, and customers. The work translates to increased efficiency and accelerated time-to-market for the company's offerings.
 
-One key pillar has been the rollout of AI Coding Copilots; a strategic initiative.IFS is a double-digit growth company in the enterprise software industry. As Product Manager for Developer Experience at IFS, I set the strategy for the tools and platforms that empower internal engineering teams, global partners, and customers. The work translates to increased efficiency and accelerated time-to-market for the company's offerings. One key pillar has been the rollout of AI Coding Copilots; a strategic initiative.…see more
+One key pillar has been the rollout of AI Coding Copilots; a strategic initiative. IFS is a double-digit growth company in the enterprise software industry. As Product Manager for Developer Experience at IFS, I set the strategy for the tools and platforms that empower internal engineering teams, global partners, and customers. The work translates to increased efficiency and accelerated time-to-market for the company's offerings. One key pillar has been the rollout of AI Coding Copilots; a strategic initiative.…see more
 Product Manager - Product Experience (Design System)
 Apr 2022 - Feb 2025 · 2 yrs 1 mosApr 2022 to Feb 2025 · 2 yrs 1 mos
 Gothenburg, Västra Götaland County, Sweden · Hybrid
@@ -308,13 +309,9 @@ Schools
 Cassie Kozyrkov
 CEO, Google's first Chief Decision Scientist, AI Adviser, Decision Strategist, Keynote Speaker (makecassietalk.com), LinkedIn Top Voice
 688,604 followers
-
-Following
 Marc Randolph
 Netflix Co-Founder, Entrepreneur, Mentor & Investor
 386,22 followers
-
-Following
 Show all Top Voices
 Profile language
 Svenska

@@ -1,11 +1,24 @@
 import { readdirSync, readFileSync, statSync } from 'node:fs';
-import { join } from 'node:path';
+import { dirname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 
 // context/ is a public, agent-facing corpus. It must never carry logged-in
-// LinkedIn UI (owner-only "Open to work" roles, "Private to you" boxes) or the
-// unapproved copilots value claim.
-const banned = ['open to work', 'private to you', 'several millions'];
+// LinkedIn UI (owner-only "Open to" buttons and roles, "Private to you" boxes,
+// viewer analytics, online status, Premium upsells) or the unapproved copilots
+// value claim.
+const banned = [
+  'open to work',
+  'open to',
+  'private to you',
+  'several millions',
+  'profile views',
+  'search appearances',
+  'status is online',
+  'premium',
+];
+
+const contextDir = resolve(dirname(fileURLToPath(import.meta.url)), '../../context');
 
 function listFiles(dir: string): string[] {
   return readdirSync(dir).flatMap((name) => {
@@ -15,7 +28,7 @@ function listFiles(dir: string): string[] {
 }
 
 describe('context/ privacy', () => {
-  const files = listFiles('context');
+  const files = listFiles(contextDir);
 
   it('has files to scan', () => {
     expect(files.length).toBeGreaterThan(0);
