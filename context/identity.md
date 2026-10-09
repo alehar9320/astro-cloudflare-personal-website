@@ -18,7 +18,7 @@ Source of truth for who Alexander Härenstam is. Cite sources. Never invent. Vis
 
 IFS full-time "8 yrs 5 mos" as of the scrape (`context/author-linkedin.md`):
 
-- Product Manager, Developer Experience — Feb 2025–present, Stockholm, hybrid. LinkedIn: strategy for tools/platforms for internal engineering, partners, customers; AI coding copilots. Live /biography/ mentions copilots **without** a dollar figure. The LinkedIn "several millions" line is **not authorized** for the visitor site.
+- Product Manager, Developer Experience — Feb 2025–present, Stockholm, hybrid. LinkedIn: strategy for tools/platforms for internal engineering, partners, customers; AI coding copilots. Live /biography/ mentions copilots **without** a dollar figure. The LinkedIn copilots business-value size claim is **not authorized** for the visitor site (and was stripped from the scrape).
 - Product Manager, Product Experience (Design System) — Apr 2022–Feb 2025, Gothenburg, hybrid. Past proof (keep "up to"): up to 2x faster delivery, up to 30x ROI, Zeroheight Design System Awards runner-up; User Behavior Analytics Platform. Sources: LinkedIn scrape; live /biography/; `/work/ifs-design-system/`.
 - Lead Software Designer — Sep 2021–Apr 2022, Gothenburg, hybrid. LinkedIn: "Product Lead working with internal systems aimed at scaling a consistent user experience across the full customer journey."
 - Scrape says "Show all 6 experiences" after Lead Software Designer. Remaining IFS rows are collapsed. Do not invent dates/titles. Public LinkedIn post metadata names Senior Software Designer as a previous IFS role, **dates unknown**.
@@ -40,7 +40,7 @@ IFS full-time "8 yrs 5 mos" as of the scrape (`context/author-linkedin.md`):
 
 ## Private / do not ship on visitor pages
 
-- Copilots "several millions".
+- The copilots business-value size claim from LinkedIn (no figure, no size).
 
 ## Adjacent pictures from published proof only
 
