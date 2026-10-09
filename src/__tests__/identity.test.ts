@@ -125,7 +125,8 @@ describe('identity copy', () => {
   it('keeps the chat FAB off Earlier work and the biography timeline on a phone', () => {
     const work = readFileSync('src/pages/work.astro', 'utf8');
     const bio = readFileSync('src/pages/biography.astro', 'utf8');
-    expect(work).toContain('padding-bottom: var(--chat-fab-clearance)');
+    // ContactCTA follows Earlier work and carries the FAB clearance (#1109 follow-up).
+    expect(work).not.toContain('padding-bottom: var(--chat-fab-clearance)');
     expect(work).toContain('padding-right: var(--chat-fab-clearance)');
     expect(work).toContain('Earlier work');
     expect(bio).toContain('padding-bottom: var(--chat-fab-clearance)');
@@ -2968,5 +2969,16 @@ describe('/work/ hire door is the counted ContactCTA (#1109 follow-up)', () => {
     expect(work).toContain('<ContactCTA />');
     expect(cta).toContain('data-hire-event="hire_cta_click"');
     expect(cta).toContain('data-hire-surface="contact_cta"');
+  });
+});
+
+describe('/work/ Earlier work ends on the normal section rhythm (#1109 follow-up)', () => {
+  const work = readFileSync('src/pages/work.astro', 'utf8');
+
+  it('drops the phone FAB-clearance bottom padding on .earlier (ContactCTA clears the FAB)', () => {
+    const earlierRule = work.match(/\n {2}\.earlier \{[^}]*\}/)?.[0] ?? '';
+    expect(earlierRule).toContain('display: flex;');
+    expect(earlierRule).not.toContain('padding-bottom: var(--chat-fab-clearance)');
+    expect(earlierRule).toContain('padding-right: var(--chat-fab-clearance);');
   });
 });
