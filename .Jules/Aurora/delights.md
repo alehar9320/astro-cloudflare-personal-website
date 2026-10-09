@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - Chat Toggle Tactile Bounce | Signal: Competitive | Lean Implementation: Added tactile spring-scale on hover (1.08) and active press (0.95) to Chat FAB.
+
+- Insight: Floating action buttons with subtle spring tactile feedback create higher perceived physical responsiveness and invite user interaction.
+- User Target: Surprise & Delight
+- Abort Triggers: None (verified via build, lint, and vitest suites).
+- User Reaction: Pending synthetic feedback.

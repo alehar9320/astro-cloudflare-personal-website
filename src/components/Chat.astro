@@ -1,11 +1,14 @@
 ---
+import { getEntry } from 'astro:content';
 
+const flagsEntry = await getEntry('flags', 'config');
+const isTactileEnabled = flagsEntry?.data.enable_chat_toggle_tactile_v1 ?? false;
 ---
 
 <div id="chat-container" class="chat-container">
   <button
     id="chat-toggle"
-    class="chat-toggle"
+    class:list={['chat-toggle', { 'tactile-v1': isTactileEnabled }]}
     aria-label="Open chat"
     aria-expanded="false"
     aria-controls="chat-window"
@@ -186,6 +189,18 @@
   .chat-toggle:focus-visible {
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .chat-toggle.tactile-v1 {
+      transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .chat-toggle.tactile-v1:hover {
+      transform: scale(1.08);
+    }
+    .chat-toggle.tactile-v1:active {
+      transform: scale(0.95);
+    }
   }
 
   .chat-container.is-prominent .chat-toggle,
