@@ -13,6 +13,7 @@ export type HireSurface =
   | 'hero'
   | 'contact_cta'
   | 'contact_page'
+  // Legacy: no longer emitted in src (case pages are chrome-only hire). Kept for older PostHog data.
   | 'case_study'
   | '404'
   | 'now'

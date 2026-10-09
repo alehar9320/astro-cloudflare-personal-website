@@ -3,6 +3,8 @@ title: Internal AI coding copilots
 publishDate: 2025-02-01 00:00:00
 description: |
   Internal AI coding copilots for IFS engineering teams.
+metaDescription: >-
+  Internal AI coding copilots for IFS engineering teams, my work as Product Manager, Developer Experience in Greater Stockholm since February 2025.
 tags:
   - Developer Experience
   - AI Strategy

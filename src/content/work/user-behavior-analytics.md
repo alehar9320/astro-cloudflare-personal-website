@@ -3,6 +3,8 @@ title: User behavior analytics
 publishDate: 2023-01-01 00:00:00
 description: |
   Usage telemetry for IFS Cloud roadmap decisions.
+metaDescription: >-
+  User behavior analytics for IFS Cloud: capturing usage so product teams see what customers actually do, and roadmap decisions rest on that usage.
 tags:
   - Analytics
   - User Behavior

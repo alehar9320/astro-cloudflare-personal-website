@@ -3,6 +3,8 @@ title: Chalmers master's thesis
 publishDate: 2017-06-01 00:00:00
 description: |
   Chalmers master's thesis, 2017.
+metaDescription: >-
+  Chalmers master's thesis, 2017, on what digitalization does to business models. One case, compared to the literature. Barriers were mostly organizational.
 tags:
   - Research
   - Digitalization
