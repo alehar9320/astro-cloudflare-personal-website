@@ -1,4 +1,5 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { fetchDirectNotFound, isDirectNotFoundPath } from '../direct-not-found';
@@ -2168,7 +2169,8 @@ describe('identity copy', () => {
     expect(notFound).toContain('https://www.linkedin.com/in/alehar/');
     expect(notFound).toContain('Get in touch');
     expect(notFound).toContain('Return to Homepage');
-    expect(notFound).toContain('LinkedIn · replies from me');
+    expect(notFound).toContain('<p class="cta-hint">LinkedIn</p>');
+    expect(notFound).not.toContain('replies from me');
     expect(notFound).toContain('data-hire-event="hire_cta_click"');
     expect(notFound).toContain('data-hire-surface="404"');
     expect(content).toContain('title="Page not found"');
@@ -2271,7 +2273,8 @@ describe('identity copy', () => {
     expect(now).toContain('Product Manager, Developer Experience');
     expect(now).toContain('https://www.linkedin.com/in/alehar/');
     expect(now).toContain('Get in touch');
-    expect(now).toContain('LinkedIn · replies from me');
+    expect(now).toContain('<p class="cta-hint">LinkedIn</p>');
+    expect(now).not.toContain('replies from me');
     expect(now).toContain('Hero title="Product Manager, Developer Experience at IFS"');
     expect(now.replace(/\s+/g, ' ')).toContain('up to 2x faster delivery');
     expect(now).toContain('up to 30x ROI');
@@ -2291,7 +2294,8 @@ describe('identity copy', () => {
     expect(page).toContain('Product Manager, Developer Experience');
     expect(page).toContain('https://www.linkedin.com/in/alehar/');
     expect(page).toContain('Get in touch');
-    expect(page).toContain('LinkedIn · replies from me');
+    expect(page).toContain('<p class="cta-hint">LinkedIn</p>');
+    expect(page).not.toContain('replies from me');
     expect(page).toContain('High Output Management');
     expect(page).toContain('The Lean Startup');
     expect(page).toContain('Competing Against Luck');
@@ -2882,5 +2886,27 @@ describe('identity copy', () => {
     expect(slug.indexOf('<ContactCTA />')).toBeGreaterThan(headerEnd);
     expect(cta).toContain('https://www.linkedin.com/in/alehar/');
     expect(cta).not.toContain('mailto:');
+  });
+});
+
+describe('hire hint is just LinkedIn everywhere (#990 / #761 Eden copy lock)', () => {
+  // Tests legitimately keep the old copy in negative assertions, so skip them.
+  const isTestPath = (path: string) =>
+    path.split(/[\\/]/).includes('__tests__') || /\.(test|spec)\.[cm]?[jt]sx?$/.test(path);
+
+  const listSourceFiles = (dir: string): string[] =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+      const path = join(dir, entry.name);
+      if (isTestPath(path)) return [];
+      return entry.isDirectory() ? listSourceFiles(path) : [path];
+    });
+
+  it('no file under src/ says replies from me', () => {
+    const sources = listSourceFiles('src');
+    expect(sources).toContain(join('src', 'components', 'ContactCTA.astro'));
+    const offenders = sources.filter((path) =>
+      /replies\s+from\s+me/i.test(readFileSync(path, 'utf8'))
+    );
+    expect(offenders).toEqual([]);
   });
 });
