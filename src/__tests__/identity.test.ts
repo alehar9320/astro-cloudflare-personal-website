@@ -2857,4 +2857,20 @@ describe('identity copy', () => {
     expect(nav).toContain("href: '/contact/'");
     expect(nav).not.toContain('mailto:');
   });
+
+  it('keeps analytics case Get in touch in chrome/footer, not under the H1 (#929)', () => {
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    const headerStart = slug.indexOf('<header>');
+    const headerEnd = slug.indexOf('</header>');
+    expect(headerStart).toBeGreaterThan(-1);
+    expect(headerEnd).toBeGreaterThan(headerStart);
+    const header = slug.slice(headerStart, headerEnd);
+    expect(header).toContain('<Hero');
+    expect(header).not.toContain('<ContactCTA');
+    expect(slug).toContain('<ContactCTA />');
+    expect(slug.indexOf('<ContactCTA />')).toBeGreaterThan(headerEnd);
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(cta).not.toContain('mailto:');
+  });
 });
