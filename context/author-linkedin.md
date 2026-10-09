@@ -1,5 +1,7 @@
 # Alexander Härenstam LinkedIn Profile
 
+> **Redacted public-profile scrape.** Logged-in and private LinkedIn UI (owner-only controls, private boxes and analytics, network suggestions, messaging, viewer follow state) was removed in #1639 and its follow-up. Everything under `context/` is locked by `src/__tests__/context-privacy.test.ts`.
+
 Alexander Härenstam
 (He/Him)
 Product @IFS | Developer Experience
@@ -114,7 +116,6 @@ Consumer AI experiences are great, but it's when it's rolled out for hard-to-sol
 …more
 View Christian Pedersen’s graphic link
 Christian Pedersen
-• FollowingPremium • Following
 Chief Product Officer @ IFS | Leader in Industrial AI
 200+ AI-based capabilities now available in IFS Cloud 25R1! With hashtag#IndustrialAI and sustainability at its core, this new release incorporates agentic industrial AI capabilities that enable customers to rapidly drive value from Industrial AI at scale.
 
@@ -144,7 +145,7 @@ IFS is a double-digit growth company in the enterprise software industry.
 
 As Product Manager for Developer Experience at IFS, I set the strategy for the tools and platforms that empower internal engineering teams, global partners, and customers. The work translates to increased efficiency and accelerated time-to-market for the company's offerings.
 
-One key pillar has been the rollout of AI Coding Copilots; a strategic initiative.IFS is a double-digit growth company in the enterprise software industry. As Product Manager for Developer Experience at IFS, I set the strategy for the tools and platforms that empower internal engineering teams, global partners, and customers. The work translates to increased efficiency and accelerated time-to-market for the company's offerings. One key pillar has been the rollout of AI Coding Copilots; a strategic initiative.…see more
+One key pillar has been the rollout of AI Coding Copilots; a strategic initiative. IFS is a double-digit growth company in the enterprise software industry. As Product Manager for Developer Experience at IFS, I set the strategy for the tools and platforms that empower internal engineering teams, global partners, and customers. The work translates to increased efficiency and accelerated time-to-market for the company's offerings. One key pillar has been the rollout of AI Coding Copilots; a strategic initiative.…see more
 Product Manager - Product Experience (Design System)
 Apr 2022 - Feb 2025 · 2 yrs 1 mosApr 2022 to Feb 2025 · 2 yrs 1 mos
 Gothenburg, Västra Götaland County, Sweden · Hybrid
@@ -158,7 +159,7 @@ Scaling the IFS Design System: Took the platform from 0 to 1 with limited resour
 
 Spearheading the User Behavior Analytics Platform: This key capability for IFS Cloud ensures features are grounded in genuine customer needs, preventing over-engineering and optimizing development resources.
 
-These achievements were made possible through the dedication and talent of the incredible teams I've had the privilege to work with.IFS is a double-digit growth company in the enterprise software industry. As Product Manager for the company design system, I championed the tools and platforms that empowered internal engineering teams, global partners, and customers. The work by the team translated to increased efficiency and accelerated time-to-market for the IFS Cloud ecosystem. A proven track record of delivering quantifiable business value through platform innovation, including but not limited to: Scaling the IFS Design System: Took the platform from 0 to 1 with limited resources, enabling product teams to deliver new functionality 2x faster and generating a financial return of up to 30x the initial investment. This work was recognized as a runner-up in the prestigious Zeroheight Design System Awards. Spearheading the User Behavior Analytics Platform: This key capability for IFS Cloud ensures features are grounded in genuine customer needs, preventing over-engineering and optimizing development resources. These achievements were made possible through the dedication and talent of the incredible teams I've had the privilege to work with.…see more
+These achievements were made possible through the dedication and talent of the incredible teams I've had the privilege to work with. IFS is a double-digit growth company in the enterprise software industry. As Product Manager for the company design system, I championed the tools and platforms that empowered internal engineering teams, global partners, and customers. The work by the team translated to increased efficiency and accelerated time-to-market for the IFS Cloud ecosystem. A proven track record of delivering quantifiable business value through platform innovation, including but not limited to: Scaling the IFS Design System: Took the platform from 0 to 1 with limited resources, enabling product teams to deliver new functionality 2x faster and generating a financial return of up to 30x the initial investment. This work was recognized as a runner-up in the prestigious Zeroheight Design System Awards. Spearheading the User Behavior Analytics Platform: This key capability for IFS Cloud ensures features are grounded in genuine customer needs, preventing over-engineering and optimizing development resources. These achievements were made possible through the dedication and talent of the incredible teams I've had the privilege to work with.…see more
 UX-design, Technological Innovation and +3 skills
 IFS Design System
 Design and development resources for creating the highest quality end-to-end experiences in the enterprise software industry.
@@ -180,7 +181,7 @@ My thesis revolved around business model innovation, and the opportunities and b
 
 1. Academically mapping out what it means to transform a business with the help of digitalization.
 2. Studying a specific business case where digitalization was part of changing the business model.
-3. Identifying the gap between what theory stipulates and the business case at hand.Invativa is a specialist consulting company helping others create and improve their digital business. This is done by identifying how digital technology can be applied to improve the business model; digitalization. My thesis revolved around business model innovation, and the opportunities and barriers that digitalization creates. This was done by: 1) Academically mapping out what it means to transform a business with the help of digitalization. 2) Studying a specific business case where digitalization was part of changing the business model. 3) Identifying the gap between what theory stipulates and the business case at hand.…see more
+3. Identifying the gap between what theory stipulates and the business case at hand. Invativa is a specialist consulting company helping others create and improve their digital business. This is done by identifying how digital technology can be applied to improve the business model; digitalization. My thesis revolved around business model innovation, and the opportunities and barriers that digitalization creates. This was done by: 1) Academically mapping out what it means to transform a business with the help of digitalization. 2) Studying a specific business case where digitalization was part of changing the business model. 3) Identifying the gap between what theory stipulates and the business case at hand.…see more
    Ericsson logo
    Ericsson
    1 yr 3 mos
@@ -210,7 +211,7 @@ My thesis revolved around business model innovation, and the opportunities and b
 6. PWC - advanced Excel
 7. McKinsey&Company - case interview training
 8. IDI - emotional intelligence
-9. H&M - leadership.Activities and societies: I-Academy 2017. A training and development programme for Industrial Engineering and Management students in their 3rd to 5th year. Consists of six workshops during the spring. 1) NOVA - modern recruiting method 2) Trendie - future scenario planning 3) PWC - advanced Excel 4) McKinsey&Company - case interview training 5) IDI - emotional intelligence 6) H&M - leadership.
+9. H&M - leadership. Activities and societies: I-Academy 2017. A training and development programme for Industrial Engineering and Management students in their 3rd to 5th year. Consists of six workshops during the spring. 1) NOVA - modern recruiting method 2) Trendie - future scenario planning 3) PWC - advanced Excel 4) McKinsey&Company - case interview training 5) IDI - emotional intelligence 6) H&M - leadership.
    Through a combination of an advanced level of business management and economics in relation to engineering knowledge, students are trained in analyzing, understanding and skilfully managing innovation processes in companies and other areas of society. The programme focuses on how and why companies innovate to compete and how companies can reap financial returns from their investments in innovation.
    Chalmers University of Technology logo
    Chalmers University of Technology
@@ -308,13 +309,9 @@ Schools
 Cassie Kozyrkov
 CEO, Google's first Chief Decision Scientist, AI Adviser, Decision Strategist, Keynote Speaker (makecassietalk.com), LinkedIn Top Voice
 688,604 followers
-
-Following
 Marc Randolph
 Netflix Co-Founder, Entrepreneur, Mentor & Investor
 386,22 followers
-
-Following
 Show all Top Voices
 Profile language
 Svenska
