@@ -1,0 +1,119 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_operating_model) return Astro.redirect('/404/');
+
+const linkedinHref = 'https://www.linkedin.com/in/alehar/';
+
+const pillars = [
+  {
+    name: 'Developer Friction Reduction',
+    focus: 'Eliminating workflow papercuts and shrinking feedback loops across dev lifecycles.',
+  },
+  {
+    name: 'Systemic Platform Consistency',
+    focus: 'Unifying UI design systems, API standards, and component architecture.',
+  },
+  {
+    name: 'Measurable Product Outcomes',
+    focus: 'Driving engineering velocity into tangible business impact and user ROI.',
+  },
+];
+---
+
+<BaseLayout
+  title="Operating Model | Product Manager, DevEx at IFS"
+  ogTitle="Operating Model | Product Manager, DevEx at IFS"
+  description="Product Manager, Developer Experience at IFS. Operating model and principles."
+  robots="noindex"
+>
+  <main id="main-content" role="main" class="wrapper stack gap-8">
+    <Hero title="Operating Model" tagline="DevEx and Product Management principles." align="start">
+      <p class="lede">
+        How I approach developer experience: shrinking feedback loops, scaling design systems, and
+        turning technical quality into measurable business velocity.
+      </p>
+    </Hero>
+    <div class="grid">
+      {
+        pillars.map(({ name, focus }) => (
+          <div class="card">
+            <strong>{name}</strong>
+            <p>{focus}</p>
+          </div>
+        ))
+      }
+    </div>
+    <div class="actions">
+      <CallToAction
+        href={linkedinHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-hire-event="hire_cta_click"
+        data-hire-surface="operating-model"
+      >
+        Get in touch
+      </CallToAction>
+      <p class="cta-hint">LinkedIn · replies from me</p>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .lede {
+    margin: 0;
+    color: var(--gray-200);
+    max-width: 46ch;
+  }
+
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
+  .card {
+    padding: 1.25rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+    background: var(--gradient-subtle);
+  }
+
+  .card strong {
+    display: block;
+    color: var(--gray-0);
+  }
+
+  .card p {
+    margin: 0.4rem 0 0;
+    color: var(--gray-300);
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    padding-bottom: var(--chat-fab-clearance);
+    padding-right: var(--chat-fab-clearance);
+  }
+
+  .cta-hint {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    font-weight: 400;
+  }
+
+  @media (min-width: 50em) {
+    .actions {
+      padding-bottom: 0;
+      padding-right: 0;
+    }
+  }
+</style>
