@@ -12,7 +12,8 @@ const schema = {
       '@id': 'https://me.alehar.workers.dev/#person',
       name: 'Alexander Härenstam',
       jobTitle: 'Product Manager, Developer Experience at IFS',
-      description: 'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.',
+      description:
+        'Product Manager, Developer Experience at IFS. Design systems, developer platforms, and Industrial AI copilots.',
       url: 'https://me.alehar.workers.dev/',
       sameAs: ['https://www.linkedin.com/in/alehar/'],
       worksFor: {
@@ -32,7 +33,8 @@ const schema = {
       url: 'https://me.alehar.workers.dev/biography/',
       name: 'Biography | Product Manager, Developer Experience at IFS',
       about: { '@id': 'https://me.alehar.workers.dev/#person' },
-      description: 'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.',
+      description:
+        'Biography of Alexander Härenstam, Product Manager, Developer Experience at IFS. Eight years at IFS. Software engineering and innovation management at Chalmers.',
       breadcrumb: {
         '@type': 'BreadcrumbList',
         itemListElement: [
@@ -57,7 +59,7 @@ const schema = {
 
 <BaseLayout
   title="Biography | Product Manager, Developer Experience at IFS"
-  description="Product Manager, Developer Experience at IFS. Get in touch on LinkedIn."
+  description="Biography of Alexander Härenstam, Product Manager, Developer Experience at IFS. Eight years at IFS. Software engineering and innovation management at Chalmers."
 >
   <script is:inline type="application/ld+json" set:html={safeJsonLd(schema)} />
 
