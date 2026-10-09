@@ -5,6 +5,8 @@ img: /assets/stock-2.jpg
 img_alt: Design components
 description: |
   From the first version to IFS Cloud.
+metaDescription: >-
+  The IFS Design System, from the first version to IFS Cloud. Up to 2x faster feature delivery, up to 30x ROI, Zeroheight Design System Awards runner-up.
 tags:
   - Design System
   - Product Experience

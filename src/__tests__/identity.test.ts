@@ -1453,13 +1453,11 @@ describe('identity copy', () => {
     expect(nav).not.toContain("'About'");
   });
 
-  it('lets a work-case share read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+  it('lets a work-case share read the case meta description, title keeps Product Manager, Developer Experience at IFS', () => {
     const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
     expect(slug).toContain('Product Manager, Developer Experience at IFS');
-    expect(slug).toContain('Get in touch on LinkedIn.');
-    expect(slug).toContain(
-      'Product Manager, Developer Experience at IFS. ${entry.data.description.trim()} Get in touch on LinkedIn.'
-    );
+    expect(slug).toContain('? entry.data.metaDescription');
+    expect(slug).not.toContain('Get in touch on LinkedIn.');
     expect(slug).toContain('ogTitle={shareTitle}');
     expect(slug).toContain("title={shareTitle ?? 'Not Found'}");
     expect(slug).not.toContain('mailto:');
@@ -1786,167 +1784,16 @@ describe('identity copy', () => {
     expect(slug).not.toContain('mailto:');
   });
 
-  it('lets the IFS Design System JSON-LD WebPage.description include Get in touch on LinkedIn', () => {
+  it('lets every work-case JSON-LD WebPage and CreativeWork description read the case meta description', () => {
     const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
-    expect(slug).toContain("'@type': 'WebPage'");
-    expect(slug).toContain(
-      `'@type': 'WebPage',
-          '@id': \`https://me.alehar.workers.dev/work/\${entry.id}/#webpage\`,
-          url: \`https://me.alehar.workers.dev/work/\${entry.id}/\`,
-          name:
-            entry.id === 'ifs-design-system'
-              ? 'IFS Design System | Product Manager, Developer Experience at IFS'
-              : entry.id === 'user-behavior-analytics'
-                ? 'User behavior analytics | Product Manager, Developer Experience at IFS'
-                : \`\${entry.data.title} | Alexander Härenstam\`,
-          description:
-            entry.id === 'ifs-design-system' ||
-            entry.id === 'ai-coding-copilots' ||
-            entry.id === 'user-behavior-analytics' ||
-            entry.id === 'master-thesis'
-              ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
-              : entry.data.description,`
+    const webPage = slug.slice(slug.indexOf("'@type': 'WebPage'"), slug.indexOf('breadcrumb:'));
+    const creativeWork = slug.slice(
+      slug.indexOf("'@type': 'CreativeWork'"),
+      slug.indexOf('datePublished:')
     );
-    expect(slug).not.toContain('mailto:');
-  });
-
-  it('lets the AI coding copilots JSON-LD WebPage.description include Get in touch on LinkedIn', () => {
-    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
-    expect(slug).toContain("'@type': 'WebPage'");
-    expect(slug).toContain(
-      `'@type': 'WebPage',
-          '@id': \`https://me.alehar.workers.dev/work/\${entry.id}/#webpage\`,
-          url: \`https://me.alehar.workers.dev/work/\${entry.id}/\`,
-          name:
-            entry.id === 'ifs-design-system'
-              ? 'IFS Design System | Product Manager, Developer Experience at IFS'
-              : entry.id === 'user-behavior-analytics'
-                ? 'User behavior analytics | Product Manager, Developer Experience at IFS'
-                : \`\${entry.data.title} | Alexander Härenstam\`,
-          description:
-            entry.id === 'ifs-design-system' ||
-            entry.id === 'ai-coding-copilots' ||
-            entry.id === 'user-behavior-analytics' ||
-            entry.id === 'master-thesis'
-              ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
-              : entry.data.description,`
-    );
-    expect(slug).not.toContain('mailto:');
-  });
-
-  it('lets the user behavior analytics JSON-LD WebPage.description include Get in touch on LinkedIn', () => {
-    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
-    expect(slug).toContain("'@type': 'WebPage'");
-    expect(slug).toContain(
-      `'@type': 'WebPage',
-          '@id': \`https://me.alehar.workers.dev/work/\${entry.id}/#webpage\`,
-          url: \`https://me.alehar.workers.dev/work/\${entry.id}/\`,
-          name:
-            entry.id === 'ifs-design-system'
-              ? 'IFS Design System | Product Manager, Developer Experience at IFS'
-              : entry.id === 'user-behavior-analytics'
-                ? 'User behavior analytics | Product Manager, Developer Experience at IFS'
-                : \`\${entry.data.title} | Alexander Härenstam\`,
-          description:
-            entry.id === 'ifs-design-system' ||
-            entry.id === 'ai-coding-copilots' ||
-            entry.id === 'user-behavior-analytics' ||
-            entry.id === 'master-thesis'
-              ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
-              : entry.data.description,`
-    );
-    expect(slug).not.toContain('mailto:');
-  });
-
-  it("lets the Chalmers master's thesis JSON-LD WebPage.description include Get in touch on LinkedIn", () => {
-    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
-    expect(slug).toContain("'@type': 'WebPage'");
-    expect(slug).toContain(
-      `'@type': 'WebPage',
-          '@id': \`https://me.alehar.workers.dev/work/\${entry.id}/#webpage\`,
-          url: \`https://me.alehar.workers.dev/work/\${entry.id}/\`,
-          name:
-            entry.id === 'ifs-design-system'
-              ? 'IFS Design System | Product Manager, Developer Experience at IFS'
-              : entry.id === 'user-behavior-analytics'
-                ? 'User behavior analytics | Product Manager, Developer Experience at IFS'
-                : \`\${entry.data.title} | Alexander Härenstam\`,
-          description:
-            entry.id === 'ifs-design-system' ||
-            entry.id === 'ai-coding-copilots' ||
-            entry.id === 'user-behavior-analytics' ||
-            entry.id === 'master-thesis'
-              ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
-              : entry.data.description,`
-    );
-    expect(slug).not.toContain('mailto:');
-  });
-
-  it('lets the IFS Design System JSON-LD CreativeWork.description include Get in touch on LinkedIn', () => {
-    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
-    expect(slug).toContain("'@type': 'CreativeWork'");
-    expect(slug).toContain(
-      `'@type': 'CreativeWork',
-          name: entry.data.title,
-          description:
-            entry.id === 'ifs-design-system' ||
-            entry.id === 'ai-coding-copilots' ||
-            entry.id === 'user-behavior-analytics' ||
-            entry.id === 'master-thesis'
-              ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
-              : entry.data.description,`
-    );
-    expect(slug).not.toContain('mailto:');
-  });
-
-  it('lets the AI coding copilots JSON-LD CreativeWork.description include Get in touch on LinkedIn', () => {
-    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
-    expect(slug).toContain("'@type': 'CreativeWork'");
-    expect(slug).toContain(
-      `'@type': 'CreativeWork',
-          name: entry.data.title,
-          description:
-            entry.id === 'ifs-design-system' ||
-            entry.id === 'ai-coding-copilots' ||
-            entry.id === 'user-behavior-analytics' ||
-            entry.id === 'master-thesis'
-              ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
-              : entry.data.description,`
-    );
-    expect(slug).not.toContain('mailto:');
-  });
-
-  it('lets the user behavior analytics JSON-LD CreativeWork.description include Get in touch on LinkedIn', () => {
-    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
-    expect(slug).toContain("'@type': 'CreativeWork'");
-    expect(slug).toContain(
-      `'@type': 'CreativeWork',
-          name: entry.data.title,
-          description:
-            entry.id === 'ifs-design-system' ||
-            entry.id === 'ai-coding-copilots' ||
-            entry.id === 'user-behavior-analytics' ||
-            entry.id === 'master-thesis'
-              ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
-              : entry.data.description,`
-    );
-    expect(slug).not.toContain('mailto:');
-  });
-
-  it("lets the Chalmers master's thesis JSON-LD CreativeWork.description include Get in touch on LinkedIn", () => {
-    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
-    expect(slug).toContain("'@type': 'CreativeWork'");
-    expect(slug).toContain(
-      `'@type': 'CreativeWork',
-          name: entry.data.title,
-          description:
-            entry.id === 'ifs-design-system' ||
-            entry.id === 'ai-coding-copilots' ||
-            entry.id === 'user-behavior-analytics' ||
-            entry.id === 'master-thesis'
-              ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
-              : entry.data.description,`
-    );
+    expect(webPage).toContain('description: entry.data.metaDescription,');
+    expect(creativeWork).toContain('description: entry.data.metaDescription,');
+    expect(slug).not.toContain('Get in touch on LinkedIn.');
     expect(slug).not.toContain('mailto:');
   });
 
@@ -3027,7 +2874,7 @@ describe('IFS Design System case hire is counted from chrome only (#979)', () =>
 describe('every hire surface the site emits is a known HireSurface', () => {
   const analytics = readFileSync('src/utils/hire-analytics.ts', 'utf8');
   const union = analytics.match(/export type HireSurface =([^;]+);/)?.[1] ?? '';
-  const known = new Set([...union.matchAll(/'([^']+)'/g)].map((m) => m[1]));
+  const known = new Set([...union.matchAll(/(['"`])([^'"`]+)\1/g)].map((m) => m[2]));
 
   const isTestPath = (path: string) =>
     path.split(/[\\/]/).includes('__tests__') || /\.(test|spec)\.[cm]?[jt]sx?$/.test(path);
@@ -3043,16 +2890,42 @@ describe('every hire surface the site emits is a known HireSurface', () => {
     const used = new Set<string>();
     for (const path of listSourceFiles('src')) {
       const text = readFileSync(path, 'utf8');
+      // Single, double or backtick quotes.
       for (const re of [
-        /data-hire-surface="([^"]+)"/g,
-        /\bsurface: '([^']+)'/g,
-        /trackHireEvent\('[^']+', '([^']+)'\)/g,
+        /data-hire-surface=(?<q>["'`])(?<surface>[^"'`]+)\k<q>/g,
+        /\bsurface: (?<q>["'`])(?<surface>[^"'`]+)\k<q>/g,
+        /trackHireEvent\(\s*(["'`])[^"'`]+\1\s*,\s*(?<q>["'`])(?<surface>[^"'`]+)\k<q>\s*\)/g,
       ]) {
-        for (const m of text.matchAll(re)) used.add(m[1]);
+        for (const m of text.matchAll(re)) used.add(m.groups!.surface);
       }
     }
     expect(known.size).toBeGreaterThan(0);
     expect(used).toContain('404');
+    expect(used).toContain('fab');
+    // Direction: every used value must be listed. Listed-but-unused is allowed
+    // (case_study is legacy, kept for older PostHog data).
     expect([...used].filter((surface) => !known.has(surface))).toEqual([]);
+    expect(known).toContain('case_study');
+  });
+});
+
+describe('work case meta descriptions describe the case, not the hire CTA', () => {
+  const caseFiles = readdirSync('src/content/work').filter((name) => name.endsWith('.md'));
+
+  it.each(caseFiles)('%s has a case meta description without Get in touch, 1-160 chars', (name) => {
+    const md = readFileSync(join('src/content/work', name), 'utf8');
+    const frontmatter = md.split('---')[1] ?? '';
+    const meta = frontmatter.match(/\nmetaDescription: >-\n {2}([^\n]+)\n/)?.[1]?.trim() ?? '';
+    const description = frontmatter.match(/\ndescription: \|\n {2}([^\n]+)\n/)?.[1]?.trim() ?? '';
+    expect(meta.length).toBeGreaterThan(0);
+    expect(meta.length).toBeLessThanOrEqual(160);
+    expect(meta).not.toMatch(/get in touch/i);
+    expect(meta).not.toMatch(/several millions|used by millions/i);
+    expect(description.length).toBeGreaterThan(0);
+    expect(description).not.toMatch(/get in touch/i);
+  });
+
+  it('covers all five case pages', () => {
+    expect(caseFiles).toHaveLength(5);
   });
 });
