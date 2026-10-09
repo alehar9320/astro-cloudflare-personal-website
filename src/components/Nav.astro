@@ -42,12 +42,17 @@ const iconLinks: {
   },
 ];
 
-/** Test if a link is pointing to the current page. */
+/**
+ * Test if a link is pointing to the current page.
+ * Optimization (⚡ Bolt): Hoisting URL pathname string normalization outside isCurrentPage prevents redundant string replaces and manipulations across link item iterations during page rendering.
+ * Benchmark: Evaluates pathname once per component render instead of 10 times per page view.
+ */
+let currentPathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
+if (currentPathname.at(0) !== '/') currentPathname = '/' + currentPathname;
+if (currentPathname.at(-1) !== '/') currentPathname += '/';
+
 const isCurrentPage = (href: string) => {
-  let pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
-  if (pathname.at(0) !== '/') pathname = '/' + pathname;
-  if (pathname.at(-1) !== '/') pathname += '/';
-  return pathname === href || (href !== '/' && pathname.startsWith(href));
+  return currentPathname === href || (href !== '/' && currentPathname.startsWith(href));
 };
 ---
 
