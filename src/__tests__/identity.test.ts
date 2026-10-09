@@ -1192,12 +1192,17 @@ describe('identity copy', () => {
     expect(analytics).not.toContain('mailto:');
   });
 
-  it("lets the Chalmers master's thesis case include a visible Get in touch on LinkedIn CTA", () => {
+  it('keeps thesis case body free of in-body Get in touch; hire stays chrome (#1109/#1110 pattern)', () => {
     const thesis = readFileSync('src/content/work/master-thesis.md', 'utf8');
-    expect(thesis).toContain(
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(thesis).not.toContain(
       '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
     );
+    expect(thesis).not.toContain('Get in touch');
     expect(thesis).not.toContain('mailto:');
+    const mainEnd = slug.indexOf('</main>');
+    const ctaAt = slug.indexOf('<ContactCTA />');
+    expect(ctaAt).toBeGreaterThan(mainEnd);
 
     const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
     const work = readFileSync('src/pages/work.astro', 'utf8');
@@ -1222,7 +1227,7 @@ describe('identity copy', () => {
     expect(thesis).toContain('compared that to the literature');
     expect(thesis).toContain('Opportunities showed up as reach, scale, and data for decisions');
     expect(thesis).toContain('Barriers were mostly organizational');
-    expect(thesis).toContain(
+    expect(thesis).not.toContain(
       '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
     );
     expect(thesis).not.toContain('mailto:');
@@ -2993,5 +2998,38 @@ describe('IFS Design System case Get in touch is counted as hire (#979)', () => 
     expect(link).toContain('data-hire-event="hire_cta_click"');
     expect(link).toContain('data-hire-surface="case_study"');
     expect(analytics).toContain("| 'case_study'");
+  });
+});
+
+describe('every hire surface the site emits is a known HireSurface', () => {
+  const analytics = readFileSync('src/utils/hire-analytics.ts', 'utf8');
+  const union = analytics.match(/export type HireSurface =([^;]+);/)?.[1] ?? '';
+  const known = new Set([...union.matchAll(/'([^']+)'/g)].map((m) => m[1]));
+
+  const isTestPath = (path: string) =>
+    path.split(/[\\/]/).includes('__tests__') || /\.(test|spec)\.[cm]?[jt]sx?$/.test(path);
+
+  const listSourceFiles = (dir: string): string[] =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+      const path = join(dir, entry.name);
+      if (isTestPath(path)) return [];
+      return entry.isDirectory() ? listSourceFiles(path) : [path];
+    });
+
+  it('lists every data-hire-surface / surface / trackHireEvent value used in src/', () => {
+    const used = new Set<string>();
+    for (const path of listSourceFiles('src')) {
+      const text = readFileSync(path, 'utf8');
+      for (const re of [
+        /data-hire-surface="([^"]+)"/g,
+        /\bsurface: '([^']+)'/g,
+        /trackHireEvent\('[^']+', '([^']+)'\)/g,
+      ]) {
+        for (const m of text.matchAll(re)) used.add(m[1]);
+      }
+    }
+    expect(known.size).toBeGreaterThan(0);
+    expect(used).toContain('404');
+    expect([...used].filter((surface) => !known.has(surface))).toEqual([]);
   });
 });
