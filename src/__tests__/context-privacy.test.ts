@@ -9,7 +9,8 @@ import { describe, expect, it } from 'vitest';
 // value claim.
 const banned = [
   'open to work',
-  'open to',
+  // The LinkedIn button label form ("Open to:"); bare "open to" is fine in prose.
+  'open to:',
   'private to you',
   'several millions',
   'profile views',

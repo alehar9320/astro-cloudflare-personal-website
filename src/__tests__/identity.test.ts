@@ -125,7 +125,8 @@ describe('identity copy', () => {
   it('keeps the chat FAB off Earlier work and the biography timeline on a phone', () => {
     const work = readFileSync('src/pages/work.astro', 'utf8');
     const bio = readFileSync('src/pages/biography.astro', 'utf8');
-    expect(work).toContain('padding-bottom: var(--chat-fab-clearance)');
+    // ContactCTA follows Earlier work and carries the FAB clearance (#1109 follow-up).
+    expect(work).not.toContain('padding-bottom: var(--chat-fab-clearance)');
     expect(work).toContain('padding-right: var(--chat-fab-clearance)');
     expect(work).toContain('Earlier work');
     expect(bio).toContain('padding-bottom: var(--chat-fab-clearance)');
@@ -1095,7 +1096,7 @@ describe('identity copy', () => {
   it('lets the IFS Design System case include a visible Get in touch on LinkedIn CTA', () => {
     const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
     expect(ds).toContain(
-      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer" data-hire-event="hire_cta_click" data-hire-surface="case_study">Get in touch on LinkedIn</a>'
     );
     expect(ds).not.toContain('mailto:');
 
@@ -1119,7 +1120,7 @@ describe('identity copy', () => {
     expect(ds).toContain('up to 30x');
     expect(ds).toContain('Zeroheight');
     expect(ds).toContain(
-      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer" data-hire-event="hire_cta_click" data-hire-surface="case_study">Get in touch on LinkedIn</a>'
     );
     expect(ds).not.toContain('mailto:');
   });
@@ -2621,7 +2622,7 @@ describe('identity copy', () => {
     expect(home).not.toContain('ds-first');
     expect(ds).not.toContain('mailto:');
     expect(ds).toContain(
-      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer" data-hire-event="hire_cta_click" data-hire-surface="case_study">Get in touch on LinkedIn</a>'
     );
   });
 
@@ -2774,7 +2775,7 @@ describe('identity copy', () => {
     expect(slug).toContain("import ContactCTA from '../../components/ContactCTA.astro';");
     expect(slug).not.toContain('mailto:');
     expect(ds).toContain(
-      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer" data-hire-event="hire_cta_click" data-hire-surface="case_study">Get in touch on LinkedIn</a>'
     );
     expect(ds).not.toContain('mailto:');
     expect(work).toContain('class="proof-card"');
@@ -2957,6 +2958,41 @@ describe('chat open stage follows the header on scroll (#1633 follow-up)', () =>
       /function unbindChatStageScroll\(\) \{\s*window\.removeEventListener\('scroll', onChatStageScroll\);\s*if \(chatStageScrollFrame\) \{\s*cancelAnimationFrame\(chatStageScrollFrame\);/
     );
     expect(chat).toMatch(/\} else \{\s*unbindChatStageScroll\(\);\s*\}\s*\};/);
+  });
+});
+
+describe('/work/ hire door is the counted ContactCTA (#1109 follow-up)', () => {
+  const work = readFileSync('src/pages/work.astro', 'utf8');
+  const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+
+  it('ContactCTA on /work/ carries hire_cta_click / contact_cta', () => {
+    expect(work).toContain('<ContactCTA />');
+    expect(cta).toContain('data-hire-event="hire_cta_click"');
+    expect(cta).toContain('data-hire-surface="contact_cta"');
+  });
+});
+
+describe('/work/ Earlier work ends on the normal section rhythm (#1109 follow-up)', () => {
+  const work = readFileSync('src/pages/work.astro', 'utf8');
+
+  it('drops the phone FAB-clearance bottom padding on .earlier (ContactCTA clears the FAB)', () => {
+    const earlierRule = work.match(/\n {2}\.earlier \{[^}]*\}/)?.[0] ?? '';
+    expect(earlierRule).toContain('display: flex;');
+    expect(earlierRule).not.toContain('padding-bottom: var(--chat-fab-clearance)');
+    expect(earlierRule).toContain('padding-right: var(--chat-fab-clearance);');
+  });
+});
+
+describe('IFS Design System case Get in touch is counted as hire (#979)', () => {
+  const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
+  const analytics = readFileSync('src/utils/hire-analytics.ts', 'utf8');
+
+  it('tags the in-body LinkedIn Get in touch with hire_cta_click / case_study', () => {
+    const link = ds.match(/<a [^>]*>Get in touch on LinkedIn<\/a>/)?.[0] ?? '';
+    expect(link).toMatch(/\bhref="https:\/\/www\.linkedin\.com\/in\/alehar\/"/);
+    expect(link).toContain('data-hire-event="hire_cta_click"');
+    expect(link).toContain('data-hire-surface="case_study"');
+    expect(analytics).toContain("| 'case_study'");
   });
 });
 
