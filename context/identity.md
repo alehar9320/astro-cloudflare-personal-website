@@ -10,7 +10,7 @@ Source of truth for who Alexander Härenstam is. Cite sources. Never invent. Vis
 
 ## What he strives for (published words only)
 
-- GitHub profile README (`alehar9320/alehar9320`): currently accountable for Developer Experience of global enterprise software used by millions; previously accountable for enterprise design system with focus on seamless design token distribution; intersection of software design, development and product strategy; passion for delivering lovable software experiences.
+- GitHub profile README (`alehar9320/alehar9320`): currently accountable for Developer Experience of global enterprise software used by millions (do not ship); previously accountable for enterprise design system with focus on seamless design token distribution; intersection of software design, development and product strategy; passion for delivering lovable software experiences.
 - Old personal site intro (`alehar9320/personal-website`, last push 2023-04-21; live https://www.alexanderharenstam.se was HTTP 500 on 2026-08-28): "I create lovable user experiences - digital products, services, and processes that help make people's lives better." About: "Professionally, I'm passionate about creating computer software that people love." / "I build, design, manage, and strategize." Then-occupation (historical): Lead Software Designer, IFS World Operations AB. Then-location: Gothenburg (historical).
 - Live /roadmap/ lede (Eden re-lock 2026-08-29, issue #777): "What's next on this site. Product Manager, Developer Experience at IFS — DevEx, design systems, and Industrial AI from work already published here."
 
