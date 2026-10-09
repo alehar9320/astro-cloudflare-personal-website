@@ -10,6 +10,7 @@ import {
   prepareReleaseSummary,
   releaseSummaryKey,
   releaseSummaryPrompt,
+  sentenceCount,
 } from '../utils/release-summary';
 
 type GetContext = Parameters<typeof GET>[0];
@@ -117,6 +118,29 @@ describe('prepareReleaseSummary', () => {
         source
       )
     ).toBe(null);
+  });
+});
+
+describe('sentenceCount', () => {
+  it('returns 0 for empty or whitespace-only strings', () => {
+    expect(sentenceCount('')).toBe(0);
+    expect(sentenceCount('   \n\t  ')).toBe(0);
+  });
+
+  it('correctly counts sentences without splitting on version numbers or decimals', () => {
+    expect(
+      sentenceCount(
+        'The latest release is 2026.08.15.1714. Visitors can now view the glance. More is on this page.'
+      )
+    ).toBe(3);
+  });
+
+  it('handles multiple trailing punctuation and no terminal punctuation', () => {
+    expect(sentenceCount('First sentence. Second sentence?! Third sentence')).toBe(3);
+  });
+
+  it('handles CRLF and trailing whitespace', () => {
+    expect(sentenceCount('First sentence.\r\nSecond sentence.\r\n   ')).toBe(2);
   });
 });
 
@@ -317,5 +341,147 @@ describe('release summary API', () => {
       summary: notesFallback,
     });
     expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it('rejects POST payload with invalid tag characters and falls back to GitHub', async () => {
+    const fetchSpy = vi.spyOn(githubReleases, 'fetchGitHubReleases');
+    fetchSpy.mockClear();
+
+    const request = new Request('https://example.com/api/release-summary', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        tag: '../../invalid-path-tag',
+        body: 'valid release notes',
+      }),
+    });
+    const response = await POST(createContext({}, request));
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      tag: latest.version,
+      summary: notesFallback,
+    });
+    expect(fetchSpy).toHaveBeenCalled();
+  });
+
+  it('rejects POST payload with oversized body and falls back to GitHub', async () => {
+    const fetchSpy = vi.spyOn(githubReleases, 'fetchGitHubReleases');
+    fetchSpy.mockClear();
+
+    const request = new Request('https://example.com/api/release-summary', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        tag: 'v1.0.0',
+        body: 'x'.repeat(6000),
+      }),
+    });
+    const response = await POST(createContext({}, request));
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      tag: latest.version,
+      summary: notesFallback,
+    });
+    expect(fetchSpy).toHaveBeenCalled();
+  });
+
+  it('rejects POST payload with non-object JSON and falls back to GitHub', async () => {
+    const fetchSpy = vi.spyOn(githubReleases, 'fetchGitHubReleases');
+    fetchSpy.mockClear();
+
+    const request = new Request('https://example.com/api/release-summary', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify('not-an-object'),
+    });
+    const response = await POST(createContext({}, request));
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      tag: latest.version,
+      summary: notesFallback,
+    });
+    expect(fetchSpy).toHaveBeenCalled();
+  });
+
+  it('accepts POST payload with version and notes fields and custom title', async () => {
+    const fetchSpy = vi.spyOn(githubReleases, 'fetchGitHubReleases');
+    fetchSpy.mockClear();
+
+    const request = new Request('https://example.com/api/release-summary', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        version: latest.version,
+        title: 'Custom Release Title',
+        notes: latest.body,
+      }),
+    });
+    const response = await POST(createContext({}, request));
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      tag: latest.version,
+      summary:
+        'The latest release is Custom Release Title. Visitors can now inline footer pageviews with an exec glance. More is in the changelog on this page.',
+    });
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it('handles invalid JSON body string in POST gracefully and falls back to GitHub', async () => {
+    const fetchSpy = vi.spyOn(githubReleases, 'fetchGitHubReleases');
+    fetchSpy.mockClear();
+
+    const request = new Request('https://example.com/api/release-summary', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: '{ invalid json }',
+    });
+    const response = await POST(createContext({}, request));
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      tag: latest.version,
+      summary: notesFallback,
+    });
+    expect(fetchSpy).toHaveBeenCalled();
+  });
+
+  it('rejects whitespace-only tag in POST payload and falls back to GitHub', async () => {
+    const fetchSpy = vi.spyOn(githubReleases, 'fetchGitHubReleases');
+    fetchSpy.mockClear();
+
+    const request = new Request('https://example.com/api/release-summary', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        tag: '   ',
+        notes: 'Some notes',
+      }),
+    });
+    const response = await POST(createContext({}, request));
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      tag: latest.version,
+      summary: notesFallback,
+    });
+    expect(fetchSpy).toHaveBeenCalled();
+  });
+
+  it('rejects POST payload missing tag and version fields and falls back to GitHub', async () => {
+    const fetchSpy = vi.spyOn(githubReleases, 'fetchGitHubReleases');
+    fetchSpy.mockClear();
+
+    const request = new Request('https://example.com/api/release-summary', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({
+        body: 'Some notes without tag or version',
+      }),
+    });
+    const response = await POST(createContext({}, request));
+    expect(response.status).toBe(200);
+    await expect(response.json()).resolves.toEqual({
+      tag: latest.version,
+      summary: notesFallback,
+    });
+    expect(fetchSpy).toHaveBeenCalled();
   });
 });

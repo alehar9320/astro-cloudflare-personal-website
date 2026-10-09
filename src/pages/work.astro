@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { safeJsonLd } from '../utils/safe-json-ld';
 
 const projects = await getCollection('work');
 const byId = new Map(projects.map((project) => [project.id, project]));
@@ -76,7 +77,7 @@ const schema = {
   title="Work | Product Manager, Developer Experience at IFS"
   description="Product Manager, Developer Experience at IFS. Get in touch on LinkedIn."
 >
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <script is:inline type="application/ld+json" set:html={safeJsonLd(schema)} />
   <div class="stack gap-20">
     <main id="main-content" class="wrapper stack gap-8 work-first">
       <Hero title="Work" tagline="The IFS Design System case, then earlier work." align="start" />
@@ -121,11 +122,6 @@ const schema = {
           }
         </ul>
       </section>
-      <p class="hire-cta">
-        <a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer"
-          >Get in touch on LinkedIn</a
-        >
-      </p>
     </main>
     <ContactCTA />
   </div>
@@ -192,7 +188,6 @@ const schema = {
     gap: 0.75rem;
     color: var(--gray-300);
     /* Phone: keep the list out of the fixed chat FAB band. */
-    padding-bottom: var(--chat-fab-clearance);
     padding-right: var(--chat-fab-clearance);
   }
 
@@ -218,6 +213,9 @@ const schema = {
   }
 
   .earlier a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     color: var(--gray-200);
     text-decoration: 1px solid underline transparent;
     text-underline-offset: 0.25em;
@@ -237,31 +235,6 @@ const schema = {
   .earlier p {
     margin: 0;
     font-size: var(--text-sm);
-  }
-
-  .hire-cta {
-    margin: 0;
-    color: var(--gray-300);
-    /* Phone: keep the LinkedIn hire CTA out of the fixed chat FAB band. */
-    padding-bottom: var(--chat-fab-clearance);
-    padding-right: var(--chat-fab-clearance);
-  }
-
-  .hire-cta a {
-    color: var(--gray-200);
-    text-decoration: 1px solid underline transparent;
-    text-underline-offset: 0.25em;
-  }
-
-  .hire-cta a:hover,
-  .hire-cta a:focus-visible {
-    text-decoration-color: currentColor;
-  }
-
-  .hire-cta a:focus-visible {
-    outline: 2px solid var(--accent-regular);
-    outline-offset: 4px;
-    border-radius: 0.25rem;
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -310,11 +283,6 @@ const schema = {
     }
 
     .earlier {
-      padding-bottom: 0;
-      padding-right: 0;
-    }
-
-    .hire-cta {
       padding-bottom: 0;
       padding-right: 0;
     }
