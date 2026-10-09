@@ -2966,7 +2966,7 @@ describe('every /work/ Get in touch link is counted as hire', () => {
       ...`${work}\n${cta}`.matchAll(/<(a|CallToAction)\b[^>]*>[\s\S]*?<\/\1\s*>/g),
     ]
       .map((m) => m[0])
-      .filter((tag) => tag.includes('https://www.linkedin.com/in/alehar/'))
+      .filter((tag) => /\bhref="https:\/\/www\.linkedin\.com\/in\/alehar\/"/.test(tag))
       .filter((tag) => tag.includes('Get in touch'));
     expect(work).toContain('<ContactCTA />');
     expect(linkedInLinks).toHaveLength(2);
