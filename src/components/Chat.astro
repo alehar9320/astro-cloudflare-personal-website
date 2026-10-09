@@ -1149,17 +1149,40 @@
     chatContainer.style.setProperty('--chat-stage-top', `${top}px`);
   }
 
+  // Scrolling back to the top while chat is open moves the header down again,
+  // so recompute the stage top on scroll (rAF-throttled, open chat only).
+  let chatStageScrollFrame = 0;
+
+  function onChatStageScroll() {
+    if (chatStageScrollFrame) return;
+    chatStageScrollFrame = requestAnimationFrame(() => {
+      chatStageScrollFrame = 0;
+      syncChatStageTop();
+    });
+  }
+
+  function unbindChatStageScroll() {
+    window.removeEventListener('scroll', onChatStageScroll);
+    if (chatStageScrollFrame) {
+      cancelAnimationFrame(chatStageScrollFrame);
+      chatStageScrollFrame = 0;
+    }
+  }
+
   const setChatExpanded = (expand: boolean) => {
     chatToggle?.setAttribute('aria-expanded', String(expand));
     chatWindow?.classList.toggle('hidden', !expand);
     chatContainer?.classList.toggle('is-open', expand);
     if (expand) {
       syncChatStageTop();
+      window.addEventListener('scroll', onChatStageScroll, { passive: true });
       chatContainer?.classList.remove('is-docked');
       chatContainer?.classList.remove('is-prominent');
       document.body.classList.remove('has-prominent-chat');
       chatInput?.focus();
       setStatus('idle');
+    } else {
+      unbindChatStageScroll();
     }
   };
 
