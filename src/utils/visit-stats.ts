@@ -13,14 +13,29 @@ export type VisitGlance = {
 export const POSTHOG_SOURCE_LABEL = 'Unique visitors from PostHog (EU)';
 export const POSTHOG_SOURCE_TITLE = 'Source: PostHog, eu.posthog.com';
 
+/**
+ * Checks whether a given raw value represents a valid positive numeric visit count.
+ * @param {unknown} count - The raw count value to validate.
+ * @returns {boolean} True if count is a finite number greater than zero.
+ */
 export function shouldShowVisitCount(count: unknown): count is number {
   return typeof count === 'number' && Number.isFinite(count) && count > 0;
 }
 
+/**
+ * Formats a pageview count into a human-readable string.
+ * @param {number} count - Number of pageviews.
+ * @returns {string} Pluralized pageview string (e.g. "1 pageview" or "5 pageviews").
+ */
 export function formatPageviewCount(count: number): string {
   return `${count} pageview${count === 1 ? '' : 's'}`;
 }
 
+/**
+ * Formats a unique visitor count into a human-readable string with "up to" prefix.
+ * @param {number} count - Number of unique visitors.
+ * @returns {string} Formatted unique visitor string (e.g. "up to 1 unique visitor").
+ */
 export function formatUniqueVisitorCount(count: number): string {
   return `up to ${count} unique visitor${count === 1 ? '' : 's'}`;
 }
@@ -70,6 +85,11 @@ function percentChange(current: number | null, previous: number | null): number 
   return Number.isFinite(pct) ? pct : null;
 }
 
+/**
+ * Parses raw PostHog API response payload into a structured VisitGlance object.
+ * @param {unknown} payload - Raw API JSON response.
+ * @returns {VisitGlance | null} Parsed VisitGlance metrics or null if invalid or incomplete.
+ */
 export function parseVisitGlance(payload: unknown): VisitGlance | null {
   if (!payload || typeof payload !== 'object') return null;
   const results = (payload as { results?: unknown }).results;
@@ -121,6 +141,11 @@ export function parseVisitGlance(payload: unknown): VisitGlance | null {
   };
 }
 
+/**
+ * Formats an ISO-8601 timestamp string into a localized Stockholm date representation.
+ * @param {string} iso - ISO-8601 timestamp string.
+ * @returns {string} Formatted date string (e.g. "12 May 2026") or empty string if invalid.
+ */
 export function formatFirstSeen(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '';
@@ -132,6 +157,11 @@ export function formatFirstSeen(iso: string): string {
   }).format(d);
 }
 
+/**
+ * Formats a VisitGlance metrics object into user-facing summary strings.
+ * @param {VisitGlance} glance - Visit metrics object.
+ * @returns {{ all: string; last7d: string; firstSeen: string }} Summary labels for total, 7-day, and first-seen statistics.
+ */
 export function formatVisitGlance(glance: VisitGlance): {
   all: string;
   last7d: string;
@@ -150,6 +180,11 @@ export function formatVisitGlance(glance: VisitGlance): {
   };
 }
 
+/**
+ * Formats a numerical percentage into a rounded, signed percentage string.
+ * @param {number} percent - Raw percentage value.
+ * @returns {string} Formatted percentage string (e.g. "+12%", "-5%", or "0%").
+ */
 export function formatSignedPercent(percent: number): string {
   const rounded = Math.round(percent);
   if (rounded === 0) return '0%';
@@ -164,6 +199,11 @@ export const PERIOD_WORDS = {
   YoY: 'year over year',
 } as const;
 
+/**
+ * Formats VisitGlance metrics into a compact colophon summary string with period-over-period changes.
+ * @param {VisitGlance} glance - Visit metrics object.
+ * @returns {string} Dot-separated colophon summary string.
+ */
 export function formatColophonVisits(glance: VisitGlance): string {
   const parts = [formatUniqueVisitorCount(glance.uniqueVisitors)];
   const periods: Array<[keyof typeof PERIOD_WORDS, number | null]> = [
@@ -179,6 +219,11 @@ export function formatColophonVisits(glance: VisitGlance): string {
   return parts.join(' · ');
 }
 
+/**
+ * Formats VisitGlance metrics into a detailed title string for colophon visit tooltips or metadata.
+ * @param {VisitGlance} glance - Visit metrics object.
+ * @returns {string} Period-separated colophon title string including PostHog source attribution.
+ */
 export function formatColophonVisitsTitle(glance: VisitGlance): string {
   const parts = [formatUniqueVisitorCount(glance.uniqueVisitors)];
   const periods: Array<[keyof typeof PERIOD_WORDS, number | null]> = [
