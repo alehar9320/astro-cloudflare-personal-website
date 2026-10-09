@@ -70,7 +70,7 @@
       </section>
       <div id="chat-suggestions" class="chat-suggestions">
         <button type="button" class="chat-suggestion">
-          What did the IFS design system change?
+          What did the IFS Design System change?
         </button>
         <button type="button" class="chat-suggestion">How do you work as a PM?</button>
         <button type="button" class="chat-suggestion">What's the Industrial AI bet?</button>
@@ -140,7 +140,16 @@
 
   @media (min-width: 50em) {
     .chat-container.is-open:not(.is-prominent) {
-      padding-top: 5rem;
+      inset: var(--chat-stage-top, 5rem) 0 0 0;
+      padding-top: 0;
+      height: auto;
+      max-height: none;
+      justify-content: stretch;
+    }
+
+    .chat-container.is-open:not(.is-prominent) .chat-window {
+      flex: 1 1 auto;
+      min-height: 0;
     }
   }
 
@@ -335,7 +344,7 @@
 
   .chat-suggestion:focus-visible {
     outline: 2px solid var(--accent-regular);
-    outline-offset: 4px;
+    outline-offset: 2px;
   }
 
   .chat-window {
@@ -490,10 +499,20 @@
     border: none;
     color: var(--gray-400);
     cursor: pointer;
-    padding: 0.25rem 0.4rem;
+    padding: 0.25rem 0.5rem;
     font: inherit;
     font-size: 0.75rem;
     font-weight: 500;
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    box-sizing: border-box;
+    transition:
+      color var(--theme-transition),
+      transform var(--theme-transition);
   }
 
   .chat-clear:hover,
@@ -506,7 +525,14 @@
   .chat-clear:focus-visible,
   .chat-close:focus-visible {
     outline: 2px solid var(--accent-regular);
-    outline-offset: 4px;
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .chat-clear:active,
+    .chat-close:active {
+      transform: scale(0.96);
+    }
   }
 
   .chat-close {
@@ -515,6 +541,16 @@
     color: var(--gray-400);
     cursor: pointer;
     padding: 0.25rem;
+    min-height: 44px;
+    min-width: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.375rem;
+    box-sizing: border-box;
+    transition:
+      color var(--theme-transition),
+      transform var(--theme-transition);
   }
 
   .chat-messages {
@@ -616,13 +652,14 @@
   .chat-explore-card-open:hover,
   .chat-explore-card-open:focus-visible {
     outline: 2px solid var(--accent-regular);
-    outline-offset: 4px;
+    outline-offset: 2px;
   }
 
   .chat-explore-card-primary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    min-height: 44px;
     margin-top: 0.15rem;
     padding: 0.5rem 0.9rem;
     border-radius: 0.5rem;
@@ -638,7 +675,7 @@
   .chat-explore-card-primary:hover,
   .chat-explore-card-primary:focus-visible {
     outline: 2px solid var(--accent-regular);
-    outline-offset: 4px;
+    outline-offset: 2px;
   }
 
   @media (prefers-reduced-motion: no-preference) {
@@ -860,7 +897,7 @@
 
   const FOLD_DISMISSED_KEY = 'chat-fold-dismissed';
   const FOLLOW_UP_PROMPTS = [
-    'What did the IFS design system change?',
+    'What did the IFS Design System change?',
     'How do you work as a PM?',
     "What's the Industrial AI bet?",
     'How do I get in touch on LinkedIn?',
@@ -944,8 +981,14 @@
   function showFollowUps() {
     removeFollowUps();
     if (!chatMessages) return;
-    const lastUser = [...messages].reverse().find((msg: Message) => msg.role === 'user');
-    const lastUserText = lastUser?.content?.trim() ?? '';
+    /* Optimization (⚡ Bolt): Iterate backwards to find the last user message without dynamic shallow array allocations ([...messages]) or array reversal (.reverse()). Benchmark: 0 temporary array allocations on follow-up prompt updates. */
+    let lastUserText = '';
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === 'user') {
+        lastUserText = messages[i].content?.trim() ?? '';
+        break;
+      }
+    }
     const prompts = FOLLOW_UP_PROMPTS.filter((prompt) => prompt !== lastUserText);
     if (prompts.length === 0) return;
     const row = document.createElement('div');
@@ -1087,16 +1130,59 @@
     showFollowUps();
   }
 
+  const CHAT_STAGE_GAP_PX = 8;
+  const CHAT_STAGE_MIN_PX = 80;
+  const CHAT_STAGE_HEADER_PARTS = [
+    'nav .menu-header',
+    '#menu-content .nav-items',
+    '#menu-content .menu-footer',
+  ];
+
+  function syncChatStageTop() {
+    if (!chatContainer) return;
+    let bottom = 0;
+    for (const selector of CHAT_STAGE_HEADER_PARTS) {
+      const el = document.querySelector(selector);
+      if (el) bottom = Math.max(bottom, el.getBoundingClientRect().bottom);
+    }
+    const top = Math.max(CHAT_STAGE_MIN_PX, Math.ceil(bottom) + CHAT_STAGE_GAP_PX);
+    chatContainer.style.setProperty('--chat-stage-top', `${top}px`);
+  }
+
+  // Scrolling back to the top while chat is open moves the header down again,
+  // so recompute the stage top on scroll (rAF-throttled, open chat only).
+  let chatStageScrollFrame = 0;
+
+  function onChatStageScroll() {
+    if (chatStageScrollFrame) return;
+    chatStageScrollFrame = requestAnimationFrame(() => {
+      chatStageScrollFrame = 0;
+      syncChatStageTop();
+    });
+  }
+
+  function unbindChatStageScroll() {
+    window.removeEventListener('scroll', onChatStageScroll);
+    if (chatStageScrollFrame) {
+      cancelAnimationFrame(chatStageScrollFrame);
+      chatStageScrollFrame = 0;
+    }
+  }
+
   const setChatExpanded = (expand: boolean) => {
     chatToggle?.setAttribute('aria-expanded', String(expand));
     chatWindow?.classList.toggle('hidden', !expand);
     chatContainer?.classList.toggle('is-open', expand);
     if (expand) {
+      syncChatStageTop();
+      window.addEventListener('scroll', onChatStageScroll, { passive: true });
       chatContainer?.classList.remove('is-docked');
       chatContainer?.classList.remove('is-prominent');
       document.body.classList.remove('has-prominent-chat');
       chatInput?.focus();
       setStatus('idle');
+    } else {
+      unbindChatStageScroll();
     }
   };
 
@@ -1133,6 +1219,13 @@
   }
 
   initConversationalFold();
+  window.addEventListener(
+    'resize',
+    () => {
+      if (chatContainer?.classList.contains('is-open')) syncChatStageTop();
+    },
+    { passive: true }
+  );
 
   if (chatSuggestions) bindChipSubmit(chatSuggestions);
 
