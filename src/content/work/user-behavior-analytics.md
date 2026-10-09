@@ -26,4 +26,3 @@ As Product Manager, Developer Experience at IFS, I worked on user behavior analy
 ## Outcome
 
 Usage telemetry so IFS Cloud roadmap decisions rest on how people actually use the product.
-
