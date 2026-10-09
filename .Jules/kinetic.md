@@ -24,3 +24,14 @@ Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hi
   - Glass Blur: `16px`
   - Affordance: `translateY(-4px)`
   - Glow: `hsla(210, 100%, 45%, 0.3)`
+
+## 2026-03-29 - Fluid Pill Badge Hover Micro-Interaction
+
+- **Signal:** Pill badges had static `background-position` gradient base styles without interactive transitions or hover depth.
+- **Action:**
+  - Updated `src/components/Pill.astro` with fluid `background-position: 100% 50%` gradient sweep.
+  - Added hardware-accelerated `transform: translateY(-2px)` elevation with Northern Lights cyan glow `hsla(210, 100%, 45%, 0.25)`.
+  - Added `@media (prefers-reduced-motion: reduce)` media query overrides to respect accessibility requirements.
+- **Tokens Added:**
+  - Elevation Affordance: `translateY(-2px)`
+  - Glow: `hsla(210, 100%, 45%, 0.25)`
