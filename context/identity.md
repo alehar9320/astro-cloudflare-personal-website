@@ -40,9 +40,7 @@ IFS full-time "8 yrs 5 mos" as of the scrape (`context/author-linkedin.md`):
 
 ## Private / do not ship on visitor pages
 
-- LinkedIn Open to: Product Manager, Frontend Web Developer, Business Analyst, Team Lead, Development Team Lead.
 - Copilots "several millions".
-- Unpublished old-site draft in about.tsx: "perhaps as a future manager" — not a public claim; never turn into Head/VP/Director.
 
 ## Adjacent pictures from published proof only
 
