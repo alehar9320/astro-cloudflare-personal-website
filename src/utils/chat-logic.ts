@@ -26,6 +26,22 @@ export const ChatRequestSchema = z.object({
 });
 
 /**
+ * Finds the most recent user message in a conversation history without array cloning or reversing.
+ * Iterates backwards through the list to avoid dynamic array allocations on edge API requests.
+ *
+ * @param messages - Array of chat messages.
+ * @returns The last message with role 'user', or undefined if none exists.
+ */
+export function getLastUserMessage(messages: ChatMessage[]): ChatMessage | undefined {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i].role === 'user') {
+      return messages[i];
+    }
+  }
+  return undefined;
+}
+
+/**
  * Prunes conversation history to fit within defined message and character limits.
  * Implements a sliding window algorithm that prioritizes the most recent messages.
  *
@@ -37,7 +53,10 @@ export function pruneMessages(messages: ChatMessage[]): ChatMessage[] {
   if (windowed.length <= 1) return windowed;
 
   let start = 0;
-  let totalLength = windowed.reduce((acc, msg) => acc + msg.content.length, 0);
+  let totalLength = 0;
+  for (let i = 0; i < windowed.length; i++) {
+    totalLength += windowed[i].content.length;
+  }
 
   while (start < windowed.length - 1 && totalLength > MAX_TOTAL_CONTENT_LENGTH) {
     totalLength -= windowed[start].content.length;
