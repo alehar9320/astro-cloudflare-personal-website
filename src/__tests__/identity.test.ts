@@ -2936,3 +2936,23 @@ describe('hire hint is just LinkedIn everywhere (#990 / #761 Eden copy lock)', (
     expect(offenders).toEqual([]);
   });
 });
+
+describe('chat open stage follows the header on scroll (#1633 follow-up)', () => {
+  const chat = readFileSync('src/components/Chat.astro', 'utf8');
+
+  it('recomputes the open stage top on a passive, rAF-throttled scroll listener', () => {
+    expect(chat).toMatch(
+      /if \(expand\) \{\s*syncChatStageTop\(\);\s*window\.addEventListener\('scroll', onChatStageScroll, \{ passive: true \}\);/
+    );
+    expect(chat).toMatch(
+      /function onChatStageScroll\(\) \{\s*if \(chatStageScrollFrame\) return;\s*chatStageScrollFrame = requestAnimationFrame\(\(\) => \{\s*chatStageScrollFrame = 0;\s*syncChatStageTop\(\);/
+    );
+  });
+
+  it('removes the scroll listener and cancels a pending frame when chat closes', () => {
+    expect(chat).toMatch(
+      /function unbindChatStageScroll\(\) \{\s*window\.removeEventListener\('scroll', onChatStageScroll\);\s*if \(chatStageScrollFrame\) \{\s*cancelAnimationFrame\(chatStageScrollFrame\);/
+    );
+    expect(chat).toMatch(/\} else \{\s*unbindChatStageScroll\(\);\s*\}\s*\};/);
+  });
+});
