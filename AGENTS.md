@@ -22,7 +22,7 @@
 - `src/pages/`: Route-level components.
 - `src/styles/`: Global and shared CSS styles.
 - `src/data/`: Static data used across the site.
-- `context/`: Background information about the author.
+- `context/`: Author background. Start at [`context/identity.md`](context/identity.md).
 - `scripts/`: Build and release automation scripts.
 - `.Jules/`: Jules scheduled-agent journals only. Never create `.Aurora`, `.jules`, `.Pruning`, `.Janitor`, `.Nova`, `.FixtureRefresher`, `.GripTight`, `.ObservabilityClerk`, or `.StuntDouble` at repo root. If a prompt names one of those paths, write under `.Jules/` instead.
 

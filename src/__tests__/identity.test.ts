@@ -1227,13 +1227,16 @@ describe('identity copy', () => {
     expect(thesis).not.toContain('mailto:');
   });
 
-  it('lets the Work index include a visible Get in touch on LinkedIn CTA', () => {
-    const work = readFileSync('src/pages/work.astro', 'utf8');
-    expect(work).toContain('href="https://www.linkedin.com/in/alehar/"');
-    expect(work).toContain('target="_blank"');
-    expect(work).toContain('rel="noopener noreferrer"');
-    expect(work).toMatch(/>Get in touch on LinkedIn<\/a/);
-    expect(work).not.toContain('mailto:');
+  it('keeps /work/ Get in touch in chrome, not under Earlier work (#1104)', () => {
+    const page = readFileSync('src/pages/work.astro', 'utf8');
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    expect(page).not.toContain('class="hire-cta"');
+    expect(page).not.toMatch(/<p class="hire-cta"[\s\S]*Get in touch on LinkedIn/);
+    const mainEnd = page.indexOf('</main>');
+    const ctaAt = page.indexOf('<ContactCTA />');
+    expect(ctaAt).toBeGreaterThan(mainEnd);
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(cta).not.toContain('mailto:');
   });
 
   it('lets the AI coding copilots work-case TL;DR include at IFS', () => {
@@ -2520,7 +2523,7 @@ describe('identity copy', () => {
     expect(work).toContain('animation: enter-soft 400ms');
     expect(work).toContain('translate: 0 12px');
     expect(work).toContain('cubic-bezier(0.22, 1, 0.36, 1)');
-    expect(work).toContain('https://www.linkedin.com/in/alehar/');
+    expect(work).toContain('<ContactCTA />'); // hire LinkedIn lives in chrome ContactCTA (#1104)
     const workGated = work.slice(work.indexOf('@supports (animation-timeline: view())'));
     expect(workGated).toContain('animation: enter-soft 400ms');
     expect(workGated).not.toContain('opacity: 0');
@@ -2802,7 +2805,7 @@ describe('identity copy', () => {
       /@media \(min-width: 50em\)[\s\S]*?\.proof-card\s*\{[\s\S]*?padding:\s*1\.5rem/
     );
     expect(work).not.toContain('padding: 2.5rem');
-    expect(work).toContain('https://www.linkedin.com/in/alehar/');
+    expect(work).toContain('<ContactCTA />'); // hire LinkedIn lives in chrome ContactCTA (#1104)
     expect(work).not.toContain('mailto:');
     expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
   });
