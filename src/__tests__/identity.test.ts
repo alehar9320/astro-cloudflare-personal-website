@@ -999,7 +999,7 @@ describe('identity copy', () => {
     expect(chat).toContain("open.className = 'chat-explore-card-open'");
     expect(chat).toContain('open.href = card.href');
     expect(chat).toContain("open.textContent = 'Open'");
-    expect(chat).toContain('article.append(title, line, open)');
+    expect(chat).toContain('article.replaceChildren(title, line, open)');
     expect(chat).not.toContain("location.href = '/work/");
     expect(chat).not.toContain('location.assign');
     expect(chat).not.toContain('Get in touch');
