@@ -93,7 +93,8 @@ describe('identity copy', () => {
     expect(cta).toContain('https://www.linkedin.com/in/alehar/');
     expect(cta).toContain('Get in touch');
     expect(cta).not.toContain('mailto:');
-    expect(cta).toContain('LinkedIn · replies from me');
+    expect(cta).toContain('class="cta-hint">LinkedIn</p>');
+    expect(cta).not.toContain('LinkedIn · replies from me');
     expect(cta).not.toContain('high-impact');
   });
 
@@ -311,7 +312,8 @@ describe('identity copy', () => {
     expect(footer).toContain("{' · '}");
     // Fail the prior bug: newline/indent then middot (leading space collapsed in paint).
     expect(footer).not.toMatch(/>\s*\n\s+·\s/);
-    expect(cta).toContain('LinkedIn · replies from me');
+    expect(cta).toContain('class="cta-hint">LinkedIn</p>');
+    expect(cta).not.toContain('LinkedIn · replies from me');
   });
 
   it('keeps Footer .visit-stats display:inline only when not [hidden]', () => {
@@ -2361,7 +2363,8 @@ describe('identity copy', () => {
     expect(robots).toContain('Disallow: /whats-new/');
     expect(cta).toContain('https://www.linkedin.com/in/alehar/');
     expect(cta).toContain('Get in touch');
-    expect(cta).toContain('LinkedIn · replies from me');
+    expect(cta).toContain('class="cta-hint">LinkedIn</p>');
+    expect(cta).not.toContain('LinkedIn · replies from me');
     expect(cta).not.toContain('mailto:');
     expect(
       toVisitorChangelogTitle('41fe7ae feat: rewrite /experimental/now/ for visitors (#523)')
@@ -2863,5 +2866,21 @@ describe('identity copy', () => {
     expect(nav).toContain("href: '/biography/'");
     expect(nav).toContain("href: '/contact/'");
     expect(nav).not.toContain('mailto:');
+  });
+
+  it('keeps analytics case Get in touch in chrome/footer, not under the H1 (#929)', () => {
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    const headerStart = slug.indexOf('<header>');
+    const headerEnd = slug.indexOf('</header>');
+    expect(headerStart).toBeGreaterThan(-1);
+    expect(headerEnd).toBeGreaterThan(headerStart);
+    const header = slug.slice(headerStart, headerEnd);
+    expect(header).toContain('<Hero');
+    expect(header).not.toContain('<ContactCTA');
+    expect(slug).toContain('<ContactCTA />');
+    expect(slug.indexOf('<ContactCTA />')).toBeGreaterThan(headerEnd);
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(cta).not.toContain('mailto:');
   });
 });
