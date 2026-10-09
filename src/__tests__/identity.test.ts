@@ -1093,12 +1093,30 @@ describe('identity copy', () => {
     expect(ds).not.toContain('mailto:');
   });
 
-  it('lets the IFS Design System case include a visible Get in touch on LinkedIn CTA', () => {
+  it('keeps IFS case body free of in-body Get in touch; hire stays chrome', () => {
     const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
-    expect(ds).toContain(
-      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer" data-hire-event="hire_cta_click" data-hire-surface="case_study">Get in touch on LinkedIn</a>'
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    expect(ds).not.toContain(
+      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
     );
+    // #1638 had tagged the in-body link hire_cta_click/case_study; #979 removes it entirely.
+    expect(ds).not.toContain('Get in touch on LinkedIn');
+    expect(ds).not.toContain('https://www.linkedin.com/in/alehar/');
     expect(ds).not.toContain('mailto:');
+    expect(ds).toContain('## Problem');
+    expect(ds).toContain('## Approach');
+    expect(ds).toContain('## Outcome');
+    const headerStart = slug.indexOf('<header>');
+    const headerEnd = slug.indexOf('</header>');
+    const mainEnd = slug.indexOf('</main>');
+    const ctaAt = slug.indexOf('<ContactCTA />');
+    expect(headerStart).toBeGreaterThan(-1);
+    expect(headerEnd).toBeGreaterThan(headerStart);
+    expect(slug.slice(headerStart, headerEnd)).not.toContain('<ContactCTA');
+    expect(ctaAt).toBeGreaterThan(mainEnd);
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(cta).not.toContain('mailto:');
 
     const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
     const work = readFileSync('src/pages/work.astro', 'utf8');
@@ -1119,9 +1137,6 @@ describe('identity copy', () => {
     expect(ds).toContain('up to 2x');
     expect(ds).toContain('up to 30x');
     expect(ds).toContain('Zeroheight');
-    expect(ds).toContain(
-      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer" data-hire-event="hire_cta_click" data-hire-surface="case_study">Get in touch on LinkedIn</a>'
-    );
     expect(ds).not.toContain('mailto:');
   });
 
@@ -2634,9 +2649,8 @@ describe('identity copy', () => {
     expect(home).toContain('https://www.linkedin.com/in/alehar/');
     expect(home).not.toContain('ds-first');
     expect(ds).not.toContain('mailto:');
-    expect(ds).toContain(
-      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer" data-hire-event="hire_cta_click" data-hire-surface="case_study">Get in touch on LinkedIn</a>'
-    );
+    // #979: IFS hire is chrome ContactCTA only; no in-body Get in touch.
+    expect(ds).not.toContain('Get in touch on LinkedIn');
   });
 
   it('tightens IFS case-local spacing on short desktop so chips clear the composer (#801)', () => {
@@ -2787,9 +2801,8 @@ describe('identity copy', () => {
     );
     expect(slug).toContain("import ContactCTA from '../../components/ContactCTA.astro';");
     expect(slug).not.toContain('mailto:');
-    expect(ds).toContain(
-      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer" data-hire-event="hire_cta_click" data-hire-surface="case_study">Get in touch on LinkedIn</a>'
-    );
+    // #979: IFS hire is chrome ContactCTA only; no in-body Get in touch.
+    expect(ds).not.toContain('Get in touch on LinkedIn');
     expect(ds).not.toContain('mailto:');
     expect(work).toContain('class="proof-card"');
     expect(work).toContain('href="/work/ifs-design-system/"');
@@ -2996,16 +3009,18 @@ describe('/work/ Earlier work ends on the normal section rhythm (#1109 follow-up
   });
 });
 
-describe('IFS Design System case Get in touch is counted as hire (#979)', () => {
+describe('IFS Design System case hire is counted from chrome only (#979)', () => {
   const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
-  const analytics = readFileSync('src/utils/hire-analytics.ts', 'utf8');
+  const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+  const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
 
-  it('tags the in-body LinkedIn Get in touch with hire_cta_click / case_study', () => {
-    const link = ds.match(/<a [^>]*>Get in touch on LinkedIn<\/a>/)?.[0] ?? '';
-    expect(link).toMatch(/\bhref="https:\/\/www\.linkedin\.com\/in\/alehar\/"/);
-    expect(link).toContain('data-hire-event="hire_cta_click"');
-    expect(link).toContain('data-hire-surface="case_study"');
-    expect(analytics).toContain("| 'case_study'");
+  it('has no in-body LinkedIn link; ContactCTA after </main> carries hire_cta_click / contact_cta', () => {
+    expect(ds).not.toMatch(/<a [^>]*linkedin\.com/);
+    expect(ds).not.toContain('Get in touch on LinkedIn');
+    expect(slug.indexOf('<ContactCTA />')).toBeGreaterThan(slug.indexOf('</main>'));
+    expect(cta).toMatch(/\bhref="https:\/\/www\.linkedin\.com\/in\/alehar\/"/);
+    expect(cta).toContain('data-hire-event="hire_cta_click"');
+    expect(cta).toContain('data-hire-surface="contact_cta"');
   });
 });
 
