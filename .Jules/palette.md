@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-28 - Header Social External Link Target Standard
+
+**Learning:** External social links in top navigation controls (such as `.social` in `Nav.astro`) should include `target="_blank"` and `rel="noopener noreferrer"` attributes to match footer social links and prevent navigating away from the user's active session, maintaining consistent external link security and UX context.
+
+**Action:** Added `target="_blank"` and `rel="noopener noreferrer"` to header social icon links in `src/components/Nav.astro`.
+
 ## 2026-05-27 - Navigation Link Touch Target Ergonomics
 
 **Learning:** Main menu text links (`.link`) and header social icons (`.social`) in `Nav.astro` can fail WCAG 2.1 AA 44x44px minimum touch target requirements when rendered on mobile devices. Standardizing `.link` with `display: inline-flex; align-items: center; min-height: 44px;` and `.social` with `min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;` prevents mis-taps on touch devices while preserving desktop layout alignment.
