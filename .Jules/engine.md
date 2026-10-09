@@ -35,3 +35,9 @@
 - **Edge Memory & GC Allocation:** Hoisted static regular expression literal patterns in `src/utils/chat-explore.ts` to module scope constants (`SUPPRESS_PATTERN`, `LINKEDIN_PATTERN`, `DESIGN_SYSTEM_PATTERN`, `COPILOTS_PATTERN`, `ANALYTICS_PATTERN`, `THESIS_PATTERN`, `BIOGRAPHY_PATTERN`, `CASES_PATTERN`, `WORK_PATTERN`).
 - **Performance:** Eliminates dynamic `RegExp` compilation and dynamic string allocations on every avatar chat message question query in Cloudflare Workers edge runtimes.
 - **Verification:** Added unit test coverage in `src/utils/chat-explore.test.ts` for suppression logic, keyword variations, edge cases, and empty strings. All tests pass cleanly.
+
+## 2025-06-25 - O(1) Column Map Indexing for Visit Statistics Dataset Parsing
+
+- **Performance & Edge Memory:** Refactored `parseVisitGlance` in `src/utils/visit-stats.ts` to pre-construct an $O(1)$ `Map<string, number>` from payload column name arrays using a single-pass index loop, eliminating linear `Array.prototype.indexOf` searches and `.filter()` array allocations on every row field evaluation.
+- **Data Parsing:** Refactored `valueFromRow` helper to use constant-time `columnMap.get(key)` lookups.
+- **Verification:** Expanded Vitest unit tests in `src/utils/visit-stats.test.ts` covering custom reordered column maps, array-structured payloads, and period growth computations.
