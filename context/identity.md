@@ -41,6 +41,7 @@ IFS full-time "8 yrs 5 mos" as of the scrape (`context/author-linkedin.md`):
 ## Private / do not ship on visitor pages
 
 - The copilots business-value size claim from LinkedIn (no figure, no size).
+- The "used by millions" reach claim from the GitHub profile README (no user-count or scale claim).
 
 ## Adjacent pictures from published proof only
 

@@ -16,6 +16,7 @@ const banned = [
   'search appearances',
   'status is online',
   'premium',
+  'who your viewers also viewed',
 ];
 
 const contextDir = resolve(dirname(fileURLToPath(import.meta.url)), '../../context');
