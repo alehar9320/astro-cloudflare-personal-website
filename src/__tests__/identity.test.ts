@@ -2889,6 +2889,32 @@ describe('identity copy', () => {
   });
 });
 
+describe('chat open stage clears the header nav (#939 follow-up)', () => {
+  const chat = readFileSync('src/components/Chat.astro', 'utf8');
+
+  it('desktop open stage top comes from --chat-stage-top with a 5rem fallback', () => {
+    expect(chat).toMatch(
+      /@media \(min-width: 50em\) \{\s*\.chat-container\.is-open:not\(\.is-prominent\) \{\s*inset: var\(--chat-stage-top, 5rem\) 0 0 0;/
+    );
+    expect(chat).not.toContain('inset: 5rem 0 0 0;');
+  });
+
+  it('measures the header row bottom before the chat opens', () => {
+    expect(chat).toContain("'nav .menu-header'");
+    expect(chat).toContain("'#menu-content .nav-items'");
+    expect(chat).toContain("'#menu-content .menu-footer'");
+    expect(chat).toContain("chatContainer.style.setProperty('--chat-stage-top'");
+    expect(chat).toContain('const CHAT_STAGE_MIN_PX = 80;');
+    expect(chat).toMatch(/if \(expand\) \{\s*syncChatStageTop\(\);/);
+  });
+
+  it('keeps phone open chat full page', () => {
+    expect(chat).toMatch(
+      /@media \(max-width: 49\.99em\) \{[\s\S]*?\.chat-container\.is-open:not\(\.is-prominent\) \{\s*inset: 0;\s*padding-top: 0;[\s\S]*?height: 100dvh;/
+    );
+  });
+});
+
 describe('hire hint is just LinkedIn everywhere (#990 / #761 Eden copy lock)', () => {
   // Tests legitimately keep the old copy in negative assertions, so skip them.
   const isTestPath = (path: string) =>
