@@ -1,0 +1,89 @@
+---
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const pageTitle = 'Laboratory | Interactive Experiments';
+const description = 'Experimental interactive canvases, visual math, and digital art prototypes.';
+---
+
+<BaseLayout title={pageTitle} description={description} ogTitle={pageTitle}>
+  <div class="stack gap-20">
+    <main id="main-content" class="lab-index stack gap-8">
+      <Hero
+        title="Laboratory"
+        tagline="Experimental interactive canvases, visual math, and digital art prototypes."
+        align="start"
+      />
+
+      <section class="experiments-grid stack gap-4" aria-label="Experiments">
+        <a href="/lab/aurora/" class="experiment-card">
+          <div class="experiment-info">
+            <h2 class="experiment-title">Northern Lights Aurora Canvas</h2>
+            <p class="experiment-desc">
+              Multi-frequency sine wave superposition with dynamic spatial step sampling and
+              interactive pointer perturbations.
+            </p>
+          </div>
+          <span class="experiment-link">View experiment &rarr;</span>
+        </a>
+      </section>
+    </main>
+  </div>
+</BaseLayout>
+
+<style>
+  .lab-index {
+    width: min(52rem, calc(100vw - 3rem));
+    margin-inline: auto;
+    padding-bottom: var(--chat-fab-clearance);
+  }
+
+  .experiment-card {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.5rem;
+    background: hsla(var(--gray-999-basis), 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 0.75rem;
+    text-decoration: none;
+    color: var(--gray-0);
+    transition: all 0.2s ease-out;
+  }
+
+  .experiment-card:hover {
+    border-color: var(--accent-light);
+    transform: translateY(-2px);
+  }
+
+  .experiment-card:focus-visible {
+    outline: 2px solid var(--accent-light);
+    outline-offset: 4px;
+  }
+
+  .experiment-title {
+    margin: 0 0 0.5rem 0;
+    font-size: var(--text-xl);
+    font-weight: 600;
+  }
+
+  .experiment-desc {
+    margin: 0;
+    font-size: var(--text-md);
+    color: var(--gray-200);
+    line-height: 1.5;
+  }
+
+  .experiment-link {
+    font-size: var(--text-sm);
+    color: var(--accent-light);
+    font-weight: 500;
+  }
+
+  @media (min-width: 50em) {
+    .lab-index {
+      padding-bottom: 0;
+    }
+  }
+</style>

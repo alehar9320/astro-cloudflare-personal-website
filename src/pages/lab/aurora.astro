@@ -1,0 +1,103 @@
+---
+import AuroraCanvas from '../../components/AuroraCanvas.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const pageTitle = 'Northern Lights Canvas | Laboratory';
+const description =
+  'Interactive HTML5 Canvas experiment featuring math-driven Northern Lights aurora wave superposition.';
+---
+
+<BaseLayout title={pageTitle} description={description} ogTitle={pageTitle}>
+  <div class="stack gap-20">
+    <main id="main-content" class="lab-aurora stack gap-8">
+      <div class="nav-back">
+        <a href="/lab/" class="back-link">&larr; Back to Laboratory</a>
+      </div>
+
+      <Hero
+        title="Northern Lights Canvas"
+        tagline="Multi-frequency sine wave superposition rendered at dynamic spatial step intervals."
+        align="start"
+      />
+
+      <section class="canvas-section" aria-label="Interactive Aurora Canvas">
+        <AuroraCanvas height="380px" />
+      </section>
+
+      <section class="details-section stack gap-4" aria-label="Technical Details">
+        <h2 class="section-title">How it works</h2>
+        <div class="details-copy stack gap-2">
+          <p>
+            This canvas uses pure TypeScript math algorithms to evaluate sine wave superposition
+            across marine blue and cyan color layers.
+          </p>
+          <p>
+            To maintain 60fps frame rates and avoid memory overhead on high-DPI displays, the
+            rendering pipeline dynamically adjusts spatial step sampling intervals (<code
+              >Math.max(4, Math.floor(width / 120))</code
+            >) based on the current canvas width.
+          </p>
+          <p>
+            Move your cursor or touch pointer over the canvas to perturb the wave field, or use the
+            accessible play/pause control in the bottom corner.
+          </p>
+        </div>
+      </section>
+    </main>
+  </div>
+</BaseLayout>
+
+<style>
+  .lab-aurora {
+    width: min(52rem, calc(100vw - 3rem));
+    margin-inline: auto;
+    padding-bottom: var(--chat-fab-clearance);
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    font-size: var(--text-sm);
+    color: var(--accent-light);
+    text-decoration: none;
+    transition: color 0.2s ease-out;
+  }
+
+  .back-link:hover {
+    color: var(--gray-0);
+  }
+
+  .back-link:focus-visible {
+    outline: 2px solid var(--accent-light);
+    outline-offset: 4px;
+    border-radius: 0.25rem;
+  }
+
+  .section-title {
+    margin: 0;
+    font-size: var(--text-xl);
+    color: var(--gray-0);
+  }
+
+  .details-copy p {
+    margin: 0;
+    font-size: var(--text-md);
+    color: var(--gray-200);
+    line-height: 1.6;
+  }
+
+  .details-copy code {
+    font-family: monospace;
+    padding: 0.15rem 0.35rem;
+    background: rgba(255, 255, 255, 0.08);
+    border-radius: 0.25rem;
+    color: var(--accent-light);
+  }
+
+  @media (min-width: 50em) {
+    .lab-aurora {
+      padding-bottom: 0;
+    }
+  }
+</style>

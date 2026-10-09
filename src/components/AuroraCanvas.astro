@@ -1,0 +1,282 @@
+---
+/**
+ * AuroraCanvas.astro
+ * Interactive HTML5 Canvas component rendering math-driven Northern Lights aurora waves.
+ * Includes lifecycle cleanup, accessibility controls, and prefers-reduced-motion compliance.
+ */
+interface Props {
+  height?: string;
+  className?: string;
+}
+
+const { className = '', height = '320px' } = Astro.props;
+---
+
+<div class:list={['aurora-canvas-container', className]} style={`height: ${height};`}>
+  <canvas class="aurora-canvas" aria-hidden="true"></canvas>
+  <button
+    type="button"
+    class="canvas-control-btn focus-visible"
+    aria-label="Pause animation"
+    data-state="playing"
+  >
+    <svg
+      class="pause-icon"
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 256 256"
+      aria-hidden="true"
+    >
+      <path
+        fill="currentColor"
+        d="M216 48v160a16 16 0 0 1-16 16h-40a16 16 0 0 1-16-16V48a16 16 0 0 1 16-16h40a16 16 0 0 1 16 16m-104 0v160a16 16 0 0 1-16 16H56a16 16 0 0 1-16-16V48a16 16 0 0 1 16-16h40a16 16 0 0 1 16 16"
+      ></path>
+    </svg>
+    <svg
+      class="play-icon"
+      xmlns="http://www.w3.org/2000/svg"
+      width="16"
+      height="16"
+      viewBox="0 0 256 256"
+      aria-hidden="true"
+    >
+      <path
+        fill="currentColor"
+        d="M228.23 120.35L84.23 32.35A16 16 0 0 0 60 46v164a16 16 0 0 0 24.23 13.65l144-88a16 16 0 0 0 0-27.3"
+      ></path>
+    </svg>
+    <span class="btn-text">Pause</span>
+  </button>
+</div>
+
+<script>
+  import { DEFAULT_AURORA_WAVES, generateWavePathPoints } from '../utils/aurora-waves';
+
+  function initAuroraCanvas() {
+    const containers = document.querySelectorAll('.aurora-canvas-container');
+
+    containers.forEach((container) => {
+      const canvas = container.querySelector('.aurora-canvas') as HTMLCanvasElement | null;
+      const toggleBtn = container.querySelector('.canvas-control-btn') as HTMLButtonElement | null;
+      if (!canvas) return;
+
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      let animationFrameId: number | null = null;
+      let isPlaying = true;
+      const startTime = performance.now();
+      let cursor: { x: number; y: number } | undefined = undefined;
+
+      const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const resize = () => {
+        const rect = container.getBoundingClientRect();
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        ctx.scale(dpr, dpr);
+        drawFrame(performance.now() - startTime);
+      };
+
+      const drawFrame = (elapsedTime: number) => {
+        const width = canvas.width / (window.devicePixelRatio || 1);
+        const height = canvas.height / (window.devicePixelRatio || 1);
+
+        ctx.clearRect(0, 0, width, height);
+
+        // Render Northern Lights aurora ribbons
+        DEFAULT_AURORA_WAVES.forEach((wave) => {
+          const points = generateWavePathPoints(width, height, elapsedTime, wave, cursor);
+          if (points.length < 2) return;
+
+          ctx.beginPath();
+          ctx.moveTo(points[0].x, points[0].y);
+
+          for (let i = 1; i < points.length; i++) {
+            ctx.lineTo(points[i].x, points[i].y);
+          }
+
+          ctx.lineTo(width, height);
+          ctx.lineTo(0, height);
+          ctx.closePath();
+
+          ctx.fillStyle = wave.color;
+          ctx.fill();
+        });
+      };
+
+      const renderLoop = (timestamp: number) => {
+        if (!isPlaying) return;
+        drawFrame(timestamp - startTime);
+        animationFrameId = requestAnimationFrame(renderLoop);
+      };
+
+      const stopAnimation = () => {
+        isPlaying = false;
+        if (animationFrameId !== null) {
+          cancelAnimationFrame(animationFrameId);
+          animationFrameId = null;
+        }
+        if (toggleBtn) {
+          toggleBtn.setAttribute('data-state', 'paused');
+          toggleBtn.setAttribute('aria-label', 'Play animation');
+          const textSpan = toggleBtn.querySelector('.btn-text');
+          if (textSpan) textSpan.textContent = 'Play';
+        }
+      };
+
+      const startAnimation = () => {
+        if (prefersReducedMotion) return;
+        isPlaying = true;
+        if (toggleBtn) {
+          toggleBtn.setAttribute('data-state', 'playing');
+          toggleBtn.setAttribute('aria-label', 'Pause animation');
+          const textSpan = toggleBtn.querySelector('.btn-text');
+          if (textSpan) textSpan.textContent = 'Pause';
+        }
+        animationFrameId = requestAnimationFrame(renderLoop);
+      };
+
+      // Event handlers
+      const handlePointerMove = (e: PointerEvent) => {
+        const rect = canvas.getBoundingClientRect();
+        cursor = {
+          x: e.clientX - rect.left,
+          y: e.clientY - rect.top,
+        };
+      };
+
+      const handlePointerLeave = () => {
+        cursor = undefined;
+      };
+
+      const handleVisibilityChange = () => {
+        if (document.hidden) {
+          if (animationFrameId !== null) {
+            cancelAnimationFrame(animationFrameId);
+            animationFrameId = null;
+          }
+        } else if (isPlaying && !prefersReducedMotion) {
+          animationFrameId = requestAnimationFrame(renderLoop);
+        }
+      };
+
+      const handleToggle = () => {
+        if (isPlaying) {
+          stopAnimation();
+        } else {
+          startAnimation();
+        }
+      };
+
+      // Listener Registration
+      window.addEventListener('resize', resize, { passive: true });
+      canvas.addEventListener('pointermove', handlePointerMove, { passive: true });
+      canvas.addEventListener('pointerleave', handlePointerLeave, { passive: true });
+      document.addEventListener('visibilitychange', handleVisibilityChange);
+
+      if (toggleBtn) {
+        toggleBtn.addEventListener('click', handleToggle);
+      }
+
+      // Initial setup
+      resize();
+
+      if (prefersReducedMotion) {
+        stopAnimation();
+      } else {
+        startAnimation();
+      }
+
+      // Lifecycle Cleanup on Astro page transition
+      document.addEventListener(
+        'astro:before-swap',
+        () => {
+          stopAnimation();
+          window.removeEventListener('resize', resize);
+          canvas.removeEventListener('pointermove', handlePointerMove);
+          canvas.removeEventListener('pointerleave', handlePointerLeave);
+          document.removeEventListener('visibilitychange', handleVisibilityChange);
+          if (toggleBtn) {
+            toggleBtn.removeEventListener('click', handleToggle);
+          }
+        },
+        { once: true }
+      );
+    });
+  }
+
+  // Initialize on load and post-swap
+  initAuroraCanvas();
+  document.addEventListener('astro:after-swap', initAuroraCanvas);
+</script>
+
+<style>
+  .aurora-canvas-container {
+    position: relative;
+    width: 100%;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: radial-gradient(
+      ellipse 80% 60% at 50% 100%,
+      rgba(0, 100, 180, 0.15),
+      rgba(10, 18, 30, 0.8)
+    );
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: inset 0 0 20px rgba(0, 200, 255, 0.05);
+  }
+
+  .aurora-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+  }
+
+  .canvas-control-btn {
+    position: absolute;
+    bottom: 0.75rem;
+    right: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    padding: 0.35rem 0.65rem;
+    font-size: var(--text-sm, 0.875rem);
+    font-family: inherit;
+    color: var(--gray-200, #e2e8f0);
+    background: rgba(15, 23, 42, 0.7);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 9999px;
+    cursor: pointer;
+    transition: all 0.2s ease-out;
+  }
+
+  .canvas-control-btn:hover {
+    color: var(--gray-0, #ffffff);
+    background: rgba(30, 41, 59, 0.85);
+    border-color: var(--accent-light, #38bdf8);
+  }
+
+  .canvas-control-btn:focus-visible {
+    outline: 2px solid var(--accent-light, #38bdf8);
+    outline-offset: 2px;
+  }
+
+  .canvas-control-btn[data-state='playing'] .play-icon {
+    display: none;
+  }
+
+  .canvas-control-btn[data-state='paused'] .pause-icon {
+    display: none;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .canvas-control-btn {
+      display: none;
+    }
+  }
+</style>
