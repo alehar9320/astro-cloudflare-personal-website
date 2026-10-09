@@ -32,5 +32,3 @@ Master's thesis at Chalmers University of Technology in 2017 on business model i
 ## Outcome
 
 Opportunities showed up as reach, scale, and data for decisions. Barriers were mostly organizational.
-
-<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer" data-hire-event="hire_cta_click" data-hire-surface="case_study">Get in touch on LinkedIn</a>
