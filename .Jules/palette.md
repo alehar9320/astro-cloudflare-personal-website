@@ -1,5 +1,54 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-27 - Navigation Link Touch Target Ergonomics
+
+**Learning:** Main menu text links (`.link`) and header social icons (`.social`) in `Nav.astro` can fail WCAG 2.1 AA 44x44px minimum touch target requirements when rendered on mobile devices. Standardizing `.link` with `display: inline-flex; align-items: center; min-height: 44px;` and `.social` with `min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;` prevents mis-taps on touch devices while preserving desktop layout alignment.
+
+**Action:** Added `display: inline-flex; align-items: center; min-height: 44px;` to `.link` and `min-width: 44px; min-height: 44px; align-items: center; justify-content: center;` to `.social` in `src/components/Nav.astro`.
+
+## 2026-05-27 - Forced-Colors Mode Structural Borders for ContactCTA
+
+**Learning:** Translucent glassmorphism borders declared with `hsla(...)` colors inside structural callout sections (such as `aside` in `ContactCTA.astro`) disappear entirely when rendered under Windows High Contrast / Forced Colors mode, leaving section boundaries invisible. Declaring `border-color: CanvasText;` within `@media (forced-colors: active)` ensures structural borders remain crisp and defined in high contrast viewports.
+
+**Action:** Added `@media (forced-colors: active)` border-color fallback for `aside` in `src/components/ContactCTA.astro`.
+
+## 2026-05-27 - Action CTA Touch Target Ergonomics on Fallback Pages
+
+**Learning:** Primary action triggers and call-to-action buttons nested in container wrappers (such as `.cta-container` in `NotFoundContent.astro`) require explicit WCAG 2.1 AA 44x44px touch target bounds (`min-height: 44px; min-width: 44px;`) across touch viewports to prevent mis-taps when placed adjacent to secondary action hints or links.
+
+**Action:** Enforced `min-height: 44px; min-width: 44px;` for `:global(a)` inside `.cta-container` in `src/components/NotFoundContent.astro`.
+
+
+## 2026-05-26 - Page Link Touch Target Ergonomics
+
+**Learning:** Section list links (such as `.earlier a` in `work.astro`) and standalone page action links (such as `.history-link` in `whats-new.astro` and `.hire-cta a`) often render as compact inline links on mobile viewports, failing WCAG 2.1 AA 44x44px minimum touch target requirements and risking mis-taps. Setting `display: inline-flex; align-items: center; min-height: 44px;` expands the interactive tap area without disrupting surrounding line rhythm.
+
+**Action:** Added `display: inline-flex; align-items: center; min-height: 44px;` to `:global(.history-link)` in `whats-new.astro` and `.earlier a` / `.hire-cta a` in `work.astro`.
+
+## 2026-05-25 - Theme Toggle Touch Target Ergonomics & Focus Containment
+
+**Learning:** Compact pill controls located within constrained header/navigation layouts (such as `ThemeToggle.astro` in `Nav.astro`) require explicit minimum dimensions (`min-width: 44px; min-height: 44px; align-items: center; justify-content: center;`) to satisfy WCAG 2.1 AA touch target standards on mobile viewports. Furthermore, switching from positive `outline-offset: 2px` to negative inset focus containment (`outline-offset: -2px`) prevents the focus ring from overflowing outer header borders or clipping against adjacent layout elements during keyboard navigation.
+
+**Action:** Enforced `min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;` and `outline-offset: -2px` for `button:focus-visible` in `src/components/ThemeToggle.astro`.
+
+## 2026-05-24 - Focus-Visible Standardization & Mobile Touch Target Ergonomics
+
+**Learning:** Replacing raw `:focus` pseudo-classes with `:focus-visible` across footer version links (`.version-link`) and accessibility skip links (`.sr-only.focus-visible`) prevents sticky, persistent focus rings during mouse click interactions while preserving essential keyboard focus indicators. Furthermore, declaring explicit `min-height: 44px; display: inline-flex; align-items: center;` on interactive colophon triggers (`.visit-trigger`) ensures mobile touch targets comply with WCAG 2.1 AA requirements on touch viewports without causing layout shift.
+
+**Action:** Updated `.version-link` in `Footer.astro` and `.sr-only.focus-visible` in `BaseLayout.astro` to use `:focus-visible`. Added `min-height: 44px; display: inline-flex; align-items: center;` to `.visit-trigger` in `Footer.astro`.
+
+## 2026-05-23 - Compact Overlay Control Focus Containment & Touch Target Standard
+
+**Learning:** Compact overlay controls inside constrained components (such as `.chat-clear`, `.chat-close`, and suggestion chips in `Chat.astro`) require tight focus ring containment (`outline-offset: 2px`) to prevent focus outlines from overflowing overlay bounds or clipping against scroll container edges. Furthermore, ensuring all action controls maintain WCAG touch target dimensions (`min-height: 44px; min-width: 44px`) with `display: inline-flex; align-items: center; justify-content: center;` and gated tactile feedback (`transform: scale(0.96)`) under `@media (prefers-reduced-motion: no-preference)` delivers an accessible, highly responsive experience across touch and keyboard interactions.
+
+**Action:** Updated `.chat-clear`, `.chat-close`, `.chat-suggestion`, and explore card links in `src/components/Chat.astro` to enforce 44x44px minimum touch targets and contained `outline-offset: 2px` focus outlines with tactile `:active` scaling.
+
+## 2026-05-22 - Forced-Colors Mode High Contrast Progress Bars & Proof Card Affordances
+
+**Learning:** When using custom progress bars or metric fill elements (such as `.kr-bar` and `.kr-bar-fill` in `okr.astro`), translucent or gradient backgrounds disappear or become invisible in Windows High Contrast Mode / forced-colors active mode. Adding explicit system color fallbacks (`border: 1px solid CanvasText;` and `background-color: Highlight;`) inside `@media (forced-colors: active)` ensures data visualization components remain fully readable. Additionally, standardizing interactive card affordances (such as `.proof-affordance`) with WCAG touch target dimensions (`min-height: 44px; min-width: 44px;`) and clear hover/focus-visible color feedback (`color: var(--gray-0)`) ensures accessible touch and keyboard interactions.
+
+**Action:** Added `@media (forced-colors: active)` support for `.kr-bar` and `.kr-bar-fill` in `src/pages/okr.astro`. Enhanced `.proof-card` in `src/pages/roadmap.astro` and `src/pages/index.astro` with hover and `:focus-visible` color transitions on `.proof-affordance`, and enforced minimum 44x44px touch targets.
+
 ## 2026-05-21 - Standardizing Focus-Visible Indicators & Card Radius Alignment
 
 **Learning:** Scoped link selectors inside markdown content containers (such as `.content :global(a)`) and list sections (`.earlier a`) must use `:focus-visible` with site-standard outline indicators (`outline: 2px solid var(--accent-regular)`, `outline-offset: 4px`, `border-radius: 0.25rem`) rather than raw `:focus` text-decoration properties. Replacing raw `:focus` prevents sticky focus underlines on mouse clicks, while adding explicit `:focus-visible` outlines and rounded corner alignment ensures a high-visibility, visually clean experience for keyboard navigation.

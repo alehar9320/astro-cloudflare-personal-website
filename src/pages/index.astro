@@ -2,6 +2,7 @@
 import CallToAction from '../components/CallToAction.astro';
 import Hero from '../components/Hero.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { safeJsonLd } from '../utils/safe-json-ld';
 
 const linkedinHref = 'https://www.linkedin.com/in/alehar/';
 
@@ -67,7 +68,7 @@ const schema = {
   description="Product Manager, Developer Experience at IFS. Get in touch on LinkedIn."
   ogTitle="Product Manager, Developer Experience at IFS"
 >
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <script is:inline type="application/ld+json" set:html={safeJsonLd(schema)} />
   <main id="main-content" class="wrapper stack first-screen">
     <header class="hero">
       <div class="hero-copy">
@@ -188,6 +189,11 @@ const schema = {
     border-radius: 0.25rem;
   }
 
+  .proof-card:hover .proof-affordance,
+  .proof-card:focus-visible .proof-affordance {
+    color: var(--gray-0);
+  }
+
   .proof-eyebrow {
     margin: 0;
     font-size: var(--text-sm);
@@ -225,6 +231,7 @@ const schema = {
     min-height: 44px;
     min-width: 44px;
     box-sizing: border-box;
+    transition: color var(--theme-transition);
   }
 
   @media (min-width: 50em) {

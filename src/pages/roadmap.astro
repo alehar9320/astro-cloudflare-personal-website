@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactCTA from '../components/ContactCTA.astro';
+import { safeJsonLd } from '../utils/safe-json-ld';
 import Hero from '../components/Hero.astro';
 import { UPCOMING, stillPromisesFlatten } from '../data/upcoming';
 
@@ -51,7 +52,7 @@ const schema = {
 ---
 
 <BaseLayout title={pageTitle} ogTitle={pageTitle} description={dek}>
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <script is:inline type="application/ld+json" set:html={safeJsonLd(schema)} />
   <div class="stack gap-20">
     <main id="main-content" class="upcoming-page stack gap-8">
       <Hero title="What's next" tagline={lede} align="start" />
@@ -124,6 +125,11 @@ const schema = {
     border-radius: 0.25rem;
   }
 
+  .proof-card:hover .proof-affordance,
+  .proof-card:focus-visible .proof-affordance {
+    color: var(--gray-0);
+  }
+
   .proof-eyebrow {
     margin: 0;
     font-size: var(--text-sm);
@@ -156,6 +162,12 @@ const schema = {
     color: var(--gray-300);
     text-decoration: underline;
     text-underline-offset: 0.2em;
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    min-width: 44px;
+    box-sizing: border-box;
+    transition: color var(--theme-transition);
   }
 
   @media (min-width: 50em) {
