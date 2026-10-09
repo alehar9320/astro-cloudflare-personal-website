@@ -2956,3 +2956,25 @@ describe('chat open stage follows the header on scroll (#1633 follow-up)', () =>
     expect(chat).toMatch(/\} else \{\s*unbindChatStageScroll\(\);\s*\}\s*\};/);
   });
 });
+
+describe('every /work/ Get in touch link is counted as hire', () => {
+  const work = readFileSync('src/pages/work.astro', 'utf8');
+  const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+
+  it('tags each LinkedIn Get in touch link on /work/ with data-hire-event and data-hire-surface', () => {
+    const linkedInLinks = [
+      ...`${work}\n${cta}`.matchAll(/<(a|CallToAction)\b[^>]*>[\s\S]*?<\/\1\s*>/g),
+    ]
+      .map((m) => m[0])
+      .filter((tag) => tag.includes('https://www.linkedin.com/in/alehar/'))
+      .filter((tag) => tag.includes('Get in touch'));
+    expect(work).toContain('<ContactCTA />');
+    expect(linkedInLinks).toHaveLength(2);
+    for (const link of linkedInLinks) {
+      expect(link).toContain('data-hire-event="hire_cta_click"');
+      expect(link).toMatch(/data-hire-surface="[a-z0-9_]+"/);
+    }
+    expect(work).toContain('data-hire-surface="work_page"');
+    expect(cta).toContain('data-hire-surface="contact_cta"');
+  });
+});
