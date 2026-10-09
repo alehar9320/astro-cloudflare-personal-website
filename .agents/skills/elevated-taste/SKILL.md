@@ -5,6 +5,7 @@ description: >-
   existing look and feel and raises visual taste instead of adding generic AI
   chrome
 ---
+
 # Elevated taste
 
 Use this when a change will be seen by a person: layout, type, color, spacing, motion, or copy-in-chrome. Skip pure infra, tests, and docs with no visitor surface.
