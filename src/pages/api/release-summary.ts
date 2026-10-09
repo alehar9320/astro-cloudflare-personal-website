@@ -1,4 +1,5 @@
 import type { APIRoute } from 'astro';
+import { z } from 'astro/zod';
 import { env } from 'cloudflare:workers';
 import { LATEST_RELEASE_SNAPSHOT } from '../../data/latest-release';
 import { fetchGitHubReleases, type SiteRelease } from '../../utils/github-releases';
@@ -47,27 +48,33 @@ function jsonBody(tag: string, summary: string) {
   return new Response(JSON.stringify({ tag, summary }), { headers: jsonHeaders });
 }
 
+const SAFE_TAG_REGEX = /^[a-zA-Z0-9_.-]+$/;
+
+export const ReleaseSummaryPostSchema = z.object({
+  tag: z.string().trim().max(100).optional(),
+  version: z.string().trim().max(100).optional(),
+  title: z.string().trim().max(200).optional(),
+  body: z.string().trim().max(5000).optional(),
+  notes: z.string().trim().max(5000).optional(),
+});
+
 function postedRelease(data: unknown): SiteRelease | null {
-  if (!data || typeof data !== 'object') return null;
-  const row = data as {
-    tag?: unknown;
-    version?: unknown;
-    title?: unknown;
-    body?: unknown;
-    notes?: unknown;
-  };
-  const version =
-    typeof row.tag === 'string' ? row.tag : typeof row.version === 'string' ? row.version : '';
-  const body =
-    typeof row.body === 'string' ? row.body : typeof row.notes === 'string' ? row.notes : '';
-  const title = typeof row.title === 'string' && row.title.trim() ? row.title : version;
-  if (!version.trim()) return null;
+  const result = ReleaseSummaryPostSchema.safeParse(data);
+  if (!result.success) return null;
+
+  const rawVersion = result.data.tag ?? result.data.version ?? '';
+  const version = rawVersion.trim();
+  if (!version || !SAFE_TAG_REGEX.test(version)) return null;
+
+  const rawBody = result.data.body ?? result.data.notes ?? '';
+  const title = result.data.title?.trim() || version;
+
   return {
-    body,
+    body: rawBody,
     publishedAt: null,
     title,
     url: LATEST_RELEASE_SNAPSHOT.url,
-    version: version.trim(),
+    version,
   };
 }
 
