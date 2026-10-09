@@ -1493,16 +1493,16 @@ describe('identity copy', () => {
     expect(contact).not.toContain('mailto:');
   });
 
-  it('lets a Work share read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+  it('lets a Work share describe the work and read Product Manager, Developer Experience at IFS', () => {
     const head = readFileSync('src/components/MainHead.astro', 'utf8');
     const work = readFileSync('src/pages/work.astro', 'utf8');
     const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
     const shareDescription =
-      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+      'Work by Alexander Härenstam, Product Manager, Developer Experience at IFS: the IFS Design System case, then earlier work.';
     expect(work).toContain(`description="${shareDescription}"`);
     expect(work).toContain('title="Work | Product Manager, Developer Experience at IFS"');
     expect(work).toContain('Product Manager, Developer Experience at IFS');
-    expect(work).toContain('Get in touch on LinkedIn.');
+    expect(work).not.toContain('Get in touch on LinkedIn.');
     expect(cta).toContain('https://www.linkedin.com/in/alehar/');
     expect(work).not.toContain('mailto:');
     expect(cta).not.toContain('mailto:');
@@ -1510,11 +1510,11 @@ describe('identity copy', () => {
     expect(head).toContain('name="twitter:description" content={description}');
   });
 
-  it('lets a Biography share read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+  it('lets a Biography share describe the biography and read Product Manager, Developer Experience at IFS', () => {
     const head = readFileSync('src/components/MainHead.astro', 'utf8');
     const bio = readFileSync('src/pages/biography.astro', 'utf8');
     const shareDescription =
-      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+      'Biography of Alexander Härenstam, Product Manager, Developer Experience at IFS. Eight years at IFS; software engineering and innovation degrees from Chalmers.';
     expect(bio).toContain(`description="${shareDescription}"`);
     expect(bio).toContain('title="Biography | Product Manager, Developer Experience at IFS"');
     expect(bio).toContain('https://www.linkedin.com/in/alehar/');
@@ -1523,16 +1523,18 @@ describe('identity copy', () => {
     expect(head).toContain('name="twitter:description" content={description}');
   });
 
-  it('lets a Home share read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+  it('lets Home and Contact shares describe the page and read Product Manager, Developer Experience at IFS', () => {
     const head = readFileSync('src/components/MainHead.astro', 'utf8');
     const home = readFileSync('src/pages/index.astro', 'utf8');
     const layout = readFileSync('src/layouts/BaseLayout.astro', 'utf8');
     const contact = readFileSync('src/pages/contact.astro', 'utf8');
     const shareDescription =
-      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+      'Alexander Härenstam, Product Manager, Developer Experience at IFS. Design systems, developer platforms, and Industrial AI copilots.';
+    const contactDescription =
+      'How to reach Alexander Härenstam, Product Manager, Developer Experience at IFS: on LinkedIn.';
     expect(home).toContain('ogTitle="Product Manager, Developer Experience at IFS"');
     expect(home).toContain(`description="${shareDescription}"`);
-    expect(contact).toContain(`description="${shareDescription}"`);
+    expect(contact).toContain(`description="${contactDescription}"`);
     expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
     expect(home).toContain('https://www.linkedin.com/in/alehar/');
     expect(home).not.toContain('mailto:');
@@ -1577,18 +1579,19 @@ describe('identity copy', () => {
     expect(bio).not.toContain('mailto:');
   });
 
-  it('lets Person.description read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+  it('lets Person.description read Product Manager, Developer Experience at IFS and the work', () => {
     const home = readFileSync('src/pages/index.astro', 'utf8');
     const bio = readFileSync('src/pages/biography.astro', 'utf8');
     const personDescription =
-      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+      'Product Manager, Developer Experience at IFS. Design systems, developer platforms, and Industrial AI copilots.';
     expect(home).toContain("'@type': 'Person'");
     expect(home).toContain(
       `'@type': 'Person',
       '@id': 'https://me.alehar.workers.dev/#person',
       name: 'Alexander Härenstam',
       jobTitle: 'Product Manager, Developer Experience at IFS',
-      description: '${personDescription}'`
+      description:
+        '${personDescription}'`
     );
     expect(bio).toContain("'@type': 'Person'");
     expect(bio).toContain(
@@ -1596,7 +1599,8 @@ describe('identity copy', () => {
       '@id': 'https://me.alehar.workers.dev/#person',
       name: 'Alexander Härenstam',
       jobTitle: 'Product Manager, Developer Experience at IFS',
-      description: '${personDescription}'`
+      description:
+        '${personDescription}'`
     );
     expect(home).toContain("jobTitle: 'Product Manager, Developer Experience at IFS'");
     expect(bio).toContain("jobTitle: 'Product Manager, Developer Experience at IFS'");
@@ -1617,10 +1621,10 @@ describe('identity copy', () => {
     expect(home).not.toContain('mailto:');
   });
 
-  it('lets WebSite.description read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+  it('lets WebSite.description describe the site and read Product Manager, Developer Experience at IFS', () => {
     const home = readFileSync('src/pages/index.astro', 'utf8');
     const websiteDescription =
-      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+      'Personal site of Alexander Härenstam, Product Manager, Developer Experience at IFS: work, biography, and recent changes to the site.';
     expect(home).toContain("'@type': 'WebSite'");
     expect(home).toContain(
       `'@type': 'WebSite',
@@ -1628,7 +1632,8 @@ describe('identity copy', () => {
       url: 'https://me.alehar.workers.dev/',
       name: 'Alexander Härenstam | Product Manager, Developer Experience at IFS',
       publisher: { '@id': 'https://me.alehar.workers.dev/#person' },
-      description: '${websiteDescription}'`
+      description:
+        '${websiteDescription}'`
     );
     expect(home).toContain("jobTitle: 'Product Manager, Developer Experience at IFS'");
     expect(home).toContain('https://www.linkedin.com/in/alehar/');
@@ -1656,11 +1661,13 @@ describe('identity copy', () => {
     expect(rss).not.toContain('mailto:');
   });
 
-  it('lets Home and Biography WebPage.description read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+  it('lets Home and Biography WebPage.description describe the page and read Product Manager, Developer Experience at IFS', () => {
     const home = readFileSync('src/pages/index.astro', 'utf8');
     const bio = readFileSync('src/pages/biography.astro', 'utf8');
-    const webpageDescription =
-      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+    const homeDescription =
+      'Alexander Härenstam, Product Manager, Developer Experience at IFS. Design systems, developer platforms, and Industrial AI copilots.';
+    const bioDescription =
+      'Biography of Alexander Härenstam, Product Manager, Developer Experience at IFS. Eight years at IFS; software engineering and innovation degrees from Chalmers.';
     expect(home).toContain("'@type': 'WebPage'");
     expect(home).toContain(
       `'@type': 'WebPage',
@@ -1668,7 +1675,8 @@ describe('identity copy', () => {
       url: 'https://me.alehar.workers.dev/',
       name: 'Alexander Härenstam | Product Manager, Developer Experience at IFS',
       about: { '@id': 'https://me.alehar.workers.dev/#person' },
-      description: '${webpageDescription}'`
+      description:
+        '${homeDescription}'`
     );
     expect(bio).toContain("'@type': 'WebPage'");
     expect(bio).toContain(
@@ -1677,7 +1685,8 @@ describe('identity copy', () => {
       url: 'https://me.alehar.workers.dev/biography/',
       name: 'Biography | Product Manager, Developer Experience at IFS',
       about: { '@id': 'https://me.alehar.workers.dev/#person' },
-      description: '${webpageDescription}'`
+      description:
+        '${bioDescription}'`
     );
     expect(home).toContain("jobTitle: 'Product Manager, Developer Experience at IFS'");
     expect(bio).toContain("jobTitle: 'Product Manager, Developer Experience at IFS'");
@@ -1687,25 +1696,25 @@ describe('identity copy', () => {
     expect(bio).not.toContain('mailto:');
   });
 
-  it('lets Work WebPage.description read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+  it('lets Work WebPage.description describe the work and read Product Manager, Developer Experience at IFS', () => {
     const work = readFileSync('src/pages/work.astro', 'utf8');
     const webpageDescription =
-      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+      'Work by Alexander Härenstam, Product Manager, Developer Experience at IFS: the IFS Design System case, then earlier work.';
     expect(work).toContain("'@type': 'WebPage'");
     expect(work).toContain(
       `'@type': 'WebPage',
       '@id': 'https://me.alehar.workers.dev/work/#webpage',
       url: 'https://me.alehar.workers.dev/work/',
       name: 'Work | Product Manager, Developer Experience at IFS',
-      description: '${webpageDescription}'`
+      description:
+        '${webpageDescription}'`
     );
     expect(work).not.toContain('mailto:');
   });
 
-  it('lets Work ItemList.description read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+  it('lets Work ItemList.description describe the list', () => {
     const work = readFileSync('src/pages/work.astro', 'utf8');
-    const itemListDescription =
-      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+    const itemListDescription = 'The IFS Design System case, then earlier work.';
     expect(work).toContain("'@type': 'ItemList'");
     expect(work).toContain(
       `'@type': 'ItemList',
@@ -1806,10 +1815,10 @@ describe('identity copy', () => {
     expect(rss).not.toContain('mailto:');
   });
 
-  it('lets the RSS channel description read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+  it('lets the RSS channel description describe the feed and read Product Manager, Developer Experience at IFS', () => {
     const rss = readFileSync('src/pages/rss.xml.ts', 'utf8');
     const channelDescription =
-      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+      'Case studies from Alexander Härenstam, Product Manager, Developer Experience at IFS: IFS Design System, AI coding copilots, usage analytics, Chalmers thesis.';
     expect(rss).toContain(`<description>${channelDescription}</description>`);
     expect(rss).toContain(
       '<title>Alexander Härenstam | Product Manager, Developer Experience at IFS</title>'
@@ -2123,7 +2132,7 @@ describe('identity copy', () => {
       '<title>Alexander Härenstam | Product Manager, Developer Experience at IFS</title>'
     );
     expect(rss).toContain(
-      '<description>Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.</description>'
+      '<description>Case studies from Alexander Härenstam, Product Manager, Developer Experience at IFS: IFS Design System, AI coding copilots, usage analytics, Chalmers thesis.</description>'
     );
     expect(rss).toContain('ifs-design-system');
     expect(rss).toContain("entry.id !== 'lidkoping-stenhuggeri'");
@@ -2927,5 +2936,50 @@ describe('work case meta descriptions describe the case, not the hire CTA', () =
 
   it('covers all five case pages', () => {
     expect(caseFiles).toHaveLength(5);
+  });
+});
+
+describe('page and feed descriptions describe the page, not the hire CTA', () => {
+  const isTestPath = (path: string) =>
+    path.split(/[\\/]/).includes('__tests__') || /\.(test|spec)\.[cm]?[jt]sx?$/.test(path);
+
+  const listSourceFiles = (dir: string): string[] =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+      const path = join(dir, entry.name);
+      if (isTestPath(path)) return [];
+      return entry.isDirectory() ? listSourceFiles(path) : [path];
+    });
+
+  // description= / description: / metaDescription: (quoted, template or YAML block)
+  // plus RSS <description>. On-page CTA copy (ContactCTA heading, biography line)
+  // is not a description and stays.
+  const descriptionPatterns = [
+    /\b(?:meta)?[dD]escription\s*[=:]\s*(?:\{`([^`]*)`\}|"([^"]*)"|'([^']*)'|`([^`]*)`|[|>]-?\n((?: {2}[^\n]*\n)+))/g,
+    /<description>([\s\S]*?)<\/description>/g,
+  ];
+
+  it('no meta, JSON-LD, feed or frontmatter description in src/ says Get in touch on LinkedIn', () => {
+    const hits: string[] = [];
+    let scanned = 0;
+    for (const path of listSourceFiles('src')) {
+      const text = readFileSync(path, 'utf8');
+      for (const re of descriptionPatterns) {
+        for (const m of text.matchAll(re)) {
+          const value = m.slice(1).find((g) => g !== undefined) ?? '';
+          scanned += 1;
+          if (/get in touch on linkedin/i.test(value)) hits.push(`${path}: ${value.trim()}`);
+        }
+      }
+    }
+    expect(scanned).toBeGreaterThan(20);
+    expect(hits).toEqual([]);
+  });
+
+  it('keeps the on-page LinkedIn hire copy', () => {
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    const bio = readFileSync('src/pages/biography.astro', 'utf8');
+    expect(cta).toContain('<h2>Get in touch on LinkedIn</h2>');
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(bio).toContain("Get in touch on{' '}");
   });
 });
