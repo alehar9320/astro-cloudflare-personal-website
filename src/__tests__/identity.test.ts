@@ -304,13 +304,11 @@ describe('identity copy', () => {
     const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
     expect(footer).toContain('class="colophon"');
     expect(footer).toContain("What's New");
-    expect(footer).toContain('data-visit-stats');
-    expect(footer).toContain('hidden');
+    expect(footer).not.toContain('data-visit-stats');
     expect(footer).not.toContain('showUpcoming');
     expect(footer).toContain("What's New</a>");
     // Space-middot-space as Astro text node so paint is What's New · N.
     expect(footer).toContain("{' · '}");
-    expect(footer.slice(footer.indexOf('data-visit-stats'))).toContain("{' · '}");
     // Fail the prior bug: newline/indent then middot (leading space collapsed in paint).
     expect(footer).not.toMatch(/>\s*\n\s+·\s/);
     expect(cta).toContain('LinkedIn · replies from me');
@@ -318,24 +316,21 @@ describe('identity copy', () => {
 
   it('keeps Footer .visit-stats display:inline only when not [hidden]', () => {
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
-    expect(footer).toContain('.visit-stats:not([hidden])');
-    expect(footer).toContain('display: inline');
-    // Bare .visit-stats { display: inline } overrides UA [hidden]{display:none}.
-    expect(footer).not.toMatch(/\.visit-stats\s*\{\s*display:\s*inline/);
+    expect(footer).not.toContain('.visit-stats:not([hidden])');
+    expect(footer).not.toContain('.visit-stats');
+    expect(footer).not.toContain('data-visit-stats');
     expect(footer).toContain("{' · '}");
     expect(footer).toContain('https://www.linkedin.com/in/alehar/');
   });
 
   it('leads the colophon visit trigger with unique visitors and names PostHog', () => {
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
-    expect(footer).toContain('formatColophonVisits');
-    expect(footer).toContain('formatColophonVisitsTitle');
-    expect(footer).toContain("trigger.addEventListener('focus'");
-    expect(footer).toContain('shouldShowVisitCount(row.uniqueVisitors)');
-    expect(footer).not.toContain('formatPageviewCount(data.pageviews)');
-    expect(footer).not.toContain('white-space: nowrap');
-    expect(footer).toContain('.visit-stats:not([hidden])');
-    expect(footer).toContain("{' · '}");
+    expect(footer).not.toContain('formatColophonVisits');
+    expect(footer).not.toContain('formatColophonVisitsTitle');
+    expect(footer).not.toContain("trigger.addEventListener('focus'");
+    expect(footer).not.toContain('shouldShowVisitCount');
+    expect(footer).not.toContain('data-visit-count');
+    expect(footer).not.toContain('/api/visits');
     expect(footer).toContain('https://www.linkedin.com/in/alehar/');
     expect(footer).not.toContain('mailto:');
     expect(footer).toContain('class="colophon"');
@@ -779,7 +774,7 @@ describe('identity copy', () => {
     expect(chat).toContain('id="chat-clear"');
     expect(chat).toContain('chat-followups');
     expect(chat).toContain('How do I get in touch on LinkedIn?');
-    expect(chat).toContain('What did the IFS design system change?');
+    expect(chat).toContain('What did the IFS Design System change?');
     expect(chat).toContain("I'm an AI with his context.");
     expect(chat).not.toContain('Ask about the work');
     expect(chat).toContain('prefers-reduced-motion: reduce');
@@ -901,7 +896,7 @@ describe('identity copy', () => {
     expect(chat).toContain('id="chat-clear"');
     expect(chat).toContain('chat-followups');
     expect(chat).toContain('How do I get in touch on LinkedIn?');
-    expect(chat).toContain('What did the IFS design system change?');
+    expect(chat).toContain('What did the IFS Design System change?');
     expect(chat).toContain("I'm an AI with his context.");
     expect(nav).toContain('hsla(var(--gray-999-basis), 0.9)');
     expect(nav).toContain('backdrop-filter: blur(40px) saturate(140%)');
@@ -1051,7 +1046,7 @@ describe('identity copy', () => {
     expect(chat).toContain('id="chat-clear"');
     expect(chat).toContain('chat-followups');
     expect(chat).toContain('How do I get in touch on LinkedIn?');
-    expect(chat).toContain('What did the IFS design system change?');
+    expect(chat).toContain('What did the IFS Design System change?');
     expect(chat).toContain("I'm an AI with his context.");
     expect(nav).toContain('hsla(var(--gray-999-basis), 0.9)');
     expect(nav).toContain('backdrop-filter: blur(40px) saturate(140%)');
@@ -1346,6 +1341,15 @@ describe('identity copy', () => {
     expect(nav).toContain('backdrop-filter: blur(24px) saturate(150%)');
     expect(nav).toContain('background: hsla(var(--gray-999-basis), 0.7)');
     expect(nav).not.toContain('hsla(var(--gray-999-basis), 0.85)');
+  });
+
+  it('keeps mobile Menu button at 44px hit target', () => {
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    const block = nav.match(/\.menu-button\s*\{[\s\S]*?\}/);
+    expect(block).toBeTruthy();
+    expect(block![0]).toMatch(/min-height:\s*44px/);
+    expect(block![0]).toMatch(/min-width:\s*44px/);
+    expect(nav).toContain('<span class="sr-only">Menu</span>');
   });
 
   it('closes the mobile nav overlay on Escape and restores focus without leaking the keydown', () => {
@@ -2330,7 +2334,6 @@ describe('identity copy', () => {
     expect(page).toContain('title="What\'s New | Product Manager, Developer Experience at IFS"');
     expect(page).toContain('ogTitle="What\'s New | Product Manager, Developer Experience at IFS"');
     expect(page).toContain('Product Manager, Developer Experience');
-    expect(page).toContain('toVisitorChangelogTitle');
     expect(page).toContain('toVisitorRelease');
     expect(page).toContain('ContactCTA');
     expect(page).toContain('fetchGitHubReleases');
@@ -2797,6 +2800,22 @@ describe('identity copy', () => {
     expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
   });
 
+  it('keeps Footer LinkedIn hire Contact card attrs (#1118)', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(footer).toContain('href="https://www.linkedin.com/in/alehar/"');
+    expect(footer).toContain('data-hire-event="linkedin_click"');
+    expect(footer).toContain('data-hire-surface="footer"');
+    expect(footer).toContain('blog.ifs.com/author/alexander-harenstam/');
+    expect(footer).toContain('https://github.com/alehar9320');
+    // Blog + GitHub stay untagged as hire
+    const blogBlock = footer.slice(
+      footer.indexOf('blog.ifs.com'),
+      footer.indexOf('https://github.com/alehar9320')
+    );
+    expect(blogBlock).not.toContain('data-hire-event');
+    expect(footer).not.toContain('mailto:');
+  });
+
   it('keeps Contact quiet hire as exact LinkedIn, no twin-mouth (#824)', () => {
     const contact = readFileSync('src/pages/contact.astro', 'utf8');
     expect(contact).toContain('<p class="cta-hint">LinkedIn</p>');
@@ -2807,5 +2826,32 @@ describe('identity copy', () => {
     expect(contact).not.toContain('mailto:');
     expect(contact).toContain('min-height: 44px');
     expect(contact).toContain('min-width: 44px');
+  });
+
+  it('footer colophon has no visitor visit-count control (#1045)', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(footer).toContain('class="colophon"');
+    expect(footer).toContain("What's New");
+    expect(footer).toContain('This site');
+    expect(footer).toContain("What's next");
+    expect(footer).toContain('Site success');
+    expect(footer).not.toContain('data-visit-stats');
+    expect(footer).not.toContain('data-visit-count');
+    expect(footer).not.toContain('visit-glance-panel');
+    expect(footer).not.toContain('/api/visits');
+    expect(footer).toContain('https://www.linkedin.com/in/alehar/');
+    expect(footer).not.toContain('mailto:');
+  });
+
+  it('keeps nav text links with a visible focus ring', () => {
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    expect(nav).toMatch(
+      /\.link:focus-visible\s*\{[\s\S]*?outline:\s*2px\s+solid\s+var\(--accent-regular\);[\s\S]*?outline-offset:\s*4px;/
+    );
+    expect(nav).toContain('class="link"');
+    expect(nav).toContain("href: '/work/'");
+    expect(nav).toContain("href: '/biography/'");
+    expect(nav).toContain("href: '/contact/'");
+    expect(nav).not.toContain('mailto:');
   });
 });
