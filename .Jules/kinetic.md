@@ -24,3 +24,15 @@ Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hi
   - Glass Blur: `16px`
   - Affordance: `translateY(-4px)`
   - Glow: `hsla(210, 100%, 45%, 0.3)`
+
+## 2026-08-30 - Pill Badge Gradient Sweep and Hover Elevation
+
+- **Signal:** Static `.pill` badges on project detail pages lacked interactive hover affordance and dynamic lighting motion.
+- **Action:**
+  - Added CSS transitions for `background-position`, `transform`, and `box-shadow` to `Pill.astro`.
+  - Animated gradient sweep (`background-position: 100% 50%`) with `translateY(-2px)` elevation and cyan glow shadow (`hsla(210, 100%, 45%, 0.35)`) on hover and focus-within.
+  - Ensured compliance with accessibility guidelines by gating animations inside `@media (prefers-reduced-motion: no-preference)`.
+- **Tokens Added:**
+  - Elevation: `translateY(-2px)`
+  - Cyan Glow: `0 4px 12px hsla(210, 100%, 45%, 0.35)`
+  - Sweep Position: `100% 50%`
