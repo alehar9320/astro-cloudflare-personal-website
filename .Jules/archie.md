@@ -1,0 +1,3 @@
+2026-03-28 - Codified ADR 0002 and Established Repository Tech Radar
+Learning: Established codebase conventions around static pre-rendering with Cloudflare Workers Assets binding lacked explicit ADR documentation and a centralized Tech Radar, risking AI agent architectural drift across autonomous runs.
+Action: Formally codified ADR 0002 (Static Pre-Rendering with Cloudflare Workers Assets Binding), initialized the master ADR index (`docs/adr/README.md`), and created the Repository Tech Radar (`docs/tech-radar.md`) with explicit Directives for AI Agents across Adopt, Trial, Assess, and Hold rings.
