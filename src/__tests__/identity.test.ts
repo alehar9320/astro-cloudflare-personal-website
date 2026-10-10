@@ -2991,6 +2991,18 @@ describe('page and feed descriptions describe the page, not the hire CTA', () =>
     expect(src).toContain('<span class="sr-only">Menu</span>');
   });
 
+  it('keeps theme toggle free of tactile press scale', () => {
+    const toggle = readFileSync('src/components/ThemeToggle.astro', 'utf8');
+    const flags = readFileSync('src/content/flags/config.json', 'utf8');
+    const config = readFileSync('src/content.config.ts', 'utf8');
+    expect(toggle).not.toContain('enable_theme_toggle_tactile_v1');
+    expect(toggle).not.toContain('isTactileEnabled');
+    expect(toggle).not.toContain('tactile-v1');
+    expect(toggle).not.toContain('scale(0.96)');
+    expect(flags).not.toContain('enable_theme_toggle_tactile_v1');
+    expect(config).not.toContain('enable_theme_toggle_tactile_v1');
+  });
+
   it('quiets open-chat twin title to AI twin (#1016)', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
     expect(chat).toMatch(/class="[^"]*\bwelcome-message\b/);
