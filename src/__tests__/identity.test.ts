@@ -2737,6 +2737,22 @@ describe('identity copy', () => {
     expect(contact).toContain('min-width: 44px');
   });
 
+  it("lets What's New in the this-site sentence open /whats-new/ same tab", () => {
+    const page = readFileSync('src/pages/this-site.astro', 'utf8');
+    expect(page).toContain('<a href="/whats-new/">What\'s New</a>');
+    expect(page).toContain('is what you can see on this site lately.');
+    const linkAt = page.indexOf('<a href="/whats-new/">What\'s New</a>');
+    expect(linkAt).toBeGreaterThanOrEqual(0);
+    const near = page.slice(Math.max(0, linkAt - 120), linkAt + 160);
+    expect(near).not.toContain('min-height: 44px');
+    expect(near).not.toContain('min-width: 44px');
+    expect(near).not.toContain('target="_blank"');
+    expect(page).not.toContain('mailto:');
+    expect(page.indexOf('<ContactCTA />')).toBeGreaterThan(page.indexOf('</main>'));
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+  });
+
   it('gives #chat-input accessible name Message and keeps Send message', () => {
     const chat = readFileSync('src/components/Chat.astro', 'utf8');
     const inputAt = chat.indexOf('id="chat-input"');
