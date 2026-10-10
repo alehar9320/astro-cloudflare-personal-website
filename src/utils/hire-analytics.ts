@@ -18,6 +18,7 @@ export type HireSurface =
   | '404'
   | 'now'
   | 'reading-list'
+  | 'playbook'
   | 'fab'
   | 'footer';
 
