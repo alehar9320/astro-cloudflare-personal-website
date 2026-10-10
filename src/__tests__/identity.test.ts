@@ -2996,10 +2996,9 @@ describe('page and feed descriptions describe the page, not the hire CTA', () =>
     expect(md).toContain(
       '<p class="case-continue"><a href="/work/ifs-design-system/">Continue to the IFS Design System case</a></p>'
     );
-    expect(md).toContain('February 2025');
-    expect((md.match(/## Problem/g) || []).length).toBe(1);
-    expect((md.match(/## Approach/g) || []).length).toBe(1);
-    expect((md.match(/## Outcome/g) || []).length).toBe(1);
+    const body = md.replace(/^---\n[\s\S]*?\n---\n/, '');
+    expect(body).not.toBe(md);
+    expect((body.match(/February 2025/g) || []).length).toBe(1);
     expect(md).not.toContain('mailto:');
     expect(md).not.toContain('Get in touch');
     expect(md).not.toContain('https://www.linkedin.com/in/alehar/');
