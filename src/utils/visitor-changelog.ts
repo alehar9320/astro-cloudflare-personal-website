@@ -38,9 +38,15 @@ export const VISITOR_CHANGELOG: readonly VisitorChangelogEntry[] = [
     title: 'Home “Read the case” stays clear of the chat dock',
   },
   {
-    pr: 817,
+    pr: 815,
     subject: 'Keep home Read the case clear of the docked composer',
     title: 'Home “Read the case” stays clear of the chat dock',
+  },
+  {
+    pr: 1020,
+    subject:
+      'Hiring managers on the copilots case get a continue to IFS Design System proof, not a circular stub',
+    title: 'The AI coding copilots case now ends with a link to the IFS Design System case',
   },
   {
     pr: 1019,

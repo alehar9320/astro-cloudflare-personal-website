@@ -71,9 +71,9 @@ describe('visitor-changelog utilities', () => {
         toVisitorChangelogTitle('Raise home Read the case 44x44 hit-box clear of dock (#817)')
       ).toBe('Home “Read the case” stays clear of the chat dock');
     });
-    it('maps locked visitor changelog row PR_817 keep (#1163)', () => {
+    it('maps locked visitor changelog row PR_815 keep (#1163)', () => {
       expect(
-        toVisitorChangelogTitle('Keep home Read the case clear of the docked composer (#817)')
+        toVisitorChangelogTitle('Keep home Read the case clear of the docked composer (#815)')
       ).toBe('Home “Read the case” stays clear of the chat dock');
     });
 
@@ -366,6 +366,23 @@ describe('visitor titles for Last 30 days release lines (#1163 extension)', () =
         expect(INTERNAL_CHANGELOG_ITEM.test(title), title).toBe(false);
       }
     });
+  });
+  it('maps #1020 to a visitor title', () => {
+    expect(
+      toVisitorChangelogTitle(
+        '8b68dea Hiring managers on the copilots case get a continue to IFS Design System proof, not a circular stub (#1020)'
+      )
+    ).toBe('The AI coding copilots case now ends with a link to the IFS Design System case');
+  });
+  it('maps the real #815 and #817 squash subjects to the same home title', () => {
+    for (const line of [
+      'b4305fd Keep home Read the case clear of the docked composer (#812) (#815)',
+      'c884599 Raise home Read the case 44x44 hit-box clear of dock (#812) (#817)',
+    ]) {
+      expect(toVisitorChangelogTitle(line)).toBe(
+        'Home “Read the case” stays clear of the chat dock'
+      );
+    }
   });
   it('looks up the LAST (#N) in a squash title, not the issue ref before it', () => {
     // #817 is mapped; #99999 is not. The squash PR is the last suffix.
