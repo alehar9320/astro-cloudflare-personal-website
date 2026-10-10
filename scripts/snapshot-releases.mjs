@@ -1,7 +1,8 @@
 // Build-time snapshot of GitHub releases for /whats-new/ (#1579).
 // The Worker falls back to this file when its own GitHub fetch fails and the isolate has no
 // last good list yet (the Cache API is a no-op on *.workers.dev). Fail-soft: a failed fetch
-// keeps any existing snapshot and never fails the build. Never logs the token.
+// keeps any existing snapshot, warns loudly on stderr and never fails the build. Never logs the
+// token. Runs inside `npm run build` (not a prebuild hook) so it can't be skipped silently.
 import { writeFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
@@ -30,7 +31,17 @@ try {
   writeFileSync(OUT, `${JSON.stringify(slim, null, 2)}\n`);
   console.log(`releases snapshot: ${slim.length} releases`);
 } catch (error) {
-  console.warn(
-    `releases snapshot skipped: ${String(error).replace(/token\s+\S+/g, 'token [REDACTED]')}`
+  // Loud on purpose (#1668): a skipped snapshot builds green but leaves cold isolates with no
+  // What's New fallback. Still never exits non-zero, so a GitHub rate limit can't block a deploy.
+  const reason = String(error).replace(/token\s+\S+/g, 'token [REDACTED]');
+  console.error(
+    [
+      '',
+      '==================================================================',
+      `WARN releases snapshot SKIPPED: ${reason} — /whats-new/ will rely on live fetch + isolate memory`,
+      "WARN The cold-start What's New fallback (BUILD_SNAPSHOT) will be empty for this deploy.",
+      '==================================================================',
+      '',
+    ].join('\n')
   );
 }
