@@ -15,17 +15,17 @@ export const VISITOR_CHANGELOG: readonly VisitorChangelogEntry[] = [
   {
     pr: 864,
     subject: 'Fix biography IFS Design System proof link hit target and mobile dock clearance',
-    title: 'Biography proof links are easier to tap, including on phones',
+    title: 'The IFS Design System link on Biography is easier to tap, including on phones',
   },
   {
     pr: 825,
     subject: 'Quiet Contact hire line to LinkedIn; no twin-mouth',
-    title: 'Contact sends hire interest to LinkedIn — one clear path',
+    title: 'Contact names one hire path: LinkedIn',
   },
   {
     pr: 823,
     subject: 'Cold-land Work/case so shared proof is a real site entry',
-    title: 'Shared Work links open the case as a real site entry',
+    title: 'Case pages opened from a shared link now show a way back to Work on phones',
   },
   {
     pr: 819,
@@ -45,7 +45,88 @@ export const VISITOR_CHANGELOG: readonly VisitorChangelogEntry[] = [
   {
     pr: 803,
     subject: 'Hire tracking is live',
-    title: 'Hire interest tracking is live',
+    title: 'Site success page shows hire tracking as live',
+  },
+  {
+    pr: 1577,
+    subject: 'expose window.posthog after idle init for hire events',
+    title: 'Taps on the hire links are now counted',
+  },
+  {
+    pr: 1019,
+    subject: 'quiet open welcome h2 to AI twin',
+    title: 'Open chat shows a quieter “AI twin” heading',
+  },
+  {
+    pr: 1107,
+    subject: 'drop in-body LinkedIn; keep chrome ContactCTA',
+    title: 'Biography keeps one hire link at the end of the page, not a second one under education',
+  },
+  {
+    pr: 1116,
+    subject: 'Analytics: Get in touch from chrome only',
+    title:
+      'The analytics case keeps one hire link at the end of the page, not a second one in the text',
+  },
+  {
+    pr: 1110,
+    subject: 'Copilots: Get in touch from chrome only',
+    title:
+      'The AI coding copilots case keeps one hire link at the end of the page, not a second one in the text',
+  },
+  {
+    pr: 1109,
+    subject: 'drop in-body hire-cta; keep chrome ContactCTA',
+    title: 'Work keeps one hire link at the end of the page, not a second one under Earlier work',
+  },
+  {
+    pr: 1642,
+    subject: 'drop thesis in-body Get in touch; add 404 to HireSurface',
+    title:
+      'The master thesis case keeps one hire link at the end of the page, not a second one in the text',
+  },
+  {
+    pr: 983,
+    subject:
+      'Visitors on the IFS Design System case take Get in touch from chrome, not a second primary under the H1',
+    title:
+      'The IFS Design System case keeps one hire link at the end of the page, not a second one in the text',
+  },
+  {
+    pr: 1034,
+    subject: 'link copilots mention to the case',
+    title: 'Biography links the AI coding copilots mention to its case',
+  },
+  {
+    pr: 1035,
+    subject: 'link M.Sc. row to master-thesis case',
+    title: 'Biography links the M.Sc. entry to the master thesis case',
+  },
+  {
+    pr: 1635,
+    subject: 'align leftover hire hint to LinkedIn',
+    title: 'The 404 page hire hint now just says “LinkedIn”',
+  },
+  {
+    pr: 1634,
+    subject: 'start desktop open stage below the header nav',
+    title: 'With chat open on a laptop, the header nav links stay clickable',
+  },
+  {
+    pr: 939,
+    subject: 'Give laptop open chat a conversation stage under the header',
+    title: 'On a laptop, open chat sits under the header instead of covering the whole page',
+  },
+  {
+    pr: 1643,
+    subject: 'case meta descriptions describe the case, not the hire CTA',
+    title: 'Shared Work case links now preview what each case is about',
+  },
+  {
+    pr: 1644,
+    subject: 'page and feed descriptions describe the page, not the hire CTA',
+    title:
+      'Shared links to Home, Biography, Work and Contact, and the RSS feed, now describe the page itself',
   },
   {
     pr: 524,
@@ -220,7 +301,8 @@ const DEV_ONLY_ITEM =
 const INLINE_ISSUE_REF = /#\d+/;
 /* Optimization (⚡ Bolt): Hoist PR_MATCH_REGEX and SPACES_REGEX to avoid dynamic RegExp instantiations on edge changelog title processing.
    Benchmark: Eliminates redundant regex creation during visitor title mapping. */
-const PR_MATCH_REGEX = /\(#(\d+)\)/;
+/** Every `(#N)` group; the lookup uses the LAST one, which is the squash PR (earlier ones are issue refs). */
+const PR_MATCH_REGEX = /\(#(\d+)\)/g;
 const MULTI_SPACES_REGEX = /\s{2,}/g;
 
 /**
@@ -253,9 +335,10 @@ export function toVisitorChangelogTitle(raw: string): string {
   const trimmed = raw.trim();
   if (!trimmed) return trimmed;
 
-  const prMatch = trimmed.match(PR_MATCH_REGEX);
-  if (prMatch) {
-    const mapped = BY_PR.get(Number(prMatch[1]));
+  let lastPr: string | undefined;
+  for (const match of trimmed.matchAll(PR_MATCH_REGEX)) lastPr = match[1];
+  if (lastPr) {
+    const mapped = BY_PR.get(Number(lastPr));
     if (mapped) return mapped;
   }
 

@@ -47,17 +47,17 @@ describe('visitor-changelog utilities', () => {
         toVisitorChangelogTitle(
           'Fix biography IFS Design System proof link hit target and mobile dock clearance (#864)'
         )
-      ).toBe('Biography proof links are easier to tap, including on phones');
+      ).toBe('The IFS Design System link on Biography is easier to tap, including on phones');
     });
     it('maps locked visitor changelog row PR_825 (#1163)', () => {
       expect(
         toVisitorChangelogTitle('Quiet Contact hire line to LinkedIn; no twin-mouth (#825)')
-      ).toBe('Contact sends hire interest to LinkedIn — one clear path');
+      ).toBe('Contact names one hire path: LinkedIn');
     });
     it('maps locked visitor changelog row PR_823 (#1163)', () => {
       expect(
         toVisitorChangelogTitle('Cold-land Work/case so shared proof is a real site entry (#823)')
-      ).toBe('Shared Work links open the case as a real site entry');
+      ).toBe('Case pages opened from a shared link now show a way back to Work on phones');
     });
     it('maps locked visitor changelog row PR_819 (#1163)', () => {
       expect(
@@ -76,7 +76,7 @@ describe('visitor-changelog utilities', () => {
     });
     it('maps locked visitor changelog row PR_803 (#1163)', () => {
       expect(toVisitorChangelogTitle('Hire tracking is live (#803)')).toBe(
-        'Hire interest tracking is live'
+        'Site success page shows hire tracking as live'
       );
     });
 
@@ -192,9 +192,9 @@ describe('visitor changelog drops dev-only release lines (spec C)', () => {
 
   it('drops #NNN refs, scrape wording and docs/context-only lines from the visitor body', () => {
     expect(toVisitorReleaseBody(body).split('\n')).toEqual([
-      '- Page and feed descriptions describe the page, not the hire CTA',
-      '- Copilots: Get in touch from chrome only',
-      '- Drop in-body hire-cta; keep chrome ContactCTA',
+      '- Shared links to Home, Biography, Work and Contact, and the RSS feed, now describe the page itself',
+      '- The AI coding copilots case keeps one hire link at the end of the page, not a second one in the text',
+      '- Work keeps one hire link at the end of the page, not a second one under Earlier work',
     ]);
   });
 
@@ -224,5 +224,126 @@ describe('visitor changelog drops dev-only release lines (spec C)', () => {
       expect(line).not.toMatch(/\bscrape\b|\bredaction\b/i);
       expect(line).not.toMatch(/\bREADME\b|author-linkedin\.md/);
     }
+  });
+});
+
+describe('visitor titles for Last 30 days release lines (#1163 extension)', () => {
+  it('maps #1019 to a visitor title', () => {
+    expect(
+      toVisitorChangelogTitle('ed3b478 fix(chat): quiet open welcome h2 to AI twin (#1016) (#1019)')
+    ).toBe('Open chat shows a quieter “AI twin” heading');
+  });
+  it('maps #1107 to a visitor title', () => {
+    expect(
+      toVisitorChangelogTitle(
+        'b38f2fb fix(biography): drop in-body LinkedIn; keep chrome ContactCTA (#1103) (#1107)'
+      )
+    ).toBe(
+      'Biography keeps one hire link at the end of the page, not a second one under education'
+    );
+  });
+  it('maps #1116 to a visitor title', () => {
+    expect(
+      toVisitorChangelogTitle('536b0f9 Analytics: Get in touch from chrome only (#1111) (#1116)')
+    ).toBe(
+      'The analytics case keeps one hire link at the end of the page, not a second one in the text'
+    );
+  });
+  it('maps #1110 to a visitor title', () => {
+    expect(
+      toVisitorChangelogTitle('cc41498 Copilots: Get in touch from chrome only (#1105) (#1110)')
+    ).toBe(
+      'The AI coding copilots case keeps one hire link at the end of the page, not a second one in the text'
+    );
+  });
+  it('maps #1109 to a visitor title', () => {
+    expect(
+      toVisitorChangelogTitle(
+        '86f0f90 fix(work): drop in-body hire-cta; keep chrome ContactCTA (#1104) (#1109)'
+      )
+    ).toBe('Work keeps one hire link at the end of the page, not a second one under Earlier work');
+  });
+  it('maps #1642 to a visitor title', () => {
+    expect(
+      toVisitorChangelogTitle(
+        'ce35c50 fix(hire): drop thesis in-body Get in touch; add 404 to HireSurface (#1642)'
+      )
+    ).toBe(
+      'The master thesis case keeps one hire link at the end of the page, not a second one in the text'
+    );
+  });
+  it('maps #983 to a visitor title', () => {
+    expect(
+      toVisitorChangelogTitle(
+        '9c4bb83 Visitors on the IFS Design System case take Get in touch from chrome, not a second primary under the H1 (#983)'
+      )
+    ).toBe(
+      'The IFS Design System case keeps one hire link at the end of the page, not a second one in the text'
+    );
+  });
+  it('maps #1034 to a visitor title', () => {
+    expect(
+      toVisitorChangelogTitle(
+        'c5ee1ec fix(biography): link copilots mention to the case (#1028) (#1034)'
+      )
+    ).toBe('Biography links the AI coding copilots mention to its case');
+  });
+  it('maps #1035 to a visitor title', () => {
+    expect(
+      toVisitorChangelogTitle(
+        '9818672 fix(biography): link M.Sc. row to master-thesis case (#1030) (#1035)'
+      )
+    ).toBe('Biography links the M.Sc. entry to the master thesis case');
+  });
+  it('maps #1635 to a visitor title', () => {
+    expect(
+      toVisitorChangelogTitle('40e4a52 fix(copy): align leftover hire hint to LinkedIn (#1635)')
+    ).toBe('The 404 page hire hint now just says “LinkedIn”');
+  });
+  it('maps #1634 to a visitor title', () => {
+    expect(
+      toVisitorChangelogTitle(
+        'f2b6c8d fix(chat): start desktop open stage below the header nav (#1633) (#1634)'
+      )
+    ).toBe('With chat open on a laptop, the header nav links stay clickable');
+  });
+  it('maps #939 to a visitor title', () => {
+    expect(
+      toVisitorChangelogTitle(
+        'd7c1c20 Give laptop open chat a conversation stage under the header (#939)'
+      )
+    ).toBe('On a laptop, open chat sits under the header instead of covering the whole page');
+  });
+  it('maps #1643 to a visitor title', () => {
+    expect(
+      toVisitorChangelogTitle(
+        '48c550e docs(work): case meta descriptions describe the case, not the hire CTA (#1643)'
+      )
+    ).toBe('Shared Work case links now preview what each case is about');
+  });
+  it('maps #1644 to a visitor title', () => {
+    expect(
+      toVisitorChangelogTitle(
+        'c1621b4 docs(meta): page and feed descriptions describe the page, not the hire CTA (#1644)'
+      )
+    ).toBe(
+      'Shared links to Home, Biography, Work and Contact, and the RSS feed, now describe the page itself'
+    );
+  });
+  it('maps #1577 to a visitor title', () => {
+    expect(
+      toVisitorChangelogTitle(
+        'e651ca6 feat: expose window.posthog after idle init for hire events (#1574) (#1577)'
+      )
+    ).toBe('Taps on the hire links are now counted');
+  });
+  it('looks up the LAST (#N) in a squash title, not the issue ref before it', () => {
+    // #817 is mapped; #99999 is not. The squash PR is the last suffix.
+    expect(toVisitorChangelogTitle('Some internal change (#817) (#99999)')).toBe(
+      'Some internal change'
+    );
+    expect(toVisitorChangelogTitle('Some internal change (#99999) (#817)')).toBe(
+      'Home “Read the case” stays clear of the chat dock'
+    );
   });
 });
