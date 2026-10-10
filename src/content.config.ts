@@ -9,6 +9,8 @@ export const collections = {
     schema: z.object({
       title: z.string(),
       description: z.string(),
+      // Case page <meta>/og/JSON-LD description: describes the case, no hire CTA.
+      metaDescription: z.string().min(1).max(160),
       publishDate: z.coerce.date(),
       tags: z.array(z.string()),
       img: z.string().optional(),
@@ -26,7 +28,6 @@ export const collections = {
       enable_reading_list: z.boolean().default(false),
       enable_logo_wobble_v1: z.boolean().default(false),
       enable_cta_tactile_v1: z.boolean().default(false),
-      enable_theme_toggle_tactile_v1: z.boolean().default(false),
     }),
   }),
 };
