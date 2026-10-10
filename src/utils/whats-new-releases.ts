@@ -100,13 +100,16 @@ export async function loadWhatsNewReleases(
 }
 
 /**
- * Show the neutral unavailable line only when GitHub failed and the fallback still leaves
- * both sections empty. A genuine "nothing shipped" result never shows it.
+ * Show the neutral unavailable line when both sections are empty and either GitHub failed, or
+ * releases loaded but every line was hidden (Matt's call (b)). A genuinely empty list never shows it.
  */
 export function shouldShowUpdatesUnavailable(
   loaded: WhatsNewReleases,
   glance: WhatsNewGlance
 ): boolean {
-  if (loaded.state === 'fresh' || loaded.state === 'cached') return false;
-  return glance.thisWeek.length === 0 && glance.groups.length === 0;
+  if (glance.thisWeek.length > 0 || glance.groups.length > 0) return false;
+  // GitHub failed and the fallback is empty, or releases loaded but every line was hidden as
+  // dev-shaped (Matt's call (b), #1163): show the neutral line, never a blank page.
+  if (loaded.state === 'fresh' || loaded.state === 'cached') return loaded.releases.length > 0;
+  return true;
 }

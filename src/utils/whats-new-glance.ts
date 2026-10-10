@@ -6,7 +6,12 @@
 import type { SiteRelease } from './github-releases';
 import { splitReleaseBody } from './github-releases';
 import { isVisitorFacingBullet } from './release-summary';
-import { INTERNAL_CHANGELOG_ITEM, toVisitorRelease } from './visitor-changelog';
+import {
+  INTERNAL_CHANGELOG_ITEM,
+  isDevShapedUnmappedLine,
+  mappedVisitorTitle,
+  toVisitorRelease,
+} from './visitor-changelog';
 
 export const COMMITS_HISTORY_URL =
   'https://github.com/alehar9320/astro-cloudflare-personal-website/commits';
@@ -65,6 +70,10 @@ const THEMES: Theme[] = [
 export function isKeptVisitorLine(raw: string, visitorTitle: string): boolean {
   const title = visitorTitle.trim();
   if (!title) return false;
+  // Mapped VISITOR_CHANGELOG rows always render (Matt's call (b), #1163).
+  if (mappedVisitorTitle(raw) || mappedVisitorTitle(title)) return true;
+  // Unmapped and still shaped like an engineering squash: hidden.
+  if (isDevShapedUnmappedLine(raw) || isDevShapedUnmappedLine(title)) return false;
   if (SHA_OR_VERSION_ONLY.test(title) || SHA_OR_VERSION_ONLY.test(raw.trim())) return false;
   if (
     DROP_PATTERN.test(raw) ||

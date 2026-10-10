@@ -128,7 +128,7 @@ describe('visitor-changelog utilities', () => {
 
     it('filters out internal agent or tool items from bullet lists', () => {
       const input =
-        '- feat: add public feature\n- chore(jules): internal sync\n- refactor(engine): internal logic';
+        '- Add public feature\n- chore(jules): internal sync\n- refactor(engine): internal logic';
       const output = toVisitorReleaseBody(input);
       expect(output).toBe('- Add public feature');
     });
@@ -137,7 +137,7 @@ describe('visitor-changelog utilities', () => {
       const paletteStr =
         '🎨 Palette: Standardize Chat Overlay Control Touch Targets and Focus States';
       const testCoverageStr = 'Expand unit test coverage for visitor-changelog utilities';
-      const input = `- ${paletteStr}\n- ${testCoverageStr}\n- feat: add public feature`;
+      const input = `- ${paletteStr}\n- ${testCoverageStr}\n- Add public feature`;
       const output = toVisitorReleaseBody(input);
       expect(output).toBe('- Add public feature');
       expect(output).not.toContain('Palette');
