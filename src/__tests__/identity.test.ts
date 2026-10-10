@@ -1,4 +1,5 @@
-import { existsSync, readFileSync } from 'node:fs';
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { fetchDirectNotFound, isDirectNotFoundPath } from '../direct-not-found';
@@ -93,7 +94,8 @@ describe('identity copy', () => {
     expect(cta).toContain('https://www.linkedin.com/in/alehar/');
     expect(cta).toContain('Get in touch');
     expect(cta).not.toContain('mailto:');
-    expect(cta).toContain('LinkedIn · replies from me');
+    expect(cta).toContain('class="cta-hint">LinkedIn</p>');
+    expect(cta).not.toContain('LinkedIn · replies from me');
     expect(cta).not.toContain('high-impact');
   });
 
@@ -123,7 +125,8 @@ describe('identity copy', () => {
   it('keeps the chat FAB off Earlier work and the biography timeline on a phone', () => {
     const work = readFileSync('src/pages/work.astro', 'utf8');
     const bio = readFileSync('src/pages/biography.astro', 'utf8');
-    expect(work).toContain('padding-bottom: var(--chat-fab-clearance)');
+    // ContactCTA follows Earlier work and carries the FAB clearance (#1109 follow-up).
+    expect(work).not.toContain('padding-bottom: var(--chat-fab-clearance)');
     expect(work).toContain('padding-right: var(--chat-fab-clearance)');
     expect(work).toContain('Earlier work');
     expect(bio).toContain('padding-bottom: var(--chat-fab-clearance)');
@@ -304,38 +307,34 @@ describe('identity copy', () => {
     const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
     expect(footer).toContain('class="colophon"');
     expect(footer).toContain("What's New");
-    expect(footer).toContain('data-visit-stats');
-    expect(footer).toContain('hidden');
+    expect(footer).not.toContain('data-visit-stats');
     expect(footer).not.toContain('showUpcoming');
     expect(footer).toContain("What's New</a>");
     // Space-middot-space as Astro text node so paint is What's New · N.
     expect(footer).toContain("{' · '}");
-    expect(footer.slice(footer.indexOf('data-visit-stats'))).toContain("{' · '}");
     // Fail the prior bug: newline/indent then middot (leading space collapsed in paint).
     expect(footer).not.toMatch(/>\s*\n\s+·\s/);
-    expect(cta).toContain('LinkedIn · replies from me');
+    expect(cta).toContain('class="cta-hint">LinkedIn</p>');
+    expect(cta).not.toContain('LinkedIn · replies from me');
   });
 
   it('keeps Footer .visit-stats display:inline only when not [hidden]', () => {
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
-    expect(footer).toContain('.visit-stats:not([hidden])');
-    expect(footer).toContain('display: inline');
-    // Bare .visit-stats { display: inline } overrides UA [hidden]{display:none}.
-    expect(footer).not.toMatch(/\.visit-stats\s*\{\s*display:\s*inline/);
+    expect(footer).not.toContain('.visit-stats:not([hidden])');
+    expect(footer).not.toContain('.visit-stats');
+    expect(footer).not.toContain('data-visit-stats');
     expect(footer).toContain("{' · '}");
     expect(footer).toContain('https://www.linkedin.com/in/alehar/');
   });
 
   it('leads the colophon visit trigger with unique visitors and names PostHog', () => {
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
-    expect(footer).toContain('formatColophonVisits');
-    expect(footer).toContain('formatColophonVisitsTitle');
-    expect(footer).toContain("trigger.addEventListener('focus'");
-    expect(footer).toContain('shouldShowVisitCount(row.uniqueVisitors)');
-    expect(footer).not.toContain('formatPageviewCount(data.pageviews)');
-    expect(footer).not.toContain('white-space: nowrap');
-    expect(footer).toContain('.visit-stats:not([hidden])');
-    expect(footer).toContain("{' · '}");
+    expect(footer).not.toContain('formatColophonVisits');
+    expect(footer).not.toContain('formatColophonVisitsTitle');
+    expect(footer).not.toContain("trigger.addEventListener('focus'");
+    expect(footer).not.toContain('shouldShowVisitCount');
+    expect(footer).not.toContain('data-visit-count');
+    expect(footer).not.toContain('/api/visits');
     expect(footer).toContain('https://www.linkedin.com/in/alehar/');
     expect(footer).not.toContain('mailto:');
     expect(footer).toContain('class="colophon"');
@@ -779,7 +778,7 @@ describe('identity copy', () => {
     expect(chat).toContain('id="chat-clear"');
     expect(chat).toContain('chat-followups');
     expect(chat).toContain('How do I get in touch on LinkedIn?');
-    expect(chat).toContain('What did the IFS design system change?');
+    expect(chat).toContain('What did the IFS Design System change?');
     expect(chat).toContain("I'm an AI with his context.");
     expect(chat).not.toContain('Ask about the work');
     expect(chat).toContain('prefers-reduced-motion: reduce');
@@ -901,7 +900,7 @@ describe('identity copy', () => {
     expect(chat).toContain('id="chat-clear"');
     expect(chat).toContain('chat-followups');
     expect(chat).toContain('How do I get in touch on LinkedIn?');
-    expect(chat).toContain('What did the IFS design system change?');
+    expect(chat).toContain('What did the IFS Design System change?');
     expect(chat).toContain("I'm an AI with his context.");
     expect(nav).toContain('hsla(var(--gray-999-basis), 0.9)');
     expect(nav).toContain('backdrop-filter: blur(40px) saturate(140%)');
@@ -1051,7 +1050,7 @@ describe('identity copy', () => {
     expect(chat).toContain('id="chat-clear"');
     expect(chat).toContain('chat-followups');
     expect(chat).toContain('How do I get in touch on LinkedIn?');
-    expect(chat).toContain('What did the IFS design system change?');
+    expect(chat).toContain('What did the IFS Design System change?');
     expect(chat).toContain("I'm an AI with his context.");
     expect(nav).toContain('hsla(var(--gray-999-basis), 0.9)');
     expect(nav).toContain('backdrop-filter: blur(40px) saturate(140%)');
@@ -1094,12 +1093,30 @@ describe('identity copy', () => {
     expect(ds).not.toContain('mailto:');
   });
 
-  it('lets the IFS Design System case include a visible Get in touch on LinkedIn CTA', () => {
+  it('keeps IFS case body free of in-body Get in touch; hire stays chrome', () => {
     const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
-    expect(ds).toContain(
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    expect(ds).not.toContain(
       '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
     );
+    // #1638 had tagged the in-body link hire_cta_click/case_study; #979 removes it entirely.
+    expect(ds).not.toContain('Get in touch on LinkedIn');
+    expect(ds).not.toContain('https://www.linkedin.com/in/alehar/');
     expect(ds).not.toContain('mailto:');
+    expect(ds).toContain('## Problem');
+    expect(ds).toContain('## Approach');
+    expect(ds).toContain('## Outcome');
+    const headerStart = slug.indexOf('<header>');
+    const headerEnd = slug.indexOf('</header>');
+    const mainEnd = slug.indexOf('</main>');
+    const ctaAt = slug.indexOf('<ContactCTA />');
+    expect(headerStart).toBeGreaterThan(-1);
+    expect(headerEnd).toBeGreaterThan(headerStart);
+    expect(slug.slice(headerStart, headerEnd)).not.toContain('<ContactCTA');
+    expect(ctaAt).toBeGreaterThan(mainEnd);
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(cta).not.toContain('mailto:');
 
     const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
     const work = readFileSync('src/pages/work.astro', 'utf8');
@@ -1120,18 +1137,19 @@ describe('identity copy', () => {
     expect(ds).toContain('up to 2x');
     expect(ds).toContain('up to 30x');
     expect(ds).toContain('Zeroheight');
-    expect(ds).toContain(
-      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
-    );
     expect(ds).not.toContain('mailto:');
   });
 
-  it('lets the AI coding copilots case include a visible Get in touch on LinkedIn CTA', () => {
-    const copilots = readFileSync('src/content/work/ai-coding-copilots.md', 'utf8');
-    expect(copilots).toContain(
+  it('keeps copilots case body free of in-body Get in touch; hire stays chrome (#1105)', () => {
+    const md = readFileSync('src/content/work/ai-coding-copilots.md', 'utf8');
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(md).not.toContain(
       '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
     );
-    expect(copilots).not.toContain('mailto:');
+    expect(md).not.toContain('mailto:');
+    const mainEnd = slug.indexOf('</main>');
+    const ctaAt = slug.indexOf('<ContactCTA />');
+    expect(ctaAt).toBeGreaterThan(mainEnd);
 
     const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
     const work = readFileSync('src/pages/work.astro', 'utf8');
@@ -1154,18 +1172,22 @@ describe('identity copy', () => {
     expect(copilots).toContain('internal AI coding copilots');
     expect(copilots).toContain('engineering teams');
     expect(copilots).toContain('February 2025');
-    expect(copilots).toContain(
+    expect(copilots).not.toContain(
       '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
     );
     expect(copilots).not.toContain('mailto:');
   });
 
-  it('lets the user behavior analytics case include a visible Get in touch on LinkedIn CTA', () => {
-    const analytics = readFileSync('src/content/work/user-behavior-analytics.md', 'utf8');
-    expect(analytics).toContain(
+  it('keeps analytics case body free of in-body Get in touch; hire stays chrome (#1111)', () => {
+    const md = readFileSync('src/content/work/user-behavior-analytics.md', 'utf8');
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(md).not.toContain(
       '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
     );
-    expect(analytics).not.toContain('mailto:');
+    expect(md).not.toContain('mailto:');
+    const mainEnd = slug.indexOf('</main>');
+    const ctaAt = slug.indexOf('<ContactCTA />');
+    expect(ctaAt).toBeGreaterThan(mainEnd);
 
     const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
     const work = readFileSync('src/pages/work.astro', 'utf8');
@@ -1187,18 +1209,23 @@ describe('identity copy', () => {
     expect(analytics).toContain('capturing usage');
     expect(analytics).toContain('product teams can see what customers actually do');
     expect(analytics).toContain('Roadmap decisions rest on that usage');
-    expect(analytics).toContain(
+    expect(analytics).not.toContain(
       '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
     );
     expect(analytics).not.toContain('mailto:');
   });
 
-  it("lets the Chalmers master's thesis case include a visible Get in touch on LinkedIn CTA", () => {
+  it('keeps thesis case body free of in-body Get in touch; hire stays chrome (#1109/#1110 pattern)', () => {
     const thesis = readFileSync('src/content/work/master-thesis.md', 'utf8');
-    expect(thesis).toContain(
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    expect(thesis).not.toContain(
       '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
     );
+    expect(thesis).not.toContain('Get in touch');
     expect(thesis).not.toContain('mailto:');
+    const mainEnd = slug.indexOf('</main>');
+    const ctaAt = slug.indexOf('<ContactCTA />');
+    expect(ctaAt).toBeGreaterThan(mainEnd);
 
     const lidkoping = readFileSync('src/content/work/lidkoping-stenhuggeri.md', 'utf8');
     const work = readFileSync('src/pages/work.astro', 'utf8');
@@ -1223,19 +1250,22 @@ describe('identity copy', () => {
     expect(thesis).toContain('compared that to the literature');
     expect(thesis).toContain('Opportunities showed up as reach, scale, and data for decisions');
     expect(thesis).toContain('Barriers were mostly organizational');
-    expect(thesis).toContain(
+    expect(thesis).not.toContain(
       '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
     );
     expect(thesis).not.toContain('mailto:');
   });
 
-  it('lets the Work index include a visible Get in touch on LinkedIn CTA', () => {
-    const work = readFileSync('src/pages/work.astro', 'utf8');
-    expect(work).toContain('href="https://www.linkedin.com/in/alehar/"');
-    expect(work).toContain('target="_blank"');
-    expect(work).toContain('rel="noopener noreferrer"');
-    expect(work).toMatch(/>Get in touch on LinkedIn<\/a/);
-    expect(work).not.toContain('mailto:');
+  it('keeps /work/ Get in touch in chrome, not under Earlier work (#1104)', () => {
+    const page = readFileSync('src/pages/work.astro', 'utf8');
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    expect(page).not.toContain('class="hire-cta"');
+    expect(page).not.toMatch(/<p class="hire-cta"[\s\S]*Get in touch on LinkedIn/);
+    const mainEnd = page.indexOf('</main>');
+    const ctaAt = page.indexOf('<ContactCTA />');
+    expect(ctaAt).toBeGreaterThan(mainEnd);
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(cta).not.toContain('mailto:');
   });
 
   it('lets the AI coding copilots work-case TL;DR include at IFS', () => {
@@ -1348,6 +1378,15 @@ describe('identity copy', () => {
     expect(nav).not.toContain('hsla(var(--gray-999-basis), 0.85)');
   });
 
+  it('keeps mobile Menu button at 44px hit target', () => {
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    const block = nav.match(/\.menu-button\s*\{[\s\S]*?\}/);
+    expect(block).toBeTruthy();
+    expect(block![0]).toMatch(/min-height:\s*44px/);
+    expect(block![0]).toMatch(/min-width:\s*44px/);
+    expect(nav).toContain('<span class="sr-only">Menu</span>');
+  });
+
   it('closes the mobile nav overlay on Escape and restores focus without leaking the keydown', () => {
     const nav = readFileSync('src/components/Nav.astro', 'utf8');
     expect(nav).toContain('AbortController');
@@ -1414,13 +1453,11 @@ describe('identity copy', () => {
     expect(nav).not.toContain("'About'");
   });
 
-  it('lets a work-case share read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+  it('lets a work-case share read the case meta description, title keeps Product Manager, Developer Experience at IFS', () => {
     const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
     expect(slug).toContain('Product Manager, Developer Experience at IFS');
-    expect(slug).toContain('Get in touch on LinkedIn.');
-    expect(slug).toContain(
-      'Product Manager, Developer Experience at IFS. ${entry.data.description.trim()} Get in touch on LinkedIn.'
-    );
+    expect(slug).toContain('? entry.data.metaDescription');
+    expect(slug).not.toContain('Get in touch on LinkedIn.');
     expect(slug).toContain('ogTitle={shareTitle}');
     expect(slug).toContain("title={shareTitle ?? 'Not Found'}");
     expect(slug).not.toContain('mailto:');
@@ -1456,16 +1493,16 @@ describe('identity copy', () => {
     expect(contact).not.toContain('mailto:');
   });
 
-  it('lets a Work share read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+  it('lets a Work share describe the work and read Product Manager, Developer Experience at IFS', () => {
     const head = readFileSync('src/components/MainHead.astro', 'utf8');
     const work = readFileSync('src/pages/work.astro', 'utf8');
     const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
     const shareDescription =
-      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+      'Work by Alexander Härenstam, Product Manager, Developer Experience at IFS: the IFS Design System case, then earlier work.';
     expect(work).toContain(`description="${shareDescription}"`);
     expect(work).toContain('title="Work | Product Manager, Developer Experience at IFS"');
     expect(work).toContain('Product Manager, Developer Experience at IFS');
-    expect(work).toContain('Get in touch on LinkedIn.');
+    expect(work).not.toContain('Get in touch on LinkedIn.');
     expect(cta).toContain('https://www.linkedin.com/in/alehar/');
     expect(work).not.toContain('mailto:');
     expect(cta).not.toContain('mailto:');
@@ -1473,11 +1510,11 @@ describe('identity copy', () => {
     expect(head).toContain('name="twitter:description" content={description}');
   });
 
-  it('lets a Biography share read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+  it('lets a Biography share describe the biography and read Product Manager, Developer Experience at IFS', () => {
     const head = readFileSync('src/components/MainHead.astro', 'utf8');
     const bio = readFileSync('src/pages/biography.astro', 'utf8');
     const shareDescription =
-      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+      'Biography of Alexander Härenstam, Product Manager, Developer Experience at IFS. Eight years at IFS. Software engineering and innovation management at Chalmers.';
     expect(bio).toContain(`description="${shareDescription}"`);
     expect(bio).toContain('title="Biography | Product Manager, Developer Experience at IFS"');
     expect(bio).toContain('https://www.linkedin.com/in/alehar/');
@@ -1486,16 +1523,18 @@ describe('identity copy', () => {
     expect(head).toContain('name="twitter:description" content={description}');
   });
 
-  it('lets a Home share read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+  it('lets Home and Contact shares describe the page and read Product Manager, Developer Experience at IFS', () => {
     const head = readFileSync('src/components/MainHead.astro', 'utf8');
     const home = readFileSync('src/pages/index.astro', 'utf8');
     const layout = readFileSync('src/layouts/BaseLayout.astro', 'utf8');
     const contact = readFileSync('src/pages/contact.astro', 'utf8');
     const shareDescription =
-      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+      'Alexander Härenstam, Product Manager, Developer Experience at IFS. Design systems, developer platforms, and Industrial AI copilots.';
+    const contactDescription =
+      'Reach Alexander Härenstam, Product Manager, Developer Experience at IFS, on LinkedIn.';
     expect(home).toContain('ogTitle="Product Manager, Developer Experience at IFS"');
     expect(home).toContain(`description="${shareDescription}"`);
-    expect(contact).toContain(`description="${shareDescription}"`);
+    expect(contact).toContain(`description="${contactDescription}"`);
     expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
     expect(home).toContain('https://www.linkedin.com/in/alehar/');
     expect(home).not.toContain('mailto:');
@@ -1540,18 +1579,19 @@ describe('identity copy', () => {
     expect(bio).not.toContain('mailto:');
   });
 
-  it('lets Person.description read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+  it('lets Person.description read Product Manager, Developer Experience at IFS and the work', () => {
     const home = readFileSync('src/pages/index.astro', 'utf8');
     const bio = readFileSync('src/pages/biography.astro', 'utf8');
     const personDescription =
-      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+      'Product Manager, Developer Experience at IFS. Design systems, developer platforms, and Industrial AI copilots.';
     expect(home).toContain("'@type': 'Person'");
     expect(home).toContain(
       `'@type': 'Person',
       '@id': 'https://me.alehar.workers.dev/#person',
       name: 'Alexander Härenstam',
       jobTitle: 'Product Manager, Developer Experience at IFS',
-      description: '${personDescription}'`
+      description:
+        '${personDescription}'`
     );
     expect(bio).toContain("'@type': 'Person'");
     expect(bio).toContain(
@@ -1559,7 +1599,8 @@ describe('identity copy', () => {
       '@id': 'https://me.alehar.workers.dev/#person',
       name: 'Alexander Härenstam',
       jobTitle: 'Product Manager, Developer Experience at IFS',
-      description: '${personDescription}'`
+      description:
+        '${personDescription}'`
     );
     expect(home).toContain("jobTitle: 'Product Manager, Developer Experience at IFS'");
     expect(bio).toContain("jobTitle: 'Product Manager, Developer Experience at IFS'");
@@ -1580,10 +1621,10 @@ describe('identity copy', () => {
     expect(home).not.toContain('mailto:');
   });
 
-  it('lets WebSite.description read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+  it('lets WebSite.description describe the site and read Product Manager, Developer Experience at IFS', () => {
     const home = readFileSync('src/pages/index.astro', 'utf8');
     const websiteDescription =
-      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+      'Personal site of Alexander Härenstam, Product Manager, Developer Experience at IFS: work, biography, and recent changes to the site.';
     expect(home).toContain("'@type': 'WebSite'");
     expect(home).toContain(
       `'@type': 'WebSite',
@@ -1591,7 +1632,8 @@ describe('identity copy', () => {
       url: 'https://me.alehar.workers.dev/',
       name: 'Alexander Härenstam | Product Manager, Developer Experience at IFS',
       publisher: { '@id': 'https://me.alehar.workers.dev/#person' },
-      description: '${websiteDescription}'`
+      description:
+        '${websiteDescription}'`
     );
     expect(home).toContain("jobTitle: 'Product Manager, Developer Experience at IFS'");
     expect(home).toContain('https://www.linkedin.com/in/alehar/');
@@ -1619,11 +1661,13 @@ describe('identity copy', () => {
     expect(rss).not.toContain('mailto:');
   });
 
-  it('lets Home and Biography WebPage.description read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+  it('lets Home and Biography WebPage.description describe the page and read Product Manager, Developer Experience at IFS', () => {
     const home = readFileSync('src/pages/index.astro', 'utf8');
     const bio = readFileSync('src/pages/biography.astro', 'utf8');
-    const webpageDescription =
-      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+    const homeDescription =
+      'Alexander Härenstam, Product Manager, Developer Experience at IFS. Design systems, developer platforms, and Industrial AI copilots.';
+    const bioDescription =
+      'Biography of Alexander Härenstam, Product Manager, Developer Experience at IFS. Eight years at IFS. Software engineering and innovation management at Chalmers.';
     expect(home).toContain("'@type': 'WebPage'");
     expect(home).toContain(
       `'@type': 'WebPage',
@@ -1631,7 +1675,8 @@ describe('identity copy', () => {
       url: 'https://me.alehar.workers.dev/',
       name: 'Alexander Härenstam | Product Manager, Developer Experience at IFS',
       about: { '@id': 'https://me.alehar.workers.dev/#person' },
-      description: '${webpageDescription}'`
+      description:
+        '${homeDescription}'`
     );
     expect(bio).toContain("'@type': 'WebPage'");
     expect(bio).toContain(
@@ -1640,7 +1685,8 @@ describe('identity copy', () => {
       url: 'https://me.alehar.workers.dev/biography/',
       name: 'Biography | Product Manager, Developer Experience at IFS',
       about: { '@id': 'https://me.alehar.workers.dev/#person' },
-      description: '${webpageDescription}'`
+      description:
+        '${bioDescription}'`
     );
     expect(home).toContain("jobTitle: 'Product Manager, Developer Experience at IFS'");
     expect(bio).toContain("jobTitle: 'Product Manager, Developer Experience at IFS'");
@@ -1650,25 +1696,25 @@ describe('identity copy', () => {
     expect(bio).not.toContain('mailto:');
   });
 
-  it('lets Work WebPage.description read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+  it('lets Work WebPage.description describe the work and read Product Manager, Developer Experience at IFS', () => {
     const work = readFileSync('src/pages/work.astro', 'utf8');
     const webpageDescription =
-      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+      'Work by Alexander Härenstam, Product Manager, Developer Experience at IFS: the IFS Design System case, then earlier work.';
     expect(work).toContain("'@type': 'WebPage'");
     expect(work).toContain(
       `'@type': 'WebPage',
       '@id': 'https://me.alehar.workers.dev/work/#webpage',
       url: 'https://me.alehar.workers.dev/work/',
       name: 'Work | Product Manager, Developer Experience at IFS',
-      description: '${webpageDescription}'`
+      description:
+        '${webpageDescription}'`
     );
     expect(work).not.toContain('mailto:');
   });
 
-  it('lets Work ItemList.description read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+  it('lets Work ItemList.description describe the list', () => {
     const work = readFileSync('src/pages/work.astro', 'utf8');
-    const itemListDescription =
-      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+    const itemListDescription = 'The IFS Design System case, then earlier work.';
     expect(work).toContain("'@type': 'ItemList'");
     expect(work).toContain(
       `'@type': 'ItemList',
@@ -1747,167 +1793,16 @@ describe('identity copy', () => {
     expect(slug).not.toContain('mailto:');
   });
 
-  it('lets the IFS Design System JSON-LD WebPage.description include Get in touch on LinkedIn', () => {
+  it('lets every work-case JSON-LD WebPage and CreativeWork description read the case meta description', () => {
     const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
-    expect(slug).toContain("'@type': 'WebPage'");
-    expect(slug).toContain(
-      `'@type': 'WebPage',
-          '@id': \`https://me.alehar.workers.dev/work/\${entry.id}/#webpage\`,
-          url: \`https://me.alehar.workers.dev/work/\${entry.id}/\`,
-          name:
-            entry.id === 'ifs-design-system'
-              ? 'IFS Design System | Product Manager, Developer Experience at IFS'
-              : entry.id === 'user-behavior-analytics'
-                ? 'User behavior analytics | Product Manager, Developer Experience at IFS'
-                : \`\${entry.data.title} | Alexander Härenstam\`,
-          description:
-            entry.id === 'ifs-design-system' ||
-            entry.id === 'ai-coding-copilots' ||
-            entry.id === 'user-behavior-analytics' ||
-            entry.id === 'master-thesis'
-              ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
-              : entry.data.description,`
+    const webPage = slug.slice(slug.indexOf("'@type': 'WebPage'"), slug.indexOf('breadcrumb:'));
+    const creativeWork = slug.slice(
+      slug.indexOf("'@type': 'CreativeWork'"),
+      slug.indexOf('datePublished:')
     );
-    expect(slug).not.toContain('mailto:');
-  });
-
-  it('lets the AI coding copilots JSON-LD WebPage.description include Get in touch on LinkedIn', () => {
-    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
-    expect(slug).toContain("'@type': 'WebPage'");
-    expect(slug).toContain(
-      `'@type': 'WebPage',
-          '@id': \`https://me.alehar.workers.dev/work/\${entry.id}/#webpage\`,
-          url: \`https://me.alehar.workers.dev/work/\${entry.id}/\`,
-          name:
-            entry.id === 'ifs-design-system'
-              ? 'IFS Design System | Product Manager, Developer Experience at IFS'
-              : entry.id === 'user-behavior-analytics'
-                ? 'User behavior analytics | Product Manager, Developer Experience at IFS'
-                : \`\${entry.data.title} | Alexander Härenstam\`,
-          description:
-            entry.id === 'ifs-design-system' ||
-            entry.id === 'ai-coding-copilots' ||
-            entry.id === 'user-behavior-analytics' ||
-            entry.id === 'master-thesis'
-              ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
-              : entry.data.description,`
-    );
-    expect(slug).not.toContain('mailto:');
-  });
-
-  it('lets the user behavior analytics JSON-LD WebPage.description include Get in touch on LinkedIn', () => {
-    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
-    expect(slug).toContain("'@type': 'WebPage'");
-    expect(slug).toContain(
-      `'@type': 'WebPage',
-          '@id': \`https://me.alehar.workers.dev/work/\${entry.id}/#webpage\`,
-          url: \`https://me.alehar.workers.dev/work/\${entry.id}/\`,
-          name:
-            entry.id === 'ifs-design-system'
-              ? 'IFS Design System | Product Manager, Developer Experience at IFS'
-              : entry.id === 'user-behavior-analytics'
-                ? 'User behavior analytics | Product Manager, Developer Experience at IFS'
-                : \`\${entry.data.title} | Alexander Härenstam\`,
-          description:
-            entry.id === 'ifs-design-system' ||
-            entry.id === 'ai-coding-copilots' ||
-            entry.id === 'user-behavior-analytics' ||
-            entry.id === 'master-thesis'
-              ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
-              : entry.data.description,`
-    );
-    expect(slug).not.toContain('mailto:');
-  });
-
-  it("lets the Chalmers master's thesis JSON-LD WebPage.description include Get in touch on LinkedIn", () => {
-    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
-    expect(slug).toContain("'@type': 'WebPage'");
-    expect(slug).toContain(
-      `'@type': 'WebPage',
-          '@id': \`https://me.alehar.workers.dev/work/\${entry.id}/#webpage\`,
-          url: \`https://me.alehar.workers.dev/work/\${entry.id}/\`,
-          name:
-            entry.id === 'ifs-design-system'
-              ? 'IFS Design System | Product Manager, Developer Experience at IFS'
-              : entry.id === 'user-behavior-analytics'
-                ? 'User behavior analytics | Product Manager, Developer Experience at IFS'
-                : \`\${entry.data.title} | Alexander Härenstam\`,
-          description:
-            entry.id === 'ifs-design-system' ||
-            entry.id === 'ai-coding-copilots' ||
-            entry.id === 'user-behavior-analytics' ||
-            entry.id === 'master-thesis'
-              ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
-              : entry.data.description,`
-    );
-    expect(slug).not.toContain('mailto:');
-  });
-
-  it('lets the IFS Design System JSON-LD CreativeWork.description include Get in touch on LinkedIn', () => {
-    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
-    expect(slug).toContain("'@type': 'CreativeWork'");
-    expect(slug).toContain(
-      `'@type': 'CreativeWork',
-          name: entry.data.title,
-          description:
-            entry.id === 'ifs-design-system' ||
-            entry.id === 'ai-coding-copilots' ||
-            entry.id === 'user-behavior-analytics' ||
-            entry.id === 'master-thesis'
-              ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
-              : entry.data.description,`
-    );
-    expect(slug).not.toContain('mailto:');
-  });
-
-  it('lets the AI coding copilots JSON-LD CreativeWork.description include Get in touch on LinkedIn', () => {
-    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
-    expect(slug).toContain("'@type': 'CreativeWork'");
-    expect(slug).toContain(
-      `'@type': 'CreativeWork',
-          name: entry.data.title,
-          description:
-            entry.id === 'ifs-design-system' ||
-            entry.id === 'ai-coding-copilots' ||
-            entry.id === 'user-behavior-analytics' ||
-            entry.id === 'master-thesis'
-              ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
-              : entry.data.description,`
-    );
-    expect(slug).not.toContain('mailto:');
-  });
-
-  it('lets the user behavior analytics JSON-LD CreativeWork.description include Get in touch on LinkedIn', () => {
-    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
-    expect(slug).toContain("'@type': 'CreativeWork'");
-    expect(slug).toContain(
-      `'@type': 'CreativeWork',
-          name: entry.data.title,
-          description:
-            entry.id === 'ifs-design-system' ||
-            entry.id === 'ai-coding-copilots' ||
-            entry.id === 'user-behavior-analytics' ||
-            entry.id === 'master-thesis'
-              ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
-              : entry.data.description,`
-    );
-    expect(slug).not.toContain('mailto:');
-  });
-
-  it("lets the Chalmers master's thesis JSON-LD CreativeWork.description include Get in touch on LinkedIn", () => {
-    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
-    expect(slug).toContain("'@type': 'CreativeWork'");
-    expect(slug).toContain(
-      `'@type': 'CreativeWork',
-          name: entry.data.title,
-          description:
-            entry.id === 'ifs-design-system' ||
-            entry.id === 'ai-coding-copilots' ||
-            entry.id === 'user-behavior-analytics' ||
-            entry.id === 'master-thesis'
-              ? \`\${entry.data.description.trim()} Get in touch on LinkedIn.\`
-              : entry.data.description,`
-    );
+    expect(webPage).toContain('description: entry.data.metaDescription,');
+    expect(creativeWork).toContain('description: entry.data.metaDescription,');
+    expect(slug).not.toContain('Get in touch on LinkedIn.');
     expect(slug).not.toContain('mailto:');
   });
 
@@ -1920,10 +1815,10 @@ describe('identity copy', () => {
     expect(rss).not.toContain('mailto:');
   });
 
-  it('lets the RSS channel description read Product Manager, Developer Experience at IFS and LinkedIn', () => {
+  it('lets the RSS channel description describe the feed and read Product Manager, Developer Experience at IFS', () => {
     const rss = readFileSync('src/pages/rss.xml.ts', 'utf8');
     const channelDescription =
-      'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.';
+      'Case studies from Alexander Härenstam, Product Manager, Developer Experience at IFS: IFS Design System, AI coding copilots, usage analytics, Chalmers thesis.';
     expect(rss).toContain(`<description>${channelDescription}</description>`);
     expect(rss).toContain(
       '<title>Alexander Härenstam | Product Manager, Developer Experience at IFS</title>'
@@ -2162,7 +2057,8 @@ describe('identity copy', () => {
     expect(notFound).toContain('https://www.linkedin.com/in/alehar/');
     expect(notFound).toContain('Get in touch');
     expect(notFound).toContain('Return to Homepage');
-    expect(notFound).toContain('LinkedIn · replies from me');
+    expect(notFound).toContain('<p class="cta-hint">LinkedIn</p>');
+    expect(notFound).not.toContain('replies from me');
     expect(notFound).toContain('data-hire-event="hire_cta_click"');
     expect(notFound).toContain('data-hire-surface="404"');
     expect(content).toContain('title="Page not found"');
@@ -2236,7 +2132,7 @@ describe('identity copy', () => {
       '<title>Alexander Härenstam | Product Manager, Developer Experience at IFS</title>'
     );
     expect(rss).toContain(
-      '<description>Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.</description>'
+      '<description>Case studies from Alexander Härenstam, Product Manager, Developer Experience at IFS: IFS Design System, AI coding copilots, usage analytics, Chalmers thesis.</description>'
     );
     expect(rss).toContain('ifs-design-system');
     expect(rss).toContain("entry.id !== 'lidkoping-stenhuggeri'");
@@ -2265,7 +2161,8 @@ describe('identity copy', () => {
     expect(now).toContain('Product Manager, Developer Experience');
     expect(now).toContain('https://www.linkedin.com/in/alehar/');
     expect(now).toContain('Get in touch');
-    expect(now).toContain('LinkedIn · replies from me');
+    expect(now).toContain('<p class="cta-hint">LinkedIn</p>');
+    expect(now).not.toContain('replies from me');
     expect(now).toContain('Hero title="Product Manager, Developer Experience at IFS"');
     expect(now.replace(/\s+/g, ' ')).toContain('up to 2x faster delivery');
     expect(now).toContain('up to 30x ROI');
@@ -2285,7 +2182,8 @@ describe('identity copy', () => {
     expect(page).toContain('Product Manager, Developer Experience');
     expect(page).toContain('https://www.linkedin.com/in/alehar/');
     expect(page).toContain('Get in touch');
-    expect(page).toContain('LinkedIn · replies from me');
+    expect(page).toContain('<p class="cta-hint">LinkedIn</p>');
+    expect(page).not.toContain('replies from me');
     expect(page).toContain('High Output Management');
     expect(page).toContain('The Lean Startup');
     expect(page).toContain('Competing Against Luck');
@@ -2330,7 +2228,6 @@ describe('identity copy', () => {
     expect(page).toContain('title="What\'s New | Product Manager, Developer Experience at IFS"');
     expect(page).toContain('ogTitle="What\'s New | Product Manager, Developer Experience at IFS"');
     expect(page).toContain('Product Manager, Developer Experience');
-    expect(page).toContain('toVisitorChangelogTitle');
     expect(page).toContain('toVisitorRelease');
     expect(page).toContain('ContactCTA');
     expect(page).toContain('fetchGitHubReleases');
@@ -2358,7 +2255,8 @@ describe('identity copy', () => {
     expect(robots).toContain('Disallow: /whats-new/');
     expect(cta).toContain('https://www.linkedin.com/in/alehar/');
     expect(cta).toContain('Get in touch');
-    expect(cta).toContain('LinkedIn · replies from me');
+    expect(cta).toContain('class="cta-hint">LinkedIn</p>');
+    expect(cta).not.toContain('LinkedIn · replies from me');
     expect(cta).not.toContain('mailto:');
     expect(
       toVisitorChangelogTitle('41fe7ae feat: rewrite /experimental/now/ for visitors (#523)')
@@ -2510,7 +2408,7 @@ describe('identity copy', () => {
     expect(work).toContain('animation: enter-soft 400ms');
     expect(work).toContain('translate: 0 12px');
     expect(work).toContain('cubic-bezier(0.22, 1, 0.36, 1)');
-    expect(work).toContain('https://www.linkedin.com/in/alehar/');
+    expect(work).toContain('<ContactCTA />'); // hire LinkedIn lives in chrome ContactCTA (#1104)
     const workGated = work.slice(work.indexOf('@supports (animation-timeline: view())'));
     expect(workGated).toContain('animation: enter-soft 400ms');
     expect(workGated).not.toContain('opacity: 0');
@@ -2607,9 +2505,8 @@ describe('identity copy', () => {
     expect(home).toContain('https://www.linkedin.com/in/alehar/');
     expect(home).not.toContain('ds-first');
     expect(ds).not.toContain('mailto:');
-    expect(ds).toContain(
-      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
-    );
+    // #979: IFS hire is chrome ContactCTA only; no in-body Get in touch.
+    expect(ds).not.toContain('Get in touch on LinkedIn');
   });
 
   it('tightens IFS case-local spacing on short desktop so chips clear the composer (#801)', () => {
@@ -2760,9 +2657,8 @@ describe('identity copy', () => {
     );
     expect(slug).toContain("import ContactCTA from '../../components/ContactCTA.astro';");
     expect(slug).not.toContain('mailto:');
-    expect(ds).toContain(
-      '<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>'
-    );
+    // #979: IFS hire is chrome ContactCTA only; no in-body Get in touch.
+    expect(ds).not.toContain('Get in touch on LinkedIn');
     expect(ds).not.toContain('mailto:');
     expect(work).toContain('class="proof-card"');
     expect(work).toContain('href="/work/ifs-design-system/"');
@@ -2792,9 +2688,25 @@ describe('identity copy', () => {
       /@media \(min-width: 50em\)[\s\S]*?\.proof-card\s*\{[\s\S]*?padding:\s*1\.5rem/
     );
     expect(work).not.toContain('padding: 2.5rem');
-    expect(work).toContain('https://www.linkedin.com/in/alehar/');
+    expect(work).toContain('<ContactCTA />'); // hire LinkedIn lives in chrome ContactCTA (#1104)
     expect(work).not.toContain('mailto:');
     expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
+  });
+
+  it('keeps Footer LinkedIn hire Contact card attrs (#1118)', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(footer).toContain('href="https://www.linkedin.com/in/alehar/"');
+    expect(footer).toContain('data-hire-event="linkedin_click"');
+    expect(footer).toContain('data-hire-surface="footer"');
+    expect(footer).toContain('blog.ifs.com/author/alexander-harenstam/');
+    expect(footer).toContain('https://github.com/alehar9320');
+    // Blog + GitHub stay untagged as hire
+    const blogBlock = footer.slice(
+      footer.indexOf('blog.ifs.com'),
+      footer.indexOf('https://github.com/alehar9320')
+    );
+    expect(blogBlock).not.toContain('data-hire-event');
+    expect(footer).not.toContain('mailto:');
   });
 
   it('keeps Contact quiet hire as exact LinkedIn, no twin-mouth (#824)', () => {
@@ -2809,14 +2721,285 @@ describe('identity copy', () => {
     expect(contact).toContain('min-width: 44px');
   });
 
+  it('exposes window.posthog after idle init so hire Contact card can capture (#hire-ph)', () => {
+    const ph = readFileSync('src/components/PostHog.astro', 'utf8');
+    expect(ph).toContain("await import('posthog-js')");
+    expect(ph).toContain('posthog.init(');
+    expect(ph).toMatch(/window\.posthog\s*=\s*posthog/);
+    expect(ph).toContain('PUBLIC_POSTHOG_KEY');
+    expect(ph).toContain('requestIdleCallback');
+    expect(ph).not.toMatch(/^import\s+.*from\s+['"]posthog-js['"]/m);
+  });
+
+  it('footer colophon has no visitor visit-count control (#1045)', () => {
+    const footer = readFileSync('src/components/Footer.astro', 'utf8');
+    expect(footer).toContain('class="colophon"');
+    expect(footer).toContain("What's New");
+    expect(footer).toContain('This site');
+    expect(footer).toContain("What's next");
+    expect(footer).toContain('Site success');
+    expect(footer).not.toContain('data-visit-stats');
+    expect(footer).not.toContain('data-visit-count');
+    expect(footer).not.toContain('visit-glance-panel');
+    expect(footer).not.toContain('/api/visits');
+    expect(footer).toContain('https://www.linkedin.com/in/alehar/');
+    expect(footer).not.toContain('mailto:');
+  });
+
+  it('keeps nav text links with a visible focus ring', () => {
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    expect(nav).toMatch(
+      /\.link:focus-visible\s*\{[\s\S]*?outline:\s*2px\s+solid\s+var\(--accent-regular\);[\s\S]*?outline-offset:\s*4px;/
+    );
+    expect(nav).toContain('class="link"');
+    expect(nav).toContain("href: '/work/'");
+    expect(nav).toContain("href: '/biography/'");
+    expect(nav).toContain("href: '/contact/'");
+    expect(nav).not.toContain('mailto:');
+  });
+
+  it('keeps analytics case Get in touch in chrome/footer, not under the H1 (#929)', () => {
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    const headerStart = slug.indexOf('<header>');
+    const headerEnd = slug.indexOf('</header>');
+    expect(headerStart).toBeGreaterThan(-1);
+    expect(headerEnd).toBeGreaterThan(headerStart);
+    const header = slug.slice(headerStart, headerEnd);
+    expect(header).toContain('<Hero');
+    expect(header).not.toContain('<ContactCTA');
+    expect(slug).toContain('<ContactCTA />');
+    expect(slug.indexOf('<ContactCTA />')).toBeGreaterThan(headerEnd);
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(cta).not.toContain('mailto:');
+  });
+});
+
+describe('chat open stage clears the header nav (#939 follow-up)', () => {
+  const chat = readFileSync('src/components/Chat.astro', 'utf8');
+
+  it('desktop open stage top comes from --chat-stage-top with a 5rem fallback', () => {
+    expect(chat).toMatch(
+      /@media \(min-width: 50em\) \{\s*\.chat-container\.is-open:not\(\.is-prominent\) \{\s*inset: var\(--chat-stage-top, 5rem\) 0 0 0;/
+    );
+    expect(chat).not.toContain('inset: 5rem 0 0 0;');
+  });
+
+  it('measures the header row bottom before the chat opens', () => {
+    expect(chat).toContain("'nav .menu-header'");
+    expect(chat).toContain("'#menu-content .nav-items'");
+    expect(chat).toContain("'#menu-content .menu-footer'");
+    expect(chat).toContain("chatContainer.style.setProperty('--chat-stage-top'");
+    expect(chat).toContain('const CHAT_STAGE_MIN_PX = 80;');
+    expect(chat).toMatch(/if \(expand\) \{\s*syncChatStageTop\(\);/);
+  });
+
+  it('keeps phone open chat full page', () => {
+    expect(chat).toMatch(
+      /@media \(max-width: 49\.99em\) \{[\s\S]*?\.chat-container\.is-open:not\(\.is-prominent\) \{\s*inset: 0;\s*padding-top: 0;[\s\S]*?height: 100dvh;/
+    );
+  });
+});
+
+describe('hire hint is just LinkedIn everywhere (#990 / #761 Eden copy lock)', () => {
+  // Tests legitimately keep the old copy in negative assertions, so skip them.
+  const isTestPath = (path: string) =>
+    path.split(/[\\/]/).includes('__tests__') || /\.(test|spec)\.[cm]?[jt]sx?$/.test(path);
+
+  const listSourceFiles = (dir: string): string[] =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+      const path = join(dir, entry.name);
+      if (isTestPath(path)) return [];
+      return entry.isDirectory() ? listSourceFiles(path) : [path];
+    });
+
+  it('no file under src/ says replies from me', () => {
+    const sources = listSourceFiles('src');
+    expect(sources).toContain(join('src', 'components', 'ContactCTA.astro'));
+    const offenders = sources.filter((path) =>
+      /replies\s+from\s+me/i.test(readFileSync(path, 'utf8'))
+    );
+    expect(offenders).toEqual([]);
+  });
+});
+
+describe('chat open stage follows the header on scroll (#1633 follow-up)', () => {
+  const chat = readFileSync('src/components/Chat.astro', 'utf8');
+
+  it('recomputes the open stage top on a passive, rAF-throttled scroll listener', () => {
+    expect(chat).toMatch(
+      /if \(expand\) \{\s*syncChatStageTop\(\);\s*window\.addEventListener\('scroll', onChatStageScroll, \{ passive: true \}\);/
+    );
+    expect(chat).toMatch(
+      /function onChatStageScroll\(\) \{\s*if \(chatStageScrollFrame\) return;\s*chatStageScrollFrame = requestAnimationFrame\(\(\) => \{\s*chatStageScrollFrame = 0;\s*syncChatStageTop\(\);/
+    );
+  });
+
+  it('removes the scroll listener and cancels a pending frame when chat closes', () => {
+    expect(chat).toMatch(
+      /function unbindChatStageScroll\(\) \{\s*window\.removeEventListener\('scroll', onChatStageScroll\);\s*if \(chatStageScrollFrame\) \{\s*cancelAnimationFrame\(chatStageScrollFrame\);/
+    );
+    expect(chat).toMatch(/\} else \{\s*unbindChatStageScroll\(\);\s*\}\s*\};/);
+  });
+});
+
+describe('/work/ hire door is the counted ContactCTA (#1109 follow-up)', () => {
+  const work = readFileSync('src/pages/work.astro', 'utf8');
+  const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+
+  it('ContactCTA on /work/ carries hire_cta_click / contact_cta', () => {
+    expect(work).toContain('<ContactCTA />');
+    expect(cta).toContain('data-hire-event="hire_cta_click"');
+    expect(cta).toContain('data-hire-surface="contact_cta"');
+  });
+});
+
+describe('/work/ Earlier work ends on the normal section rhythm (#1109 follow-up)', () => {
+  const work = readFileSync('src/pages/work.astro', 'utf8');
+
+  it('drops the phone FAB-clearance bottom padding on .earlier (ContactCTA clears the FAB)', () => {
+    const earlierRule = work.match(/\n {2}\.earlier \{[^}]*\}/)?.[0] ?? '';
+    expect(earlierRule).toContain('display: flex;');
+    expect(earlierRule).not.toContain('padding-bottom: var(--chat-fab-clearance)');
+    expect(earlierRule).toContain('padding-right: var(--chat-fab-clearance);');
+  });
+});
+
+describe('IFS Design System case hire is counted from chrome only (#979)', () => {
+  const ds = readFileSync('src/content/work/ifs-design-system.md', 'utf8');
+  const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+  const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+
+  it('has no in-body LinkedIn link; ContactCTA after </main> carries hire_cta_click / contact_cta', () => {
+    expect(ds).not.toMatch(/<a [^>]*linkedin\.com/);
+    expect(ds).not.toContain('Get in touch on LinkedIn');
+    expect(slug.indexOf('<ContactCTA />')).toBeGreaterThan(slug.indexOf('</main>'));
+    expect(cta).toMatch(/\bhref="https:\/\/www\.linkedin\.com\/in\/alehar\/"/);
+    expect(cta).toContain('data-hire-event="hire_cta_click"');
+    expect(cta).toContain('data-hire-surface="contact_cta"');
+  });
+});
+
+describe('every hire surface the site emits is a known HireSurface', () => {
+  const analytics = readFileSync('src/utils/hire-analytics.ts', 'utf8');
+  const union = analytics.match(/export type HireSurface =([^;]+);/)?.[1] ?? '';
+  const known = new Set([...union.matchAll(/(['"`])([^'"`]+)\1/g)].map((m) => m[2]));
+
+  const isTestPath = (path: string) =>
+    path.split(/[\\/]/).includes('__tests__') || /\.(test|spec)\.[cm]?[jt]sx?$/.test(path);
+
+  const listSourceFiles = (dir: string): string[] =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+      const path = join(dir, entry.name);
+      if (isTestPath(path)) return [];
+      return entry.isDirectory() ? listSourceFiles(path) : [path];
+    });
+
+  it('lists every data-hire-surface / surface / trackHireEvent value used in src/', () => {
+    const used = new Set<string>();
+    for (const path of listSourceFiles('src')) {
+      const text = readFileSync(path, 'utf8');
+      // Single, double or backtick quotes.
+      for (const re of [
+        /data-hire-surface=(?<q>["'`])(?<surface>[^"'`]+)\k<q>/g,
+        /\bsurface: (?<q>["'`])(?<surface>[^"'`]+)\k<q>/g,
+        /trackHireEvent\(\s*(["'`])[^"'`]+\1\s*,\s*(?<q>["'`])(?<surface>[^"'`]+)\k<q>\s*\)/g,
+      ]) {
+        for (const m of text.matchAll(re)) used.add(m.groups!.surface);
+      }
+    }
+    expect(known.size).toBeGreaterThan(0);
+    expect(used).toContain('404');
+    expect(used).toContain('fab');
+    // Direction: every used value must be listed. Listed-but-unused is allowed
+    // (case_study is legacy, kept for older PostHog data).
+    expect([...used].filter((surface) => !known.has(surface))).toEqual([]);
+    expect(known).toContain('case_study');
+  });
+});
+
+describe('work case meta descriptions describe the case, not the hire CTA', () => {
+  const caseFiles = readdirSync('src/content/work').filter((name) => name.endsWith('.md'));
+
+  it.each(caseFiles)('%s has a case meta description without Get in touch, 1-160 chars', (name) => {
+    const md = readFileSync(join('src/content/work', name), 'utf8');
+    const frontmatter = md.split('---')[1] ?? '';
+    const meta = frontmatter.match(/\nmetaDescription: >-\n {2}([^\n]+)\n/)?.[1]?.trim() ?? '';
+    const description = frontmatter.match(/\ndescription: \|\n {2}([^\n]+)\n/)?.[1]?.trim() ?? '';
+    expect(meta.length).toBeGreaterThan(0);
+    expect(meta.length).toBeLessThanOrEqual(160);
+    expect(meta).not.toMatch(/get in touch/i);
+    expect(meta).not.toMatch(/several millions|used by millions/i);
+    expect(description.length).toBeGreaterThan(0);
+    expect(description).not.toMatch(/get in touch/i);
+  });
+
+  it('covers all five case pages', () => {
+    expect(caseFiles).toHaveLength(5);
+  });
+});
+
+describe('page and feed descriptions describe the page, not the hire CTA', () => {
+  const isTestPath = (path: string) =>
+    path.split(/[\\/]/).includes('__tests__') || /\.(test|spec)\.[cm]?[jt]sx?$/.test(path);
+
+  const listSourceFiles = (dir: string): string[] =>
+    readdirSync(dir, { withFileTypes: true }).flatMap((entry) => {
+      const path = join(dir, entry.name);
+      if (isTestPath(path)) return [];
+      return entry.isDirectory() ? listSourceFiles(path) : [path];
+    });
+
+  // description= / description: / metaDescription: (quoted, template or YAML block)
+  // plus RSS <description>. On-page CTA copy (ContactCTA heading, biography line)
+  // is not a description and stays.
+  const descriptionPatterns = [
+    /\b(?:meta)?[dD]escription\s*[=:]\s*(?:\{`([^`]*)`\}|"([^"]*)"|'([^']*)'|`([^`]*)`|[|>]-?\n((?: {2}[^\n]*\n)+))/g,
+    /<description>([\s\S]*?)<\/description>/g,
+  ];
+
+  it('no meta, JSON-LD, feed or frontmatter description in src/ says Get in touch on LinkedIn', () => {
+    const hits: string[] = [];
+    let scanned = 0;
+    for (const path of listSourceFiles('src')) {
+      const text = readFileSync(path, 'utf8');
+      for (const re of descriptionPatterns) {
+        for (const m of text.matchAll(re)) {
+          const value = m.slice(1).find((g) => g !== undefined) ?? '';
+          scanned += 1;
+          if (/get in touch on linkedin/i.test(value)) hits.push(`${path}: ${value.trim()}`);
+        }
+      }
+    }
+    expect(scanned).toBeGreaterThan(20);
+    expect(hits).toEqual([]);
+  });
+
+  it('keeps the on-page LinkedIn hire copy', () => {
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    const bio = readFileSync('src/pages/biography.astro', 'utf8');
+    expect(cta).toContain('<h2>Get in touch on LinkedIn</h2>');
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(bio).toContain("Get in touch on{' '}");
+  });
+
+  it('keeps mobile Menu button aria-controls pointing at menu-content', () => {
+    const src = readFileSync('src/components/Nav.astro', 'utf8');
+    expect(src).toContain('id="menu-content"');
+    expect(src).toMatch(/<button class="menu-button"[^>]*aria-controls="menu-content"[^>]*>/);
+    expect(src).toMatch(/<button class="menu-button"[^>]*aria-expanded="false"[^>]*>/);
+    expect(src).toContain('<span class="sr-only">Menu</span>');
+  });
+
   it('keeps theme toggle free of tactile press scale', () => {
     const toggle = readFileSync('src/components/ThemeToggle.astro', 'utf8');
     const flags = readFileSync('src/content/flags/config.json', 'utf8');
+    const config = readFileSync('src/content.config.ts', 'utf8');
     expect(toggle).not.toContain('enable_theme_toggle_tactile_v1');
     expect(toggle).not.toContain('isTactileEnabled');
     expect(toggle).not.toContain('tactile-v1');
     expect(toggle).not.toContain('scale(0.96)');
     expect(flags).not.toContain('enable_theme_toggle_tactile_v1');
+    expect(config).not.toContain('enable_theme_toggle_tactile_v1');
   });
-
 });

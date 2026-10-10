@@ -31,6 +31,39 @@ describe('exploreCardForQuestion', () => {
     );
   });
 
+  it('handles edge cases and keyword variations correctly', () => {
+    expect(exploreCardForQuestion('')).toBeNull();
+    expect(exploreCardForQuestion('   ')).toBeNull();
+    expect(exploreCardForQuestion('random question without keywords')).toBeNull();
+
+    // Suppression checks
+    expect(exploreCardForQuestion('Send me an email')).toBeNull();
+    expect(exploreCardForQuestion('Do you have a CV?')).toBeNull();
+    expect(exploreCardForQuestion('Where is your résumé?')).toBeNull();
+    expect(exploreCardForQuestion('Resume link?')).toBeNull();
+
+    // Contact & LinkedIn variations
+    expect(exploreCardForQuestion('Can we hire you?')).toEqual(LINKEDIN_CONFIRM);
+    expect(exploreCardForQuestion('How do I contact Alexander?')).toEqual(LINKEDIN_CONFIRM);
+
+    // Design system keywords & metrics
+    expect(exploreCardForQuestion('What ROI did it achieve?')).toEqual(EXPLORE_CARDS.designSystem);
+    expect(exploreCardForQuestion('2x faster delivery')).toEqual(EXPLORE_CARDS.designSystem);
+    expect(exploreCardForQuestion('Did you use zeroheight?')).toEqual(EXPLORE_CARDS.designSystem);
+
+    // Copilots, analytics, thesis
+    expect(exploreCardForQuestion('Tell me about AI coding')).toEqual(EXPLORE_CARDS.copilots);
+    expect(exploreCardForQuestion('How was telemetry used?')).toEqual(EXPLORE_CARDS.analytics);
+    expect(exploreCardForQuestion('Tell me about your masters')).toEqual(EXPLORE_CARDS.thesis);
+
+    // Biography & background
+    expect(exploreCardForQuestion('What is your background?')).toEqual(EXPLORE_CARDS.biography);
+    expect(exploreCardForQuestion('Who are you?')).toEqual(EXPLORE_CARDS.biography);
+    expect(exploreCardForQuestion('How do you work as a product manager?')).toEqual(
+      EXPLORE_CARDS.biography
+    );
+  });
+
   it('keeps action cards on published routes and LinkedIn confirm on the hire path', () => {
     expect(EXPLORE_CARDS.designSystem.href).toBe('/work/ifs-design-system/');
     expect(EXPLORE_CARDS.designSystem.actionLabel).toBe('View the case');
