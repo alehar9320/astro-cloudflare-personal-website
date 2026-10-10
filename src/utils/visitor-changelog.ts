@@ -43,6 +43,11 @@ export const VISITOR_CHANGELOG: readonly VisitorChangelogEntry[] = [
     title: 'Home “Read the case” stays clear of the chat dock',
   },
   {
+    pr: 1167,
+    subject: 'What’s New: hiring visitors read outcome lines, not eng shorthand',
+    title: 'What’s New now describes each update in plain language',
+  },
+  {
     pr: 945,
     subject: "in-sentence What's New link to /whats-new/",
     title: 'The “This site” page now links to What’s New',
@@ -103,6 +108,22 @@ export const VISITOR_CHANGELOG: readonly VisitorChangelogEntry[] = [
     pr: 1635,
     subject: 'align leftover hire hint to LinkedIn',
     title: 'The 404 page hint now just says LinkedIn',
+  },
+  // Vera 6098150386: real visitor changes that Matt's call (b) would otherwise hide. Eden FINAL.
+  {
+    pr: 943,
+    subject: 'name the message field for screen readers',
+    title: 'Screen readers now announce the chat message field',
+  },
+  {
+    pr: 1033,
+    subject: 'remove theme-toggle tactile press scale',
+    title: 'The theme toggle no longer shrinks when pressed',
+  },
+  {
+    pr: 1223,
+    subject: '44px Menu button hit target',
+    title: 'The Menu button is easier to tap on phones',
   },
   {
     pr: 1634,
@@ -286,6 +307,8 @@ const BY_PR = new Map(VISITOR_CHANGELOG.map((entry) => [entry.pr, entry.title]))
 const BY_SUBJECT = new Map(
   VISITOR_CHANGELOG.map((entry) => [entry.subject.toLowerCase(), entry.title])
 );
+/** Titles from VISITOR_CHANGELOG, so a second toVisitorRelease pass still knows a line is mapped. */
+const MAPPED_TITLES = new Set(VISITOR_CHANGELOG.map((entry) => entry.title.toLowerCase()));
 
 const SHA_PREFIX = /^[a-f0-9]{7,40}\s+/i;
 const CONVENTIONAL_PREFIX =
@@ -296,6 +319,23 @@ const DEV_ONLY_ITEM =
   /^(?:[a-f0-9]{7,40}\s+)?docs(?:\((?:context|readme|agents)\))?!?:|\bscrape\b|\bredaction\b/i;
 /** A #NNN ref still left after the trailing (#PR) is stripped (e.g. "(#1639 follow-up)", "/work/ #1109 nits"). */
 const INLINE_ISSUE_REF = /#\d+/;
+/**
+ * Matt's call (b), #1163: an UNMAPPED line is dev-shaped (hidden) when it still has a
+ * conventional prefix or an "Area:" prefix (e.g. "What’s New:", "Analytics:"), or a code token:
+ * #NNN, a file path, backticks, or dev words. Mapped VISITOR_CHANGELOG rows always render.
+ */
+const AREA_PREFIX = /^(?:[\p{L}\d’'&/-]+\s){0,2}[\p{L}\d’'&/-]+:\s/u;
+/** Visitor-surface prefixes that may look like "Area:" but name a visitor thing (Johan 6098040346). */
+// Page names count too (Vera 6098150386). What’s New: is deliberately absent, so #1167's raw
+// subject stays hidden.
+const VISITOR_PREFIX =
+  /^(?:(?:new|updated)\s+(?:case|case study|page|post|project|section|talk)s?|home|biography|work|contact|this site):\s/i;
+const FILE_PATH =
+  /`|\b[\w-]+\.(?:ts|tsx|js|mjs|cjs|astro|md|mdx|json|css|ya?ml|toml|html)\b|(?:^|\s)\.?\/?(?:src|public|scripts|context|docs|tests?)\/|(?:^|\s)\/[\w.-]+\//i;
+const DEV_WORD =
+  /\b(?:scrape|redaction|context|shorthand|regex|lint|eslint|prettier|posthog|tsconfig|wrangler|dependabot|deps?|bump|workflow|refactor|fixture|mock|stub|ssr|kv)\b/i;
+/** "CI" only as an uppercase whole word, so visitor words that contain "ci" are never hit. */
+const DEV_WORD_UPPER = /\bCI\b/;
 /* Optimization (⚡ Bolt): Hoist PR_MATCH_REGEX and SPACES_REGEX to avoid dynamic RegExp instantiations on edge changelog title processing.
    Benchmark: Eliminates redundant regex creation during visitor title mapping. */
 /** Every `(#N)` group; the lookup uses the LAST one, which is the squash PR (earlier ones are issue refs). */
@@ -325,6 +365,46 @@ export const INTERNAL_CHANGELOG_ITEM =
 const BULLET_PREFIX = /^[-*+]\s+/;
 
 /**
+ * The VISITOR_CHANGELOG title for a raw line (by its LAST `(#N)`, then by subject), or for a line
+ * that already is a mapped title. Undefined when the line is unmapped.
+ */
+export function mappedVisitorTitle(raw: string): string | undefined {
+  const trimmed = raw.trim();
+  if (!trimmed) return undefined;
+  let lastPr: string | undefined;
+  for (const match of trimmed.matchAll(PR_MATCH_REGEX)) lastPr = match[1];
+  if (lastPr) {
+    const byPr = BY_PR.get(Number(lastPr));
+    if (byPr) return byPr;
+  }
+  const bySubject = BY_SUBJECT.get(stripChangelogChrome(trimmed).toLowerCase());
+  if (bySubject) return bySubject;
+  return MAPPED_TITLES.has(trimmed.toLowerCase()) ? trimmed : undefined;
+}
+
+/**
+ * Matt's call (b): true when an UNMAPPED line still reads as an engineering squash (conventional or
+ * "Area:" prefix, #NNN, file path, backticks, dev words). Mapped lines are never dev-shaped.
+ */
+export function isDevShapedUnmappedLine(raw: string): boolean {
+  return !mappedVisitorTitle(raw) && isDevShapedLine(raw);
+}
+
+/** The dev-shape check alone, ignoring VISITOR_CHANGELOG (so tests can treat a mapped line as unmapped). */
+export function isDevShapedLine(raw: string): boolean {
+  const noSha = raw.trim().replace(SHA_PREFIX, '');
+  if (CONVENTIONAL_PREFIX.test(noSha)) return true;
+  if (AREA_PREFIX.test(noSha) && !VISITOR_PREFIX.test(noSha)) return true;
+  const subject = stripChangelogChrome(raw);
+  return (
+    INLINE_ISSUE_REF.test(subject) ||
+    FILE_PATH.test(subject) ||
+    DEV_WORD.test(subject) ||
+    DEV_WORD_UPPER.test(subject)
+  );
+}
+
+/**
  * Visitor sentence for a changelog item. Lookup known shipped PRs, else sanitize.
  * Idempotent: already-visitor copy (no SHA / type / PR chrome) is returned as-is.
  */
@@ -332,17 +412,10 @@ export function toVisitorChangelogTitle(raw: string): string {
   const trimmed = raw.trim();
   if (!trimmed) return trimmed;
 
-  let lastPr: string | undefined;
-  for (const match of trimmed.matchAll(PR_MATCH_REGEX)) lastPr = match[1];
-  if (lastPr) {
-    const mapped = BY_PR.get(Number(lastPr));
-    if (mapped) return mapped;
-  }
+  const mapped = mappedVisitorTitle(trimmed);
+  if (mapped) return mapped;
 
   const subject = stripChangelogChrome(trimmed);
-  const bySubject = BY_SUBJECT.get(subject.toLowerCase());
-  if (bySubject) return bySubject;
-
   if (subject === trimmed) return trimmed;
   if (!subject) return titleCaseFirst(trimmed.replace(SHA_PREFIX, '').trim());
   return titleCaseFirst(subject);
@@ -376,7 +449,11 @@ export function toVisitorReleaseBody(body: string): string {
 
     hadBullets = true;
     const message = trimmed.replace(BULLET_PREFIX, '');
-    if (!INTERNAL_CHANGELOG_ITEM.test(message) && !DEV_ONLY_ITEM.test(message)) {
+    if (
+      !INTERNAL_CHANGELOG_ITEM.test(message) &&
+      !DEV_ONLY_ITEM.test(message) &&
+      !isDevShapedUnmappedLine(message)
+    ) {
       const title = toVisitorChangelogTitle(message);
       if (!INLINE_ISSUE_REF.test(title)) result.push(`- ${title}`);
     }

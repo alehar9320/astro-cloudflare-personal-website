@@ -39,7 +39,7 @@ try {
       '',
       '==================================================================',
       `WARN releases snapshot SKIPPED: ${reason} — /whats-new/ will rely on live fetch + isolate memory`,
-      "WARN The cold-start What's New fallback (BUILD_SNAPSHOT) will be empty for this deploy.",
+      "WARN The cold-start What's New fallback (BUILD_SNAPSHOT) will be empty or stale for this deploy.",
       '==================================================================',
       '',
     ].join('\n')

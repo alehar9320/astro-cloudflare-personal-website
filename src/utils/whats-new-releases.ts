@@ -38,6 +38,9 @@ export interface LoadWhatsNewReleasesOptions {
 }
 
 /** Eden PASS, word for word. Shown above the existing "Full history on GitHub" link. */
+/** Releases loaded but every line was hidden as dev-shaped (Matt's call (b), #1163). Eden FINAL copy. */
+export const NO_VISITOR_UPDATES_COPY = 'No new updates lately. The full history is on GitHub.';
+
 export const UPDATES_UNAVAILABLE_COPY =
   "Recent updates can't load right now. The full history is on GitHub.";
 
@@ -109,4 +112,16 @@ export function shouldShowUpdatesUnavailable(
 ): boolean {
   if (loaded.state === 'fresh' || loaded.state === 'cached') return false;
   return glance.thisWeek.length === 0 && glance.groups.length === 0;
+}
+
+/**
+ * Releases loaded fine, but Matt's call (b) (#1163) hid every line as dev-shaped. Show the
+ * NO_VISITOR_UPDATES_COPY line, never the can't-load line and never a blank page.
+ */
+export function shouldShowNoVisitorUpdates(
+  loaded: WhatsNewReleases,
+  glance: WhatsNewGlance
+): boolean {
+  if (loaded.state !== 'fresh' && loaded.state !== 'cached') return false;
+  return loaded.releases.length > 0 && glance.thisWeek.length === 0 && glance.groups.length === 0;
 }

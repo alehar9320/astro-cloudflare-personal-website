@@ -11,6 +11,8 @@ import { toVisitorRelease } from '../utils/visitor-changelog';
 import { buildWhatsNewGlance } from '../utils/whats-new-glance';
 import {
   loadWhatsNewReleases,
+  NO_VISITOR_UPDATES_COPY,
+  shouldShowNoVisitorUpdates,
   shouldShowUpdatesUnavailable,
   UPDATES_UNAVAILABLE_COPY,
 } from '../utils/whats-new-releases';
@@ -43,6 +45,8 @@ const baseReleases =
 const visitorReleases = baseReleases.map(toVisitorRelease);
 const glance = buildWhatsNewGlance(visitorReleases);
 const releasesUnavailable = shouldShowUpdatesUnavailable(loaded, glance);
+// Releases loaded but Matt's call (b) hid every line: say so honestly, not "can't load".
+const noVisitorUpdates = shouldShowNoVisitorUpdates(loaded, glance);
 
 const dek = 'What you can see on this site lately.';
 const pageTitle = "What's New | Product Manager, Developer Experience at IFS";
@@ -124,6 +128,14 @@ const schema = {
               ))}
             </div>
           </section>
+        )
+      }
+
+      {
+        noVisitorUpdates && (
+          <p class="updates-unavailable" role="status">
+            {NO_VISITOR_UPDATES_COPY}
+          </p>
         )
       }
 

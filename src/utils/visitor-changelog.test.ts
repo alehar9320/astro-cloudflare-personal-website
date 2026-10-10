@@ -128,7 +128,7 @@ describe('visitor-changelog utilities', () => {
 
     it('filters out internal agent or tool items from bullet lists', () => {
       const input =
-        '- feat: add public feature\n- chore(jules): internal sync\n- refactor(engine): internal logic';
+        '- Add public feature\n- chore(jules): internal sync\n- refactor(engine): internal logic';
       const output = toVisitorReleaseBody(input);
       expect(output).toBe('- Add public feature');
     });
@@ -137,7 +137,7 @@ describe('visitor-changelog utilities', () => {
       const paletteStr =
         '🎨 Palette: Standardize Chat Overlay Control Touch Targets and Focus States';
       const testCoverageStr = 'Expand unit test coverage for visitor-changelog utilities';
-      const input = `- ${paletteStr}\n- ${testCoverageStr}\n- feat: add public feature`;
+      const input = `- ${paletteStr}\n- ${testCoverageStr}\n- Add public feature`;
       const output = toVisitorReleaseBody(input);
       expect(output).toBe('- Add public feature');
       expect(output).not.toContain('Palette');
@@ -287,6 +287,27 @@ describe('visitor titles for Last 30 days release lines (#1163 extension)', () =
       toVisitorChangelogTitle('40e4a52 fix(copy): align leftover hire hint to LinkedIn (#1635)')
     ).toBe('The 404 page hint now just says LinkedIn');
   });
+  // Real squash subjects from main, and the release each one shipped in (Vera 6098150386).
+  it.each([
+    [
+      '2026.10.10.1238',
+      'c851e1a fix(chat): name the message field for screen readers (#891) (#943)',
+      'Screen readers now announce the chat message field',
+    ],
+    [
+      '2026.10.10.1132',
+      'e43630f fix(theme): remove theme-toggle tactile press scale (#1029) (#1033)',
+      'The theme toggle no longer shrinks when pressed',
+    ],
+    [
+      '2026.10.06.1635',
+      '846719d fix(a11y): 44px Menu button hit target (#1219) (#1223)',
+      'The Menu button is easier to tap on phones',
+    ],
+  ])('release %s: maps %s to a visitor title', (_tag, raw, title) => {
+    expect(toVisitorChangelogTitle(raw)).toBe(title);
+    expect(toVisitorReleaseBody(`- ${raw}`)).toBe(`- ${title}`);
+  });
   it('maps #1634 to a visitor title', () => {
     expect(
       toVisitorChangelogTitle(
@@ -366,6 +387,17 @@ describe('visitor titles for Last 30 days release lines (#1163 extension)', () =
         expect(INTERNAL_CHANGELOG_ITEM.test(title), title).toBe(false);
       }
     });
+  });
+  it('maps #1167 to a visitor title via the last (#N)', () => {
+    expect(
+      toVisitorChangelogTitle(
+        '80c22f7 What’s New: hiring visitors read outcome lines, not eng shorthand (#1167)'
+      )
+    ).toBe('What’s New now describes each update in plain language');
+    // Resolves by PR number, not subject: an issue ref before it must not win.
+    expect(toVisitorChangelogTitle('Some other squash subject (#1163) (#1167)')).toBe(
+      'What’s New now describes each update in plain language'
+    );
   });
   it('maps #945 to a visitor title', () => {
     expect(
