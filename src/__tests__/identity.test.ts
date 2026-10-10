@@ -3002,4 +3002,15 @@ describe('page and feed descriptions describe the page, not the hire CTA', () =>
     expect(flags).not.toContain('enable_theme_toggle_tactile_v1');
     expect(config).not.toContain('enable_theme_toggle_tactile_v1');
   });
+
+  it('biography M.Sc. continues to master-thesis case', () => {
+    const page = readFileSync('src/pages/biography.astro', 'utf8');
+    expect(page).toMatch(
+      /<h3>\s*<a href=["']\/work\/master-thesis\/["']>\s*M\.Sc\. Management and Economics of Innovation\s*<\/a>\s*<\/h3>/
+    );
+    expect(page).toContain('href="/work/ifs-design-system/"');
+    expect(page).toContain('linkedin.com/in/alehar');
+    expect(page).not.toContain('mailto:');
+    expect(page).toMatch(/\.timeline h3 a\s*\{[^}]*color:\s*inherit;/);
+  });
 });
