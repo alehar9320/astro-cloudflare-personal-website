@@ -5,6 +5,8 @@ img: /assets/stock-2.jpg
 img_alt: Design components
 description: |
   From the first version to IFS Cloud.
+metaDescription: >-
+  The IFS Design System, from the first version to IFS Cloud. Up to 2x faster feature delivery, up to 30x ROI, Zeroheight Design System Awards runner-up.
 tags:
   - Design System
   - Product Experience
@@ -34,5 +36,3 @@ As Product Manager, Developer Experience at IFS, I took the design system from t
 ## Outcome
 
 The system now runs at IFS Cloud scale. Developers and designers use it to ship a consistent experience across Cloud, with up to 2x faster feature delivery and up to 30x ROI on the initial investment. It was a Zeroheight Design System Awards runner-up.
-
-<a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer">Get in touch on LinkedIn</a>
