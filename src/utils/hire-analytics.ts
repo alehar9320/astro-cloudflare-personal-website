@@ -8,7 +8,18 @@ export type HireEventName =
   | 'chat_opened'
   | 'chat_message_sent';
 
-export type HireSurface = 'nav' | 'hero' | 'contact_cta' | 'contact_page' | 'fab';
+export type HireSurface =
+  | 'nav'
+  | 'hero'
+  | 'contact_cta'
+  | 'contact_page'
+  // Legacy: no longer emitted in src (case pages are chrome-only hire). Kept for older PostHog data.
+  | 'case_study'
+  | '404'
+  | 'now'
+  | 'reading-list'
+  | 'fab'
+  | 'footer';
 
 declare global {
   interface Window {
