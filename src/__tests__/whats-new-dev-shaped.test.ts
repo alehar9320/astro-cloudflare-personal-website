@@ -134,6 +134,27 @@ describe("unmapped dev-shaped squash lines are hidden (Matt's call (b))", () => 
     );
   });
 
+  it.each(['Home', 'Biography', 'Work', 'Contact', 'This site'])(
+    'lets the page-name prefix "%s:" through the Area: rule',
+    (page) => {
+      const raw = `abc1234 ${page}: the chat intro reads shorter (#99960)`;
+      expect(isDevShapedUnmappedLine(raw)).toBe(false);
+      expect(painted([rel(`- ${raw}`)]).lines).toEqual([`${page}: the chat intro reads shorter`]);
+    }
+  );
+
+  it('page-name prefix only bypasses the Area: rule, not the visitor-surface allowlist', () => {
+    // "This site" is not itself a VISIBLE_SURFACE word, so the line still needs one.
+    expect(painted([rel('- abc1234 This site: the intro reads shorter (#99956)')]).lines).toEqual(
+      []
+    );
+  });
+
+  it('never lets "What’s New:" through as a page-name prefix', () => {
+    expect(isDevShapedUnmappedLine('abc1234 What’s New: tidier lines (#99959)')).toBe(true);
+    expect(isDevShapedUnmappedLine("abc1234 What's New: tidier lines (#99958)")).toBe(true);
+  });
+
   it('matches CI only as an uppercase word and no longer treats env/api/eng as dev words', () => {
     expect(isDevShapedLine('Home chat checks CI before replies (#99962)')).toBe(true);
     expect(isDevShapedLine('Visitors can read the decision case in English (#99963)')).toBe(false);

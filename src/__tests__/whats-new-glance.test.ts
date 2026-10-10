@@ -279,8 +279,10 @@ describe('whats-new glance This week order on live releases (Vera, #1579)', () =
 
   it('keeps case, thesis and theme-toggle lines as visitor lines', () => {
     expect(kept('fix(biography): link M.Sc. row to master-thesis case (#1030) (#1035)')).toBe(true);
-    // Unmapped and conventional-prefixed, so hidden under Matt's call (b), #1163.
-    expect(kept('fix(theme): remove theme-toggle tactile press scale (#1029) (#1033)')).toBe(false);
+    // Conventional-prefixed, but mapped since Vera 6098150386, so it renders.
+    expect(kept('fix(theme): remove theme-toggle tactile press scale (#1029) (#1033)')).toBe(true);
+    // An unmapped conventional-prefixed line is still hidden under Matt's call (b), #1163.
+    expect(kept('fix(theme): remove the theme-toggle hover tint (#99957)')).toBe(false);
     expect(kept('Remove the theme-toggle tactile press scale (#1033)')).toBe(true);
     expect(kept('fix(biography): link copilots mention to the case (#1028) (#1034)')).toBe(true);
   });

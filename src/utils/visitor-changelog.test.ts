@@ -287,6 +287,27 @@ describe('visitor titles for Last 30 days release lines (#1163 extension)', () =
       toVisitorChangelogTitle('40e4a52 fix(copy): align leftover hire hint to LinkedIn (#1635)')
     ).toBe('The 404 page hint now just says LinkedIn');
   });
+  // Real squash subjects from main, and the release each one shipped in (Vera 6098150386).
+  it.each([
+    [
+      '2026.10.10.1238',
+      'c851e1a fix(chat): name the message field for screen readers (#891) (#943)',
+      'Screen readers now announce the chat message field',
+    ],
+    [
+      '2026.10.10.1132',
+      'e43630f fix(theme): remove theme-toggle tactile press scale (#1029) (#1033)',
+      'The theme toggle no longer shrinks when pressed',
+    ],
+    [
+      '2026.10.06.1635',
+      '846719d fix(a11y): 44px Menu button hit target (#1219) (#1223)',
+      'The Menu button is easier to tap on phones',
+    ],
+  ])('release %s: maps %s to a visitor title', (_tag, raw, title) => {
+    expect(toVisitorChangelogTitle(raw)).toBe(title);
+    expect(toVisitorReleaseBody(`- ${raw}`)).toBe(`- ${title}`);
+  });
   it('maps #1634 to a visitor title', () => {
     expect(
       toVisitorChangelogTitle(

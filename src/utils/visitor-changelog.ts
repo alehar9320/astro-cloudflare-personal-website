@@ -109,6 +109,22 @@ export const VISITOR_CHANGELOG: readonly VisitorChangelogEntry[] = [
     subject: 'align leftover hire hint to LinkedIn',
     title: 'The 404 page hint now just says LinkedIn',
   },
+  // Vera 6098150386: real visitor changes that Matt's call (b) would otherwise hide. Eden FINAL.
+  {
+    pr: 943,
+    subject: 'name the message field for screen readers',
+    title: 'Screen readers now announce the chat message field',
+  },
+  {
+    pr: 1033,
+    subject: 'remove theme-toggle tactile press scale',
+    title: 'The theme toggle no longer shrinks when pressed',
+  },
+  {
+    pr: 1223,
+    subject: '44px Menu button hit target',
+    title: 'The Menu button is easier to tap on phones',
+  },
   {
     pr: 1634,
     subject: 'start desktop open stage below the header nav',
@@ -310,8 +326,10 @@ const INLINE_ISSUE_REF = /#\d+/;
  */
 const AREA_PREFIX = /^(?:[\p{L}\d’'&/-]+\s){0,2}[\p{L}\d’'&/-]+:\s/u;
 /** Visitor-surface prefixes that may look like "Area:" but name a visitor thing (Johan 6098040346). */
+// Page names count too (Vera 6098150386). What’s New: is deliberately absent, so #1167's raw
+// subject stays hidden.
 const VISITOR_PREFIX =
-  /^(?:new|updated)\s+(?:case|case study|page|post|project|section|talk)s?:\s/i;
+  /^(?:(?:new|updated)\s+(?:case|case study|page|post|project|section|talk)s?|home|biography|work|contact|this site):\s/i;
 const FILE_PATH =
   /`|\b[\w-]+\.(?:ts|tsx|js|mjs|cjs|astro|md|mdx|json|css|ya?ml|toml|html)\b|(?:^|\s)\.?\/?(?:src|public|scripts|context|docs|tests?)\/|(?:^|\s)\/[\w.-]+\//i;
 const DEV_WORD =
