@@ -367,6 +367,17 @@ describe('visitor titles for Last 30 days release lines (#1163 extension)', () =
       }
     });
   });
+  it('maps #1167 to a visitor title via the last (#N)', () => {
+    expect(
+      toVisitorChangelogTitle(
+        '80c22f7 What’s New: hiring visitors read outcome lines, not eng shorthand (#1167)'
+      )
+    ).toBe('What’s New now describes each update in plain language');
+    // Resolves by PR number, not subject: an issue ref before it must not win.
+    expect(toVisitorChangelogTitle('Some other squash subject (#1163) (#1167)')).toBe(
+      'What’s New now describes each update in plain language'
+    );
+  });
   it('maps #945 to a visitor title', () => {
     expect(
       toVisitorChangelogTitle(
