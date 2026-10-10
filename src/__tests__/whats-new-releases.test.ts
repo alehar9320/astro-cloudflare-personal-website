@@ -98,7 +98,7 @@ describe('What’s New releases: a failed GitHub fetch is not an empty list (#15
     expect(loaded.state).toBe('snapshot');
     const { glance, unavailable } = render(loaded);
     expect(glance.thisWeek).toEqual([
-      'Give laptop open chat a conversation stage under the header',
+      'On a laptop, open chat sits under the header instead of covering the whole page',
     ]);
     expect(unavailable).toBe(false);
   });
@@ -139,7 +139,7 @@ describe('What’s New releases: a failed GitHub fetch is not an empty list (#15
     expect(later.state).toBe('stale');
     expect(later.releases).toEqual(first.releases);
     expect(render(later).glance.thisWeek).toEqual([
-      'Give laptop open chat a conversation stage under the header',
+      'On a laptop, open chat sits under the header instead of covering the whole page',
     ]);
     expect(noOpCache.match).not.toHaveBeenCalled();
     expect(noOpCache.put).not.toHaveBeenCalled();

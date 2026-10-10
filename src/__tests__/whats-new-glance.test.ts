@@ -262,12 +262,12 @@ describe('whats-new glance This week order on live releases (Vera, #1579)', () =
   it('shows the 3 newest visitor lines, not older ones past dropped case/thesis/theme-toggle ships', () => {
     const glance = buildWhatsNewGlance(releases, new Date('2026-10-10T12:20:00Z'));
     expect(glance.thisWeek).toEqual([
-      'Quiet open welcome h2 to AI twin',
-      'Hiring managers on the copilots case get a continue to IFS Design System proof, not a circular stub',
-      'Drop in-body LinkedIn; keep chrome ContactCTA',
+      'Open chat shows a quieter “AI twin” heading',
+      'The AI coding copilots case now ends with a link to the IFS Design System case',
+      'Biography ends with a single LinkedIn link',
     ]);
     const all = [...glance.thisWeek, ...glance.groups.flatMap((group) => group.lines)];
-    expect(all).toContain('Link M.Sc. row to master-thesis case');
+    expect(all).toContain('Biography links the M.Sc. entry to the master thesis case');
     expect(glance.thisWeek).not.toContain('Screen-reader visitors know which panel Menu opens');
   });
 

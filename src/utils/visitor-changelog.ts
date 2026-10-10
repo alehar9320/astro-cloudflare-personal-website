@@ -13,6 +13,119 @@ export type VisitorChangelogEntry = {
 /** Known shipped PRs on this site. Do not invent work that is not in the feed. */
 export const VISITOR_CHANGELOG: readonly VisitorChangelogEntry[] = [
   {
+    pr: 864,
+    subject: 'Fix biography IFS Design System proof link hit target and mobile dock clearance',
+    title: 'The IFS Design System link on Biography is easier to tap, including on phones',
+  },
+  {
+    pr: 825,
+    subject: 'Quiet Contact hire line to LinkedIn; no twin-mouth',
+    title: 'Contact names one hire path: LinkedIn',
+  },
+  {
+    pr: 823,
+    subject: 'Cold-land Work/case so shared proof is a real site entry',
+    title: 'Case pages opened from a shared link now show a way back to Work on phones',
+  },
+  {
+    pr: 819,
+    subject: 'What’s New: denser desktop Last-30 so lines clear composer',
+    title: 'What’s New fits more updates above the chat dock on desktop',
+  },
+  {
+    pr: 817,
+    subject: 'Raise home Read the case 44x44 hit-box clear of dock',
+    title: 'Home “Read the case” stays clear of the chat dock',
+  },
+  {
+    pr: 815,
+    subject: 'Keep home Read the case clear of the docked composer',
+    title: 'Home “Read the case” stays clear of the chat dock',
+  },
+  {
+    pr: 945,
+    subject: "in-sentence What's New link to /whats-new/",
+    title: 'The “This site” page now links to What’s New',
+  },
+  {
+    pr: 1020,
+    subject:
+      'Hiring managers on the copilots case get a continue to IFS Design System proof, not a circular stub',
+    title: 'The AI coding copilots case now ends with a link to the IFS Design System case',
+  },
+  {
+    pr: 1019,
+    subject: 'quiet open welcome h2 to AI twin',
+    title: 'Open chat shows a quieter “AI twin” heading',
+  },
+  {
+    pr: 1107,
+    subject: 'drop in-body LinkedIn; keep chrome ContactCTA',
+    title: 'Biography ends with a single LinkedIn link',
+  },
+  {
+    pr: 1116,
+    subject: 'Analytics: Get in touch from chrome only',
+    title: 'The user behavior analytics case ends with a single LinkedIn link',
+  },
+  {
+    pr: 1110,
+    subject: 'Copilots: Get in touch from chrome only',
+    title: 'The AI coding copilots case ends with a single LinkedIn link',
+  },
+  {
+    pr: 1109,
+    subject: 'drop in-body hire-cta; keep chrome ContactCTA',
+    title: 'Work ends with a single LinkedIn link',
+  },
+  {
+    pr: 1642,
+    subject: 'drop thesis in-body Get in touch; add 404 to HireSurface',
+    title: 'The master thesis case ends with a single LinkedIn link',
+  },
+  {
+    pr: 983,
+    subject:
+      'Visitors on the IFS Design System case take Get in touch from chrome, not a second primary under the H1',
+    title: 'The IFS Design System case ends with a single LinkedIn link',
+  },
+  {
+    pr: 1034,
+    subject: 'link copilots mention to the case',
+    title: 'Biography links the AI coding copilots mention to its case',
+  },
+  {
+    pr: 1035,
+    subject: 'link M.Sc. row to master-thesis case',
+    title: 'Biography links the M.Sc. entry to the master thesis case',
+  },
+  {
+    pr: 1635,
+    subject: 'align leftover hire hint to LinkedIn',
+    title: 'The 404 page hint now just says LinkedIn',
+  },
+  {
+    pr: 1634,
+    subject: 'start desktop open stage below the header nav',
+    title: 'With chat open on a laptop, the header nav links stay clickable',
+  },
+  {
+    pr: 939,
+    subject: 'Give laptop open chat a conversation stage under the header',
+    title: 'On a laptop, open chat sits under the header instead of covering the whole page',
+  },
+  {
+    pr: 1643,
+    subject: 'case meta descriptions describe the case, not the hire CTA',
+    title: 'Shared Work case links now preview what each case is about',
+  },
+  {
+    pr: 1644,
+    subject: 'page and feed descriptions describe the page, not the hire CTA',
+    title:
+      'Shared links to Home, Biography, Work and Contact, and the RSS feed, now describe the page itself',
+  },
+  {
     pr: 524,
     subject: 'rewrite What’s New for visitors',
     title: 'What’s New rewritten for visitors',
@@ -185,11 +298,12 @@ const DEV_ONLY_ITEM =
 const INLINE_ISSUE_REF = /#\d+/;
 /* Optimization (⚡ Bolt): Hoist PR_MATCH_REGEX and SPACES_REGEX to avoid dynamic RegExp instantiations on edge changelog title processing.
    Benchmark: Eliminates redundant regex creation during visitor title mapping. */
-const PR_MATCH_REGEX = /\(#(\d+)\)/;
+/** Every `(#N)` group; the lookup uses the LAST one, which is the squash PR (earlier ones are issue refs). */
+const PR_MATCH_REGEX = /\(#(\d+)\)/g;
 const MULTI_SPACES_REGEX = /\s{2,}/g;
 
 /**
- * Strip SHA, conventional-commit type, and trailing (#123) from a changelog line.
+ * Strip SHA, conventional-commit type, and all trailing (#123) suffixes from a changelog line.
  */
 export function stripChangelogChrome(raw: string): string {
   return raw
@@ -207,7 +321,7 @@ function titleCaseFirst(text: string): string {
 }
 
 export const INTERNAL_CHANGELOG_ITEM =
-  /\b(palette|oracle|scribe|sentinel|vantage|bolt|jules|kinetic|engine|prism|apex|aurora|janitor|observabilityclerk|stuntdouble|stunt[- ]double|archie)\b|\bcontent:\s*|[🎨🔮✍️🛡️🔍⚡🐱⚙️👩‍🚀👨‍💼❤️🧹📋🎭🏛️🧑‍🎓]|\bagent[- ]farm\b|\bgoogle-labs-jules\b|\bjohan nits\b|\bprune\b|\bparser\b|\bunit[- ]test\b|\bcoverage\b|\bvisitor[- ]changelog\b|\btest[- ]only\b|\bvitest\b|\bplaywright\b/i;
+  /\b(palette|oracle|scribe|sentinel|vantage|bolt|jules|kinetic|engine|prism|apex|aurora|janitor|observabilityclerk|stuntdouble|stunt[- ]double|archie)\b|\bcontent:\s*|[🎨🔮✍️🛡️🔍⚡🐱⚙️👩‍🚀👨‍💼❤️🧹📋🎭🏛️🧑‍🎓]|\bagent[- ]farm\b|\bgoogle-labs-jules\b|\bjohan nits\b|\bprune\b|\bparser\b|\bunit[- ]test\b|\bcoverage\b|\bvisitor[- ]changelog\b|\btest[- ]only\b|\bvitest\b|\bplaywright\b|\bposthog\b|\b(?:hire|tap) tracking\b/i;
 const BULLET_PREFIX = /^[-*+]\s+/;
 
 /**
@@ -218,9 +332,10 @@ export function toVisitorChangelogTitle(raw: string): string {
   const trimmed = raw.trim();
   if (!trimmed) return trimmed;
 
-  const prMatch = trimmed.match(PR_MATCH_REGEX);
-  if (prMatch) {
-    const mapped = BY_PR.get(Number(prMatch[1]));
+  let lastPr: string | undefined;
+  for (const match of trimmed.matchAll(PR_MATCH_REGEX)) lastPr = match[1];
+  if (lastPr) {
+    const mapped = BY_PR.get(Number(lastPr));
     if (mapped) return mapped;
   }
 
