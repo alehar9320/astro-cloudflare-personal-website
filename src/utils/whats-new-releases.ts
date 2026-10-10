@@ -1,92 +1,78 @@
 import { z } from 'zod';
-import { fetchGitHubReleasesResult, SiteReleaseSchema, type SiteRelease } from './github-releases';
+import {
+  fetchGitHubReleasesResult,
+  GitHubReleaseApiItemSchema,
+  normalizeRelease,
+  type SiteRelease,
+} from './github-releases';
+import type { WhatsNewGlance } from './whats-new-glance';
 
 /**
  * Releases for /whats-new/ SSR (#1579 follow-up).
  *
  * A failed GitHub fetch (unauthenticated 60/h per egress IP, 403/429, 5xx, network,
- * timeout) used to look like an empty list. The page then fell back to a stale snapshot
- * that is older than 30 days, so This week and Last 30 days disappeared on about half of
- * the requests. Here a failure is never an empty list:
- * - `fresh`: GitHub answered. A non-empty list is stored as the last good result.
- * - `cached`: a last good result younger than FRESH_MS is reused without calling GitHub.
- * - `stale`: GitHub failed; the last good result is served instead.
- * - `error`: GitHub failed and there is no last good result. Never cached.
+ * timeout) used to look like an empty list. The page then fell back to a snapshot older
+ * than 30 days, so This week and Last 30 days vanished on a large share of requests.
+ * Here a failure is never an empty list:
+ * - `fresh`: GitHub answered. A non-empty list becomes this isolate's last good list.
+ * - `cached`: this isolate's last good list is younger than FRESH_MS; GitHub is not called.
+ * - `stale`: GitHub failed; this isolate's last good list is served.
+ * - `snapshot`: GitHub failed and the isolate has none; the build-time snapshot is served.
+ * - `error`: GitHub failed and there is nothing to fall back to.
+ *
+ * The Cloudflare Cache API (`caches.default`) is not used: it has no effect on
+ * *.workers.dev, which is where prod runs. Isolate memory is best-effort; the
+ * build-time snapshot (scripts/snapshot-releases.mjs) is the guaranteed fallback.
+ * Empty and failed results are never stored.
  */
 export type WhatsNewReleases =
-  | { state: 'fresh' | 'cached' | 'stale'; releases: SiteRelease[] }
+  | { state: 'fresh' | 'cached' | 'stale' | 'snapshot'; releases: SiteRelease[] }
   | { state: 'error'; releases: [] };
 
-/** Minimal Cache API surface (Workers `caches.default`). */
-export interface ReleasesCache {
-  match(request: Request): Promise<Response | undefined>;
-  put(request: Request, response: Response): Promise<void>;
-}
-
 export interface LoadWhatsNewReleasesOptions {
-  cache?: ReleasesCache;
   fetchImpl?: typeof fetch;
   now?: number;
+  /** Build-time releases; defaults to the generated snapshot bundled into the Worker. */
+  snapshot?: SiteRelease[];
   token?: string;
 }
 
-/** Synthetic Cache API key; never fetched over the network. */
-export const LAST_GOOD_CACHE_KEY = 'https://me.alehar.workers.dev/__cache/whats-new-releases-v1';
+/** Eden PASS, word for word. Shown above the existing "Full history on GitHub" link. */
+export const UPDATES_UNAVAILABLE_COPY =
+  "Recent updates can't load right now. The full history is on GitHub.";
+
 /** Reuse the last good list without calling GitHub for this long (eases the 60/h limit). */
 export const FRESH_MS = 2 * 60 * 1000;
-/** Keep the last good list as an error fallback for this long. */
-export const LAST_GOOD_TTL_S = 7 * 24 * 60 * 60;
 
-const CachedEntrySchema = z.object({
-  releases: z.array(SiteReleaseSchema).min(1),
-  storedAt: z.number(),
+let lastGood: { releases: SiteRelease[]; storedAt: number } | null = null;
+
+/** Test hook: forget this isolate's last good list. */
+export function resetWhatsNewReleasesMemory(): void {
+  lastGood = null;
+}
+
+/** Normalize a raw GitHub API releases array (the build snapshot) into site releases. */
+export function parseReleasesSnapshot(raw: unknown): SiteRelease[] {
+  const parsed = z.array(GitHubReleaseApiItemSchema).safeParse(raw);
+  if (!parsed.success) return [];
+  return parsed.data
+    .filter((release) => !release.prerelease)
+    .map(normalizeRelease)
+    .filter((release): release is SiteRelease => release !== null);
+}
+
+// Generated at build time and gitignored. The glob is empty when the build fetch failed
+// or no build ran (tests), so a missing file never breaks the bundle.
+const generated = import.meta.glob<unknown>('../data/releases-snapshot.generated.json', {
+  eager: true,
+  import: 'default',
 });
-
-/** Workers `caches.default`, or undefined off-Workers (tests, Node). */
-export function defaultReleasesCache(): ReleasesCache | undefined {
-  return (globalThis as { caches?: { default?: ReleasesCache } }).caches?.default;
-}
-
-async function readLastGood(
-  cache: ReleasesCache | undefined
-): Promise<z.infer<typeof CachedEntrySchema> | null> {
-  if (!cache) return null;
-  try {
-    const hit = await cache.match(new Request(LAST_GOOD_CACHE_KEY));
-    if (!hit) return null;
-    const parsed = CachedEntrySchema.safeParse(await hit.json());
-    return parsed.success ? parsed.data : null;
-  } catch {
-    return null;
-  }
-}
-
-async function writeLastGood(
-  cache: ReleasesCache | undefined,
-  releases: SiteRelease[],
-  now: number
-): Promise<void> {
-  if (!cache || releases.length === 0) return;
-  try {
-    await cache.put(
-      new Request(LAST_GOOD_CACHE_KEY),
-      new Response(JSON.stringify({ releases, storedAt: now }), {
-        headers: {
-          'Cache-Control': `max-age=${LAST_GOOD_TTL_S}`,
-          'content-type': 'application/json',
-        },
-      })
-    );
-  } catch (error: unknown) {
-    console.error({ event: 'whats_new_cache_put_failed', error: String(error) });
-  }
-}
+const BUILD_SNAPSHOT = parseReleasesSnapshot(Object.values(generated)[0] ?? []);
 
 export async function loadWhatsNewReleases(
   options: LoadWhatsNewReleasesOptions = {}
 ): Promise<WhatsNewReleases> {
-  const { cache, fetchImpl = fetch, now = Date.now(), token } = options;
-  const lastGood = await readLastGood(cache);
+  const { fetchImpl = fetch, now = Date.now(), snapshot = BUILD_SNAPSHOT, token } = options;
   if (lastGood && now - lastGood.storedAt < FRESH_MS) {
     return { state: 'cached', releases: lastGood.releases };
   }
@@ -97,16 +83,30 @@ export async function loadWhatsNewReleases(
     token ? { token } : undefined
   );
   if (result.ok) {
-    await writeLastGood(cache, result.releases, now);
+    if (result.releases.length > 0) lastGood = { releases: result.releases, storedAt: now };
     return { state: 'fresh', releases: result.releases };
   }
 
+  const fallback = lastGood ? 'last_good' : snapshot.length > 0 ? 'snapshot' : 'none';
   console.error({
     event: 'whats_new_releases_unavailable',
-    fallback: lastGood ? 'last_good' : 'none',
+    fallback,
     reason: result.reason,
     status: result.status,
   });
   if (lastGood) return { state: 'stale', releases: lastGood.releases };
+  if (snapshot.length > 0) return { state: 'snapshot', releases: snapshot };
   return { state: 'error', releases: [] };
+}
+
+/**
+ * Show the neutral unavailable line only when GitHub failed and the fallback still leaves
+ * both sections empty. A genuine "nothing shipped" result never shows it.
+ */
+export function shouldShowUpdatesUnavailable(
+  loaded: WhatsNewReleases,
+  glance: WhatsNewGlance
+): boolean {
+  if (loaded.state === 'fresh' || loaded.state === 'cached') return false;
+  return glance.thisWeek.length === 0 && glance.groups.length === 0;
 }
