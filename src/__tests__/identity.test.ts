@@ -2986,12 +2986,8 @@ describe('page and feed descriptions describe the page, not the hire CTA', () =>
   it('keeps mobile Menu button aria-controls pointing at menu-content', () => {
     const src = readFileSync('src/components/Nav.astro', 'utf8');
     expect(src).toContain('id="menu-content"');
-    expect(src).toMatch(
-      /<button class="menu-button"[^>]*aria-controls="menu-content"[^>]*>/
-    );
-    expect(src).toMatch(
-      /<button class="menu-button"[^>]*aria-expanded="false"[^>]*>/
-    );
+    expect(src).toMatch(/<button class="menu-button"[^>]*aria-controls="menu-content"[^>]*>/);
+    expect(src).toMatch(/<button class="menu-button"[^>]*aria-expanded="false"[^>]*>/);
     expect(src).toContain('<span class="sr-only">Menu</span>');
   });
 });
