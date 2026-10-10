@@ -5,6 +5,7 @@ import { fetchGitHubReleasesResult } from '../utils/github-releases';
 import { toVisitorRelease } from '../utils/visitor-changelog';
 import { buildWhatsNewGlance } from '../utils/whats-new-glance';
 import {
+  defaultReleasesCache,
   FRESH_MS,
   LAST_GOOD_CACHE_KEY,
   loadWhatsNewReleases,
@@ -151,5 +152,49 @@ describe('What’s New releases: a failed GitHub fetch is not an empty list (#15
     const init = fetchImpl.mock.calls[0][1];
     expect((init?.headers as Record<string, string>).Authorization).toBe('token abc');
     expect(init?.signal).toBeInstanceOf(AbortSignal);
+  });
+
+  it('uses caches.default on Workers and nothing off-Workers', () => {
+    expect(defaultReleasesCache()).toBeUndefined();
+    const { cache } = memoryCache();
+    vi.stubGlobal('caches', { default: cache });
+    try {
+      expect(defaultReleasesCache()).toBe(cache);
+    } finally {
+      vi.unstubAllGlobals();
+    }
+  });
+
+  it('treats a broken cache as no cache and still renders a fresh list', async () => {
+    const errors = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const cache: ReleasesCache = {
+      match: vi.fn(async () => {
+        throw new Error('cache down');
+      }),
+      put: vi.fn(async () => {
+        throw new Error('cache down');
+      }),
+    };
+    const loaded = await loadWhatsNewReleases({
+      cache,
+      fetchImpl: vi.fn(async () => jsonResponse([apiRelease])),
+      now: NOW,
+    });
+    expect(loaded.state).toBe('fresh');
+    expect(errors).toHaveBeenCalledWith(
+      expect.objectContaining({ event: 'whats_new_cache_put_failed' })
+    );
+  });
+
+  it('ignores a malformed cache entry', async () => {
+    vi.spyOn(console, 'error').mockImplementation(() => {});
+    const { cache, store } = memoryCache();
+    store.set(LAST_GOOD_CACHE_KEY, JSON.stringify({ releases: [], storedAt: NOW }));
+    const loaded = await loadWhatsNewReleases({
+      cache,
+      fetchImpl: vi.fn(async () => jsonResponse({ message: 'API rate limit exceeded' }, 403)),
+      now: NOW,
+    });
+    expect(loaded).toEqual({ state: 'error', releases: [] });
   });
 });

@@ -44,11 +44,7 @@ const CachedEntrySchema = z.object({
 
 /** Workers `caches.default`, or undefined off-Workers (tests, Node). */
 export function defaultReleasesCache(): ReleasesCache | undefined {
-  try {
-    return (globalThis as { caches?: { default?: ReleasesCache } }).caches?.default;
-  } catch {
-    return undefined;
-  }
+  return (globalThis as { caches?: { default?: ReleasesCache } }).caches?.default;
 }
 
 async function readLastGood(
