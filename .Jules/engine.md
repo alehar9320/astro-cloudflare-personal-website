@@ -35,3 +35,9 @@
 - **Edge Memory & GC Allocation:** Hoisted static regular expression literal patterns in `src/utils/chat-explore.ts` to module scope constants (`SUPPRESS_PATTERN`, `LINKEDIN_PATTERN`, `DESIGN_SYSTEM_PATTERN`, `COPILOTS_PATTERN`, `ANALYTICS_PATTERN`, `THESIS_PATTERN`, `BIOGRAPHY_PATTERN`, `CASES_PATTERN`, `WORK_PATTERN`).
 - **Performance:** Eliminates dynamic `RegExp` compilation and dynamic string allocations on every avatar chat message question query in Cloudflare Workers edge runtimes.
 - **Verification:** Added unit test coverage in `src/utils/chat-explore.test.ts` for suppression logic, keyword variations, edge cases, and empty strings. All tests pass cleanly.
+
+## 2025-06-25 - O(1) Column Map Indexing for Array-Structured Visit Dataset Parsing
+
+- **Performance & Data Fetching:** Refactored `parseVisitGlance` and `valueFromRow` in `src/utils/visit-stats.ts` to pre-construct an $O(1)$ column Map for array-structured PostHog API responses.
+- **Allocation & Search Reduction:** Replaced linear `columns.indexOf(key)` ($O(N)$) searches executed 12 times per response row with a single-pass `Map<string, number>` index lookup (`columnMap.get(key)`).
+- **Verification:** Added Vitest unit test coverage in `src/utils/visit-stats.test.ts` verifying reordered column array payloads. All 396 tests pass cleanly.

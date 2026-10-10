@@ -102,6 +102,21 @@ describe('parseVisitGlance', () => {
     });
   });
 
+  it('reads a reordered column-mapped array row via O(1) Map lookups', () => {
+    const glance = parseVisitGlance({
+      columns: ['first_seen', 'unique_visitors_7d', 'pageviews', 'unique_visitors', 'pageviews_7d'],
+      results: [['2026-08-14T07:03:00.000Z', 8, 94, 12, 20]],
+    });
+    expect(glance).toEqual({
+      pageviews: 94,
+      uniqueVisitors: 12,
+      firstSeen: '2026-08-14T07:03:00.000Z',
+      pageviews7d: 20,
+      uniqueVisitors7d: 8,
+      ...emptyPeriods,
+    });
+  });
+
   it('parses a zero row so the API can fail-open', () => {
     expect(
       parseVisitGlance({
