@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-28 - Footer Link Touch Target Ergonomics & Focus Containment
+
+**Learning:** Standalone colophon navigation links (`.colophon a`) and footer social links (`.socials a`) in `Footer.astro` can fail WCAG 2.1 AA 44x44px minimum touch target requirements when accessed on touch viewports. Setting `display: inline-flex; align-items: center; min-height: 44px;` expands the interactive hit target without altering paragraph flow. Additionally, reducing `outline-offset` from `4px` to `2px` on `footer a:focus-visible` prevents focus rings from colliding with adjacent inline separator characters (`·`) in dense footer layouts.
+
+**Action:** Added `display: inline-flex; align-items: center; min-height: 44px;` to `.colophon a` and `.socials a`, and updated `footer a:focus-visible` to use `outline-offset: 2px` in `src/components/Footer.astro`.
+
 ## 2026-05-27 - Navigation Link Touch Target Ergonomics
 
 **Learning:** Main menu text links (`.link`) and header social icons (`.social`) in `Nav.astro` can fail WCAG 2.1 AA 44x44px minimum touch target requirements when rendered on mobile devices. Standardizing `.link` with `display: inline-flex; align-items: center; min-height: 44px;` and `.social` with `min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;` prevents mis-taps on touch devices while preserving desktop layout alignment.

@@ -69,7 +69,7 @@ const currentYear = new Date().getFullYear();
 
   footer a:focus-visible {
     outline: 2px solid var(--accent-regular);
-    outline-offset: 4px;
+    outline-offset: 2px;
     border-radius: 0.25rem;
   }
 
@@ -85,6 +85,13 @@ const currentYear = new Date().getFullYear();
     align-items: center;
     gap: 1rem;
     flex-wrap: wrap;
+  }
+
+  .colophon a,
+  .socials a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
   }
 
   .version-link {
