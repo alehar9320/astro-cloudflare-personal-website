@@ -19,8 +19,10 @@ const DROP_PATTERN =
 
 const SHA_OR_VERSION_ONLY = /^(?:[a-f0-9]{7,40}|\d{4}\.\d{2}\.\d{2}\.\d{4})$/i;
 
+/* Case, copilots, thesis, design-system and theme-toggle lines are visible on the site too.
+   Without them, newer case/biography ships lost This week to older chat lines (Vera, #1579). */
 const VISIBLE_SURFACE =
-  /what[’']s new|\bchat\b|\bcomposer\b|\btwin\b|\boverlay\b|\bmenu\b|\blayout\b|\bdock\b|\bbottom sheet\b|\bbubble|\bwork\b|\bbiograph|\banalytics\b|\boutcome\b|\blinkedin\b|\bhire\b|\bget in touch\b|\bglance\b|\bvisitor|\bhome\b|\bcontact\b|\bportrait\b|\bheadshot\b|\brss\b/i;
+  /\bcase\b|\bcopilot|\bthesis\b|\bdesign system\b|\btheme[- ]toggle\b|what[’']s new|\bchat\b|\bcomposer\b|\btwin\b|\boverlay\b|\bmenu\b|\blayout\b|\bdock\b|\bbottom sheet\b|\bbubble|\bwork\b|\bbiograph|\banalytics\b|\boutcome\b|\blinkedin\b|\bhire\b|\bget in touch\b|\bglance\b|\bvisitor|\bhome\b|\bcontact\b|\bportrait\b|\bheadshot\b|\brss\b/i;
 
 export type GlanceItem = {
   publishedMs: number;

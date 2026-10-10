@@ -2230,8 +2230,8 @@ describe('identity copy', () => {
     expect(page).toContain('Product Manager, Developer Experience');
     expect(page).toContain('toVisitorRelease');
     expect(page).toContain('ContactCTA');
-    expect(page).toContain('fetchGitHubReleases');
-    expect(page).toContain('fetchGitHubReleases(fetch, undefined, token ? { token } : undefined)');
+    expect(page).toContain('loadWhatsNewReleases({ cache: defaultReleasesCache(), token })');
+    expect(page).toContain("loaded.state === 'error'");
     expect(page).toContain('LATEST_RELEASE_SNAPSHOT');
     expect(page).toContain('This week');
     expect(page).toContain('Full history on GitHub');

@@ -110,12 +110,33 @@ export async function fetchGitHubReleases(
     return [];
   }
 
+  const result = await fetchGitHubReleasesResult(fetchImpl, url, options);
+  return result.ok ? result.releases : [];
+}
+
+/** Outcome of a server-side GitHub Releases fetch. `ok: false` is a failure, never an empty list. */
+export type ReleasesFetchResult =
+  | { ok: true; releases: SiteRelease[] }
+  | { ok: false; reason: 'invalid_url' | 'http' | 'invalid_body' | 'network'; status?: number };
+
+/** Abort a hung GitHub request so SSR still renders (Workers have no default fetch timeout). */
+const RELEASES_FETCH_TIMEOUT_MS = 5000;
+
+/**
+ * Server-side GitHub Releases fetch that tells a failed fetch (403/429 rate limit, 5xx,
+ * network error, timeout, bad body) apart from a genuinely empty list (#1579).
+ */
+export async function fetchGitHubReleasesResult(
+  fetchImpl: typeof fetch = fetch,
+  url: string = RELEASES_API_URL,
+  options?: FetchReleasesOptions
+): Promise<ReleasesFetchResult> {
   const githubToken = options?.token?.trim() || undefined;
 
   // Defensive check to ensure we only fetch from the trusted GitHub API domain
   if (!url.startsWith('https://api.github.com/')) {
     console.error({ event: 'github_releases_invalid_url', url });
-    return [];
+    return { ok: false, reason: 'invalid_url' };
   }
 
   try {
@@ -128,7 +149,10 @@ export async function fetchGitHubReleases(
       headers['X-GitHub-Api-Version'] = '2022-11-28';
     }
 
-    const response = await fetchImpl(url, { headers });
+    const response = await fetchImpl(url, {
+      headers,
+      signal: AbortSignal.timeout(RELEASES_FETCH_TIMEOUT_MS),
+    });
 
     if (!response.ok) {
       // Intentionally avoiding logging headers that might contain sensitive information
@@ -137,7 +161,7 @@ export async function fetchGitHubReleases(
         status: response.status,
         statusText: response.statusText,
       });
-      return [];
+      return { ok: false, reason: 'http', status: response.status };
     }
 
     const json = await response.json();
@@ -145,7 +169,7 @@ export async function fetchGitHubReleases(
 
     if (!result.success) {
       logReleaseValidationFailed(result.error.issues);
-      return [];
+      return { ok: false, reason: 'invalid_body' };
     }
 
     const releases = result.data
@@ -153,12 +177,12 @@ export async function fetchGitHubReleases(
       .map(normalizeRelease)
       .filter((release): release is SiteRelease => release !== null);
 
-    return releases;
+    return { ok: true, releases };
   } catch (error) {
     // Redact potential token if error message contains it (defense in depth)
     const safeErrorMessage = String(error).replace(TOKEN_REDACT_REGEX, 'token [REDACTED]');
     console.error({ event: 'github_releases_request_error', error: safeErrorMessage });
-    return [];
+    return { ok: false, reason: 'network' };
   }
 }
 

@@ -218,3 +218,62 @@ describe('whats-new glance', () => {
     expect(glance.groups).toEqual([]);
   });
 });
+
+describe('whats-new glance This week order on live releases (Vera, #1579)', () => {
+  const rel = (version: string, publishedAt: string, body: string): SiteRelease => ({
+    body,
+    publishedAt,
+    title: version,
+    url: `https://github.com/alehar9320/astro-cloudflare-personal-website/releases/tag/${version}`,
+    version,
+  });
+  // Real release bodies, 2026-10-10, newest first as the GitHub API returns them.
+  const releases = [
+    rel(
+      '2026.10.10.1210',
+      '2026-10-10T12:10:09Z',
+      '- ed3b478 fix(chat): quiet open welcome h2 to AI twin (#1016) (#1019)'
+    ),
+    rel(
+      '2026.10.10.1200',
+      '2026-10-10T12:00:37Z',
+      '- 8b68dea Hiring managers on the copilots case get a continue to IFS Design System proof, not a circular stub (#1020)'
+    ),
+    rel(
+      '2026.10.10.1146',
+      '2026-10-10T11:47:04Z',
+      [
+        '- b38f2fb fix(biography): drop in-body LinkedIn; keep chrome ContactCTA (#1103) (#1107)',
+        '- 9818672 fix(biography): link M.Sc. row to master-thesis case (#1030) (#1035)',
+      ].join('\n')
+    ),
+    rel(
+      '2026.10.10.1132',
+      '2026-10-10T11:32:13Z',
+      '- e43630f fix(theme): remove theme-toggle tactile press scale (#1029) (#1033)'
+    ),
+    rel(
+      '2026.10.10.1107',
+      '2026-10-10T11:07:46Z',
+      '- 32e1809 Screen-reader visitors know which panel Menu opens (#978)'
+    ),
+  ];
+
+  it('shows the 3 newest visitor lines, not older ones past dropped case/thesis/theme-toggle ships', () => {
+    const glance = buildWhatsNewGlance(releases, new Date('2026-10-10T12:20:00Z'));
+    expect(glance.thisWeek).toEqual([
+      'Quiet open welcome h2 to AI twin',
+      'Hiring managers on the copilots case get a continue to IFS Design System proof, not a circular stub',
+      'Drop in-body LinkedIn; keep chrome ContactCTA',
+    ]);
+    const all = [...glance.thisWeek, ...glance.groups.flatMap((group) => group.lines)];
+    expect(all).toContain('Link M.Sc. row to master-thesis case');
+    expect(glance.thisWeek).not.toContain('Screen-reader visitors know which panel Menu opens');
+  });
+
+  it('keeps case, thesis and theme-toggle lines as visitor lines', () => {
+    expect(kept('fix(biography): link M.Sc. row to master-thesis case (#1030) (#1035)')).toBe(true);
+    expect(kept('fix(theme): remove theme-toggle tactile press scale (#1029) (#1033)')).toBe(true);
+    expect(kept('fix(biography): link copilots mention to the case (#1028) (#1034)')).toBe(true);
+  });
+});

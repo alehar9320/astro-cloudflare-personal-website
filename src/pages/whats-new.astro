@@ -6,10 +6,10 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
 import { LATEST_RELEASE_SNAPSHOT } from '../data/latest-release';
-import { fetchGitHubReleases } from '../utils/github-releases';
 import { safeJsonLd } from '../utils/safe-json-ld';
 import { toVisitorRelease } from '../utils/visitor-changelog';
 import { buildWhatsNewGlance } from '../utils/whats-new-glance';
+import { defaultReleasesCache, loadWhatsNewReleases } from '../utils/whats-new-releases';
 
 interface Bindings {
   GITHUB_TOKEN?: string;
@@ -25,8 +25,16 @@ function readEnv(): Bindings {
 }
 
 const token = readEnv().GITHUB_TOKEN?.trim();
-const fetched = await fetchGitHubReleases(fetch, undefined, token ? { token } : undefined);
-const baseReleases = fetched.length > 0 ? fetched : [LATEST_RELEASE_SNAPSHOT];
+// A failed GitHub fetch is not "nothing shipped": serve the last good list, else a neutral line.
+const loaded = await loadWhatsNewReleases({ cache: defaultReleasesCache(), token });
+const releasesUnavailable = loaded.state === 'error';
+if (releasesUnavailable) Astro.response.headers.set('Cache-Control', 'no-store');
+const baseReleases =
+  loaded.releases.length > 0
+    ? loaded.releases
+    : releasesUnavailable
+      ? []
+      : [LATEST_RELEASE_SNAPSHOT];
 /* Optimization (⚡ Bolt): toVisitorRelease already returns fully-formatted visitor bullet points.
    Eliminating the redundant second-pass split/map/regex transform saves main-thread edge CPU cycles and memory allocations per request.
    Benchmark: Eliminates redundant multi-pass string parsing and re-parsing on edge SSR renders of /whats-new/. */
@@ -113,6 +121,14 @@ const schema = {
               ))}
             </div>
           </section>
+        )
+      }
+
+      {
+        releasesUnavailable && (
+          <p class="updates-unavailable" role="status">
+            Updates are currently unavailable. Please try again later.
+          </p>
         )
       }
 
@@ -222,6 +238,10 @@ const schema = {
 
   .history {
     margin-top: 0.5rem;
+  }
+
+  .updates-unavailable {
+    color: var(--gray-300);
   }
 
   :global(.history-link) {
