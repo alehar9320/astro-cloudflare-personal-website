@@ -177,7 +177,12 @@ const BY_SUBJECT = new Map(
 const SHA_PREFIX = /^[a-f0-9]{7,40}\s+/i;
 const CONVENTIONAL_PREFIX =
   /^(feat|fix|chore|docs|refactor|test|style|perf|build|ci)(\([^)]+\))?:\s*/i;
-const PR_SUFFIX = /\s*\(#(\d+)\)\s*$/;
+const PR_SUFFIX = /(?:\s*\(#\d+\))+\s*$/;
+/** Dev-only lines What's New must not show: docs/context-only commits and scrape/redaction wording. */
+const DEV_ONLY_ITEM =
+  /^(?:[a-f0-9]{7,40}\s+)?docs(?:\((?:context|readme|agents)\))?!?:|\bscrape\b|\bredaction\b/i;
+/** A #NNN ref still left after the trailing (#PR) is stripped (e.g. "(#1639 follow-up)", "/work/ #1109 nits"). */
+const INLINE_ISSUE_REF = /#\d+/;
 /* Optimization (⚡ Bolt): Hoist PR_MATCH_REGEX and SPACES_REGEX to avoid dynamic RegExp instantiations on edge changelog title processing.
    Benchmark: Eliminates redundant regex creation during visitor title mapping. */
 const PR_MATCH_REGEX = /\(#(\d+)\)/;
@@ -256,8 +261,9 @@ export function toVisitorReleaseBody(body: string): string {
 
     hadBullets = true;
     const message = trimmed.replace(BULLET_PREFIX, '');
-    if (!INTERNAL_CHANGELOG_ITEM.test(message)) {
-      result.push(`- ${toVisitorChangelogTitle(message)}`);
+    if (!INTERNAL_CHANGELOG_ITEM.test(message) && !DEV_ONLY_ITEM.test(message)) {
+      const title = toVisitorChangelogTitle(message);
+      if (!INLINE_ISSUE_REF.test(title)) result.push(`- ${title}`);
     }
   }
 
