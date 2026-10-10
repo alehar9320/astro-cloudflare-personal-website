@@ -276,4 +276,17 @@ describe('whats-new glance This week order on live releases (Vera, #1579)', () =
     expect(kept('fix(theme): remove theme-toggle tactile press scale (#1029) (#1033)')).toBe(true);
     expect(kept('fix(biography): link copilots mention to the case (#1028) (#1034)')).toBe(true);
   });
+
+  it('treats "case" as a case-study page, not dev wording like edge case or test case', () => {
+    // VISIBLE_SURFACE is an allowlist of things a visitor can see. A case-study page is one;
+    // an edge case or a test case is not, so those words alone must not qualify a line.
+    expect(kept('fix: handle edge case in date formatting (#1700)')).toBe(false);
+    expect(kept('fix: add test case for empty release notes (#1701)')).toBe(false);
+    expect(kept('fix: cover the use-case for missing dates (#1702)')).toBe(false);
+    expect(kept('fix: ship lower case slugs for tags (#1703)')).toBe(false);
+    expect(kept('Visitors reach the case from the home card (#1704)')).toBe(true);
+    expect(kept('fix: the analytics case opens at its H1 (#1705)')).toBe(true);
+    // A real surface still qualifies an edge-case fix through its own word.
+    expect(kept('fix(chat): handle edge case when the composer is empty (#1706)')).toBe(true);
+  });
 });
