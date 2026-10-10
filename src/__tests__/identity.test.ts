@@ -3023,6 +3023,14 @@ describe('page and feed descriptions describe the page, not the hire CTA', () =>
     expect(config).not.toContain('enable_theme_toggle_tactile_v1');
   });
 
+  it('quiets open-chat twin title to AI twin (#1016)', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    expect(chat).toMatch(/class="[^"]*\bwelcome-message\b/);
+    expect(chat).toMatch(/<h2>AI twin<\/h2>/);
+    expect(chat).not.toContain("<h2>Alexander's digital twin</h2>");
+    expect(chat).toContain('id="chat-live-label"');
+  });
+
   it('gives copilots case a continue to IFS Design System (#1017)', () => {
     const md = readFileSync('src/content/work/ai-coding-copilots.md', 'utf8');
     expect(md).toContain(
