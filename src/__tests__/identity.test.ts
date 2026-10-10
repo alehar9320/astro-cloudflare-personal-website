@@ -51,7 +51,7 @@ describe('identity copy', () => {
     expect(bio).not.toContain('Explore the professional journey');
     expect(bio).not.toContain('No new numbered');
     expect(bio).not.toContain('only numbered proof');
-    expect(bio).toContain("Get in touch on{' '}");
+    expect(bio).not.toContain("Get in touch on{' '}");
     expect(bio.replace(/\s+/g, ' ')).toContain('up to 2x faster delivery');
     expect(bio).toContain('up to 30x ROI');
     expect(twin).toContain('up to 2x faster delivery');
@@ -2693,6 +2693,18 @@ describe('identity copy', () => {
     expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
   });
 
+  it('keeps Biography Get in touch in chrome, not under education (#1103)', () => {
+    const page = readFileSync('src/pages/biography.astro', 'utf8');
+    const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
+    const mainEnd = page.indexOf('</main>');
+    const ctaAt = page.indexOf('<ContactCTA />');
+    expect(mainEnd).toBeGreaterThan(-1);
+    expect(ctaAt).toBeGreaterThan(mainEnd);
+    expect(page).not.toMatch(/Get in touch on\s*\{?\s*'?\s*<a[^>]*linkedin\.com\/in\/alehar/);
+    expect(cta).toContain('https://www.linkedin.com/in/alehar/');
+    expect(cta).not.toContain('mailto:');
+  });
+
   it('keeps Footer LinkedIn hire Contact card attrs (#1118)', () => {
     const footer = readFileSync('src/components/Footer.astro', 'utf8');
     expect(footer).toContain('href="https://www.linkedin.com/in/alehar/"');
@@ -2975,12 +2987,20 @@ describe('page and feed descriptions describe the page, not the hire CTA', () =>
     expect(hits).toEqual([]);
   });
 
-  it('keeps the on-page LinkedIn hire copy', () => {
+  it('keeps LinkedIn hire copy in chrome ContactCTA, not in the Biography body (#1103)', () => {
     const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
     const bio = readFileSync('src/pages/biography.astro', 'utf8');
     expect(cta).toContain('<h2>Get in touch on LinkedIn</h2>');
     expect(cta).toContain('https://www.linkedin.com/in/alehar/');
-    expect(bio).toContain("Get in touch on{' '}");
+    const mainStart = bio.indexOf('<main');
+    const mainEnd = bio.indexOf('</main>');
+    expect(mainStart).toBeGreaterThan(-1);
+    expect(mainEnd).toBeGreaterThan(mainStart);
+    const bioMain = bio.slice(mainStart, mainEnd);
+    expect(bioMain).not.toContain('Get in touch');
+    expect(bioMain).not.toContain('linkedin.com/in/alehar');
+    expect(bio).not.toContain("Get in touch on{' '}");
+    expect(bio.indexOf('<ContactCTA />')).toBeGreaterThan(mainEnd);
   });
 
   it('keeps mobile Menu button aria-controls pointing at menu-content', () => {
@@ -3015,5 +3035,16 @@ describe('page and feed descriptions describe the page, not the hire CTA', () =>
     expect(md).not.toContain('Get in touch');
     expect(md).not.toContain('https://www.linkedin.com/in/alehar/');
     expect(md).not.toMatch(/case-continue[^>]*pill|class="[^"]*\bpill\b/);
+  });
+
+  it('biography M.Sc. continues to master-thesis case', () => {
+    const page = readFileSync('src/pages/biography.astro', 'utf8');
+    expect(page).toMatch(
+      /<h3>\s*<a href=["']\/work\/master-thesis\/["']>\s*M\.Sc\. Management and Economics of Innovation\s*<\/a>\s*<\/h3>/
+    );
+    expect(page).toContain('href="/work/ifs-design-system/"');
+    expect(page).toContain('linkedin.com/in/alehar');
+    expect(page).not.toContain('mailto:');
+    expect(page).toMatch(/\.timeline h3 a\s*\{[^}]*color:\s*inherit;/);
   });
 });
