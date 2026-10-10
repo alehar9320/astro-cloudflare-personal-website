@@ -45,3 +45,7 @@ Action: Refactored `showFollowUps()` in `src/components/Chat.astro` to use an in
 2026-09-08 - Hoist Static Regexes Across Edge Utilities
 Learning: Declaring inline RegExp literals inside repeatedly executed edge functions (`splitReleaseBody`, `toVisitorChangelogTitle`, `stripExecBanned`, `isSafeReleaseSummary`) forces JavaScript engines on Cloudflare Workers edge runtimes to re-instantiate RegExp objects on every function call, triggering dynamic allocations and garbage collection overhead. Hoisting static regular expressions to module-level constants eliminates object instantiation and reduces GC pressure per edge request.
 Action: Hoisted static RegExp literals in `src/utils/github-releases.ts`, `src/utils/visitor-changelog.ts`, and `src/utils/release-summary.ts`.
+
+2026-10-10 - Direct String Slicing for ISO Date Extraction
+Learning: Calling `date.toISOString().split('T')[0]` allocates an intermediate 2-element array of strings on every invocation. Replacing `.split('T')[0]` with `.slice(0, 10)` directly extracts the YYYY-MM-DD substring from ISO-8601 strings without dynamic array allocation, reducing heap pressure during release date formatting on edge runtimes.
+Action: Replaced `split('T')[0]` with `slice(0, 10)` in `formatReleaseDate` in `src/utils/github-releases.ts`.
