@@ -40,3 +40,9 @@ Closed as farm: #1653, #1646, #1603, #1597, #1590, #1587, #1582, #1568, #1552, #
 - [Insight 1: When release notes contain bullet points that are all filtered out as internal, falling back to raw body transformation leaks un-bulleted internal titles to visitor views.]
 - [Insight 2: Sharing `INTERNAL_CHANGELOG_ITEM` between `visitor-changelog.ts` and `whats-new-glance.ts` guarantees consistent agent name and test-only filtering across both executive glance and full release body rendering.]
 - [Delta: ~25 lines. Guardrails: All unit tests passed.]
+
+## 2026-08-27 - Portfolio Preview Image Hover Zoom | Signal: Competitive/Technical | Lean Implementation: Flagged Hardware-Accelerated CSS Scale
+
+- [Insight 1: Applying a hardware-accelerated scale transform (`transform: scale(1.04)`) on `PortfolioPreview` images creates depth and hover responsiveness without triggering layout shifts (CLS=0).]
+- [Insight 2: Gating image scale transitions behind `enable_preview_zoom_v1` and `@media (prefers-reduced-motion: no-preference)` respects accessibility while isolating new UI enhancements.]
+- [Delta: 14 lines. Guardrails: All verification steps passed.]
