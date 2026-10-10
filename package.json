@@ -25,7 +25,7 @@
   "dependencies": {
     "@astrojs/cloudflare": "^14.2.3",
     "@astrojs/node": "^11.1.4",
-    "@sentry/astro": "^10.75.3",
+    "@sentry/astro": "^11.0.0",
     "@sentry/cloudflare": "^10.75.3",
     "astro": "^7.2.9",
     "posthog-js": "^1.435.8",
