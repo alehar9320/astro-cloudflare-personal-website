@@ -6,3 +6,10 @@
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-10 - Theme Toggle Icon Tilt | Signal: Technical | Lean Implementation: Added subtle 12deg rotation on hover to the theme toggle icon in ThemeToggle.astro.
+
+- Insight: Interactive theme controls with micro-interactions provide subtle tactile feedback, increasing perceived responsiveness and delight.
+- User Target: Comfort
+- Abort Triggers: None (verified via build and test pipeline).
+- User Reaction: Pending synthetic feedback.
