@@ -3031,6 +3031,20 @@ describe('page and feed descriptions describe the page, not the hire CTA', () =>
     expect(chat).toContain('id="chat-live-label"');
   });
 
+  it('gives copilots case a continue to IFS Design System (#1017)', () => {
+    const md = readFileSync('src/content/work/ai-coding-copilots.md', 'utf8');
+    expect(md).toContain(
+      '<p class="case-continue"><a href="/work/ifs-design-system/">Continue to the IFS Design System case</a></p>'
+    );
+    const body = md.replace(/^---\n[\s\S]*?\n---\n/, '');
+    expect(body).not.toBe(md);
+    expect((body.match(/February 2025/g) || []).length).toBe(1);
+    expect(md).not.toContain('mailto:');
+    expect(md).not.toContain('Get in touch');
+    expect(md).not.toContain('https://www.linkedin.com/in/alehar/');
+    expect(md).not.toMatch(/case-continue[^>]*pill|class="[^"]*\bpill\b/);
+  });
+
   it('biography M.Sc. continues to master-thesis case', () => {
     const page = readFileSync('src/pages/biography.astro', 'utf8');
     expect(page).toMatch(
