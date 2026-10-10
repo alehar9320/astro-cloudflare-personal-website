@@ -1,10 +1,12 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  INTERNAL_CHANGELOG_ITEM,
   stripChangelogChrome,
   toVisitorChangelogTitle,
   toVisitorRelease,
   toVisitorReleaseBody,
+  VISITOR_CHANGELOG,
 } from './visitor-changelog';
 import { buildWhatsNewGlance } from './whats-new-glance';
 
@@ -73,11 +75,6 @@ describe('visitor-changelog utilities', () => {
       expect(
         toVisitorChangelogTitle('Keep home Read the case clear of the docked composer (#817)')
       ).toBe('Home “Read the case” stays clear of the chat dock');
-    });
-    it('maps locked visitor changelog row PR_803 (#1163)', () => {
-      expect(toVisitorChangelogTitle('Hire tracking is live (#803)')).toBe(
-        'Site success page shows hire tracking as live'
-      );
     });
 
     it('looks up known PR numbers', () => {
@@ -193,8 +190,8 @@ describe('visitor changelog drops dev-only release lines (spec C)', () => {
   it('drops #NNN refs, scrape wording and docs/context-only lines from the visitor body', () => {
     expect(toVisitorReleaseBody(body).split('\n')).toEqual([
       '- Shared links to Home, Biography, Work and Contact, and the RSS feed, now describe the page itself',
-      '- The AI coding copilots case keeps one hire link at the end of the page, not a second one in the text',
-      '- Work keeps one hire link at the end of the page, not a second one under Earlier work',
+      '- The AI coding copilots case ends with a single LinkedIn link',
+      '- Work ends with a single LinkedIn link',
     ]);
   });
 
@@ -238,48 +235,38 @@ describe('visitor titles for Last 30 days release lines (#1163 extension)', () =
       toVisitorChangelogTitle(
         'b38f2fb fix(biography): drop in-body LinkedIn; keep chrome ContactCTA (#1103) (#1107)'
       )
-    ).toBe(
-      'Biography keeps one hire link at the end of the page, not a second one under education'
-    );
+    ).toBe('Biography ends with a single LinkedIn link');
   });
   it('maps #1116 to a visitor title', () => {
     expect(
       toVisitorChangelogTitle('536b0f9 Analytics: Get in touch from chrome only (#1111) (#1116)')
-    ).toBe(
-      'The analytics case keeps one hire link at the end of the page, not a second one in the text'
-    );
+    ).toBe('The user behavior analytics case ends with a single LinkedIn link');
   });
   it('maps #1110 to a visitor title', () => {
     expect(
       toVisitorChangelogTitle('cc41498 Copilots: Get in touch from chrome only (#1105) (#1110)')
-    ).toBe(
-      'The AI coding copilots case keeps one hire link at the end of the page, not a second one in the text'
-    );
+    ).toBe('The AI coding copilots case ends with a single LinkedIn link');
   });
   it('maps #1109 to a visitor title', () => {
     expect(
       toVisitorChangelogTitle(
         '86f0f90 fix(work): drop in-body hire-cta; keep chrome ContactCTA (#1104) (#1109)'
       )
-    ).toBe('Work keeps one hire link at the end of the page, not a second one under Earlier work');
+    ).toBe('Work ends with a single LinkedIn link');
   });
   it('maps #1642 to a visitor title', () => {
     expect(
       toVisitorChangelogTitle(
         'ce35c50 fix(hire): drop thesis in-body Get in touch; add 404 to HireSurface (#1642)'
       )
-    ).toBe(
-      'The master thesis case keeps one hire link at the end of the page, not a second one in the text'
-    );
+    ).toBe('The master thesis case ends with a single LinkedIn link');
   });
   it('maps #983 to a visitor title', () => {
     expect(
       toVisitorChangelogTitle(
         '9c4bb83 Visitors on the IFS Design System case take Get in touch from chrome, not a second primary under the H1 (#983)'
       )
-    ).toBe(
-      'The IFS Design System case keeps one hire link at the end of the page, not a second one in the text'
-    );
+    ).toBe('The IFS Design System case ends with a single LinkedIn link');
   });
   it('maps #1034 to a visitor title', () => {
     expect(
@@ -298,7 +285,7 @@ describe('visitor titles for Last 30 days release lines (#1163 extension)', () =
   it('maps #1635 to a visitor title', () => {
     expect(
       toVisitorChangelogTitle('40e4a52 fix(copy): align leftover hire hint to LinkedIn (#1635)')
-    ).toBe('The 404 page hire hint now just says “LinkedIn”');
+    ).toBe('The 404 page hint now just says LinkedIn');
   });
   it('maps #1634 to a visitor title', () => {
     expect(
@@ -330,12 +317,55 @@ describe('visitor titles for Last 30 days release lines (#1163 extension)', () =
       'Shared links to Home, Biography, Work and Contact, and the RSS feed, now describe the page itself'
     );
   });
-  it('maps #1577 to a visitor title', () => {
-    expect(
-      toVisitorChangelogTitle(
-        'e651ca6 feat: expose window.posthog after idle init for hire events (#1574) (#1577)'
-      )
-    ).toBe('Taps on the hire links are now counted');
+  describe('internal analytics lines never reach visitors (#1577, #803; Johan 6097557179)', () => {
+    const rawSubjects = [
+      '- e651ca6 feat: expose window.posthog after idle init for hire events (#1574) (#1577)',
+      '- expose window.posthog after idle init for hire events (#1577)',
+      '- abc1234 fix(okr): hire tracking is live (#803)',
+      '- Hire tracking is live (#803)',
+    ];
+    const formerTitles = [
+      'Taps on the hire links are now counted',
+      'Site success page shows hire tracking as live',
+      'Hire interest tracking is live',
+    ];
+
+    it('has no visitor title row for #1577 or #803', () => {
+      expect(VISITOR_CHANGELOG.some((entry) => entry.pr === 1577 || entry.pr === 803)).toBe(false);
+    });
+
+    it.each(rawSubjects)('drops raw subject %s from the visitor body', (line) => {
+      expect(INTERNAL_CHANGELOG_ITEM.test(line)).toBe(true);
+      expect(toVisitorReleaseBody(line)).toBe('');
+      expect(formerTitles).not.toContain(toVisitorChangelogTitle(line.replace(/^- /, '')));
+    });
+
+    it('keeps both off This week and Last 30 days', () => {
+      const glance = buildWhatsNewGlance(
+        [
+          {
+            body: rawSubjects.join('\n'),
+            publishedAt: '2026-10-10T10:00:00Z',
+            title: 'r',
+            url: 'u',
+            version: '2026.10.10.1000',
+          },
+        ],
+        new Date('2026-10-10T12:00:00Z')
+      );
+      expect(glance.thisWeek).toEqual([]);
+      expect(glance.groups).toEqual([]);
+    });
+
+    it('does not drop visitor hire lines that mention LinkedIn or hire links', () => {
+      for (const title of [
+        'Biography ends with a single LinkedIn link',
+        'Contact names one hire path: LinkedIn',
+        'The 404 page hint now just says LinkedIn',
+      ]) {
+        expect(INTERNAL_CHANGELOG_ITEM.test(title), title).toBe(false);
+      }
+    });
   });
   it('looks up the LAST (#N) in a squash title, not the issue ref before it', () => {
     // #817 is mapped; #99999 is not. The squash PR is the last suffix.

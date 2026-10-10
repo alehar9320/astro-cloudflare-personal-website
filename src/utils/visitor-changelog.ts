@@ -43,16 +43,6 @@ export const VISITOR_CHANGELOG: readonly VisitorChangelogEntry[] = [
     title: 'Home “Read the case” stays clear of the chat dock',
   },
   {
-    pr: 803,
-    subject: 'Hire tracking is live',
-    title: 'Site success page shows hire tracking as live',
-  },
-  {
-    pr: 1577,
-    subject: 'expose window.posthog after idle init for hire events',
-    title: 'Taps on the hire links are now counted',
-  },
-  {
     pr: 1019,
     subject: 'quiet open welcome h2 to AI twin',
     title: 'Open chat shows a quieter “AI twin” heading',
@@ -60,37 +50,33 @@ export const VISITOR_CHANGELOG: readonly VisitorChangelogEntry[] = [
   {
     pr: 1107,
     subject: 'drop in-body LinkedIn; keep chrome ContactCTA',
-    title: 'Biography keeps one hire link at the end of the page, not a second one under education',
+    title: 'Biography ends with a single LinkedIn link',
   },
   {
     pr: 1116,
     subject: 'Analytics: Get in touch from chrome only',
-    title:
-      'The analytics case keeps one hire link at the end of the page, not a second one in the text',
+    title: 'The user behavior analytics case ends with a single LinkedIn link',
   },
   {
     pr: 1110,
     subject: 'Copilots: Get in touch from chrome only',
-    title:
-      'The AI coding copilots case keeps one hire link at the end of the page, not a second one in the text',
+    title: 'The AI coding copilots case ends with a single LinkedIn link',
   },
   {
     pr: 1109,
     subject: 'drop in-body hire-cta; keep chrome ContactCTA',
-    title: 'Work keeps one hire link at the end of the page, not a second one under Earlier work',
+    title: 'Work ends with a single LinkedIn link',
   },
   {
     pr: 1642,
     subject: 'drop thesis in-body Get in touch; add 404 to HireSurface',
-    title:
-      'The master thesis case keeps one hire link at the end of the page, not a second one in the text',
+    title: 'The master thesis case ends with a single LinkedIn link',
   },
   {
     pr: 983,
     subject:
       'Visitors on the IFS Design System case take Get in touch from chrome, not a second primary under the H1',
-    title:
-      'The IFS Design System case keeps one hire link at the end of the page, not a second one in the text',
+    title: 'The IFS Design System case ends with a single LinkedIn link',
   },
   {
     pr: 1034,
@@ -105,7 +91,7 @@ export const VISITOR_CHANGELOG: readonly VisitorChangelogEntry[] = [
   {
     pr: 1635,
     subject: 'align leftover hire hint to LinkedIn',
-    title: 'The 404 page hire hint now just says “LinkedIn”',
+    title: 'The 404 page hint now just says LinkedIn',
   },
   {
     pr: 1634,
@@ -324,7 +310,7 @@ function titleCaseFirst(text: string): string {
 }
 
 export const INTERNAL_CHANGELOG_ITEM =
-  /\b(palette|oracle|scribe|sentinel|vantage|bolt|jules|kinetic|engine|prism|apex|aurora|janitor|observabilityclerk|stuntdouble|stunt[- ]double|archie)\b|\bcontent:\s*|[🎨🔮✍️🛡️🔍⚡🐱⚙️👩‍🚀👨‍💼❤️🧹📋🎭🏛️🧑‍🎓]|\bagent[- ]farm\b|\bgoogle-labs-jules\b|\bjohan nits\b|\bprune\b|\bparser\b|\bunit[- ]test\b|\bcoverage\b|\bvisitor[- ]changelog\b|\btest[- ]only\b|\bvitest\b|\bplaywright\b/i;
+  /\b(palette|oracle|scribe|sentinel|vantage|bolt|jules|kinetic|engine|prism|apex|aurora|janitor|observabilityclerk|stuntdouble|stunt[- ]double|archie)\b|\bcontent:\s*|[🎨🔮✍️🛡️🔍⚡🐱⚙️👩‍🚀👨‍💼❤️🧹📋🎭🏛️🧑‍🎓]|\bagent[- ]farm\b|\bgoogle-labs-jules\b|\bjohan nits\b|\bprune\b|\bparser\b|\bunit[- ]test\b|\bcoverage\b|\bvisitor[- ]changelog\b|\btest[- ]only\b|\bvitest\b|\bplaywright\b|\bposthog\b|\b(?:hire|tap) tracking\b/i;
 const BULLET_PREFIX = /^[-*+]\s+/;
 
 /**
