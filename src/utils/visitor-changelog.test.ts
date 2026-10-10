@@ -367,6 +367,13 @@ describe('visitor titles for Last 30 days release lines (#1163 extension)', () =
       }
     });
   });
+  it('maps #945 to a visitor title', () => {
+    expect(
+      toVisitorChangelogTitle(
+        "efba2fa fix(this-site): in-sentence What's New link to /whats-new/ (#837) (#945)"
+      )
+    ).toBe('The “This site” page now links to What’s New from its text');
+  });
   it('maps #1020 to a visitor title', () => {
     expect(
       toVisitorChangelogTitle(

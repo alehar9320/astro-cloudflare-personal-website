@@ -43,6 +43,11 @@ export const VISITOR_CHANGELOG: readonly VisitorChangelogEntry[] = [
     title: 'Home “Read the case” stays clear of the chat dock',
   },
   {
+    pr: 945,
+    subject: "in-sentence What's New link to /whats-new/",
+    title: 'The “This site” page now links to What’s New from its text',
+  },
+  {
     pr: 1020,
     subject:
       'Hiring managers on the copilots case get a continue to IFS Design System proof, not a circular stub',
