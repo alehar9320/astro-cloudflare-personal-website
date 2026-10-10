@@ -6,10 +6,14 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
 import { LATEST_RELEASE_SNAPSHOT } from '../data/latest-release';
-import { fetchGitHubReleases } from '../utils/github-releases';
 import { safeJsonLd } from '../utils/safe-json-ld';
 import { toVisitorRelease } from '../utils/visitor-changelog';
 import { buildWhatsNewGlance } from '../utils/whats-new-glance';
+import {
+  loadWhatsNewReleases,
+  shouldShowUpdatesUnavailable,
+  UPDATES_UNAVAILABLE_COPY,
+} from '../utils/whats-new-releases';
 
 interface Bindings {
   GITHUB_TOKEN?: string;
@@ -25,13 +29,20 @@ function readEnv(): Bindings {
 }
 
 const token = readEnv().GITHUB_TOKEN?.trim();
-const fetched = await fetchGitHubReleases(fetch, undefined, token ? { token } : undefined);
-const baseReleases = fetched.length > 0 ? fetched : [LATEST_RELEASE_SNAPSHOT];
+// A failed GitHub fetch is not "nothing shipped": serve the isolate's last good list or the
+// build-time snapshot, else a neutral line. Only a genuinely empty list uses the old snapshot.
+const loaded = await loadWhatsNewReleases({ token });
+const fetchFailed =
+  loaded.state === 'stale' || loaded.state === 'snapshot' || loaded.state === 'error';
+if (fetchFailed) Astro.response.headers.set('Cache-Control', 'no-store');
+const baseReleases =
+  loaded.releases.length > 0 ? loaded.releases : fetchFailed ? [] : [LATEST_RELEASE_SNAPSHOT];
 /* Optimization (⚡ Bolt): toVisitorRelease already returns fully-formatted visitor bullet points.
    Eliminating the redundant second-pass split/map/regex transform saves main-thread edge CPU cycles and memory allocations per request.
    Benchmark: Eliminates redundant multi-pass string parsing and re-parsing on edge SSR renders of /whats-new/. */
 const visitorReleases = baseReleases.map(toVisitorRelease);
 const glance = buildWhatsNewGlance(visitorReleases);
+const releasesUnavailable = shouldShowUpdatesUnavailable(loaded, glance);
 
 const dek = 'What you can see on this site lately.';
 const pageTitle = "What's New | Product Manager, Developer Experience at IFS";
@@ -113,6 +124,14 @@ const schema = {
               ))}
             </div>
           </section>
+        )
+      }
+
+      {
+        releasesUnavailable && (
+          <p class="updates-unavailable" role="status">
+            {UPDATES_UNAVAILABLE_COPY}
+          </p>
         )
       }
 
@@ -222,6 +241,10 @@ const schema = {
 
   .history {
     margin-top: 0.5rem;
+  }
+
+  .updates-unavailable {
+    color: var(--gray-300);
   }
 
   :global(.history-link) {

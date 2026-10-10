@@ -2230,8 +2230,12 @@ describe('identity copy', () => {
     expect(page).toContain('Product Manager, Developer Experience');
     expect(page).toContain('toVisitorRelease');
     expect(page).toContain('ContactCTA');
-    expect(page).toContain('fetchGitHubReleases');
-    expect(page).toContain('fetchGitHubReleases(fetch, undefined, token ? { token } : undefined)');
+    expect(page).toContain('loadWhatsNewReleases({ token })');
+    expect(page).toContain('shouldShowUpdatesUnavailable(loaded, glance)');
+    expect(page).not.toContain('caches.default');
+    expect(page).toMatch(
+      /<p class="updates-unavailable" role="status">\s*\{UPDATES_UNAVAILABLE_COPY\}\s*<\/p>\s*\)\s*\}\s*<p class="history">/
+    );
     expect(page).toContain('LATEST_RELEASE_SNAPSHOT');
     expect(page).toContain('This week');
     expect(page).toContain('Full history on GitHub');
