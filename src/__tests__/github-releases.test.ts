@@ -137,6 +137,15 @@ describe('github releases utility', () => {
     ]);
   });
 
+  it('handles CRLF line endings in splitReleaseBody', () => {
+    const body = '- feat: one\r\n* fix: two\r\n+ docs: three\r\n';
+    expect(splitReleaseBody(body)).toEqual([
+      { message: 'feat: one' },
+      { message: 'fix: two' },
+      { message: 'docs: three' },
+    ]);
+  });
+
   it('ignores lines without valid list markers', () => {
     const body = 'Just text\n- List item\nNot a list item\n### Heading';
     expect(splitReleaseBody(body)).toEqual([{ message: 'List item' }]);

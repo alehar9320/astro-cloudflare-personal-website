@@ -7,6 +7,7 @@ import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
 import { LATEST_RELEASE_SNAPSHOT } from '../data/latest-release';
 import { fetchGitHubReleases } from '../utils/github-releases';
+import { safeJsonLd } from '../utils/safe-json-ld';
 import { toVisitorRelease } from '../utils/visitor-changelog';
 import { buildWhatsNewGlance } from '../utils/whats-new-glance';
 
@@ -77,7 +78,7 @@ const schema = {
   description={`${dek} Product Manager, Developer Experience at IFS.`}
   robots="noindex"
 >
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <script is:inline type="application/ld+json" set:html={safeJsonLd(schema)} />
   <div class="stack gap-20">
     <main id="main-content" class="glance stack gap-8">
       <Hero title="What's New" tagline={dek} align="start" />
@@ -224,6 +225,9 @@ const schema = {
   }
 
   :global(.history-link) {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
     color: var(--link-color);
     text-decoration: 1px solid underline transparent;
     text-underline-offset: 0.25em;

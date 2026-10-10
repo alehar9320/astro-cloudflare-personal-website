@@ -213,6 +213,15 @@ const SHA_PREFIX = /^[a-f0-9]{7,40}\s+/i;
 const CONVENTIONAL_PREFIX =
   /^(feat|fix|chore|docs|refactor|test|style|perf|build|ci)(\([^)]+\))?:\s*/i;
 const PR_SUFFIX = /(?:\s*\(#\d+\))+\s*$/;
+/** Dev-only lines What's New must not show: docs/context-only commits and scrape/redaction wording. */
+const DEV_ONLY_ITEM =
+  /^(?:[a-f0-9]{7,40}\s+)?docs(?:\((?:context|readme|agents)\))?!?:|\bscrape\b|\bredaction\b/i;
+/** A #NNN ref still left after the trailing (#PR) is stripped (e.g. "(#1639 follow-up)", "/work/ #1109 nits"). */
+const INLINE_ISSUE_REF = /#\d+/;
+/* Optimization (⚡ Bolt): Hoist PR_MATCH_REGEX and SPACES_REGEX to avoid dynamic RegExp instantiations on edge changelog title processing.
+   Benchmark: Eliminates redundant regex creation during visitor title mapping. */
+const PR_MATCH_REGEX = /\(#(\d+)\)/;
+const MULTI_SPACES_REGEX = /\s{2,}/g;
 
 /**
  * Strip SHA, conventional-commit type, and all trailing (#123) suffixes from a changelog line.
@@ -223,7 +232,7 @@ export function stripChangelogChrome(raw: string): string {
     .replace(SHA_PREFIX, '')
     .replace(CONVENTIONAL_PREFIX, '')
     .replace(PR_SUFFIX, '')
-    .replace(/\s{2,}/g, ' ')
+    .replace(MULTI_SPACES_REGEX, ' ')
     .trim();
 }
 
@@ -232,8 +241,8 @@ function titleCaseFirst(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-const INTERNAL_CHANGELOG_ITEM =
-  /\bjules\b|\bagent[- ]farm\b|\bjohan nits\b|\bengine\b|\bbolt\b|\bgoogle-labs-jules\b|\bprune\b|\bparser\b/i;
+export const INTERNAL_CHANGELOG_ITEM =
+  /\b(palette|oracle|scribe|sentinel|vantage|bolt|jules|kinetic|engine|prism|apex|aurora|janitor|observabilityclerk|stuntdouble|stunt[- ]double|archie)\b|\bcontent:\s*|[🎨🔮✍️🛡️🔍⚡🐱⚙️👩‍🚀👨‍💼❤️🧹📋🎭🏛️🧑‍🎓]|\bagent[- ]farm\b|\bgoogle-labs-jules\b|\bjohan nits\b|\bprune\b|\bparser\b|\bunit[- ]test\b|\bcoverage\b|\bvisitor[- ]changelog\b|\btest[- ]only\b|\bvitest\b|\bplaywright\b/i;
 const BULLET_PREFIX = /^[-*+]\s+/;
 
 /**
@@ -244,7 +253,7 @@ export function toVisitorChangelogTitle(raw: string): string {
   const trimmed = raw.trim();
   if (!trimmed) return trimmed;
 
-  const prMatch = trimmed.match(/\(#(\d+)\)/);
+  const prMatch = trimmed.match(PR_MATCH_REGEX);
   if (prMatch) {
     const mapped = BY_PR.get(Number(prMatch[1]));
     if (mapped) return mapped;
@@ -261,33 +270,46 @@ export function toVisitorChangelogTitle(raw: string): string {
 
 /**
  * Rewrite a GitHub release body so list items are visitor copy, not SHA + feat + (#PR).
- * Optimization (⚡ Bolt): Uses a single-pass loop with hoisted static regexes instead of
- * multi-pass .split().map().filter() array chains, eliminating intermediate array allocations during edge SSR requests.
- * Benchmark: Eliminates 5 intermediate array allocations per release body on edge runtimes.
+ * Optimization: Uses pointer-based line scanning (`indexOf('\n', startPos)`) and a single-pass
+ * transformation loop to eliminate `body.split('\n')` array allocations and dual iteration overhead on edge SSR requests.
  */
 export function toVisitorReleaseBody(body: string): string {
-  const lines = body.split('\n');
-  const items: string[] = [];
+  const result: string[] = [];
+  let startPos = 0;
+  let hadBullets = false;
+  const len = body.length;
 
-  for (const line of lines) {
+  while (startPos < len) {
+    let nextNewline = body.indexOf('\n', startPos);
+    if (nextNewline === -1) {
+      nextNewline = len;
+    }
+
+    let line = body.slice(startPos, nextNewline);
+    if (line.endsWith('\r')) {
+      line = line.slice(0, -1);
+    }
+    startPos = nextNewline + 1;
+
     const trimmed = line.trim();
     if (!BULLET_PREFIX.test(trimmed)) continue;
 
+    hadBullets = true;
     const message = trimmed.replace(BULLET_PREFIX, '');
-    if (!INTERNAL_CHANGELOG_ITEM.test(message)) {
-      items.push(message);
+    if (!INTERNAL_CHANGELOG_ITEM.test(message) && !DEV_ONLY_ITEM.test(message)) {
+      const title = toVisitorChangelogTitle(message);
+      if (!INLINE_ISSUE_REF.test(title)) result.push(`- ${title}`);
     }
   }
 
-  if (items.length === 0) {
+  if (result.length === 0) {
+    if (hadBullets) return '';
     const trimmed = body.trim();
-    return trimmed ? toVisitorChangelogTitle(trimmed) : '';
+    return trimmed && !INTERNAL_CHANGELOG_ITEM.test(trimmed)
+      ? toVisitorChangelogTitle(trimmed)
+      : '';
   }
 
-  const result: string[] = [];
-  for (const message of items) {
-    result.push(`- ${toVisitorChangelogTitle(message)}`);
-  }
   return result.join('\n');
 }
 

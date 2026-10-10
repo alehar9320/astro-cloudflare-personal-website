@@ -6,6 +6,7 @@ import {
   toVisitorRelease,
   toVisitorReleaseBody,
 } from './visitor-changelog';
+import { buildWhatsNewGlance } from './whats-new-glance';
 
 describe('visitor-changelog utilities', () => {
   describe('stripChangelogChrome', () => {
@@ -29,9 +30,9 @@ describe('visitor-changelog utilities', () => {
     });
 
     it('stripChangelogChrome removes all trailing (#N) groups (#1163)', () => {
-      expect(stripChangelogChrome('Raise home Read the case 44x44 hit-box clear of dock (#817) (#999)')).toBe(
-        'Raise home Read the case 44x44 hit-box clear of dock'
-      );
+      expect(
+        stripChangelogChrome('Raise home Read the case 44x44 hit-box clear of dock (#817) (#999)')
+      ).toBe('Raise home Read the case 44x44 hit-box clear of dock');
     });
   });
 
@@ -42,25 +43,41 @@ describe('visitor-changelog utilities', () => {
     });
 
     it('maps locked visitor changelog row PR_864 (#1163)', () => {
-      expect(toVisitorChangelogTitle('Fix biography IFS Design System proof link hit target and mobile dock clearance (#864)')).toBe('Biography proof links are easier to tap, including on phones');
+      expect(
+        toVisitorChangelogTitle(
+          'Fix biography IFS Design System proof link hit target and mobile dock clearance (#864)'
+        )
+      ).toBe('Biography proof links are easier to tap, including on phones');
     });
     it('maps locked visitor changelog row PR_825 (#1163)', () => {
-      expect(toVisitorChangelogTitle('Quiet Contact hire line to LinkedIn; no twin-mouth (#825)')).toBe('Contact sends hire interest to LinkedIn — one clear path');
+      expect(
+        toVisitorChangelogTitle('Quiet Contact hire line to LinkedIn; no twin-mouth (#825)')
+      ).toBe('Contact sends hire interest to LinkedIn — one clear path');
     });
     it('maps locked visitor changelog row PR_823 (#1163)', () => {
-      expect(toVisitorChangelogTitle('Cold-land Work/case so shared proof is a real site entry (#823)')).toBe('Shared Work links open the case as a real site entry');
+      expect(
+        toVisitorChangelogTitle('Cold-land Work/case so shared proof is a real site entry (#823)')
+      ).toBe('Shared Work links open the case as a real site entry');
     });
     it('maps locked visitor changelog row PR_819 (#1163)', () => {
-      expect(toVisitorChangelogTitle('What’s New: denser desktop Last-30 so lines clear composer (#819)')).toBe('What’s New fits more updates above the chat dock on desktop');
+      expect(
+        toVisitorChangelogTitle('What’s New: denser desktop Last-30 so lines clear composer (#819)')
+      ).toBe('What’s New fits more updates above the chat dock on desktop');
     });
     it('maps locked visitor changelog row PR_817 raise (#1163)', () => {
-      expect(toVisitorChangelogTitle('Raise home Read the case 44x44 hit-box clear of dock (#817)')).toBe('Home “Read the case” stays clear of the chat dock');
+      expect(
+        toVisitorChangelogTitle('Raise home Read the case 44x44 hit-box clear of dock (#817)')
+      ).toBe('Home “Read the case” stays clear of the chat dock');
     });
     it('maps locked visitor changelog row PR_817 keep (#1163)', () => {
-      expect(toVisitorChangelogTitle('Keep home Read the case clear of the docked composer (#817)')).toBe('Home “Read the case” stays clear of the chat dock');
+      expect(
+        toVisitorChangelogTitle('Keep home Read the case clear of the docked composer (#817)')
+      ).toBe('Home “Read the case” stays clear of the chat dock');
     });
     it('maps locked visitor changelog row PR_803 (#1163)', () => {
-      expect(toVisitorChangelogTitle('Hire tracking is live (#803)')).toBe('Hire interest tracking is live');
+      expect(toVisitorChangelogTitle('Hire tracking is live (#803)')).toBe(
+        'Hire interest tracking is live'
+      );
     });
 
     it('looks up known PR numbers', () => {
@@ -105,6 +122,13 @@ describe('visitor-changelog utilities', () => {
       expect(output).toBe('- RSS feed of the work\n- Web app manifest');
     });
 
+    it('handles CRLF line endings correctly', () => {
+      const input =
+        '- 520 feat: add a live RSS feed for the work (#520)\r\n* 518 feat: add a working web app manifest (#518)\r\n';
+      const output = toVisitorReleaseBody(input);
+      expect(output).toBe('- RSS feed of the work\n- Web app manifest');
+    });
+
     it('filters out internal agent or tool items from bullet lists', () => {
       const input =
         '- feat: add public feature\n- chore(jules): internal sync\n- refactor(engine): internal logic';
@@ -112,16 +136,25 @@ describe('visitor-changelog utilities', () => {
       expect(output).toBe('- Add public feature');
     });
 
+    it('filters out Palette bot titles and unit test coverage items', () => {
+      const paletteStr =
+        '🎨 Palette: Standardize Chat Overlay Control Touch Targets and Focus States';
+      const testCoverageStr = 'Expand unit test coverage for visitor-changelog utilities';
+      const input = `- ${paletteStr}\n- ${testCoverageStr}\n- feat: add public feature`;
+      const output = toVisitorReleaseBody(input);
+      expect(output).toBe('- Add public feature');
+      expect(output).not.toContain('Palette');
+      expect(output).not.toContain('visitor-changelog utilities');
+    });
+
     it('falls back to toVisitorChangelogTitle if body contains no bullet items', () => {
       const input = 'a1b2c3d feat: add a live RSS feed for the work (#520)';
       expect(toVisitorReleaseBody(input)).toBe('RSS feed of the work');
     });
 
-    it('falls back to toVisitorChangelogTitle if all bullet items are filtered as internal', () => {
+    it('returns empty string if all bullet items are filtered as internal', () => {
       const input = '- chore(jules): internal update\n- refactor(engine): backend tweak';
-      expect(toVisitorReleaseBody(input)).toBe(
-        '- chore(jules): internal update\n- refactor(engine): backend tweak'
-      );
+      expect(toVisitorReleaseBody(input)).toBe('');
     });
   });
 
@@ -142,5 +175,54 @@ describe('visitor-changelog utilities', () => {
         body: '- RSS feed of the work',
       });
     });
+  });
+});
+
+describe('visitor changelog drops dev-only release lines (spec C)', () => {
+  const body = [
+    '- c1621b4 docs(meta): page and feed descriptions describe the page, not the hire CTA (#1644)',
+    '- 193eb14 docs(context): tighten LinkedIn scrape redaction (#1639 follow-up) (#1641)',
+    '- 966de12 docs(context): strip logged-in LinkedIn UI from author-linkedin.md (#1639)',
+    '- 90b95cd docs: README matches the live chat-first site (#880)',
+    '- 8a114f6 fix(hire): /work/ #1109 nits: ContactCTA lock, trim padding, tag ifs-design-system CTA (#1638)',
+    '- 7c9b03b fix(chat): recompute open stage top on scroll (#1633 follow-up) (#1636)',
+    '- cc41498 Copilots: Get in touch from chrome only (#1105) (#1110)',
+    '- 86f0f90 fix(work): drop in-body hire-cta; keep chrome ContactCTA (#1104) (#1109)',
+  ].join('\n');
+
+  it('drops #NNN refs, scrape wording and docs/context-only lines from the visitor body', () => {
+    expect(toVisitorReleaseBody(body).split('\n')).toEqual([
+      '- Page and feed descriptions describe the page, not the hire CTA',
+      '- Copilots: Get in touch from chrome only',
+      '- Drop in-body hire-cta; keep chrome ContactCTA',
+    ]);
+  });
+
+  it('keeps What’s New This week and Last 30 days free of #NNN, scrape and README lines', () => {
+    const now = new Date('2026-10-09T12:20:00Z');
+    const releases = [
+      {
+        body,
+        publishedAt: '2026-10-01T09:00:00Z',
+        title: 'r1',
+        url: 'u',
+        version: '2026.10.01.0900',
+      },
+      {
+        body: '- abc1234 fix(chat): give laptop open chat a conversation stage under the header (#939)',
+        publishedAt: '2026-10-09T09:00:00Z',
+        title: 'r2',
+        url: 'u',
+        version: '2026.10.09.0900',
+      },
+    ];
+    const glance = buildWhatsNewGlance(releases.map(toVisitorRelease), now);
+    const shown = [...glance.thisWeek, ...glance.groups.flatMap((g) => g.lines)];
+    expect(shown.length).toBeGreaterThan(0);
+    for (const line of shown) {
+      expect(line).not.toMatch(/#\d+/);
+      expect(line).not.toMatch(/\bscrape\b|\bredaction\b/i);
+      expect(line).not.toMatch(/\bREADME\b|author-linkedin\.md/);
+    }
   });
 });

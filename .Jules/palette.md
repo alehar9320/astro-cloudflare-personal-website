@@ -1,5 +1,30 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-05-27 - Navigation Link Touch Target Ergonomics
+
+**Learning:** Main menu text links (`.link`) and header social icons (`.social`) in `Nav.astro` can fail WCAG 2.1 AA 44x44px minimum touch target requirements when rendered on mobile devices. Standardizing `.link` with `display: inline-flex; align-items: center; min-height: 44px;` and `.social` with `min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;` prevents mis-taps on touch devices while preserving desktop layout alignment.
+
+**Action:** Added `display: inline-flex; align-items: center; min-height: 44px;` to `.link` and `min-width: 44px; min-height: 44px; align-items: center; justify-content: center;` to `.social` in `src/components/Nav.astro`.
+
+## 2026-05-27 - Forced-Colors Mode Structural Borders for ContactCTA
+
+**Learning:** Translucent glassmorphism borders declared with `hsla(...)` colors inside structural callout sections (such as `aside` in `ContactCTA.astro`) disappear entirely when rendered under Windows High Contrast / Forced Colors mode, leaving section boundaries invisible. Declaring `border-color: CanvasText;` within `@media (forced-colors: active)` ensures structural borders remain crisp and defined in high contrast viewports.
+
+**Action:** Added `@media (forced-colors: active)` border-color fallback for `aside` in `src/components/ContactCTA.astro`.
+
+## 2026-05-27 - Action CTA Touch Target Ergonomics on Fallback Pages
+
+**Learning:** Primary action triggers and call-to-action buttons nested in container wrappers (such as `.cta-container` in `NotFoundContent.astro`) require explicit WCAG 2.1 AA 44x44px touch target bounds (`min-height: 44px; min-width: 44px;`) across touch viewports to prevent mis-taps when placed adjacent to secondary action hints or links.
+
+**Action:** Enforced `min-height: 44px; min-width: 44px;` for `:global(a)` inside `.cta-container` in `src/components/NotFoundContent.astro`.
+
+
+## 2026-05-26 - Page Link Touch Target Ergonomics
+
+**Learning:** Section list links (such as `.earlier a` in `work.astro`) and standalone page action links (such as `.history-link` in `whats-new.astro` and `.hire-cta a`) often render as compact inline links on mobile viewports, failing WCAG 2.1 AA 44x44px minimum touch target requirements and risking mis-taps. Setting `display: inline-flex; align-items: center; min-height: 44px;` expands the interactive tap area without disrupting surrounding line rhythm.
+
+**Action:** Added `display: inline-flex; align-items: center; min-height: 44px;` to `:global(.history-link)` in `whats-new.astro` and `.earlier a` / `.hire-cta a` in `work.astro`.
+
 ## 2026-05-25 - Theme Toggle Touch Target Ergonomics & Focus Containment
 
 **Learning:** Compact pill controls located within constrained header/navigation layouts (such as `ThemeToggle.astro` in `Nav.astro`) require explicit minimum dimensions (`min-width: 44px; min-height: 44px; align-items: center; justify-content: center;`) to satisfy WCAG 2.1 AA touch target standards on mobile viewports. Furthermore, switching from positive `outline-offset: 2px` to negative inset focus containment (`outline-offset: -2px`) prevents the focus ring from overflowing outer header borders or clipping against adjacent layout elements during keyboard navigation.
