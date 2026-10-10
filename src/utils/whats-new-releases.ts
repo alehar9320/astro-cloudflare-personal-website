@@ -38,6 +38,9 @@ export interface LoadWhatsNewReleasesOptions {
 }
 
 /** Eden PASS, word for word. Shown above the existing "Full history on GitHub" link. */
+/** Releases loaded but every line was hidden as dev-shaped (Matt's call (b), #1163). Eden FINAL copy. */
+export const NO_VISITOR_UPDATES_COPY = 'No new updates lately. The full history is on GitHub.';
+
 export const UPDATES_UNAVAILABLE_COPY =
   "Recent updates can't load right now. The full history is on GitHub.";
 
@@ -100,16 +103,25 @@ export async function loadWhatsNewReleases(
 }
 
 /**
- * Show the neutral unavailable line when both sections are empty and either GitHub failed, or
- * releases loaded but every line was hidden (Matt's call (b)). A genuinely empty list never shows it.
+ * Show the neutral unavailable line only when GitHub failed and the fallback still leaves
+ * both sections empty. A genuine "nothing shipped" result never shows it.
  */
 export function shouldShowUpdatesUnavailable(
   loaded: WhatsNewReleases,
   glance: WhatsNewGlance
 ): boolean {
-  if (glance.thisWeek.length > 0 || glance.groups.length > 0) return false;
-  // GitHub failed and the fallback is empty, or releases loaded but every line was hidden as
-  // dev-shaped (Matt's call (b), #1163): show the neutral line, never a blank page.
-  if (loaded.state === 'fresh' || loaded.state === 'cached') return loaded.releases.length > 0;
-  return true;
+  if (loaded.state === 'fresh' || loaded.state === 'cached') return false;
+  return glance.thisWeek.length === 0 && glance.groups.length === 0;
+}
+
+/**
+ * Releases loaded fine, but Matt's call (b) (#1163) hid every line as dev-shaped. Show the
+ * NO_VISITOR_UPDATES_COPY line, never the can't-load line and never a blank page.
+ */
+export function shouldShowNoVisitorUpdates(
+  loaded: WhatsNewReleases,
+  glance: WhatsNewGlance
+): boolean {
+  if (loaded.state !== 'fresh' && loaded.state !== 'cached') return false;
+  return loaded.releases.length > 0 && glance.thisWeek.length === 0 && glance.groups.length === 0;
 }

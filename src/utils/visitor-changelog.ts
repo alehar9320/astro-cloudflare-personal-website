@@ -309,10 +309,15 @@ const INLINE_ISSUE_REF = /#\d+/;
  * #NNN, a file path, backticks, or dev words. Mapped VISITOR_CHANGELOG rows always render.
  */
 const AREA_PREFIX = /^(?:[\p{L}\d’'&/-]+\s){0,2}[\p{L}\d’'&/-]+:\s/u;
+/** Visitor-surface prefixes that may look like "Area:" but name a visitor thing (Johan 6098040346). */
+const VISITOR_PREFIX =
+  /^(?:new|updated)\s+(?:case|case study|page|post|project|section|talk)s?:\s/i;
 const FILE_PATH =
   /`|\b[\w-]+\.(?:ts|tsx|js|mjs|cjs|astro|md|mdx|json|css|ya?ml|toml|html)\b|(?:^|\s)\.?\/?(?:src|public|scripts|context|docs|tests?)\/|(?:^|\s)\/[\w.-]+\//i;
 const DEV_WORD =
-  /\b(?:scrape|redaction|context|eng|shorthand|regex|lint|eslint|prettier|ci|posthog|tsconfig|wrangler|dependabot|deps?|bump|workflow|refactor|fixture|mock|stub|ssr|kv|env|api)\b/i;
+  /\b(?:scrape|redaction|context|shorthand|regex|lint|eslint|prettier|posthog|tsconfig|wrangler|dependabot|deps?|bump|workflow|refactor|fixture|mock|stub|ssr|kv)\b/i;
+/** "CI" only as an uppercase whole word, so visitor words that contain "ci" are never hit. */
+const DEV_WORD_UPPER = /\bCI\b/;
 /* Optimization (⚡ Bolt): Hoist PR_MATCH_REGEX and SPACES_REGEX to avoid dynamic RegExp instantiations on edge changelog title processing.
    Benchmark: Eliminates redundant regex creation during visitor title mapping. */
 /** Every `(#N)` group; the lookup uses the LAST one, which is the squash PR (earlier ones are issue refs). */
@@ -370,9 +375,15 @@ export function isDevShapedUnmappedLine(raw: string): boolean {
 /** The dev-shape check alone, ignoring VISITOR_CHANGELOG (so tests can treat a mapped line as unmapped). */
 export function isDevShapedLine(raw: string): boolean {
   const noSha = raw.trim().replace(SHA_PREFIX, '');
-  if (CONVENTIONAL_PREFIX.test(noSha) || AREA_PREFIX.test(noSha)) return true;
+  if (CONVENTIONAL_PREFIX.test(noSha)) return true;
+  if (AREA_PREFIX.test(noSha) && !VISITOR_PREFIX.test(noSha)) return true;
   const subject = stripChangelogChrome(raw);
-  return INLINE_ISSUE_REF.test(subject) || FILE_PATH.test(subject) || DEV_WORD.test(subject);
+  return (
+    INLINE_ISSUE_REF.test(subject) ||
+    FILE_PATH.test(subject) ||
+    DEV_WORD.test(subject) ||
+    DEV_WORD_UPPER.test(subject)
+  );
 }
 
 /**

@@ -43,7 +43,7 @@ describe('build runs the What’s New releases snapshot (#1668)', () => {
     expect(run.status).toBe(0);
     expect(run.stderr).toContain('WARN releases snapshot SKIPPED:');
     expect(run.stderr).toContain('/whats-new/ will rely on live fetch + isolate memory');
-    expect(run.stderr).toContain('will be empty for this deploy');
+    expect(run.stderr).toContain('will be empty or stale for this deploy');
     expect(run.stdout).not.toContain('releases snapshot: ');
     expect(`${run.stdout}${run.stderr}`).not.toContain('ghp_secretvalue123');
   });

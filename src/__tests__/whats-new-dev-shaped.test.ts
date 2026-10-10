@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 
 import type { SiteRelease } from '../utils/github-releases';
@@ -9,7 +10,12 @@ import {
   toVisitorReleaseBody,
 } from '../utils/visitor-changelog';
 import { buildWhatsNewGlance } from '../utils/whats-new-glance';
-import { shouldShowUpdatesUnavailable } from '../utils/whats-new-releases';
+import {
+  NO_VISITOR_UPDATES_COPY,
+  shouldShowNoVisitorUpdates,
+  shouldShowUpdatesUnavailable,
+  UPDATES_UNAVAILABLE_COPY,
+} from '../utils/whats-new-releases';
 
 // Matt's call (b), #1163: an UNMAPPED release line renders only if it passes the visitor-surface
 // allowlist AND has no conventional / "Area:" prefix AND has no code token. Mapped rows always render.
@@ -78,16 +84,68 @@ describe("unmapped dev-shaped squash lines are hidden (Matt's call (b))", () => 
     ]);
   });
 
-  it('shows the #1579 empty state, never a blank heading, when (b) hides every line', () => {
+  it("all-filtered: shows the no-updates line, not the can't-load line", () => {
     const releases = [
       rel('- abc1234 fix(chat): give the chat composer a clearer focus ring (#99992)'),
     ];
     const glance = buildWhatsNewGlance(releases.map(toVisitorRelease), NOW);
     expect(glance).toEqual({ groups: [], thisWeek: [] });
-    expect(shouldShowUpdatesUnavailable({ state: 'fresh', releases }, glance)).toBe(true);
-    expect(shouldShowUpdatesUnavailable({ state: 'cached', releases }, glance)).toBe(true);
-    // A genuinely empty list is still not an error (#1666).
+    for (const state of ['fresh', 'cached'] as const) {
+      expect(shouldShowNoVisitorUpdates({ state, releases }, glance)).toBe(true);
+      expect(shouldShowUpdatesUnavailable({ state, releases }, glance)).toBe(false);
+    }
+    expect(NO_VISITOR_UPDATES_COPY).toBe('No new updates lately. The full history is on GitHub.');
+    // A genuinely empty list is still neither (#1666).
+    expect(shouldShowNoVisitorUpdates({ state: 'fresh', releases: [] }, glance)).toBe(false);
     expect(shouldShowUpdatesUnavailable({ state: 'fresh', releases: [] }, glance)).toBe(false);
+  });
+
+  it("fetch failure: shows the can't-load line, not the no-updates line", () => {
+    const empty = { groups: [], thisWeek: [] };
+    for (const state of ['error', 'stale', 'snapshot'] as const) {
+      expect(shouldShowUpdatesUnavailable({ state, releases: [] }, empty)).toBe(true);
+      expect(shouldShowNoVisitorUpdates({ state, releases: [] }, empty)).toBe(false);
+    }
+    expect(UPDATES_UNAVAILABLE_COPY).toBe(
+      "Recent updates can't load right now. The full history is on GitHub."
+    );
+  });
+
+  it('renders each empty-state line as role="status" right above the GitHub history link', () => {
+    const page = readFileSync('src/pages/whats-new.astro', 'utf8');
+    expect(page).toContain('shouldShowNoVisitorUpdates(loaded, glance)');
+    expect(page).toMatch(
+      /noVisitorUpdates && \(\s*<p class="updates-unavailable" role="status">\s*\{NO_VISITOR_UPDATES_COPY\}\s*<\/p>/
+    );
+    expect(page).toMatch(
+      /<p class="updates-unavailable" role="status">\s*\{UPDATES_UNAVAILABLE_COPY\}\s*<\/p>\s*\)\s*\}\s*<p class="history">/
+    );
+    expect(page.indexOf('{NO_VISITOR_UPDATES_COPY}')).toBeLessThan(
+      page.indexOf('<p class="history">')
+    );
+  });
+
+  it('lets an explicit visitor prefix like "New case:" through the Area: rule', () => {
+    const raw = 'abc1234 New case: IFS Design System (#99961)';
+    expect(isDevShapedUnmappedLine(raw)).toBe(false);
+    expect(painted([rel(`- ${raw}`)]).lines).toEqual(['New case: IFS Design System']);
+    expect(isDevShapedUnmappedLine('abc1234 Analytics: tidy the hire case wording (#99993)')).toBe(
+      true
+    );
+  });
+
+  it('matches CI only as an uppercase word and no longer treats env/api/eng as dev words', () => {
+    expect(isDevShapedLine('Home chat checks CI before replies (#99962)')).toBe(true);
+    expect(isDevShapedLine('Visitors can read the decision case in English (#99963)')).toBe(false);
+    for (const word of ['env', 'api', 'eng']) {
+      expect(isDevShapedLine(`Home chat names the ${word} page (#99964)`), word).toBe(false);
+    }
+    // context stays, because Matt named it explicitly.
+    expect(isDevShapedLine('Home chat context lint pass (#99997)')).toBe(true);
+    // #1167's raw subject is still dev-shaped via "What’s New:" and "shorthand".
+    expect(isDevShapedLine(RAW_1167)).toBe(true);
+    expect(isDevShapedLine('What’s New: tidier lines (#99965)')).toBe(true);
+    expect(isDevShapedLine('Visitors read shorthand-free lines (#99966)')).toBe(true);
   });
 
   it('never returns a group with no lines when (b) hides some of a theme', () => {
