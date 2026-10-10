@@ -15,7 +15,7 @@ tags:
   <p><strong>TL;DR:</strong> Internal AI coding copilots for <strong>IFS</strong> engineering teams. I am <strong>Product Manager, Developer Experience</strong> at IFS.</p>
 </div>
 
-As Product Manager, Developer Experience at IFS in Greater Stockholm, I work on internal AI coding copilots for engineering teams.
+As Product Manager, Developer Experience at IFS in Greater Stockholm, I work on internal AI coding copilots for engineering teams. I have been in this role since February 2025.
 
 ## Problem
 
@@ -23,7 +23,7 @@ Internal AI coding copilots for IFS engineering teams.
 
 ## Approach
 
-I have been Product Manager, Developer Experience at IFS since February 2025.
+I work with IFS engineering teams in Greater Stockholm on internal AI coding copilots.
 
 ## Outcome
 

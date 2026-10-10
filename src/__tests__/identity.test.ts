@@ -2998,7 +2998,7 @@ describe('page and feed descriptions describe the page, not the hire CTA', () =>
     );
     const body = md.replace(/^---\n[\s\S]*?\n---\n/, '');
     expect(body).not.toBe(md);
-    expect((body.match(/since February 2025/g) || []).length).toBe(1);
+    expect((body.match(/February 2025/g) || []).length).toBe(1);
     expect(md).not.toContain('mailto:');
     expect(md).not.toContain('Get in touch');
     expect(md).not.toContain('https://www.linkedin.com/in/alehar/');
