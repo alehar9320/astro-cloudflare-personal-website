@@ -2746,6 +2746,16 @@ describe('identity copy', () => {
     expect(chat).toContain('aria-label="Send message"');
   });
 
+  it('gives Biography copilots mention a continue to the copilots case', () => {
+    const bio = readFileSync('src/pages/biography.astro', 'utf8');
+    expect(bio).toMatch(
+      /<a href="\/work\/ai-coding-copilots\/"\s*>internal AI coding copilots<\/a\s*>/
+    );
+    expect(bio).toContain('href="/work/ifs-design-system/"');
+    expect(bio).toContain('linkedin.com/in/alehar');
+    expect(bio).not.toContain('mailto:');
+  });
+
   it('exposes window.posthog after idle init so hire Contact card can capture (#hire-ph)', () => {
     const ph = readFileSync('src/components/PostHog.astro', 'utf8');
     expect(ph).toContain("await import('posthog-js')");
