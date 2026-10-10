@@ -44,6 +44,7 @@ describe('content.config', () => {
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
+      metaDescription: 'A sample case meta description.',
       publishDate: '2025-01-01',
       tags: ['tag1', 'tag2'],
       img: '/assets/sample.jpg',

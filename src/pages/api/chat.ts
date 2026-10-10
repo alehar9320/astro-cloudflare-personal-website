@@ -2,6 +2,7 @@ import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
 import {
   ChatRequestSchema,
+  getLastUserMessage,
   groundedCannedAnswer,
   pruneMessages,
   sseTextStream,
@@ -174,7 +175,7 @@ export const POST: APIRoute = async ({ request }) => {
   }
 
   const prunedMessages = pruneMessages(result.data.messages as ChatMessage[]);
-  const lastUser = [...prunedMessages].reverse().find((message) => message.role === 'user');
+  const lastUser = getLastUserMessage(prunedMessages);
   const canned = lastUser ? groundedCannedAnswer(lastUser.content) : null;
 
   try {

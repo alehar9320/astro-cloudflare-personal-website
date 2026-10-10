@@ -2,6 +2,7 @@
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { safeJsonLd } from '../utils/safe-json-ld';
 
 const schema = {
   '@context': 'https://schema.org',
@@ -11,7 +12,8 @@ const schema = {
       '@id': 'https://me.alehar.workers.dev/#person',
       name: 'Alexander Härenstam',
       jobTitle: 'Product Manager, Developer Experience at IFS',
-      description: 'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.',
+      description:
+        'Product Manager, Developer Experience at IFS. Design systems, developer platforms, and Industrial AI copilots.',
       url: 'https://me.alehar.workers.dev/',
       sameAs: ['https://www.linkedin.com/in/alehar/'],
       worksFor: {
@@ -31,7 +33,8 @@ const schema = {
       url: 'https://me.alehar.workers.dev/biography/',
       name: 'Biography | Product Manager, Developer Experience at IFS',
       about: { '@id': 'https://me.alehar.workers.dev/#person' },
-      description: 'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.',
+      description:
+        'Biography of Alexander Härenstam, Product Manager, Developer Experience at IFS. Eight years at IFS. Software engineering and innovation management at Chalmers.',
       breadcrumb: {
         '@type': 'BreadcrumbList',
         itemListElement: [
@@ -56,9 +59,9 @@ const schema = {
 
 <BaseLayout
   title="Biography | Product Manager, Developer Experience at IFS"
-  description="Product Manager, Developer Experience at IFS. Get in touch on LinkedIn."
+  description="Biography of Alexander Härenstam, Product Manager, Developer Experience at IFS. Eight years at IFS. Software engineering and innovation management at Chalmers."
 >
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <script is:inline type="application/ld+json" set:html={safeJsonLd(schema)} />
 
   <div class="stack gap-20">
     <main id="main-content" class="wrapper about">
@@ -72,7 +75,11 @@ const schema = {
               <p class="when">Feb 2025 – present</p>
               <h3>Product Manager, Developer Experience at IFS</h3>
               <p class="where">Greater Stockholm</p>
-              <p>I work on Developer Experience at IFS, including internal AI coding copilots.</p>
+              <p>
+                I work on Developer Experience at IFS, including <a href="/work/ai-coding-copilots/"
+                  >internal AI coding copilots</a
+                >.
+              </p>
             </li>
             <li>
               <p class="when">Eight years at IFS</p>
@@ -85,7 +92,9 @@ const schema = {
             </li>
             <li>
               <p class="when">2015 – 2017</p>
-              <h3>M.Sc. Management and Economics of Innovation</h3>
+              <h3>
+                <a href="/work/master-thesis/">M.Sc. Management and Economics of Innovation</a>
+              </h3>
               <p class="where">Chalmers University of Technology</p>
             </li>
             <li>
@@ -94,12 +103,6 @@ const schema = {
               <p class="where">Chalmers University of Technology</p>
             </li>
           </ol>
-          <p>
-            Get in touch on{' '}
-            <a href="https://www.linkedin.com/in/alehar/" target="_blank" rel="noopener noreferrer"
-              >LinkedIn</a
-            >.
-          </p>
         </div>
       </section>
     </main>
@@ -167,6 +170,10 @@ const schema = {
     margin: 0.15rem 0;
     font-size: var(--text-lg);
     color: var(--gray-0);
+  }
+
+  .timeline h3 a {
+    color: inherit;
   }
 
   .when,
