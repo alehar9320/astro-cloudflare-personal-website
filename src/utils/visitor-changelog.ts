@@ -45,7 +45,7 @@ export const VISITOR_CHANGELOG: readonly VisitorChangelogEntry[] = [
   {
     pr: 945,
     subject: "in-sentence What's New link to /whats-new/",
-    title: 'The “This site” page now links to What’s New from its text',
+    title: 'The “This site” page now links to What’s New',
   },
   {
     pr: 1020,
