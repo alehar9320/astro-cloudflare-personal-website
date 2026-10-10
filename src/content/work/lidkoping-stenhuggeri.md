@@ -3,6 +3,8 @@ title: Lidköping Stenhuggeri
 publishDate: 2013-09-01 00:00:00
 description: |
   Early Android work, 2013, for Lidköping Stenhuggeri.
+metaDescription: >-
+  Early Android work, 2013: an app for Lidköping Stenhuggeri so they could track jobs on site instead of on paper.
 tags:
   - Android
   - Java
