@@ -9,6 +9,8 @@ export const collections = {
     schema: z.object({
       title: z.string(),
       description: z.string(),
+      // Case page <meta>/og/JSON-LD description: describes the case, no hire CTA.
+      metaDescription: z.string().min(1).max(160),
       publishDate: z.coerce.date(),
       tags: z.array(z.string()),
       img: z.string().optional(),

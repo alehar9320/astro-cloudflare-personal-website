@@ -1,3 +1,16 @@
+## HARD ABORT — inert pills (owner lock 2026-10-10)
+
+Read this before scouting. It overrides any idea below.
+
+- Never change `src/**/Pill.astro` or the case-study tag pills.
+- No hover lift (`translateY`), glow, shadow, shimmer, gradient, sweep, tactile press, or any other motion on inert or non-interactive elements.
+- Never add or flip any `enable_pill_*` feature flag.
+- If your plan touches any of these, stop and exit the cycle without opening a PR. Do not downscope into a sibling pill pass.
+
+Closed as farm: #1653, #1646, #1603, #1597, #1590, #1587, #1582, #1568, #1552, #1541.
+
+---
+
 ## 2026-05-19 - Tactile & Portability | Signal: Technical | Lean Implementation: Flagged CSS + Locals Fallback
 
 - [Insight 1: Deployment failures on Render caused by cloudflare:workers virtual module imports in shared code paths.]
@@ -21,3 +34,9 @@
 - [Insight 1: Tighter focus ring outline-offsets (2px) prevent focus ring overflow clipping on compact overlay toggles.]
 - [Insight 2: Gating active press scale transitions behind prefers-reduced-motion media queries respects accessibility preferences while preserving tactile visual feedback.]
 - [Delta: 17 lines. Guardrails: All passed autonomously.]
+
+## 2026-08-20 - Fix What's New Brand Leak | Signal: Technical/Quality | Lean Implementation: Shared Regex Drop Pattern + Bullet Fallback Guard
+
+- [Insight 1: When release notes contain bullet points that are all filtered out as internal, falling back to raw body transformation leaks un-bulleted internal titles to visitor views.]
+- [Insight 2: Sharing `INTERNAL_CHANGELOG_ITEM` between `visitor-changelog.ts` and `whats-new-glance.ts` guarantees consistent agent name and test-only filtering across both executive glance and full release body rendering.]
+- [Delta: ~25 lines. Guardrails: All unit tests passed.]
