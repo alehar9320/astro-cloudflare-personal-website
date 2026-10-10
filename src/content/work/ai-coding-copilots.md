@@ -23,8 +23,10 @@ Internal AI coding copilots for IFS engineering teams.
 
 ## Approach
 
-Since February 2025, I work with IFS engineering teams in Greater Stockholm as Product Manager, Developer Experience on internal AI coding copilots.
+I work with IFS engineering teams in Greater Stockholm on internal AI coding copilots.
 
 ## Outcome
 
 Internal AI coding copilots for IFS engineering teams.
+
+<p class="case-continue"><a href="/work/ifs-design-system/">Continue to the IFS Design System case</a></p>
