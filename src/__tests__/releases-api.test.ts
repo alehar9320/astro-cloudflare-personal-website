@@ -1,8 +1,13 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
+import { env as workerEnv } from 'cloudflare:workers';
 import { GET } from '../pages/api/releases';
 import * as githubReleases from '../utils/github-releases';
 import { LATEST_RELEASE_SNAPSHOT } from '../data/latest-release';
 import { toVisitorRelease } from '../utils/visitor-changelog';
+
+type ReleasesEnv = {
+  GITHUB_TOKEN?: string;
+};
 
 type GetContext = Parameters<typeof GET>[0];
 
@@ -24,6 +29,23 @@ const mockRelease: githubReleases.SiteRelease = {
 describe('releases API route', () => {
   beforeEach(() => {
     vi.restoreAllMocks();
+    const bindings = workerEnv as ReleasesEnv;
+    delete bindings.GITHUB_TOKEN;
+  });
+
+  it('passes trimmed GITHUB_TOKEN binding to fetchGitHubReleases', async () => {
+    const bindings = workerEnv as ReleasesEnv;
+    bindings.GITHUB_TOKEN = '  mock-token-123  ';
+    const fetchSpy = vi
+      .spyOn(githubReleases, 'fetchGitHubReleases')
+      .mockResolvedValue([mockRelease]);
+
+    const response = await GET(createContext());
+    expect(response.status).toBe(200);
+
+    expect(fetchSpy).toHaveBeenCalledWith(expect.any(Function), undefined, {
+      token: 'mock-token-123',
+    });
   });
 
   it('returns formatted visitor releases from GitHub', async () => {

@@ -38,6 +38,39 @@ describe('visits API', () => {
     expect(response.status).toBe(204);
   });
 
+  it('returns 204 and logs when project ID is invalid', async () => {
+    const bindings = workerEnv as VisitEnv;
+    bindings.POSTHOG_PERSONAL_API_KEY = 'test-key';
+    bindings.POSTHOG_PROJECT_ID = 'invalid-123-abc';
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const response = await GET({} as Parameters<typeof GET>[0]);
+    expect(response.status).toBe(204);
+    expect(errorSpy).toHaveBeenCalledWith({ event: 'visits_invalid_project_id' });
+  });
+
+  it('returns 204 and logs when query host protocol is not https', async () => {
+    const bindings = workerEnv as VisitEnv;
+    bindings.POSTHOG_PERSONAL_API_KEY = 'test-key';
+    bindings.POSTHOG_QUERY_HOST = 'http://eu.posthog.com';
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const response = await GET({} as Parameters<typeof GET>[0]);
+    expect(response.status).toBe(204);
+    expect(errorSpy).toHaveBeenCalledWith({ event: 'visits_invalid_host' });
+  });
+
+  it('returns 204 and logs when query host URL is malformed', async () => {
+    const bindings = workerEnv as VisitEnv;
+    bindings.POSTHOG_PERSONAL_API_KEY = 'test-key';
+    bindings.POSTHOG_QUERY_HOST = 'not a valid url';
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    const response = await GET({} as Parameters<typeof GET>[0]);
+    expect(response.status).toBe(204);
+    expect(errorSpy).toHaveBeenCalledWith({ event: 'visits_invalid_host' });
+  });
+
   it('logs structured telemetry on query failure and outer catch failure', async () => {
     const bindings = workerEnv as VisitEnv;
     bindings.POSTHOG_PERSONAL_API_KEY = 'test-key';
