@@ -18,7 +18,7 @@ Closed as farm: #1653, #1646, #1631, #1611, #1603, #1597, #1590, #1587, #1582, #
 
 Read this before proposing any visual or motion change to a component.
 
-- First check that a routed page renders it: `rg -n "<ComponentName>" src/pages src/layouts` (and the layouts and components those pages import).
+- First check that a routed page renders it: `rg -n "<ComponentName\b" src/pages src/layouts src/components` (the `\b` catches `<X />` and `<X prop>`). A hit in `src/components` only counts if that parent component is itself rendered by a routed page; follow the chain up to `src/pages`.
 - If no live page renders the component, do not propose the change. Stop and exit the cycle without opening a PR.
 - `src/components/PortfolioPreview.astro` is orphaned: no live page renders it, and `src/__tests__/identity.test.ts` forbids it on `/work/`. Do not polish it.
 
