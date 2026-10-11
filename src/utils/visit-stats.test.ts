@@ -14,6 +14,7 @@ const emptyPeriods = {
   uniqueVisitorsDoD: null,
   uniqueVisitorsWoW: null,
   uniqueVisitorsMoM: null,
+  uniqueVisitorsQoQ: null,
   uniqueVisitorsYoY: null,
 };
 
@@ -218,6 +219,23 @@ describe('parseVisitGlance', () => {
     expect(glance?.pageviews).toBe(100);
     expect(glance?.uniqueVisitors).toBe(15);
   });
+
+  it('computes QoQ from unique_visitors_90d vs unique_visitors_90d_prev', () => {
+    const glance = parseVisitGlance({
+      results: [
+        {
+          pageviews: 94,
+          unique_visitors: 12,
+          first_seen: '2026-08-14T07:03:00.000Z',
+          pageviews_7d: 20,
+          unique_visitors_7d: 8,
+          unique_visitors_90d: 40,
+          unique_visitors_90d_prev: 20,
+        },
+      ],
+    });
+    expect(glance?.uniqueVisitorsQoQ).toBe(100);
+  });
 });
 
 describe('formatFirstSeen', () => {
@@ -266,6 +284,7 @@ describe('formatColophonVisits', () => {
     uniqueVisitorsDoD: 25,
     uniqueVisitorsWoW: -10,
     uniqueVisitorsMoM: null,
+    uniqueVisitorsQoQ: null,
     uniqueVisitorsYoY: 0,
   };
 
@@ -297,7 +316,31 @@ describe('formatColophonVisits', () => {
         uniqueVisitorsYoY: null,
       })
     ).toBe('up to 1 unique visitor');
+  
+  it('places QoQ after MoM before YoY and omits null QoQ', () => {
+    const glance = {
+      pageviews: 94,
+      uniqueVisitors: 12,
+      firstSeen: '2026-08-14T07:03:00.000Z',
+      pageviews7d: 20,
+      uniqueVisitors7d: 8,
+      uniqueVisitorsDoD: null,
+      uniqueVisitorsWoW: null,
+      uniqueVisitorsMoM: 10,
+      uniqueVisitorsQoQ: 20,
+      uniqueVisitorsYoY: 5,
+    };
+    expect(formatColophonVisits(glance)).toBe(
+      'up to 12 unique visitors · MoM +10% · QoQ +20% · YoY +5%'
+    );
+    expect(formatColophonVisits({ ...glance, uniqueVisitorsQoQ: null })).toBe(
+      'up to 12 unique visitors · MoM +10% · YoY +5%'
+    );
+    expect(formatColophonVisitsTitle(glance)).toContain(
+      'QoQ quarter over quarter +20%'
+    );
   });
+});
 });
 
 describe('formatColophonVisitsTitle', () => {
@@ -310,6 +353,7 @@ describe('formatColophonVisitsTitle', () => {
     uniqueVisitorsDoD: 25,
     uniqueVisitorsWoW: -10,
     uniqueVisitorsMoM: null,
+    uniqueVisitorsQoQ: null,
     uniqueVisitorsYoY: 0,
   };
 

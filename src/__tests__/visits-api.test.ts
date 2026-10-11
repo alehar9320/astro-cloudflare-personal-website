@@ -32,6 +32,12 @@ describe('visits API', () => {
     expect(HOGQL).toContain('INTERVAL 365 DAY');
   });
 
+  it('queries unique visitors 90d for QoQ', () => {
+    expect(HOGQL).toContain('unique_visitors_90d');
+    expect(HOGQL).toContain('unique_visitors_90d_prev');
+    expect(HOGQL).toContain('INTERVAL 90 DAY');
+  });
+
   it('returns 204 when the PostHog key is missing', async () => {
     vi.spyOn(console, 'error').mockImplementation(() => {});
     const response = await GET({} as Parameters<typeof GET>[0]);

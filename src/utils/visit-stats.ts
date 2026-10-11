@@ -7,6 +7,7 @@ export type VisitGlance = {
   uniqueVisitorsDoD: number | null;
   uniqueVisitorsWoW: number | null;
   uniqueVisitorsMoM: number | null;
+  uniqueVisitorsQoQ: number | null;
   uniqueVisitorsYoY: number | null;
 };
 
@@ -113,9 +114,13 @@ export function parseVisitGlance(payload: unknown): VisitGlance | null {
   const unique30dPrev = asFiniteNumber(
     valueFromRow(row, columnNames, 'unique_visitors_30d_prev', 9)
   );
-  const unique365d = asFiniteNumber(valueFromRow(row, columnNames, 'unique_visitors_365d', 10));
+  const unique90d = asFiniteNumber(valueFromRow(row, columnNames, 'unique_visitors_90d', 10));
+  const unique90dPrev = asFiniteNumber(
+    valueFromRow(row, columnNames, 'unique_visitors_90d_prev', 11)
+  );
+  const unique365d = asFiniteNumber(valueFromRow(row, columnNames, 'unique_visitors_365d', 12));
   const unique365dPrev = asFiniteNumber(
-    valueFromRow(row, columnNames, 'unique_visitors_365d_prev', 11)
+    valueFromRow(row, columnNames, 'unique_visitors_365d_prev', 13)
   );
 
   if (
@@ -137,6 +142,7 @@ export function parseVisitGlance(payload: unknown): VisitGlance | null {
     uniqueVisitorsDoD: percentChange(unique1d, unique1dPrev),
     uniqueVisitorsWoW: percentChange(uniqueVisitors7d, unique7dPrev),
     uniqueVisitorsMoM: percentChange(unique30d, unique30dPrev),
+    uniqueVisitorsQoQ: percentChange(unique90d, unique90dPrev),
     uniqueVisitorsYoY: percentChange(unique365d, unique365dPrev),
   };
 }
@@ -196,6 +202,7 @@ export const PERIOD_WORDS = {
   DoD: 'day over day',
   WoW: 'week over week',
   MoM: 'month over month',
+  QoQ: 'quarter over quarter',
   YoY: 'year over year',
 } as const;
 
@@ -210,6 +217,7 @@ export function formatColophonVisits(glance: VisitGlance): string {
     ['DoD', glance.uniqueVisitorsDoD],
     ['WoW', glance.uniqueVisitorsWoW],
     ['MoM', glance.uniqueVisitorsMoM],
+    ['QoQ', glance.uniqueVisitorsQoQ],
     ['YoY', glance.uniqueVisitorsYoY],
   ];
   for (const [label, value] of periods) {
@@ -230,6 +238,7 @@ export function formatColophonVisitsTitle(glance: VisitGlance): string {
     ['DoD', glance.uniqueVisitorsDoD],
     ['WoW', glance.uniqueVisitorsWoW],
     ['MoM', glance.uniqueVisitorsMoM],
+    ['QoQ', glance.uniqueVisitorsQoQ],
     ['YoY', glance.uniqueVisitorsYoY],
   ];
   for (const [label, value] of periods) {
