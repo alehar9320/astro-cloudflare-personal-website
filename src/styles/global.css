@@ -351,3 +351,9 @@ h5 {
 :root.theme-dark .tldr-box strong {
   color: var(--accent-dark);
 }
+
+@media (forced-colors: active) {
+  .tldr-box {
+    border-color: CanvasText;
+  }
+}
