@@ -1506,7 +1506,7 @@ interface ErrorEventErrorEventInit {
 declare class MessageEvent extends Event {
   constructor(type: string, initializer: MessageEventInit);
   /**
-   * The **`data`** read-only property of the The data sent by the message emitter; this can be any data type, depending on what originated this event.
+   * The **`data`** read-only property of the data sent by the message emitter; this can be any data type, depending on what originated this event.
    *
    * [MDN Reference](https://developer.mozilla.org/docs/Web/API/MessageEvent/data)
    */
