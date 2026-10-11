@@ -141,6 +141,15 @@ export function parseVisitGlance(payload: unknown): VisitGlance | null {
   };
 }
 
+/* Optimization (⚡ Bolt): Hoist Intl.DateTimeFormat instance to avoid expensive repeated
+   formatter instantiations and locale parsing on every function invocation. */
+const STOCKHOLM_DATE_FORMATTER = new Intl.DateTimeFormat('en-GB', {
+  timeZone: 'Europe/Stockholm',
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+});
+
 /**
  * Formats an ISO-8601 timestamp string into a localized Stockholm date representation.
  * @param {string} iso - ISO-8601 timestamp string.
@@ -149,12 +158,7 @@ export function parseVisitGlance(payload: unknown): VisitGlance | null {
 export function formatFirstSeen(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '';
-  return new Intl.DateTimeFormat('en-GB', {
-    timeZone: 'Europe/Stockholm',
-    day: 'numeric',
-    month: 'short',
-    year: 'numeric',
-  }).format(d);
+  return STOCKHOLM_DATE_FORMATTER.format(d);
 }
 
 /**
