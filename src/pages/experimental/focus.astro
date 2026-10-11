@@ -1,0 +1,102 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_product_focus_v1) return Astro.redirect('/404/');
+
+const pillars = [
+  {
+    title: 'Developer Velocity',
+    desc: 'Streamlining CI/CD workflows and developer toolchains to eliminate friction.',
+  },
+  {
+    title: 'Design Systems',
+    desc: 'Scaling UI primitives, consistency, and accessible components across enterprise products.',
+  },
+  {
+    title: 'Industrial AI',
+    desc: 'Embedding AI coding copilots and intelligent assistants into domain workflows.',
+  },
+];
+---
+
+<BaseLayout
+  title="Product Focus | DevEx at IFS"
+  description="Core pillars driving DevEx and Product Engineering at IFS."
+  robots="noindex"
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero title="Product Focus" align="start">
+      <p class="lede">Core pillars driving Developer Experience and Product Engineering at IFS.</p>
+    </Hero>
+    <div class="grid">
+      {
+        pillars.map(({ title, desc }) => (
+          <div class="card">
+            <strong>{title}</strong>
+            <p>{desc}</p>
+          </div>
+        ))
+      }
+    </div>
+    <div class="actions">
+      <CallToAction
+        href="https://www.linkedin.com/in/alehar/"
+        target="_blank"
+        rel="noopener noreferrer"
+        data-hire-event="hire_cta_click"
+        data-hire-surface="contact_cta">Get in touch</CallToAction
+      >
+      <p class="cta-hint">LinkedIn</p>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .lede {
+    margin: 0;
+    color: var(--gray-200);
+    max-width: 46ch;
+  }
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+  .card {
+    padding: 1rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+    background: var(--gradient-subtle);
+  }
+  .card strong {
+    display: block;
+    color: var(--gray-0);
+  }
+  .card p {
+    margin: 0.35rem 0 0;
+    color: var(--gray-300);
+  }
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    padding-bottom: var(--chat-fab-clearance);
+    padding-right: var(--chat-fab-clearance);
+  }
+  .cta-hint {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+  }
+  @media (min-width: 50em) {
+    .actions {
+      padding-bottom: 0;
+      padding-right: 0;
+    }
+  }
+</style>
