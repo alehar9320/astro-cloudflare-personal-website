@@ -4,14 +4,14 @@ This directory contains Architecture Decision Records (ADRs) for Alexander Häre
 
 ## Index
 
-| ADR                                                           | Title                                                       | Status   | Date       |
-| :------------------------------------------------------------ | :---------------------------------------------------------- | :------- | :--------- |
-| [0001](0001-cloudflare-production-render-jules.md)            | Cloudflare as production, Render as Jules test env          | Accepted | 2026-08-24 |
-| [0002](0002-static-prerendering-cloudflare-assets-binding.md) | Static Pre-Rendering with Cloudflare Workers Assets Binding | Accepted | 2026-10-11 |
+| ADR                                                           | Title                                              | Status   | Date       | Deciders            |
+| :------------------------------------------------------------ | :------------------------------------------------- | :------- | :--------- | :------------------ |
+| [0001](0001-cloudflare-production-render-jules.md)            | Cloudflare as production, Render as Jules test env | Accepted | 2026-08-24 | Alexander Härenstam |
+| [0002](0002-static-prerendering-cloudflare-assets-binding.md) | Static Output and Cloudflare Workers Entrypoint    | Accepted | 2026-10-11 | Alexander Härenstam |
 
-## ADR Rules & Governance
+## ADR Governance
 
-- ADRs must be numbered sequentially (`0001`, `0002`, `0003`, etc.).
+- ADRs are numbered sequentially (`0001`, `0002`, `0003`, etc.).
 - Established patterns in the codebase are documented as `Accepted`.
-- Proposed architectural evolutions, tech replacements, or major migrations are documented as `Proposed`.
-- Every ADR MUST include an explicit **Directives for AI Agents** section to enforce technical standards and boundaries for autonomous AI agents working in this repository.
+- Proposed architectural evolutions or major migrations are documented as `Proposed`.
+- ADRs should include a **Directives for AI Agents** section when appropriate to clarify guidelines and boundaries for autonomous AI agents working in this repository.

@@ -1,29 +1,31 @@
-# 0002. Static Pre-Rendering with Cloudflare Workers Assets Binding
+# 0002. Static Output and Cloudflare Workers Entrypoint
 
 - **Status:** Accepted
 - **Date:** 2026-10-11
-- **Deciders:** Autonomous Architect (Archie) / Repository Analysis
+- **Deciders:** Alexander Härenstam
 
 ## Context
 
-The personal portfolio website needs fast global performance, zero cold-start latency for static content, and minimal compute costs while supporting dynamic Workers endpoints (e.g. chat AI, release summaries, visit tracking). Astro supports multiple output modes (`static`, `server`, or hybrid) and deployment adapters.
+The portfolio site needs fast global delivery for static content and pages while supporting server endpoints (such as `/api/chat`, `/api/releases`, `/api/release-summary`, and `/api/visits`). In Astro, output strategy and Cloudflare Worker adapter behaviors determine how static assets and server endpoint requests are served.
 
 ## Decision
 
-Adopt static pre-rendering (`output: 'static'` in `astro.config.mjs`) by default, combined with Cloudflare Workers Assets binding (`binding: "ASSETS"` in `wrangler.jsonc`).
-
-- Pages and static assets are fully compiled to static files in `./dist` at build time.
-- The Cloudflare Worker entrypoint (`src/cloudflare-worker.ts`) handles incoming requests, serving static assets via `env.ASSETS.fetch(request)` and routing dynamic API requests (such as `/api/chat`, `/api/releases`, and `/api/visits`) to dedicated Worker logic.
+- Set `output: isRender ? 'server' : 'static'` in `astro.config.mjs` so production Cloudflare builds compile static HTML/assets by default, with server endpoints handled on demand.
+- Implement the Cloudflare Worker custom entrypoint in `src/cloudflare-worker.ts`:
+  - Delegates request handling to `astro.fetch(request, env, ctx)` imported from `@astrojs/cloudflare/entrypoints/server`.
+  - Checks `isDirectNotFoundPath` for explicit direct 404 paths and delegates those specific requests to `fetchDirectNotFound(request, env.ASSETS)`.
+- Author API routes (e.g. `src/pages/api/*.ts`) as Astro server endpoints handled by the Astro runtime handler rather than routing them directly inside `src/cloudflare-worker.ts`.
 
 ## Consequences & Tradeoffs
 
-- **Positive:** Maximum edge caching performance, instant TTFB for content pages, zero serverless compute execution overhead for pre-rendered HTML/CSS/JS, and simple static build verification via `npm run build`.
-- **Negative / Risks:** Pages requiring server-side dynamic rendering must explicitly manage client-side dynamic fetching or API endpoint integration rather than Astro SSR frontmatter compute.
-- **Adoption Readiness:** Fully operational and validated in production deployment.
+- **Positive:** High performance and edge caching for pre-rendered pages with zero cold-start penalty, while retaining Astro server endpoints for dynamic Worker logic.
+- **Negative / Risks:** Direct 404 assets require explicit handling (`fetchDirectNotFound`) using the `ASSETS` binding when bypassed by Astro server rendering.
+- **Adoption Readiness:** Fully operational and active in production.
 
 ## Directives for AI Agents
 
-- **Do:** Keep `output: 'static'` in `astro.config.mjs` for production Cloudflare builds.
-- **Do:** Ensure asset requests fall back to `env.ASSETS.fetch(request)` in `src/cloudflare-worker.ts`.
-- **Don't:** Change Astro configuration to default `output: 'server'` or `output: 'hybrid'` for Cloudflare Workers builds without an explicit ADR proposal.
-- **Don't:** Remove the `ASSETS` binding from `wrangler.jsonc` or `worker-configuration.d.ts`.
+- **Do:** Keep `output: isRender ? 'server' : 'static'` in `astro.config.mjs`.
+- **Do:** Ensure `src/cloudflare-worker.ts` delegates general requests to `astro.fetch(request, env, ctx)` and uses `env.ASSETS` via `fetchDirectNotFound` specifically for direct 404 paths.
+- **Do:** Define server endpoints inside `src/pages/api/` as standard Astro endpoint handlers.
+- **Don't:** Add manual custom routing for `/api/*` routes inside `src/cloudflare-worker.ts`.
+- **Don't:** Assume `src/cloudflare-worker.ts` uses an `env.ASSETS.fetch` fallback for all non-404 static requests.
