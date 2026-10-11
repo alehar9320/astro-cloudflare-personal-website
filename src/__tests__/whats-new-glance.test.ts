@@ -35,9 +35,41 @@ describe('whats-new glance', () => {
   });
 
   it('keeps visitor-facing chat, What’s New, and work-case notes', () => {
-    expect(kept('feat: dock chat composer to the bottom edge and use the stage (#618)')).toBe(true);
-    expect(kept('feat: restore What’s New in the main menu')).toBe(true);
+    expect(kept('Dock chat composer to the bottom edge and use the stage (#618)')).toBe(true);
+    expect(kept('Restore What’s New in the main menu')).toBe(true);
     expect(kept('open the visit glance on tap at 375 (#461)')).toBe(true);
+    // Matt's call (b), #1163: the same lines with a conventional prefix are dev-shaped when unmapped.
+    expect(kept('feat: dock chat composer to the bottom edge and use the stage (#618)')).toBe(
+      false
+    );
+    expect(kept('feat: restore What’s New in the main menu')).toBe(false);
+  });
+
+  it('drops live bot-titled and test-only strings from glance and Last-30 grouping', () => {
+    const paletteStr =
+      '🎨 Palette: Standardize Chat Overlay Control Touch Targets and Focus States';
+    const testCoverageStr = 'Expand unit test coverage for visitor-changelog utilities';
+
+    expect(kept(paletteStr)).toBe(false);
+    expect(kept(testCoverageStr)).toBe(false);
+    expect(isKeptVisitorLine(paletteStr, paletteStr)).toBe(false);
+    expect(isKeptVisitorLine(testCoverageStr, testCoverageStr)).toBe(false);
+
+    const glance = buildWhatsNewGlance(
+      [
+        release({
+          body: `- ${paletteStr}\n- ${testCoverageStr}\n- 3a39e72 Dock chat composer to the bottom edge and use the stage (#618)`,
+          publishedAt: '2026-08-15T12:00:00Z',
+        }),
+      ],
+      now
+    );
+
+    const allPainted = [...glance.thisWeek, ...glance.groups.flatMap((g) => g.lines)].join('\n');
+    expect(allPainted).not.toContain(paletteStr);
+    expect(allPainted).not.toContain(testCoverageStr);
+    expect(allPainted).not.toMatch(/Palette|visitor-changelog utilities/i);
+    expect(allPainted).toMatch(/composer/i);
   });
 
   it('drops Engine / Bolt / Jules farm, prune, and parser noise', () => {
@@ -48,8 +80,8 @@ describe('whats-new glance', () => {
     expect(kept('Stop auto-merge for Jules and agent-farm PRs (#447)')).toBe(false);
     expect(kept('9ef3e5b')).toBe(false);
     expect(isKeptVisitorLine('2026.08.20.0900', '2026.08.20.0900')).toBe(false);
-    expect(kept('feat: dock chat composer to the bottom edge and use the stage (#618)')).toBe(true);
-    expect(kept('feat: restore What’s New in the main menu')).toBe(true);
+    expect(kept('Dock chat composer to the bottom edge and use the stage (#618)')).toBe(true);
+    expect(kept('Restore What’s New in the main menu')).toBe(true);
     expect(kept('open the visit glance on tap at 375 (#461)')).toBe(true);
   });
 
@@ -65,11 +97,11 @@ describe('whats-new glance', () => {
           publishedAt: '2026-08-20T07:00:00Z',
         }),
         release({
-          body: '- 3a39e72 feat: dock chat composer to the bottom edge and use the stage (#618)',
+          body: '- 3a39e72 Dock chat composer to the bottom edge and use the stage (#618)',
           publishedAt: '2026-08-19T22:32:23Z',
         }),
         release({
-          body: '- feat: restore What’s New in the main menu',
+          body: '- Restore What’s New in the main menu',
           publishedAt: '2026-08-19T12:00:00Z',
         }),
       ],
@@ -100,11 +132,11 @@ describe('whats-new glance', () => {
           publishedAt: '2026-08-19T22:33:46Z',
         }),
         release({
-          body: '- 3a39e72 feat: dock chat composer to the bottom edge and use the stage (#618)',
+          body: '- 3a39e72 Dock chat composer to the bottom edge and use the stage (#618)',
           publishedAt: '2026-08-19T22:32:23Z',
         }),
         release({
-          body: '- a856286 fix: drop redundant Outcome sentence on user behavior analytics (#610)',
+          body: '- a856286 Drop redundant Outcome sentence on user behavior analytics (#610)',
           publishedAt: '2026-08-19T18:42:32Z',
         }),
         release({
@@ -112,23 +144,23 @@ describe('whats-new glance', () => {
           publishedAt: '2026-08-18T21:15:25Z',
         }),
         release({
-          body: '- 8302a2a feat: offer LinkedIn hire on the not-found page (#519)',
+          body: '- 8302a2a Offer LinkedIn hire on the not-found page (#519)',
           publishedAt: '2026-08-16T12:00:00Z',
         }),
         release({
-          body: '- feat: restore What’s New in the main menu',
+          body: '- Restore What’s New in the main menu',
           publishedAt: '2026-08-10T12:00:00Z',
         }),
         release({
-          body: '- 66e3fe9 fix: open the visit glance on tap at 375 (#461)',
+          body: '- 66e3fe9 Open the visit glance on tap at 375 (#461)',
           publishedAt: '2026-08-10T11:00:00Z',
         }),
         release({
-          body: '- feat: rewrite analytics page as a visitor PM story (#492)',
+          body: '- Rewrite analytics page as a visitor PM story (#492)',
           publishedAt: '2026-08-10T10:00:00Z',
         }),
         release({
-          body: '- feat: point LinkedIn share photos at the live portrait (#501)',
+          body: '- Point LinkedIn share photos at the live portrait (#501)',
           publishedAt: '2026-08-10T09:00:00Z',
         }),
       ],
@@ -163,7 +195,7 @@ describe('whats-new glance', () => {
     const glance = buildWhatsNewGlance(
       [
         release({
-          body: '- 3a39e72 feat: dock chat composer to the bottom edge and use the stage (#618)',
+          body: '- 3a39e72 Dock chat composer to the bottom edge and use the stage (#618)',
           publishedAt: '2026-08-01T22:32:23Z',
         }),
       ],
@@ -176,9 +208,10 @@ describe('whats-new glance', () => {
 
   it('still runs 7/30-day filters on LATEST_RELEASE_SNAPSHOT', () => {
     const glance = buildWhatsNewGlance([LATEST_RELEASE_SNAPSHOT], now);
-    expect(glance.thisWeek.length).toBeGreaterThan(0);
+    // Matt's call (b), #1163: the snapshot line "fix: open the visit glance…" is unmapped and
+    // conventional-prefixed, so it is hidden rather than shown raw.
+    expect(glance.thisWeek).toEqual([]);
     expect(glance.thisWeek.join('\n')).not.toMatch(/2026\.08\.15\.1720|66e3fe9|feat:|fix:/);
-    expect(glance.thisWeek[0]).toMatch(/glance/i);
     const groupLines = glance.groups.flatMap((group) => group.lines);
     for (const title of glance.thisWeek) {
       expect(groupLines.map((line) => line.toLowerCase())).not.toContain(title.toLowerCase());
@@ -189,5 +222,83 @@ describe('whats-new glance', () => {
     const glance = buildWhatsNewGlance([LATEST_RELEASE_SNAPSHOT], new Date('2026-09-20T18:00:00Z'));
     expect(glance.thisWeek).toEqual([]);
     expect(glance.groups).toEqual([]);
+  });
+});
+
+describe('whats-new glance This week order on live releases (Vera, #1579)', () => {
+  const rel = (version: string, publishedAt: string, body: string): SiteRelease => ({
+    body,
+    publishedAt,
+    title: version,
+    url: `https://github.com/alehar9320/astro-cloudflare-personal-website/releases/tag/${version}`,
+    version,
+  });
+  // Real release bodies, 2026-10-10, newest first as the GitHub API returns them.
+  const releases = [
+    rel(
+      '2026.10.10.1210',
+      '2026-10-10T12:10:09Z',
+      '- ed3b478 fix(chat): quiet open welcome h2 to AI twin (#1016) (#1019)'
+    ),
+    rel(
+      '2026.10.10.1200',
+      '2026-10-10T12:00:37Z',
+      '- 8b68dea Hiring managers on the copilots case get a continue to IFS Design System proof, not a circular stub (#1020)'
+    ),
+    rel(
+      '2026.10.10.1146',
+      '2026-10-10T11:47:04Z',
+      [
+        '- b38f2fb fix(biography): drop in-body LinkedIn; keep chrome ContactCTA (#1103) (#1107)',
+        '- 9818672 fix(biography): link M.Sc. row to master-thesis case (#1030) (#1035)',
+      ].join('\n')
+    ),
+    rel(
+      '2026.10.10.1132',
+      '2026-10-10T11:32:13Z',
+      '- e43630f fix(theme): remove theme-toggle tactile press scale (#1029) (#1033)'
+    ),
+    rel(
+      '2026.10.10.1107',
+      '2026-10-10T11:07:46Z',
+      '- 32e1809 Screen-reader visitors know which panel Menu opens (#978)'
+    ),
+  ];
+
+  it('shows the 3 newest visitor lines, not older ones past dropped case/thesis/theme-toggle ships', () => {
+    const glance = buildWhatsNewGlance(releases, new Date('2026-10-10T12:20:00Z'));
+    expect(glance.thisWeek).toEqual([
+      'Open chat shows a quieter “AI twin” heading',
+      'The AI coding copilots case now ends with a link to the IFS Design System case',
+      'Biography ends with a single LinkedIn link',
+    ]);
+    const all = [...glance.thisWeek, ...glance.groups.flatMap((group) => group.lines)];
+    expect(all).toContain('Biography links the M.Sc. entry to the master thesis case');
+    expect(glance.thisWeek).not.toContain('Screen-reader visitors know which panel Menu opens');
+  });
+
+  it('keeps case, thesis and theme-toggle lines as visitor lines', () => {
+    expect(kept('fix(biography): link M.Sc. row to master-thesis case (#1030) (#1035)')).toBe(true);
+    // Conventional-prefixed, but mapped since Vera 6098150386, so it renders.
+    expect(kept('fix(theme): remove theme-toggle tactile press scale (#1029) (#1033)')).toBe(true);
+    // An unmapped conventional-prefixed line is still hidden under Matt's call (b), #1163.
+    expect(kept('fix(theme): remove the theme-toggle hover tint (#99957)')).toBe(false);
+    expect(kept('Remove the theme-toggle tactile press scale (#1033)')).toBe(true);
+    expect(kept('fix(biography): link copilots mention to the case (#1028) (#1034)')).toBe(true);
+  });
+
+  it('treats "case" as a case-study page, not dev wording like edge case or test case', () => {
+    // VISIBLE_SURFACE is an allowlist of things a visitor can see. A case-study page is one;
+    // an edge case or a test case is not, so those words alone must not qualify a line.
+    expect(kept('fix: handle edge case in date formatting (#1700)')).toBe(false);
+    expect(kept('fix: add test case for empty release notes (#1701)')).toBe(false);
+    expect(kept('fix: cover the use-case for missing dates (#1702)')).toBe(false);
+    expect(kept('fix: ship lower case slugs for tags (#1703)')).toBe(false);
+    expect(kept('Visitors reach the case from the home card (#1704)')).toBe(true);
+    expect(kept('The analytics case opens at its H1 (#1705)')).toBe(true);
+    // A real surface still qualifies an edge-case fix through its own word.
+    expect(kept('Handle edge case when the chat composer is empty (#1706)')).toBe(true);
+    // Matt's call (b), #1163: conventional-prefixed unmapped lines are hidden.
+    expect(kept('fix: the analytics case opens at its H1 (#1705)')).toBe(false);
   });
 });
