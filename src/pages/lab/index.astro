@@ -1,0 +1,82 @@
+---
+import AuroraCanvas from '../../components/AuroraCanvas.astro';
+import ContactCTA from '../../components/ContactCTA.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+const title = 'Creative Laboratory | Alexander Härenstam';
+const description =
+  'Interactive creative experiments, generative digital art, and canvas refractions by Alexander Härenstam.';
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  ogTitle="Creative Laboratory & Canvas Experiments"
+>
+  <div class="stack gap-20">
+    <main id="main-content" class="lab-page stack gap-12">
+      <Hero
+        title="Creative Laboratory"
+        tagline="Interactive digital art, vector math, and Northern Lights light refractions."
+        align="start"
+      />
+
+      <section class="experiment-section stack gap-6" aria-label="Aurora Refraction Experiment">
+        <header class="experiment-header stack gap-2">
+          <h2 class="section-title">01. Aurora Light Refraction</h2>
+          <p class="section-dek">
+            A 60fps vector refraction canvas driven by harmonic wave superposition and interactive
+            pointer displacement vectors.
+          </p>
+        </header>
+
+        <AuroraCanvas />
+      </section>
+    </main>
+
+    <ContactCTA />
+  </div>
+</BaseLayout>
+
+<style>
+  .lab-page {
+    width: min(52rem, calc(100vw - 3rem));
+    margin-inline: auto;
+    padding-bottom: var(--chat-fab-clearance);
+  }
+
+  .experiment-section {
+    padding: 1.5rem;
+    border-radius: 1rem;
+    background: hsla(var(--gray-999-basis), 0.4);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid hsla(var(--gray-0-basis), 0.1);
+  }
+
+  @media (forced-colors: active) {
+    .experiment-section {
+      border-color: CanvasText;
+    }
+  }
+
+  .section-title {
+    font-size: var(--text-2xl);
+    color: var(--gray-0);
+  }
+
+  .section-dek {
+    font-size: var(--text-md);
+    color: var(--gray-200);
+    max-width: 48ch;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  @media (min-width: 50em) {
+    .lab-page {
+      padding-bottom: 0;
+    }
+  }
+</style>

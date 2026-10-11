@@ -1,0 +1,389 @@
+---
+/**
+ * AuroraCanvas.astro
+ * Self-contained 60fps interactive HTML5 canvas component for Northern Lights light refractions.
+ * Hand-crafted by Prism 👩‍🚀 following strict performance and lifecycle cleanup guidelines.
+ */
+---
+
+<div class="aurora-canvas-wrapper">
+  <div class="aurora-canvas-container">
+    <canvas
+      id="aurora-interactive-canvas"
+      aria-label="Interactive Northern Lights Light Refraction Canvas"></canvas>
+
+    <div class="aurora-controls">
+      <button
+        id="aurora-toggle-btn"
+        class="aurora-btn"
+        type="button"
+        aria-label="Pause interactive aurora animation"
+        aria-pressed="false"
+      >
+        <span class="btn-icon" aria-hidden="true">⏸</span>
+        <span class="btn-text">Pause Motion</span>
+      </button>
+
+      <button
+        id="aurora-pulse-btn"
+        class="aurora-btn"
+        type="button"
+        aria-label="Pulse aurora light refraction"
+      >
+        <span class="btn-icon" aria-hidden="true">✨</span>
+        <span class="btn-text">Pulse Light</span>
+      </button>
+    </div>
+  </div>
+  <p class="aurora-hint">
+    Move your pointer across the canvas to refract light or use controls to pause motion.
+  </p>
+</div>
+
+<script>
+  import {
+    calculateAuroraWave,
+    calculatePointerRefraction,
+    getAuroraColor,
+  } from '../utils/aurora-math';
+
+  const canvas = document.getElementById('aurora-interactive-canvas') as HTMLCanvasElement | null;
+  const toggleBtn = document.getElementById('aurora-toggle-btn') as HTMLButtonElement | null;
+  const pulseBtn = document.getElementById('aurora-pulse-btn') as HTMLButtonElement | null;
+
+  if (canvas && canvas.parentElement) {
+    const ctx = canvas.getContext('2d');
+    let animationFrameId: number = 0;
+    let isPlaying: boolean = true;
+    let time: number = 0;
+
+    let pointerX: number = -9999;
+    let pointerY: number = -9999;
+    const activePointerRadius: number = 220;
+    let pulseStrength: number = 0;
+
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    const resize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      const parent = canvas.parentElement;
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+      const width = parent.clientWidth || 600;
+      const height = parent.clientHeight || 360;
+
+      canvas.width = width * dpr;
+      canvas.height = height * dpr;
+
+      if (ctx) {
+        ctx.scale(dpr, dpr);
+      }
+    };
+
+    const drawFrame = () => {
+      if (!ctx || !canvas || !canvas.parentElement) return;
+
+      const width = canvas.parentElement.clientWidth || 600;
+      const height = canvas.parentElement.clientHeight || 360;
+
+      const isDarkTheme =
+        document.documentElement.classList.contains('theme-dark') ||
+        !document.documentElement.classList.contains('theme-light');
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Render dark/glass canvas base gradient
+      const bgGradient = ctx.createLinearGradient(0, 0, 0, height);
+      if (isDarkTheme) {
+        bgGradient.addColorStop(0, 'rgba(2, 11, 24, 0.85)');
+        bgGradient.addColorStop(1, 'rgba(0, 20, 36, 0.95)');
+      } else {
+        bgGradient.addColorStop(0, 'rgba(235, 245, 255, 0.85)');
+        bgGradient.addColorStop(1, 'rgba(210, 230, 248, 0.95)');
+      }
+      ctx.fillStyle = bgGradient;
+      ctx.fillRect(0, 0, width, height);
+
+      // Render 3 overlapping curtain ribbons of Northern Lights
+      const curtainCount = 3;
+      const stepX = Math.max(4, Math.floor(width / 120));
+
+      // Pulse decay logic
+      if (pulseStrength > 0) {
+        pulseStrength *= 0.94;
+        if (pulseStrength < 0.1) pulseStrength = 0;
+      }
+
+      for (let c = 0; c < curtainCount; c++) {
+        const curtainTime = time + c * 800;
+        const baseHeight = height * (0.35 + c * 0.2);
+        const curtainAmplitude = 25 + c * 10 + pulseStrength * 15;
+
+        ctx.beginPath();
+        ctx.moveTo(0, height);
+
+        for (let x = 0; x <= width + stepX; x += stepX) {
+          const waveOffsetY = calculateAuroraWave(
+            x,
+            curtainTime,
+            curtainAmplitude,
+            0.006 - c * 0.001
+          );
+          const py = baseHeight + waveOffsetY;
+
+          const ref = calculatePointerRefraction(
+            x,
+            py,
+            pointerX,
+            pointerY,
+            activePointerRadius + pulseStrength * 50,
+            35 + pulseStrength * 25
+          );
+
+          const finalX = x + ref.dx;
+          const finalY = py + ref.dy;
+
+          if (x === 0) {
+            ctx.moveTo(finalX, finalY);
+          } else {
+            ctx.lineTo(finalX, finalY);
+          }
+        }
+
+        ctx.lineTo(width, height);
+        ctx.lineTo(0, height);
+        ctx.closePath();
+
+        const energyRatio = (c + 1) / (curtainCount + 1) + pulseStrength * 0.2;
+        const curtainColor = getAuroraColor(energyRatio, isDarkTheme);
+
+        ctx.fillStyle = curtainColor;
+        ctx.globalAlpha = isDarkTheme ? 0.35 - c * 0.08 : 0.25 - c * 0.05;
+        ctx.fill();
+      }
+
+      ctx.globalAlpha = 1.0;
+
+      // Render pointer light refraction focus ring
+      if (pointerX >= 0 && pointerY >= 0) {
+        const ringGradient = ctx.createRadialGradient(
+          pointerX,
+          pointerY,
+          5,
+          pointerX,
+          pointerY,
+          activePointerRadius * 0.6
+        );
+        ringGradient.addColorStop(0, 'rgba(0, 242, 254, 0.35)');
+        ringGradient.addColorStop(0.5, 'rgba(0, 255, 163, 0.15)');
+        ringGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+
+        ctx.fillStyle = ringGradient;
+        ctx.beginPath();
+        ctx.arc(pointerX, pointerY, activePointerRadius * 0.6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    };
+
+    const loop = () => {
+      if (!isPlaying) return;
+
+      time += 16.6;
+      drawFrame();
+      animationFrameId = requestAnimationFrame(loop);
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      pointerX = e.clientX - rect.left;
+      pointerY = e.clientY - rect.top;
+      if (!isPlaying) {
+        drawFrame();
+      }
+    };
+
+    const handlePointerLeave = () => {
+      pointerX = -9999;
+      pointerY = -9999;
+      if (!isPlaying) {
+        drawFrame();
+      }
+    };
+
+    const togglePlay = () => {
+      isPlaying = !isPlaying;
+      if (toggleBtn) {
+        toggleBtn.setAttribute('aria-pressed', (!isPlaying).toString());
+        const icon = toggleBtn.querySelector('.btn-icon');
+        const text = toggleBtn.querySelector('.btn-text');
+        if (isPlaying) {
+          toggleBtn.setAttribute('aria-label', 'Pause interactive aurora animation');
+          if (icon) icon.textContent = '⏸';
+          if (text) text.textContent = 'Pause Motion';
+          loop();
+        } else {
+          toggleBtn.setAttribute('aria-label', 'Play interactive aurora animation');
+          if (icon) icon.textContent = '▶';
+          if (text) text.textContent = 'Play Motion';
+          cancelAnimationFrame(animationFrameId);
+        }
+      }
+    };
+
+    const triggerPulse = () => {
+      pulseStrength = 1.0;
+      if (!isPlaying) {
+        drawFrame();
+      }
+    };
+
+    // Attach Event Listeners
+    window.addEventListener('resize', resize);
+    canvas.addEventListener('pointermove', handlePointerMove);
+    canvas.addEventListener('pointerleave', handlePointerLeave);
+
+    if (toggleBtn) toggleBtn.addEventListener('click', togglePlay);
+    if (pulseBtn) pulseBtn.addEventListener('click', triggerPulse);
+
+    const handleVisibilityChange = () => {
+      if (document.hidden) {
+        cancelAnimationFrame(animationFrameId);
+      } else if (isPlaying && !prefersReducedMotion) {
+        loop();
+      }
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Initial Setup
+    resize();
+
+    if (prefersReducedMotion) {
+      isPlaying = false;
+      if (toggleBtn) {
+        toggleBtn.setAttribute('aria-pressed', 'true');
+        toggleBtn.setAttribute('aria-label', 'Play interactive aurora animation');
+        const icon = toggleBtn.querySelector('.btn-icon');
+        const text = toggleBtn.querySelector('.btn-text');
+        if (icon) icon.textContent = '▶';
+        if (text) text.textContent = 'Play Motion';
+      }
+      drawFrame();
+    } else {
+      loop();
+    }
+
+    // Cleanup on Astro Page Swap
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        if (canvas) {
+          canvas.removeEventListener('pointermove', handlePointerMove);
+          canvas.removeEventListener('pointerleave', handlePointerLeave);
+        }
+        if (toggleBtn) toggleBtn.removeEventListener('click', togglePlay);
+        if (pulseBtn) pulseBtn.removeEventListener('click', triggerPulse);
+      },
+      { once: true }
+    );
+  }
+</script>
+
+<style>
+  .aurora-canvas-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 52rem;
+    margin-inline: auto;
+  }
+
+  .aurora-canvas-container {
+    position: relative;
+    width: 100%;
+    height: 380px;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    background: var(--gray-900);
+    border: 1px solid var(--gray-800);
+    box-shadow: var(--shadow-md);
+  }
+
+  @media (forced-colors: active) {
+    .aurora-canvas-container {
+      border-color: CanvasText;
+    }
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    touch-action: none;
+    cursor: crosshair;
+  }
+
+  .aurora-controls {
+    position: absolute;
+    bottom: 1rem;
+    right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+    z-index: 2;
+  }
+
+  .aurora-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.85rem;
+    font-size: var(--text-sm);
+    font-family: var(--font-brand);
+    font-weight: 500;
+    color: var(--gray-0);
+    background: hsla(var(--gray-999-basis), 0.75);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid hsla(var(--gray-0-basis), 0.2);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease,
+      transform 0.2s ease;
+  }
+
+  .aurora-btn:hover {
+    background: hsla(var(--gray-999-basis), 0.9);
+    border-color: var(--accent-regular);
+    transform: translateY(-1px);
+  }
+
+  .aurora-btn:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 2px;
+  }
+
+  .aurora-hint {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    text-align: center;
+  }
+
+  @media (max-width: 40em) {
+    .aurora-canvas-container {
+      height: 300px;
+    }
+    .btn-text {
+      display: none;
+    }
+    .aurora-btn {
+      padding: 0.5rem 0.65rem;
+    }
+  }
+</style>
