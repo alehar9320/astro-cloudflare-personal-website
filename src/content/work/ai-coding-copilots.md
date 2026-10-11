@@ -27,6 +27,6 @@ I work with IFS engineering teams in Greater Stockholm on internal AI coding cop
 
 ## Outcome
 
-Internal AI coding copilots for IFS engineering teams.
+Internal AI coding copilots deployed for engineering teams across IFS.
 
 <p class="case-continue"><a href="/work/ifs-design-system/">Continue to the IFS Design System case</a></p>
