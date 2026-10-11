@@ -592,8 +592,9 @@ const isCurrentPage = (href: string) => {
     .social-bounce :global(svg) {
       transition: transform var(--theme-transition);
     }
-    .social-bounce:hover :global(svg) {
-      transform: scale(1.12) rotate(-4deg);
+    .social-bounce:hover :global(svg),
+    .social-bounce:focus-visible :global(svg) {
+      transform: translateY(-1px) scale(1.05);
     }
     .logo-wobble:hover :global(svg) {
       animation: wobble 0.5s ease-in-out;
