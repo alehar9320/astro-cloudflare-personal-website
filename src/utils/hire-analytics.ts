@@ -19,7 +19,8 @@ export type HireSurface =
   | 'now'
   | 'reading-list'
   | 'fab'
-  | 'footer';
+  | 'footer'
+  | 'focus_cta';
 
 declare global {
   interface Window {

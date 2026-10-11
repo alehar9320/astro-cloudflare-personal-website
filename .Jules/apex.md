@@ -23,4 +23,4 @@ Prefer visitor-facing craft on live surfaces (Home, Work, Biography, Contact, an
 
 ## 2026-05-27 - Strategic Reading List | Signal: Portfolio "Bookshelf" trend | Lean Implementation: Isolated experimental route, static data array, uses Hero/Pill/Icon primitives, ~48 lines delta.
 
-## 2026-08-30 - Product Focus | Signal: DevEx PM "Operating Pillars" trend | Lean Implementation: Flagged experimental route (`/experimental/focus`), static focus array, < 50 lines total delta.
+## 2026-10-11 - Product Focus | Signal: DevEx PM "Operating Pillars" trend | Lean Implementation: Flagged experimental route (`/experimental/focus`), static focus array, < 50 lines total delta.

@@ -9,46 +9,46 @@ if (!flagsEntry?.data.enable_product_focus_v1) return Astro.redirect('/404/');
 
 const pillars = [
   {
-    title: 'Developer Velocity',
-    desc: 'Streamlining CI/CD workflows and developer toolchains to eliminate friction.',
+    title: 'Developer Tooling',
+    desc: 'Reducing friction in everyday developer workflows and internal toolchains.',
   },
   {
     title: 'Design Systems',
-    desc: 'Scaling UI primitives, consistency, and accessible components across enterprise products.',
+    desc: 'Maintaining consistent UI primitives, design tokens, and accessible components.',
   },
   {
-    title: 'Industrial AI',
-    desc: 'Embedding AI coding copilots and intelligent assistants into domain workflows.',
+    title: 'AI Copilots',
+    desc: 'Integrating AI coding copilots and intelligent assistants into engineering workflows.',
   },
 ];
 ---
 
 <BaseLayout
-  title="Product Focus | DevEx at IFS"
-  description="Core pillars driving DevEx and Product Engineering at IFS."
+  title="Product Focus | Product Manager, Developer Experience at IFS"
+  description="Where I focus as a Developer Experience PM at IFS."
   robots="noindex"
 >
   <main id="main-content" class="wrapper stack gap-8">
     <Hero title="Product Focus" align="start">
-      <p class="lede">Core pillars driving Developer Experience and Product Engineering at IFS.</p>
+      <p class="lede">Where I focus as a Developer Experience PM at IFS.</p>
     </Hero>
-    <div class="grid">
+    <ul role="list" class="grid">
       {
         pillars.map(({ title, desc }) => (
-          <div class="card">
-            <strong>{title}</strong>
+          <li class="card">
+            <h2>{title}</h2>
             <p>{desc}</p>
-          </div>
+          </li>
         ))
       }
-    </div>
+    </ul>
     <div class="actions">
       <CallToAction
         href="https://www.linkedin.com/in/alehar/"
         target="_blank"
         rel="noopener noreferrer"
         data-hire-event="hire_cta_click"
-        data-hire-surface="contact_cta">Get in touch</CallToAction
+        data-hire-surface="focus_cta">Get in touch</CallToAction
       >
       <p class="cta-hint">LinkedIn</p>
     </div>
@@ -65,6 +65,9 @@ const pillars = [
     display: grid;
     gap: 1rem;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    list-style: none;
+    padding: 0;
+    margin: 0;
   }
   .card {
     padding: 1rem;
@@ -72,13 +75,15 @@ const pillars = [
     border-radius: 0.5rem;
     background: var(--gradient-subtle);
   }
-  .card strong {
-    display: block;
+  .card h2 {
+    font-size: var(--text-md);
     color: var(--gray-0);
+    margin: 0;
   }
   .card p {
     margin: 0.35rem 0 0;
     color: var(--gray-300);
+    font-size: var(--text-sm);
   }
   .actions {
     display: flex;
