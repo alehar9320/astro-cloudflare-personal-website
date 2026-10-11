@@ -146,13 +146,6 @@ export function parseVisitGlance(payload: unknown): VisitGlance | null {
   };
 }
 
-const FIRST_SEEN_DATE_FORMATTER = new Intl.DateTimeFormat('en-GB', {
-  timeZone: 'Europe/Stockholm',
-  day: 'numeric',
-  month: 'short',
-  year: 'numeric',
-});
-
 /**
  * Formats an ISO-8601 timestamp string into a localized Stockholm date representation.
  * @param {string} iso - ISO-8601 timestamp string.
@@ -161,7 +154,12 @@ const FIRST_SEEN_DATE_FORMATTER = new Intl.DateTimeFormat('en-GB', {
 export function formatFirstSeen(iso: string): string {
   const d = new Date(iso);
   if (Number.isNaN(d.getTime())) return '';
-  return FIRST_SEEN_DATE_FORMATTER.format(d);
+  return new Intl.DateTimeFormat('en-GB', {
+    timeZone: 'Europe/Stockholm',
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  }).format(d);
 }
 
 /**
@@ -206,20 +204,14 @@ export const PERIOD_WORDS = {
   YoY: 'year over year',
 } as const;
 
-const PERIOD_KEYS = ['DoD', 'WoW', 'MoM', 'YoY'] as const;
+const PERIOD_FIELDS = {
+  DoD: 'uniqueVisitorsDoD',
+  WoW: 'uniqueVisitorsWoW',
+  MoM: 'uniqueVisitorsMoM',
+  YoY: 'uniqueVisitorsYoY',
+} as const satisfies Record<keyof typeof PERIOD_WORDS, keyof VisitGlance>;
 
-function getPeriodMetric(glance: VisitGlance, key: (typeof PERIOD_KEYS)[number]): number | null {
-  switch (key) {
-    case 'DoD':
-      return glance.uniqueVisitorsDoD;
-    case 'WoW':
-      return glance.uniqueVisitorsWoW;
-    case 'MoM':
-      return glance.uniqueVisitorsMoM;
-    case 'YoY':
-      return glance.uniqueVisitorsYoY;
-  }
-}
+const PERIOD_KEYS = Object.keys(PERIOD_FIELDS) as Array<keyof typeof PERIOD_FIELDS>;
 
 /**
  * Formats VisitGlance metrics into a compact colophon summary string with period-over-period changes.
@@ -230,7 +222,7 @@ export function formatColophonVisits(glance: VisitGlance): string {
   const parts = [formatUniqueVisitorCount(glance.uniqueVisitors)];
   for (let i = 0; i < PERIOD_KEYS.length; i++) {
     const label = PERIOD_KEYS[i];
-    const value = getPeriodMetric(glance, label);
+    const value = glance[PERIOD_FIELDS[label]];
     if (value === null || !Number.isFinite(value)) continue;
     parts.push(`${label} ${formatSignedPercent(value)}`);
   }
@@ -246,7 +238,7 @@ export function formatColophonVisitsTitle(glance: VisitGlance): string {
   const parts = [formatUniqueVisitorCount(glance.uniqueVisitors)];
   for (let i = 0; i < PERIOD_KEYS.length; i++) {
     const label = PERIOD_KEYS[i];
-    const value = getPeriodMetric(glance, label);
+    const value = glance[PERIOD_FIELDS[label]];
     if (value === null || !Number.isFinite(value)) continue;
     parts.push(`${label} ${PERIOD_WORDS[label]} ${formatSignedPercent(value)}`);
   }

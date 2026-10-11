@@ -219,7 +219,7 @@ describe('parseVisitGlance', () => {
     expect(glance?.uniqueVisitors).toBe(15);
   });
 
-  it('correctly maps custom-ordered columns using O(1) column map indexing', () => {
+  it('maps custom-ordered columns by header name, keeping positions when a header is not a string', () => {
     const glance = parseVisitGlance({
       columns: [
         null,
