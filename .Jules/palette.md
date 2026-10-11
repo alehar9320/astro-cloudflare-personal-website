@@ -1,5 +1,11 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## 2026-10-11 - Forced-Colors TL;DR Border
+
+**Learning:** Prose link focus and hover states are already handled globally by `a:not([class])` in `src/styles/global.css`, so page-scoped link rules should not be added because Astro's scoped rules override global `@media (prefers-reduced-motion: reduce)` transitions. The change in this PR is adding `@media (forced-colors: active) { .tldr-box { border-color: CanvasText; } }` to preserve container border visibility in Windows High Contrast / Forced Colors mode.
+
+**Action:** Added `@media (forced-colors: active)` border-color fallback for `.tldr-box` in `src/styles/global.css`.
+
 ## 2026-05-27 - Navigation Link Touch Target Ergonomics
 
 **Learning:** Main menu text links (`.link`) and header social icons (`.social`) in `Nav.astro` can fail WCAG 2.1 AA 44x44px minimum touch target requirements when rendered on mobile devices. Standardizing `.link` with `display: inline-flex; align-items: center; min-height: 44px;` and `.social` with `min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center;` prevents mis-taps on touch devices while preserving desktop layout alignment.
