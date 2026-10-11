@@ -8,7 +8,7 @@ Read this before proposing any visual or motion change to a component.
 - If no live page renders the component, do not propose the change. Stop and exit the cycle without opening a PR.
 - `src/components/PortfolioPreview.astro` is orphaned: no live page renders it, and `src/__tests__/identity.test.ts` forbids it on `/work/`. Do not polish it.
 
-Wasted runs on orphaned components: #1676, #1683, #1125, #1339, #1351, #1363.
+Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
 
 ---
 

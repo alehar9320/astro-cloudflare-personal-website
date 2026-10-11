@@ -4,7 +4,7 @@
 
 Read this before scouting. It overrides any idea below.
 
-- Never change `src/**/Pill.astro` or the case-study tag pills unless an owner-approved spec scopes it.
+- Never change `src/**/Pill.astro` or the case-study tag pills.
 - No hover lift (`translateY`), glow, shadow, shimmer, gradient, sweep, tactile press, or any other motion on inert or non-interactive elements.
 - An inert pill with a hover effect is a fake affordance: it looks clickable and isn't.
 - Never add or flip any `enable_pill_*` feature flag.
@@ -22,7 +22,7 @@ Read this before proposing any visual or motion change to a component.
 - If no live page renders the component, do not propose the change. Stop and exit the cycle without opening a PR.
 - `src/components/PortfolioPreview.astro` is orphaned: no live page renders it, and `src/__tests__/identity.test.ts` forbids it on `/work/`. Do not polish it.
 
-Wasted runs on orphaned components: #1676, #1683, #1125, #1339, #1351, #1363.
+Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
 
 ---
 
