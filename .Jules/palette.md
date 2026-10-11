@@ -1,10 +1,10 @@
 # Palette 🎨 - UX & Accessibility Journal
 
-## 2026-05-28 - Inline Prose Text Link Ergonomics & Forced-Colors TLDR Borders
+## 2026-10-11 - Forced-Colors TL;DR Border
 
-**Learning:** Setting `display: inline-flex; min-height: 44px;` on inline prose links inside paragraph text (such as `.copy a` in `this-site.astro`) creates unwanted vertical line height gaps in body text (WCAG 2.1 AA explicitly exempts inline prose links from 44x44px target sizes). Instead, applying explicit `:focus-visible` outlines (`outline: 2px solid var(--accent-regular); outline-offset: 4px; border-radius: 0.25rem;`) and hover text decoration transitions provides clear focus affordance without breaking text paragraph flow. Additionally, adding `@media (forced-colors: active) { .tldr-box { border-color: CanvasText; } }` preserves container border visibility in Windows High Contrast / Forced Colors mode.
+**Learning:** Prose link focus and hover states are already handled globally by `a:not([class])` in `src/styles/global.css`, so page-scoped link rules should not be added because Astro's scoped rules override global `@media (prefers-reduced-motion: reduce)` transitions. The change in this PR is adding `@media (forced-colors: active) { .tldr-box { border-color: CanvasText; } }` to preserve container border visibility in Windows High Contrast / Forced Colors mode.
 
-**Action:** Updated `.copy a` styling in `src/pages/this-site.astro` with `:focus-visible` indicator outlines and hover transitions, and added forced-colors border fallback for `.tldr-box` in `src/styles/global.css`.
+**Action:** Added `@media (forced-colors: active)` border-color fallback for `.tldr-box` in `src/styles/global.css`.
 
 ## 2026-05-27 - Navigation Link Touch Target Ergonomics
 
