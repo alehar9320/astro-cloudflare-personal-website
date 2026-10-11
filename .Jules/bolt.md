@@ -45,3 +45,7 @@ Action: Refactored `showFollowUps()` in `src/components/Chat.astro` to use an in
 2026-09-08 - Hoist Static Regexes Across Edge Utilities
 Learning: Declaring inline RegExp literals inside repeatedly executed edge functions (`splitReleaseBody`, `toVisitorChangelogTitle`, `stripExecBanned`, `isSafeReleaseSummary`) forces JavaScript engines on Cloudflare Workers edge runtimes to re-instantiate RegExp objects on every function call, triggering dynamic allocations and garbage collection overhead. Hoisting static regular expressions to module-level constants eliminates object instantiation and reduces GC pressure per edge request.
 Action: Hoisted static RegExp literals in `src/utils/github-releases.ts`, `src/utils/visitor-changelog.ts`, and `src/utils/release-summary.ts`.
+
+2026-09-09 - Hoist Stateless Formatters/Encoders & String Slicing Optimization
+Learning: Instantiating `Intl.DateTimeFormat` or `TextEncoder` repeatedly inside hot function paths forces V8 and edge runtimes to re-parse options, create new instances, and initialize locale data per invocation. Hoisting stateless formatters/encoders to module constants eliminates object allocation and setup overhead. Additionally, using `.slice(0, 10)` instead of `.split('T')[0]` on ISO date strings extracts `YYYY-MM-DD` without allocating temporary 2-element string arrays.
+Action: Hoisted `Intl.DateTimeFormat` in `src/utils/visit-stats.ts`, `TextEncoder` in `src/utils/chat-logic.ts`, and updated `formatReleaseDate` in `src/utils/github-releases.ts` to use `.slice(0, 10)`.
