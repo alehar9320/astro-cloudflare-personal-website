@@ -483,7 +483,7 @@ describe('identity copy', () => {
     expect(nav).not.toContain('facebook.com');
     expect(footer).not.toContain('instagram.com');
     expect(footer).not.toContain('facebook.com');
-    expect(nav).toContain('https://www.linkedin.com/in/alehar');
+    expect(nav).toContain('https://www.linkedin.com/in/alehar/');
     expect(footer).toContain('https://www.linkedin.com/in/alehar/');
     expect(nav).toContain('https://github.com/alehar9320');
     expect(footer).toContain('https://github.com/alehar9320');
@@ -2695,6 +2695,13 @@ describe('identity copy', () => {
     expect(work).toContain('<ContactCTA />'); // hire LinkedIn lives in chrome ContactCTA (#1104)
     expect(work).not.toContain('mailto:');
     expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
+  });
+
+  it('keeps header Nav LinkedIn href with trailing slash (#1112)', () => {
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    expect(nav).toContain("href: 'https://www.linkedin.com/in/alehar/'");
+    expect(nav).not.toContain("href: 'https://www.linkedin.com/in/alehar',");
+    expect(nav).not.toContain('mailto:');
   });
 
   it('keeps Biography Get in touch in chrome, not under education (#1103)', () => {
