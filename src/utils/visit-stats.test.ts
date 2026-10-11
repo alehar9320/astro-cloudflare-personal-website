@@ -218,6 +218,24 @@ describe('parseVisitGlance', () => {
     expect(glance?.pageviews).toBe(100);
     expect(glance?.uniqueVisitors).toBe(15);
   });
+
+  it('correctly maps custom-ordered columns using O(1) column map indexing', () => {
+    const glance = parseVisitGlance({
+      columns: [
+        null,
+        'unique_visitors',
+        'first_seen',
+        'pageviews_7d',
+        'unique_visitors_7d',
+        'pageviews',
+      ],
+      results: [[null, 42, '2026-08-14T07:03:00.000Z', 10, 5, 200]],
+    });
+    expect(glance?.pageviews).toBe(200);
+    expect(glance?.uniqueVisitors).toBe(42);
+    expect(glance?.pageviews7d).toBe(10);
+    expect(glance?.uniqueVisitors7d).toBe(5);
+  });
 });
 
 describe('formatFirstSeen', () => {
