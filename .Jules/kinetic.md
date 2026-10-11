@@ -23,6 +23,17 @@ Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hi
 
 # Kinetic Journal ⚡
 
+## 2026-03-31 - Parallax Image Scale Zoom for Portfolio Preview Cards
+
+- **Signal:** Portfolio preview cards displayed static images without depth during hover/focus states.
+- **Action:**
+  - Added hardware-accelerated `transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1)` to `img` in `src/components/PortfolioPreview.astro`.
+  - Applied subtle `transform: scale(1.04)` on `.card:hover img` and `.card:focus-visible img`.
+  - Gated motion inside `@media (prefers-reduced-motion: reduce)` to disable transitions for users preferring reduced motion.
+- **Tokens Added:**
+  - Image Parallax Zoom: `scale(1.04)`
+  - Motion Curve: `cubic-bezier(0.22, 1, 0.36, 1)`
+
 ## 2026-08-29 - CTA glass abort | Signal: closed #772/#667 | Lean Implementation: HARD ABORT CallToAction glassmorphism and micro-states
 
 ## 2025-05-15 - Interactive Glassmorphism for Skills Section
