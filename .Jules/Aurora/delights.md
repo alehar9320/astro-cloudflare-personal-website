@@ -19,3 +19,10 @@ Closed as farm: #1653, #1646, #1603, #1597, #1590, #1587, #1582, #1568, #1552, #
 - User Target: Joy
 - Abort Triggers: None (verified via Playwright and build pipeline).
 - User Reaction: Pending synthetic feedback.
+
+## 2026-06-11 - Social Bounce | Signal: Competitive | Lean Implementation: Added subtle scale(1.12) and -4deg rotation on hover to header social icons in Nav.astro.
+
+- Insight: Micro-interactions on header navigation controls provide tactile feedback and increase visual delight during user engagement.
+- User Target: Joy
+- Abort Triggers: None (verified via test and build pipeline).
+- User Reaction: Pending synthetic feedback.
