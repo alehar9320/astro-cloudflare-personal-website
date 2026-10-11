@@ -1,11 +1,12 @@
 {
   "portfolio_tactile_v1": true,
   "enable_strategic_pulse": true,
-  "portfolio_shimmer_v1": true,
+  "portfolio_shimmer_v1": false,
   "enable_product_manifesto": true,
   "enable_skills_pulse_v1": true,
   "enable_reading_list": true,
   "enable_logo_wobble_v1": true,
   "enable_cta_tactile_v1": true,
-  "enable_social_bounce_v1": false
+  "enable_social_bounce_v1": false,
+  "portfolio_zoom_v1": true
 }
