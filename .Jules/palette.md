@@ -1,5 +1,17 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## GUARD — orphaned components (Lead UX lock 2026-10-11)
+
+Read this before proposing any visual or motion change to a component.
+
+- First check that a routed page renders it: `rg -n "<ComponentName\b" src/pages src/layouts src/components` (the `\b` catches `<X />` and `<X prop>`). A hit in `src/components` only counts if that parent component is itself rendered by a routed page; follow the chain up to `src/pages`.
+- If no live page renders the component, do not propose the change. Stop and exit the cycle without opening a PR.
+- `src/components/PortfolioPreview.astro` is orphaned: no live page renders it, and `src/__tests__/identity.test.ts` forbids it on `/work/`. Do not polish it.
+
+Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
+
+---
+
 ## 2026-10-11 - Forced-Colors TL;DR Border
 
 **Learning:** Prose link focus and hover states are already handled globally by `a:not([class])` in `src/styles/global.css`, so page-scoped link rules should not be added because Astro's scoped rules override global `@media (prefers-reduced-motion: reduce)` transitions. The change in this PR is adding `@media (forced-colors: active) { .tldr-box { border-color: CanvasText; } }` to preserve container border visibility in Windows High Contrast / Forced Colors mode.
