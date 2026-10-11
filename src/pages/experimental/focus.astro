@@ -9,16 +9,18 @@ if (!flagsEntry?.data.enable_product_focus_v1) return Astro.redirect('/404/');
 
 const pillars = [
   {
-    title: 'Developer Tooling',
-    desc: 'Reducing friction in everyday developer workflows and internal toolchains.',
-  },
-  {
     title: 'Design Systems',
-    desc: 'Maintaining consistent UI primitives, design tokens, and accessible components.',
+    href: '/work/ifs-design-system/',
+    desc: 'Shared UI components and tokens to keep product experiences consistent across Cloud.',
   },
   {
-    title: 'AI Copilots',
-    desc: 'Integrating AI coding copilots and intelligent assistants into engineering workflows.',
+    title: 'Developer Platforms',
+    desc: 'Internal tooling and platforms that streamline engineering workflows.',
+  },
+  {
+    title: 'AI Coding Copilots',
+    href: '/work/ai-coding-copilots/',
+    desc: 'Internal AI coding copilots for engineering teams.',
   },
 ];
 ---
@@ -32,11 +34,19 @@ const pillars = [
     <Hero title="Product Focus" align="start">
       <p class="lede">Where I focus as a Developer Experience PM at IFS.</p>
     </Hero>
-    <ul role="list" class="grid">
+    <ul role="list" class="focus-list">
       {
-        pillars.map(({ title, desc }) => (
-          <li class="card">
-            <h2>{title}</h2>
+        pillars.map(({ title, href, desc }) => (
+          <li class="focus-item">
+            <h2>
+              {href ? (
+                <a href={href} class="pillar-link">
+                  {title}
+                </a>
+              ) : (
+                title
+              )}
+            </h2>
             <p>{desc}</p>
           </li>
         ))
@@ -61,26 +71,34 @@ const pillars = [
     color: var(--gray-200);
     max-width: 46ch;
   }
-  .grid {
-    display: grid;
-    gap: 1rem;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  .focus-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
     list-style: none;
     padding: 0;
     margin: 0;
   }
-  .card {
-    padding: 1rem;
-    border: 1px solid var(--gray-800);
-    border-radius: 0.5rem;
-    background: var(--gradient-subtle);
-  }
-  .card h2 {
+  .focus-item h2 {
     font-size: var(--text-md);
     color: var(--gray-0);
     margin: 0;
   }
-  .card p {
+  .pillar-link {
+    color: var(--gray-0);
+    text-decoration: underline;
+    text-decoration-color: var(--gray-600);
+    text-underline-offset: 0.2em;
+  }
+  .pillar-link:hover {
+    color: var(--accent-regular);
+    text-decoration-color: var(--accent-regular);
+  }
+  .pillar-link:focus-visible {
+    outline: 2px solid var(--accent-regular);
+    outline-offset: 2px;
+  }
+  .focus-item p {
     margin: 0.35rem 0 0;
     color: var(--gray-300);
     font-size: var(--text-sm);

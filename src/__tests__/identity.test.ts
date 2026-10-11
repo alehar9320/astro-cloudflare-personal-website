@@ -1993,6 +1993,7 @@ describe('identity copy', () => {
   it('adds robots noindex on /experimental/now/ and /experimental/reading-list/ and keeps the pages', () => {
     expect(existsSync('src/pages/experimental/now.astro')).toBe(true);
     expect(existsSync('src/pages/experimental/reading-list.astro')).toBe(true);
+    expect(existsSync('src/pages/experimental/focus.astro')).toBe(true);
     const now = readFileSync('src/pages/experimental/now.astro', 'utf8');
     expect(now).toContain('robots="noindex"');
     expect(now).toContain('https://www.linkedin.com/in/alehar/');
@@ -2010,9 +2011,14 @@ describe('identity copy', () => {
     expect(head).not.toContain('nofollow');
     const layout = readFileSync('src/layouts/BaseLayout.astro', 'utf8');
     expect(layout).toContain('robots={robots}');
+    const focus = readFileSync('src/pages/experimental/focus.astro', 'utf8');
+    expect(focus).toContain('robots="noindex"');
+    expect(focus).toContain('https://www.linkedin.com/in/alehar/');
+    expect(focus).not.toContain('mailto:');
     const sitemap = readFileSync('src/pages/sitemap.xml.ts', 'utf8');
     expect(sitemap).not.toContain('/experimental/now');
     expect(sitemap).not.toContain('/experimental/reading-list');
+    expect(sitemap).not.toContain('/experimental/focus');
     expect(sitemap).toContain('ifs-design-system');
     const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
     expect(cta).toContain('https://www.linkedin.com/in/alehar/');
@@ -2966,6 +2972,7 @@ describe('every hire surface the site emits is a known HireSurface', () => {
     expect(known.size).toBeGreaterThan(0);
     expect(used).toContain('404');
     expect(used).toContain('fab');
+    expect(used).toContain('focus_cta');
     // Direction: every used value must be listed. Listed-but-unused is allowed
     // (case_study is legacy, kept for older PostHog data).
     expect([...used].filter((surface) => !known.has(surface))).toEqual([]);
