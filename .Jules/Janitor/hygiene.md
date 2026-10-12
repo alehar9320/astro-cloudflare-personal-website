@@ -1,5 +1,17 @@
 # Janitor Hygiene Journal
 
+## HARD ABORT — Janitor "no typos found" (owner lock 2026-10-12)
+
+Read this before scouting. It overrides any idea below.
+
+- Never open a PR, journal row, or log that says "no typos found" or records a clean scan.
+- Only open a PR that fixes a real typo in visitor-facing copy.
+- If the change isn't visible to a visitor, stop and exit the cycle without opening a PR. Do not downscope into a sibling pass.
+
+Recent farm runs: #1709.
+
+---
+
 | Date       | Corrected File                    | Correction                                                                               | Status      |
 | :--------- | :-------------------------------- | :--------------------------------------------------------------------------------------- | :---------- |
 | 2025-03-24 | N/A                               | Initialized Journal                                                                      | Initialized |
