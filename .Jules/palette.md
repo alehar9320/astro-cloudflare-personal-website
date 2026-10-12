@@ -12,6 +12,12 @@ Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
 
 ---
 
+## 2026-10-12 - Skip-Link Target & Forced-Colors Borders for Manifesto Page
+
+**Learning:** Standalone or experimental page layouts must include `id="main-content"` on their primary `<main>` element to ensure the global "Skip to content" keyboard navigation link (`href="#main-content"`) works consistently site-wide. Furthermore, card containers using custom CSS variable borders require explicit `border-color: CanvasText;` fallbacks within `@media (forced-colors: active)` to preserve structural container boundaries in Windows High Contrast mode.
+
+**Action:** Added `id="main-content"` to `<main>` and `@media (forced-colors: active)` border-color fallback for `.card` elements in `src/pages/experimental/manifesto.astro`.
+
 ## 2026-10-11 - Forced-Colors TL;DR Border
 
 **Learning:** Prose link focus and hover states are already handled globally by `a:not([class])` in `src/styles/global.css`, so page-scoped link rules should not be added because Astro's scoped rules override global `@media (prefers-reduced-motion: reduce)` transitions. The change in this PR is adding `@media (forced-colors: active) { .tldr-box { border-color: CanvasText; } }` to preserve container border visibility in Windows High Contrast / Forced Colors mode.
