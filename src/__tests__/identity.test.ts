@@ -2773,6 +2773,19 @@ describe('identity copy', () => {
     expect(chat).toContain('aria-label="Send message"');
   });
 
+  it('gives the IFS case one onward read to the copilots case (next-case)', () => {
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    const linkAt = slug.indexOf(
+      'href="/work/ai-coding-copilots/">Next: Internal AI coding copilots'
+    );
+    const mainEnd = slug.indexOf('</main>');
+    expect(linkAt).toBeGreaterThan(-1);
+    expect(linkAt).toBeLessThan(mainEnd);
+    expect(slug).toContain("entry.id === 'ifs-design-system' && (");
+    expect(slug).toContain('class="next-case"');
+    expect(slug.indexOf('<ContactCTA />')).toBeGreaterThan(mainEnd);
+  });
+
   it('gives Biography copilots mention a continue to the copilots case', () => {
     const bio = readFileSync('src/pages/biography.astro', 'utf8');
     expect(bio).toMatch(
