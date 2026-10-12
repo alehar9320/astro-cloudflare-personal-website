@@ -111,7 +111,13 @@ describe('What’s New releases: a failed GitHub fetch is not an empty list (#15
       snapshot: old,
     });
     expect(loaded.state).toBe('snapshot');
-    expect(render(loaded).unavailable).toBe(true);
+    const { glance, unavailable } = render(loaded);
+    expect(unavailable).toBe(true);
+    // #1579: the old snapshot still feeds a dated Latest updates fallback above that line.
+    expect(glance.latest?.datetime).toBe('2026-08-15');
+    expect(glance.latest?.lines).toEqual([
+      'On a laptop, open chat sits under the header instead of covering the whole page',
+    ]);
   });
 
   it('works on *.workers.dev, where caches.default is a no-op', async () => {

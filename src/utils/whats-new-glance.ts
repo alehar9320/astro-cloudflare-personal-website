@@ -41,10 +41,24 @@ export type GlanceGroup = {
   lines: string[];
 };
 
+/** One release's visitor lines, shown as "Latest updates" when the 30-day window is empty (#1579). */
+export type LatestUpdates = {
+  /** YYYY-MM-DD in Europe/Stockholm, for `<time datetime>`. */
+  datetime: string;
+  /** e.g. "Updated 1 Sep 2026", Europe/Stockholm. */
+  label: string;
+  lines: string[];
+};
+
 export type WhatsNewGlance = {
   groups: GlanceGroup[];
+  /** Set only when thisWeek and groups are both empty and some release has a kept line. */
+  latest?: LatestUpdates;
   thisWeek: string[];
 };
+
+const LATEST_MAX_LINES = 3;
+const SITE_TIME_ZONE = 'Europe/Stockholm';
 
 type Theme = {
   heading: string;
@@ -135,6 +149,70 @@ function collectItems(releases: SiteRelease[], nowMs: number): GlanceItem[] {
   return items;
 }
 
+function keptLinesOf(rawRelease: SiteRelease): string[] {
+  const release = toVisitorRelease(rawRelease);
+  const bullets = splitReleaseBody(release.body);
+  const lines =
+    bullets.length > 0
+      ? bullets.map((item) => item.message)
+      : release.body.trim()
+        ? [release.body]
+        : [];
+  const kept: string[] = [];
+  const seen = new Set<string>();
+  for (const line of lines) {
+    if (!isKeptVisitorLine(line, line)) continue;
+    const key = line.toLowerCase();
+    if (seen.has(key)) continue;
+    seen.add(key);
+    kept.push(line);
+    if (kept.length >= LATEST_MAX_LINES) break;
+  }
+  return kept;
+}
+
+export function formatLatestUpdatesDate(publishedMs: number): { datetime: string; label: string } {
+  const date = new Date(publishedMs);
+  const datetime = new Intl.DateTimeFormat('en-CA', {
+    day: '2-digit',
+    month: '2-digit',
+    timeZone: SITE_TIME_ZONE,
+    year: 'numeric',
+  }).format(date);
+  const human = new Intl.DateTimeFormat('en-GB', {
+    day: 'numeric',
+    month: 'short',
+    timeZone: SITE_TIME_ZONE,
+    year: 'numeric',
+  }).format(date);
+  return { datetime, label: `Updated ${human}` };
+}
+
+/**
+ * "Latest updates" fallback (#1579): one date = one release. Walk releases newest first
+ * (any age) and take up to 3 kept visitor lines from the first release that yields one.
+ * Same toVisitorRelease / isKeptVisitorLine path as This week, so call (b) still holds.
+ */
+export function selectLatestUpdates(releases: SiteRelease[]): LatestUpdates | undefined {
+  const dated = releases
+    .map((release) => ({
+      publishedMs: release.publishedAt ? Date.parse(release.publishedAt) : Number.NaN,
+      release,
+    }))
+    .filter((entry) => !Number.isNaN(entry.publishedMs))
+    .sort((a, b) => b.publishedMs - a.publishedMs);
+  for (const { publishedMs, release } of dated) {
+    const lines = keptLinesOf(release);
+    if (lines.length > 0) return { ...formatLatestUpdatesDate(publishedMs), lines };
+  }
+  return undefined;
+}
+
+/** True when the page has any visitor lines to show (This week, Last 30 days or Latest updates). */
+export function hasGlanceContent(glance: WhatsNewGlance): boolean {
+  return glance.thisWeek.length > 0 || glance.groups.length > 0 || Boolean(glance.latest);
+}
+
 /**
  * Builds executive glance summary for /whats-new/: top 3 items for this week + theme groups for last 30 days.
  * Optimization (⚡ Bolt): Single-pass extraction of top 3 weekly items and theme groups avoids intermediate array
@@ -187,5 +265,9 @@ export function buildWhatsNewGlance(
 
   const groups: GlanceGroup[] = ranked.map(({ heading, lines }) => ({ heading, lines }));
 
+  if (thisWeek.length === 0 && groups.length === 0) {
+    const latest = selectLatestUpdates(releases);
+    if (latest) return { thisWeek, groups, latest };
+  }
   return { thisWeek, groups };
 }

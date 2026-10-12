@@ -1,4 +1,6 @@
 import { describe, expect, it } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 
 import { LATEST_RELEASE_SNAPSHOT } from '../data/latest-release';
 import type { SiteRelease } from '../utils/github-releases';
@@ -300,5 +302,105 @@ describe('whats-new glance This week order on live releases (Vera, #1579)', () =
     expect(kept('Handle edge case when the chat composer is empty (#1706)')).toBe(true);
     // Matt's call (b), #1163: conventional-prefixed unmapped lines are hidden.
     expect(kept('fix: the analytics case opens at its H1 (#1705)')).toBe(false);
+  });
+});
+
+describe('whats-new Latest updates fallback (#1579)', () => {
+  const RAW_1167 =
+    '80c22f7 What’s New: hiring visitors read outcome lines, not eng shorthand (#1167)';
+  const RAW_1223 = 'b12c3d4 44px Menu button hit target (#1223)';
+  const DEV_ONLY = '- d00d123 chore: bump vitest and scrape the context helper (#1700)';
+  const CODE_TOKEN = /\b[a-f0-9]{7,40}\b|#\d+|^(?:feat|fix|chore|docs|refactor|test|ci)(?:\(|:)/i;
+
+  it('(a) all releases older than 30 days still produce the fallback selection', () => {
+    const glance = buildWhatsNewGlance(
+      [
+        release({ body: `- ${RAW_1167}`, publishedAt: '2026-07-01T10:00:00Z' }),
+        release({ body: `- ${RAW_1223}`, publishedAt: '2026-06-01T10:00:00Z' }),
+      ],
+      now
+    );
+    expect(glance.thisWeek).toEqual([]);
+    expect(glance.groups).toEqual([]);
+    expect(glance.latest).toEqual({
+      datetime: '2026-07-01',
+      label: 'Updated 1 Jul 2026',
+      lines: ['What’s New now describes each update in plain language'],
+    });
+  });
+
+  it('(b) newest release yields 0 visitor lines, the next yields 2: those 2 plus the older date', () => {
+    const glance = buildWhatsNewGlance(
+      [
+        release({ body: DEV_ONLY, publishedAt: '2026-07-10T10:00:00Z' }),
+        release({
+          body: `- ${RAW_1167}\n- ${RAW_1223}`,
+          publishedAt: '2026-07-03T22:30:00Z',
+        }),
+        release({
+          body: '- Dock chat composer to the bottom edge and use the stage (#618)',
+          publishedAt: '2026-06-20T10:00:00Z',
+        }),
+      ],
+      now
+    );
+    // 22:30 UTC is already 4 Jul in Europe/Stockholm.
+    expect(glance.latest?.datetime).toBe('2026-07-04');
+    expect(glance.latest?.label).toBe('Updated 4 Jul 2026');
+    expect(glance.latest?.lines).toEqual([
+      'What’s New now describes each update in plain language',
+      'The Menu button is easier to tap on phones',
+    ]);
+  });
+
+  it('caps at 3 lines from one release and never shows raw dev subjects', () => {
+    const glance = buildWhatsNewGlance(
+      [
+        release({
+          body: [
+            `- ${RAW_1167}`,
+            `- ${RAW_1223}`,
+            DEV_ONLY,
+            '- Dock chat composer to the bottom edge and use the stage (#618)',
+            '- Restore What’s New in the main menu',
+          ].join('\n'),
+          publishedAt: '2026-07-01T10:00:00Z',
+        }),
+      ],
+      now
+    );
+    expect(glance.latest?.lines).toHaveLength(3);
+    for (const line of glance.latest?.lines ?? []) {
+      expect(line).not.toMatch(CODE_TOKEN);
+      expect(line).not.toMatch(/scrape|vitest/i);
+    }
+  });
+
+  it('is absent when the 30-day window has lines, and when no release has a kept line', () => {
+    const recent = buildWhatsNewGlance(
+      [release({ body: `- ${RAW_1167}`, publishedAt: '2026-08-18T10:00:00Z' })],
+      now
+    );
+    expect(recent.thisWeek.length).toBeGreaterThan(0);
+    expect(recent.latest).toBeUndefined();
+
+    const filtered = buildWhatsNewGlance(
+      [release({ body: DEV_ONLY, publishedAt: '2026-06-01T10:00:00Z' })],
+      now
+    );
+    expect(filtered.latest).toBeUndefined();
+  });
+
+  it('page reuses .this-week markup with a <time datetime> and adds no new chrome', () => {
+    const page = readFileSync(resolve(process.cwd(), 'src/pages/whats-new.astro'), 'utf8');
+    expect(page).toMatch(
+      /<section class="this-week" aria-labelledby="latest-updates-heading">\s*<h2 id="latest-updates-heading">Latest updates<\/h2>/
+    );
+    expect(page).toMatch(
+      /<time datetime=\{glance\.latest\.datetime\}>\{glance\.latest\.label\}<\/time>/
+    );
+    const latestCss = page.match(/\.latest-date \{[^}]*\}/)?.[0] ?? '';
+    expect(latestCss).not.toMatch(/border|radius|shadow|background/);
+    expect(page.match(/Full history/g)).toHaveLength(1);
   });
 });

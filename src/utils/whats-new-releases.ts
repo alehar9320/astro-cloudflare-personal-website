@@ -5,7 +5,7 @@ import {
   normalizeRelease,
   type SiteRelease,
 } from './github-releases';
-import type { WhatsNewGlance } from './whats-new-glance';
+import { hasGlanceContent, type WhatsNewGlance } from './whats-new-glance';
 
 /**
  * Releases for /whats-new/ SSR (#1579 follow-up).
@@ -111,6 +111,8 @@ export function shouldShowUpdatesUnavailable(
   glance: WhatsNewGlance
 ): boolean {
   if (loaded.state === 'fresh' || loaded.state === 'cached') return false;
+  // Keyed on the 30-day window only: a Latest updates fallback built from a stale or snapshot
+  // list may predate newer releases, so the honest can't-load line still shows under it (#1579).
   return glance.thisWeek.length === 0 && glance.groups.length === 0;
 }
 
@@ -123,5 +125,5 @@ export function shouldShowNoVisitorUpdates(
   glance: WhatsNewGlance
 ): boolean {
   if (loaded.state !== 'fresh' && loaded.state !== 'cached') return false;
-  return loaded.releases.length > 0 && glance.thisWeek.length === 0 && glance.groups.length === 0;
+  return loaded.releases.length > 0 && !hasGlanceContent(glance);
 }
