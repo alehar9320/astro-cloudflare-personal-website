@@ -1,3 +1,15 @@
+## HARD ABORT — Apex /experimental MVPs (owner lock 2026-10-12)
+
+Read this before scouting. It overrides any idea below.
+
+- Never build a new `/experimental/**` MVP route or page.
+- A noindex experimental route is not a visitor surface.
+- If the change isn't visible to a visitor, stop and exit the cycle without opening a PR. Do not downscope into a sibling pass.
+
+Recent farm runs: #1695.
+
+---
+
 # HARD ABORT — farmed experimental stack/uses pages
 
 Read this before scouting. If the idea is one of these, ABORT the cycle. Do not downscope into a sibling route with the same job. Do not open a PR.
