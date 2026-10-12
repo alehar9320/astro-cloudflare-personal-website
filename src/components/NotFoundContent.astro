@@ -24,7 +24,7 @@ const linkedinHref = 'https://www.linkedin.com/in/alehar/';
         >
           Get in touch
         </CallToAction>
-        <p class="cta-hint">LinkedIn · replies from me</p>
+        <p class="cta-hint">LinkedIn</p>
       </div>
     </div>
   </main>
@@ -38,6 +38,11 @@ const linkedinHref = 'https://www.linkedin.com/in/alehar/';
     align-items: center;
     gap: 1.5rem 2rem;
     margin-top: 2rem;
+  }
+
+  .cta-container :global(a) {
+    min-height: 44px;
+    min-width: 44px;
   }
 
   .hire-cta {

@@ -137,6 +137,15 @@ describe('github releases utility', () => {
     ]);
   });
 
+  it('handles CRLF line endings in splitReleaseBody', () => {
+    const body = '- feat: one\r\n* fix: two\r\n+ docs: three\r\n';
+    expect(splitReleaseBody(body)).toEqual([
+      { message: 'feat: one' },
+      { message: 'fix: two' },
+      { message: 'docs: three' },
+    ]);
+  });
+
   it('ignores lines without valid list markers', () => {
     const body = 'Just text\n- List item\nNot a list item\n### Heading';
     expect(splitReleaseBody(body)).toEqual([{ message: 'List item' }]);
@@ -403,6 +412,38 @@ describe('github releases utility', () => {
 
       expect(result).toEqual(mockReleases);
       expect(fetchMock).toHaveBeenCalledOnce();
+    });
+
+    it('logs proxy error when client fetch rejects in browser', async () => {
+      vi.stubGlobal('window', {});
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const fetchMock = vi.fn().mockRejectedValue(new Error('Proxy connection refused'));
+
+      const result = await fetchGitHubReleases(fetchMock as typeof fetch);
+
+      expect(result).toEqual([]);
+      expect(consoleSpy).toHaveBeenCalledWith({
+        event: 'github_releases_proxy_error',
+        error: 'Error: Proxy connection refused',
+      });
+    });
+
+    it('logs validation error when client fetch returns invalid schema in browser', async () => {
+      vi.stubGlobal('window', {});
+      const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+      const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [{ invalid: 'payload' }],
+      });
+
+      const result = await fetchGitHubReleases(fetchMock as typeof fetch);
+
+      expect(result).toEqual([]);
+      expect(consoleSpy).toHaveBeenCalledWith(
+        expect.objectContaining({
+          event: 'github_releases_validation_failed',
+        })
+      );
     });
   });
 });
