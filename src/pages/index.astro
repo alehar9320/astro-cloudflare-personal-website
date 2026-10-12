@@ -1,9 +1,12 @@
 ---
+import { getEntry } from 'astro:content';
 import CallToAction from '../components/CallToAction.astro';
 import Hero from '../components/Hero.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { safeJsonLd } from '../utils/safe-json-ld';
 
+const flagsEntry = await getEntry('flags', 'config');
+const isProofSlideEnabled = flagsEntry?.data.enable_proof_slide_v1 ?? false;
 const linkedinHref = 'https://www.linkedin.com/in/alehar/';
 
 const schema = {
@@ -91,7 +94,11 @@ const schema = {
           </div>
         </Hero>
         <section class="proof" aria-label="Proof">
-          <a class="proof-card" href="/work/ifs-design-system/">
+          <a
+            class="proof-card"
+            class:list={[{ 'proof-slide': isProofSlideEnabled }]}
+            href="/work/ifs-design-system/"
+          >
             <p class="proof-eyebrow">IFS Design System</p>
             <p class="proof-outcome">Took the design system from first version to IFS Cloud.</p>
             <p class="proof-chips">
@@ -234,7 +241,16 @@ const schema = {
     min-height: 44px;
     min-width: 44px;
     box-sizing: border-box;
-    transition: color var(--theme-transition);
+    transition:
+      color var(--theme-transition),
+      transform var(--theme-transition);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .proof-slide:hover .proof-affordance,
+    .proof-slide:focus-visible .proof-affordance {
+      transform: translateX(3px);
+    }
   }
 
   @media (min-width: 50em) {
