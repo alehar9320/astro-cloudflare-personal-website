@@ -50,3 +50,14 @@ Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hi
   - Glass Blur: `16px`
   - Affordance: `translateY(-4px)`
   - Glow: `hsla(210, 100%, 45%, 0.3)`
+
+## 2026-10-12 - Glassmorphism & Northern Lights Accent Rails for What's New
+
+- **Signal:** Section cards on `/whats-new/` lacked glassmorphic depth and interactive hover indicators for update clusters.
+- **Action:**
+  - Applied `backdrop-filter: blur(16px) saturate(140%)` frosted glass depth to `.this-week` and `.last-30` section cards in `src/pages/whats-new.astro`.
+  - Styled `.group` update clusters with a Northern Lights left accent rail (`border-left: 2px solid hsla(var(--gray-999-basis), 0.3)`) and smooth hover transition (`border-left-color: var(--accent-regular)`).
+  - Ensured WCAG forced-colors compatibility (`border-color: CanvasText`) and `prefers-reduced-motion` compliance.
+- **Tokens Added / Refined:**
+  - Glass Blur: `16px` with `saturate(140%)`
+  - Accent Rail: `hsla(var(--gray-999-basis), 0.3)` transitioning to `var(--accent-regular)`
