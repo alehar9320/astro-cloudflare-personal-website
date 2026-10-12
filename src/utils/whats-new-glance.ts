@@ -45,7 +45,7 @@ export type GlanceGroup = {
 export type LatestUpdates = {
   /** YYYY-MM-DD in Europe/Stockholm, for `<time datetime>`. */
   datetime: string;
-  /** e.g. "Updated 1 Sep 2026", Europe/Stockholm. */
+  /** e.g. "Last updated 1 Sep 2026", Europe/Stockholm. */
   label: string;
   lines: string[];
 };
@@ -185,7 +185,7 @@ export function formatLatestUpdatesDate(publishedMs: number): { datetime: string
     timeZone: SITE_TIME_ZONE,
     year: 'numeric',
   }).format(date);
-  return { datetime, label: `Updated ${human}` };
+  return { datetime, label: `Last updated ${human}` };
 }
 
 /**

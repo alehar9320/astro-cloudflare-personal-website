@@ -324,7 +324,7 @@ describe('whats-new Latest updates fallback (#1579)', () => {
     expect(glance.groups).toEqual([]);
     expect(glance.latest).toEqual({
       datetime: '2026-07-01',
-      label: 'Updated 1 Jul 2026',
+      label: 'Last updated 1 Jul 2026',
       lines: ['What’s New now describes each update in plain language'],
     });
   });
@@ -346,7 +346,7 @@ describe('whats-new Latest updates fallback (#1579)', () => {
     );
     // 22:30 UTC is already 4 Jul in Europe/Stockholm.
     expect(glance.latest?.datetime).toBe('2026-07-04');
-    expect(glance.latest?.label).toBe('Updated 4 Jul 2026');
+    expect(glance.latest?.label).toBe('Last updated 4 Jul 2026');
     expect(glance.latest?.lines).toEqual([
       'What’s New now describes each update in plain language',
       'The Menu button is easier to tap on phones',

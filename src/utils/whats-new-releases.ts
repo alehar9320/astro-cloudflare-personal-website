@@ -37,9 +37,9 @@ export interface LoadWhatsNewReleasesOptions {
   token?: string;
 }
 
-/** Eden PASS, word for word. Shown above the existing "Full history on GitHub" link. */
-/** Releases loaded but every line was hidden as dev-shaped (Matt's call (b), #1163). Eden FINAL copy. */
-export const NO_VISITOR_UPDATES_COPY = 'No new updates lately. The full history is on GitHub.';
+/** Releases loaded but every line was hidden as dev-shaped (Matt's call (b), #1163). Eden FINAL copy (c), #1699:
+ * no GitHub sentence; the history link directly below is the only pointer. */
+export const NO_VISITOR_UPDATES_COPY = 'No new updates lately.';
 
 export const UPDATES_UNAVAILABLE_COPY =
   "Recent updates can't load right now. The full history is on GitHub.";
