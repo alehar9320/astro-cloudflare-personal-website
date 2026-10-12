@@ -38,3 +38,9 @@ Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
 - Insight: Micro-interactions on header navigation controls provide tactile feedback and increase visual delight during user engagement.
 - User Target: Joy
 - Abort Triggers: None (verified via test and build pipeline).
+
+## 2026-10-12 - Proof Card Affordance Slide | Signal: Competitive | Lean Implementation: Added subtle translateX(3px) on hover/focus-visible to primary proof card affordance in index.astro under enable_proof_slide_v1.
+
+- Insight: Micro-interactions on primary CTA/affordance links provide tactile feedback and signal interactivity, increasing user engagement.
+- User Target: Delight & Affordance
+- Abort Triggers: None (verified via test and build pipeline).
