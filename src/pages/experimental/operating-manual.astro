@@ -1,0 +1,128 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_operating_manual) return Astro.redirect('/404/');
+
+const linkedinHref = 'https://www.linkedin.com/in/alehar/';
+
+const principles = [
+  {
+    title: 'Async-First Alignment',
+    description: 'Provide clear, structured written context before meetings to maximize leverage.',
+  },
+  {
+    title: 'Outcome Over Output',
+    description:
+      'Measure success by strategic customer and business value shipped, not backlog volume.',
+  },
+  {
+    title: 'Direct & Kind Feedback',
+    description:
+      'Foster psychological safety through transparent, candid, and constructive communication.',
+  },
+];
+---
+
+<BaseLayout
+  title="Operating Manual | Product Manager, Developer Experience at IFS"
+  ogTitle="Operating Manual | Product Manager, Developer Experience at IFS"
+  description="Product Manager, Developer Experience at IFS. Principles and approach for cross-functional collaboration."
+  robots="noindex"
+>
+  <main id="main-content" role="main" class="wrapper stack gap-10">
+    <Hero title="Operating Manual" align="start">
+      <p class="lede">
+        Product Manager, Developer Experience at IFS. How I approach product leadership,
+        cross-functional alignment, and high-leverage decision making.
+      </p>
+    </Hero>
+    <div class="grid">
+      {
+        principles.map(({ title, description }) => (
+          <div class="card">
+            <strong>{title}</strong>
+            <p>{description}</p>
+          </div>
+        ))
+      }
+    </div>
+    <div class="actions">
+      <CallToAction
+        href={linkedinHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-hire-event="hire_cta_click"
+        data-hire-surface="operating-manual"
+      >
+        Get in touch
+      </CallToAction>
+      <p class="cta-hint">LinkedIn</p>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .lede {
+    margin: 0;
+    color: var(--gray-200);
+    max-width: 46ch;
+  }
+
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
+  .card {
+    padding: 1rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+    background: var(--gradient-subtle);
+  }
+
+  .card strong {
+    display: block;
+    color: var(--gray-0);
+  }
+
+  .card p {
+    margin: 0.35rem 0 0;
+    color: var(--gray-300);
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    /* Phone: keep the LinkedIn hire CTA out of the fixed chat FAB band. */
+    padding-bottom: var(--chat-fab-clearance);
+    padding-right: var(--chat-fab-clearance);
+  }
+
+  .cta-hint {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    font-weight: 400;
+  }
+
+  @media (forced-colors: active) {
+    .card {
+      border-color: CanvasText;
+    }
+  }
+
+  @media (min-width: 50em) {
+    .actions {
+      padding-bottom: 0;
+      padding-right: 0;
+    }
+  }
+</style>

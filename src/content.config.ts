@@ -30,6 +30,7 @@ export const collections = {
       enable_cta_tactile_v1: z.boolean().default(false),
       enable_social_bounce_v1: z.boolean().default(false),
       portfolio_zoom_v1: z.boolean().default(false),
+      enable_operating_manual: z.boolean().default(false),
     }),
   }),
 };
