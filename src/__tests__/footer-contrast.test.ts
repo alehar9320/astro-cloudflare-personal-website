@@ -94,16 +94,58 @@ describe('footer reduced motion', () => {
   });
 });
 
-describe('footer dark mode and hire attributes stay unchanged', () => {
-  it('dark mode keeps --gray-400 at rest and --gray-200 on hover', () => {
+/**
+ * Lightest pixel of the rendered dark-mode footer background (link text hidden) inside each
+ * footer link's box. Worst case per link across widths 375/390/768/1024/1280 on /, /biography/,
+ * /work/ and /contact/ (Chrome, DPR 1). See the PR body for the method.
+ */
+const WORST_DARK_BACKGROUND: Record<string, string> = {
+  Stockholm: '#25292d', // 768
+  Sweden: '#262b2c', // 768
+  "What's New": '#221f27', // 768
+  'This site': '#2c242c', // 768
+  "What's next": '#342733', // 768
+  'Site success': '#392c38', // 768
+  LinkedIn: '#252327', // 390
+  'IFS Blog': '#362a33', // 390
+  GitHub: '#362e36', // 390, overall worst
+};
+
+describe('footer link contrast in dark mode', () => {
+  it('pins the dark resting link color to dark --gray-300 (#a3acc8)', () => {
     expect(footer).toMatch(
-      /:global\(:root\.theme-dark\) footer\s*\{\s*--footer-link-rest:\s*var\(--gray-400\);\s*\}/
+      /:global\(:root\.theme-dark\) footer\s*\{\s*--footer-link-rest:\s*var\(--gray-300\);\s*\}/
     );
-    expect(token(darkBlock, '--gray-400')).toBe('#8490b5');
-    expect(token(darkBlock, '--gray-200')).toBe('#c3cadb');
-    expect(token(darkBlock, '--gray-999')).toBe('#090b11');
+    expect(token(darkBlock, '--gray-300')).toBe('#a3acc8');
   });
 
+  it.each(Object.entries(WORST_DARK_BACKGROUND))(
+    'resting %s clears 4.5:1 on its worst-case dark background',
+    (_link, bg) => {
+      expect(contrast(token(darkBlock, '--gray-300'), bg)).toBeGreaterThanOrEqual(4.5);
+    }
+  );
+
+  it('the old dark resting color (--gray-400 #8490b5) did not clear 4.5:1, so the fix is needed', () => {
+    expect(token(darkBlock, '--gray-400')).toBe('#8490b5');
+    const worst = Math.min(
+      ...Object.values(WORST_DARK_BACKGROUND).map((bg) => contrast('#8490b5', bg))
+    );
+    expect(worst).toBeLessThan(4.5);
+  });
+
+  it('dark hover stays --gray-200 (#c3cadb), differs from rest and clears 4.5:1', () => {
+    const hover = token(darkBlock, '--gray-200');
+    expect(hover).toBe('#c3cadb');
+    expect(hover).not.toBe(token(darkBlock, '--gray-300'));
+    expect(token(darkBlock, '--gray-999')).toBe('#090b11');
+    for (const bg of Object.values(WORST_DARK_BACKGROUND)) {
+      expect(contrast(hover, bg)).toBeGreaterThanOrEqual(4.5);
+    }
+  });
+});
+
+describe('footer hire attributes stay unchanged', () => {
   it('keeps the footer LinkedIn hire attributes and no other hire events', () => {
     expect(footer).toMatch(
       /href="https:\/\/www\.linkedin\.com\/in\/alehar\/"[\s\S]*?data-hire-event="linkedin_click"\s+data-hire-surface="footer"/
