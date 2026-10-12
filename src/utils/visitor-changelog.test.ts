@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   INTERNAL_CHANGELOG_ITEM,
+  isDevShapedLine,
   stripChangelogChrome,
   toVisitorChangelogTitle,
   toVisitorRelease,
@@ -431,5 +432,16 @@ describe('visitor titles for Last 30 days release lines (#1163 extension)', () =
     expect(toVisitorChangelogTitle('Some internal change (#99999) (#817)')).toBe(
       'Home “Read the case” stays clear of the chat dock'
     );
+  });
+});
+
+describe('bare workflow/context are not dev words on their own (Matt, #1163)', () => {
+  it('does not hide a plain line just because it says "context" or "workflow"', () => {
+    expect(isDevShapedLine('Case pages give more context on the team behind the work')).toBe(false);
+    expect(isDevShapedLine('The design workflow story now reads start to finish')).toBe(false);
+  });
+  it('still hides a line that names a context/ path', () => {
+    expect(isDevShapedLine('Tighten context/identity.md wording')).toBe(true);
+    expect(isDevShapedLine('Update ./context/identity.md for the twin')).toBe(true);
   });
 });
