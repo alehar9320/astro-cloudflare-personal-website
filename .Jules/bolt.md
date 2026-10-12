@@ -49,3 +49,7 @@ Action: Hoisted static RegExp literals in `src/utils/github-releases.ts`, `src/u
 2026-10-11 - Hoist Stateless Formatters/Encoders & String Slicing Optimization
 Learning: Instantiating `Intl.DateTimeFormat` or `TextEncoder` repeatedly inside hot function paths forces V8 and edge runtimes to re-parse options, create new instances, and initialize locale data per invocation. Hoisting stateless formatters/encoders to module constants eliminates object allocation and setup overhead. Additionally, using `.slice(0, 10)` instead of `.split('T')[0]` on ISO date strings extracts `YYYY-MM-DD` without allocating temporary 2-element string arrays.
 Action: Hoisted `Intl.DateTimeFormat` in `src/utils/visit-stats.ts`, `TextEncoder` in `src/utils/chat-logic.ts`, and updated `formatReleaseDate` in `src/utils/github-releases.ts` to use `.slice(0, 10)`.
+
+2026-10-12 - Hoist Static RegExp in safeJsonLd
+Learning: Declaring inline RegExp literals inside repeatedly invoked utility functions like `safeJsonLd` forces V8 / JavaScript engines to re-allocate and re-compile RegExp instances on every call during SSR and static page generation. Hoisting `LESS_THAN_REGEX` to module scope eliminates object creation and compilation overhead per JSON-LD serialization.
+Action: Hoisted `LESS_THAN_REGEX` to module scope in `src/utils/safe-json-ld.ts`.
