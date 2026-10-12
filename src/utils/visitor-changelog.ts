@@ -333,7 +333,9 @@ const VISITOR_PREFIX =
 const FILE_PATH =
   /`|\b[\w-]+\.(?:ts|tsx|js|mjs|cjs|astro|md|mdx|json|css|ya?ml|toml|html)\b|(?:^|\s)\.?\/?(?:src|public|scripts|context|docs|tests?)\/|(?:^|\s)\/[\w.-]+\//i;
 const DEV_WORD =
-  /\b(?:scrape|redaction|context|shorthand|regex|lint|eslint|prettier|posthog|tsconfig|wrangler|dependabot|deps?|bump|workflow|refactor|fixture|mock|stub|ssr|kv)\b/i;
+  /\b(?:scrape|redaction|shorthand|regex|lint|eslint|prettier|posthog|tsconfig|wrangler|dependabot|deps?|bump|refactor|fixture|mock|stub|ssr|kv)\b/i;
+// Matt (#1163): bare 'workflow'/'context' are not dev words on their own; context/ paths are
+// still caught by FILE_PATH, and real visitor lines go through VISITOR_CHANGELOG rows.
 /** "CI" only as an uppercase whole word, so visitor words that contain "ci" are never hit. */
 const DEV_WORD_UPPER = /\bCI\b/;
 /* Optimization (⚡ Bolt): Hoist PR_MATCH_REGEX and SPACES_REGEX to avoid dynamic RegExp instantiations on edge changelog title processing.
