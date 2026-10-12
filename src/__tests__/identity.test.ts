@@ -2775,7 +2775,9 @@ describe('identity copy', () => {
 
   it('gives the IFS case one onward read to the copilots case (next-case)', () => {
     const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
-    const m = slug.match(/href="\/work\/ai-coding-copilots\/">\s*Next: Internal AI coding copilots/);
+    const m = slug.match(
+      /href="\/work\/ai-coding-copilots\/">\s*Next: Internal AI coding copilots/
+    );
     const mainEnd = slug.indexOf('</main>');
     expect(m).not.toBeNull();
     expect(m!.index!).toBeLessThan(mainEnd);
