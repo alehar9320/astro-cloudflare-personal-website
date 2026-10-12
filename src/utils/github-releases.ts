@@ -27,7 +27,7 @@ const RELEASES_API_URL =
 const RELEASES_PAGE_URL =
   'https://github.com/alehar9320/astro-cloudflare-personal-website/releases';
 const REPO_URL = 'https://github.com/alehar9320/astro-cloudflare-personal-website';
-function logReleaseValidationFailed(issues: z.ZodIssue[]): void {
+function logReleaseValidationFailed(issues: z.ZodError['issues']): void {
   const sanitizedIssues = issues.map((issue) => {
     const safeIssue = { ...issue } as Record<string, unknown>;
     delete safeIssue.received;
@@ -110,12 +110,33 @@ export async function fetchGitHubReleases(
     return [];
   }
 
+  const result = await fetchGitHubReleasesResult(fetchImpl, url, options);
+  return result.ok ? result.releases : [];
+}
+
+/** Outcome of a server-side GitHub Releases fetch. `ok: false` is a failure, never an empty list. */
+export type ReleasesFetchResult =
+  | { ok: true; releases: SiteRelease[] }
+  | { ok: false; reason: 'invalid_url' | 'http' | 'invalid_body' | 'network'; status?: number };
+
+/** Abort a hung GitHub request so SSR still renders (Workers have no default fetch timeout). */
+const RELEASES_FETCH_TIMEOUT_MS = 5000;
+
+/**
+ * Server-side GitHub Releases fetch that tells a failed fetch (403/429 rate limit, 5xx,
+ * network error, timeout, bad body) apart from a genuinely empty list (#1579).
+ */
+export async function fetchGitHubReleasesResult(
+  fetchImpl: typeof fetch = fetch,
+  url: string = RELEASES_API_URL,
+  options?: FetchReleasesOptions
+): Promise<ReleasesFetchResult> {
   const githubToken = options?.token?.trim() || undefined;
 
   // Defensive check to ensure we only fetch from the trusted GitHub API domain
   if (!url.startsWith('https://api.github.com/')) {
     console.error({ event: 'github_releases_invalid_url', url });
-    return [];
+    return { ok: false, reason: 'invalid_url' };
   }
 
   try {
@@ -128,7 +149,10 @@ export async function fetchGitHubReleases(
       headers['X-GitHub-Api-Version'] = '2022-11-28';
     }
 
-    const response = await fetchImpl(url, { headers });
+    const response = await fetchImpl(url, {
+      headers,
+      signal: AbortSignal.timeout(RELEASES_FETCH_TIMEOUT_MS),
+    });
 
     if (!response.ok) {
       // Intentionally avoiding logging headers that might contain sensitive information
@@ -137,7 +161,7 @@ export async function fetchGitHubReleases(
         status: response.status,
         statusText: response.statusText,
       });
-      return [];
+      return { ok: false, reason: 'http', status: response.status };
     }
 
     const json = await response.json();
@@ -145,7 +169,7 @@ export async function fetchGitHubReleases(
 
     if (!result.success) {
       logReleaseValidationFailed(result.error.issues);
-      return [];
+      return { ok: false, reason: 'invalid_body' };
     }
 
     const releases = result.data
@@ -153,12 +177,12 @@ export async function fetchGitHubReleases(
       .map(normalizeRelease)
       .filter((release): release is SiteRelease => release !== null);
 
-    return releases;
+    return { ok: true, releases };
   } catch (error) {
     // Redact potential token if error message contains it (defense in depth)
-    const safeErrorMessage = String(error).replace(/token\s+[a-zA-Z0-9_-]+/g, 'token [REDACTED]');
+    const safeErrorMessage = String(error).replace(TOKEN_REDACT_REGEX, 'token [REDACTED]');
     console.error({ event: 'github_releases_request_error', error: safeErrorMessage });
-    return [];
+    return { ok: false, reason: 'network' };
   }
 }
 
@@ -176,8 +200,16 @@ export function formatReleaseDate(dateString: string | null): string {
     return 'Unknown date';
   }
 
-  return date.toISOString().split('T')[0];
+  /* Optimization (⚡ Bolt): Using slice(0, 10) instead of split('T')[0] extracts YYYY-MM-DD
+     without allocating intermediate 2-element string arrays per call. */
+  return date.toISOString().slice(0, 10);
 }
+
+/* Optimization (⚡ Bolt): Hoist static regexes to avoid dynamic compilation and allocations per release item.
+   Benchmark: Eliminates redundant RegExp allocations during edge changelog processing. */
+const COMMIT_HASH_MATCH = /^([a-f0-9]{7,40})\s+(.*)/i;
+const BULLET_PREFIX_MATCH = /^[-*+]\s+/;
+const TOKEN_REDACT_REGEX = /token\s+[a-zA-Z0-9_-]+/g;
 
 /**
  * Parses a single changelog line into a ReleaseItem, extracting hashes and messages.
@@ -187,7 +219,7 @@ export function formatReleaseDate(dateString: string | null): string {
 export function parseReleaseItem(line: string): ReleaseItem {
   const cleaned = line.trim();
   // Matches a 7 to 40-character hex hash at the beginning
-  const hashMatch = cleaned.match(/^([a-f0-9]{7,40})\s+(.*)/i);
+  const hashMatch = cleaned.match(COMMIT_HASH_MATCH);
 
   if (hashMatch) {
     const hash = hashMatch[1];
@@ -213,19 +245,31 @@ export function isPublicChangelogItem(item: ReleaseItem): boolean {
  * Splits a release body into individual, formatted ReleaseItem objects.
  * Filters for lines starting with list markers (-, *, +).
  * Drops Jules, agent-farm, and Johan-nits internals from the public list.
- * Single-pass implementation to minimize allocations on edge runtimes.
+ * Uses pointer-based line scanning (`indexOf('\n', startPos)`) to eliminate dynamic line array allocations on edge runtimes.
  * @param {string} body - The full Markdown body of a GitHub release.
  * @returns {ReleaseItem[]} An array of parsed release items.
  */
 export function splitReleaseBody(body: string): ReleaseItem[] {
-  const lines = body.split('\n');
   const items: ReleaseItem[] = [];
+  let startPos = 0;
+  const len = body.length;
 
-  for (const line of lines) {
+  while (startPos < len) {
+    let nextNewline = body.indexOf('\n', startPos);
+    if (nextNewline === -1) {
+      nextNewline = len;
+    }
+
+    let line = body.slice(startPos, nextNewline);
+    if (line.endsWith('\r')) {
+      line = line.slice(0, -1);
+    }
+    startPos = nextNewline + 1;
+
     const trimmed = line.trim();
-    if (!/^[-*+]\s+/.test(trimmed)) continue;
+    if (!BULLET_PREFIX_MATCH.test(trimmed)) continue;
 
-    const rawMessage = trimmed.replace(/^[-*+]\s+/, '');
+    const rawMessage = trimmed.replace(BULLET_PREFIX_MATCH, '');
     const item = parseReleaseItem(rawMessage);
     if (isPublicChangelogItem(item)) {
       items.push(item);

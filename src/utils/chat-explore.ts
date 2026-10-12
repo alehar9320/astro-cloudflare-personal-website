@@ -62,81 +62,60 @@ export const EXPLORE_CARDS = {
   },
 } as const satisfies Record<string, ExploreCard>;
 
+const SUPPRESS_PATTERN = /email|cv|résumé|resume/i;
+const LINKEDIN_PATTERN = /linkedin|get in touch|hire|\bcontact\b/i;
+const DESIGN_SYSTEM_PATTERN = /design system|zeroheight|\b(?:2x|30x|roi)\b/i;
+const COPILOTS_PATTERN = /copilot|ai coding/i;
+const ANALYTICS_PATTERN = /analytics|telemetry|user behavior/i;
+const THESIS_PATTERN = /thesis|master[’']?s/i;
+const BIOGRAPHY_PATTERN =
+  /biograph|background|\babout you\b|about yourself|who are you|education|experience|how do you work as a (?:pm|product manager)/i;
+const CASES_PATTERN = /\bcases?\b/i;
+const WORK_PATTERN = /industrial ai|portfolio|\bwork\b/i;
+
+/**
+ * Matches user questions to relevant explore cards.
+ * Hoists static regular expressions to module scope to avoid dynamic RegExp compilation and string allocations per request on edge runtimes.
+ */
 export function exploreCardForQuestion(lastUserMessage: string): ExploreCard | null {
   const question = lastUserMessage.trim().toLowerCase();
   if (!question) return null;
 
   // Email / CV stay off — no public email, no placeholder CV.
-  if (
-    question.includes('email') ||
-    question.includes('cv') ||
-    question.includes('résumé') ||
-    question.includes('resume')
-  ) {
+  if (SUPPRESS_PATTERN.test(question)) {
     return null;
   }
 
   // Hire / LinkedIn / contact → in-stream LinkedIn confirm (one primary, unstacked).
-  if (
-    question.includes('linkedin') ||
-    question.includes('get in touch') ||
-    question.includes('hire') ||
-    /\bcontact\b/.test(question)
-  ) {
+  if (LINKEDIN_PATTERN.test(question)) {
     return LINKEDIN_CONFIRM;
   }
 
-  if (
-    question.includes('design system') ||
-    question.includes('zeroheight') ||
-    /\b(2x|30x|roi)\b/.test(question)
-  ) {
+  if (DESIGN_SYSTEM_PATTERN.test(question)) {
     return EXPLORE_CARDS.designSystem;
   }
 
-  if (question.includes('copilot') || question.includes('ai coding')) {
+  if (COPILOTS_PATTERN.test(question)) {
     return EXPLORE_CARDS.copilots;
   }
 
-  if (
-    question.includes('analytics') ||
-    question.includes('telemetry') ||
-    question.includes('user behavior')
-  ) {
+  if (ANALYTICS_PATTERN.test(question)) {
     return EXPLORE_CARDS.analytics;
   }
 
-  if (
-    question.includes('thesis') ||
-    question.includes("master's") ||
-    question.includes('masters')
-  ) {
+  if (THESIS_PATTERN.test(question)) {
     return EXPLORE_CARDS.thesis;
   }
 
-  if (
-    question.includes('biograph') ||
-    question.includes('background') ||
-    /\babout you\b/.test(question) ||
-    question.includes('about yourself') ||
-    question.includes('who are you') ||
-    question.includes('education') ||
-    question.includes('experience') ||
-    question.includes('how do you work as a pm') ||
-    question.includes('how do you work as a product manager')
-  ) {
+  if (BIOGRAPHY_PATTERN.test(question)) {
     return EXPLORE_CARDS.biography;
   }
 
-  if (/\bcases?\b/.test(question) && !question.includes('industrial')) {
+  if (CASES_PATTERN.test(question) && !question.includes('industrial')) {
     return EXPLORE_CARDS.designSystem;
   }
 
-  if (
-    question.includes('industrial ai') ||
-    question.includes('portfolio') ||
-    /\bwork\b/.test(question)
-  ) {
+  if (WORK_PATTERN.test(question)) {
     return EXPLORE_CARDS.work;
   }
 

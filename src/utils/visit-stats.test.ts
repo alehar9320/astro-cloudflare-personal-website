@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   formatColophonVisits,
   formatColophonVisitsTitle,
+  formatFirstSeen,
   formatPageviewCount,
   formatUniqueVisitorCount,
   formatVisitGlance,
@@ -170,6 +171,108 @@ describe('parseVisitGlance', () => {
       ],
     });
     expect(glance?.uniqueVisitorsWoW).toBe(100);
+  });
+
+  it('returns null when payload or results are invalid/missing', () => {
+    expect(parseVisitGlance(null)).toBeNull();
+    expect(parseVisitGlance(123)).toBeNull();
+    expect(parseVisitGlance({})).toBeNull();
+    expect(parseVisitGlance({ results: [] })).toBeNull();
+    expect(parseVisitGlance({ results: 'not an array' })).toBeNull();
+  });
+
+  it('returns null when mandatory fields cannot be parsed or are missing', () => {
+    expect(
+      parseVisitGlance({
+        results: [
+          {
+            pageviews: 'invalid',
+            unique_visitors: 12,
+            first_seen: '2026-08-14T07:03:00.000Z',
+            pageviews_7d: 20,
+            unique_visitors_7d: 8,
+          },
+        ],
+      })
+    ).toBeNull();
+
+    expect(
+      parseVisitGlance({
+        results: [
+          {
+            pageviews: 94,
+            unique_visitors: 12,
+            first_seen: 'invalid-date',
+            pageviews_7d: 20,
+            unique_visitors_7d: 8,
+          },
+        ],
+      })
+    ).toBeNull();
+  });
+
+  it('handles array rows without column header names falling back to index', () => {
+    const glance = parseVisitGlance({
+      results: [['100', '15', '2026-08-14 07:03:00', '25', '10']],
+    });
+    expect(glance?.pageviews).toBe(100);
+    expect(glance?.uniqueVisitors).toBe(15);
+  });
+
+  it('maps custom-ordered columns by header name, keeping positions when a header is not a string', () => {
+    const glance = parseVisitGlance({
+      columns: [
+        null,
+        'unique_visitors',
+        'first_seen',
+        'pageviews_7d',
+        'unique_visitors_7d',
+        'pageviews',
+      ],
+      results: [[null, 42, '2026-08-14T07:03:00.000Z', 10, 5, 200]],
+    });
+    expect(glance?.pageviews).toBe(200);
+    expect(glance?.uniqueVisitors).toBe(42);
+    expect(glance?.pageviews7d).toBe(10);
+    expect(glance?.uniqueVisitors7d).toBe(5);
+  });
+
+  it('handles Date instances and invalid Date objects for first_seen', () => {
+    const validDateGlance = parseVisitGlance({
+      results: [
+        {
+          pageviews: 50,
+          unique_visitors: 10,
+          first_seen: new Date('2026-08-14T07:03:00.000Z'),
+          pageviews_7d: 10,
+          unique_visitors_7d: 5,
+        },
+      ],
+    });
+    expect(validDateGlance?.firstSeen).toBe('2026-08-14T07:03:00.000Z');
+
+    const invalidDateGlance = parseVisitGlance({
+      results: [
+        {
+          pageviews: 50,
+          unique_visitors: 10,
+          first_seen: new Date('invalid'),
+          pageviews_7d: 10,
+          unique_visitors_7d: 5,
+        },
+      ],
+    });
+    expect(invalidDateGlance).toBeNull();
+  });
+});
+
+describe('formatFirstSeen', () => {
+  it('returns empty string for invalid dates', () => {
+    expect(formatFirstSeen('invalid-date')).toBe('');
+  });
+
+  it('formats valid ISO date strings in Stockholm time', () => {
+    expect(formatFirstSeen('2026-05-03T18:34:08.880Z')).toContain('2026');
   });
 });
 

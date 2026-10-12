@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
 import {
   pruneMessages,
+  getLastUserMessage,
   MAX_MESSAGES,
+  MAX_MESSAGE_CONTENT_LENGTH,
   MAX_TOTAL_CONTENT_LENGTH,
   DESIGN_SYSTEM_CHIP,
   DESIGN_SYSTEM_PROOF,
@@ -9,10 +11,48 @@ import {
   groundedCannedAnswer,
   groundedDesignSystemAnswer,
   groundedLinkedInHireAnswer,
+  ChatMessageSchema,
+  ChatRequestSchema,
+  sseTextStream,
   type ChatMessage,
 } from './chat-logic';
 
 describe('chat logic utilities', () => {
+  describe('getLastUserMessage', () => {
+    it('returns undefined for an empty message array', () => {
+      expect(getLastUserMessage([])).toBeUndefined();
+    });
+
+    it('returns undefined when no user messages exist', () => {
+      const messages: ChatMessage[] = [
+        { role: 'assistant', content: 'Hello!' },
+        { role: 'assistant', content: 'How can I help?' },
+      ];
+      expect(getLastUserMessage(messages)).toBeUndefined();
+    });
+
+    it('returns the last user message when it is at the end', () => {
+      const userMsg: ChatMessage = { role: 'user', content: 'What is your background?' };
+      const messages: ChatMessage[] = [
+        { role: 'user', content: 'First question' },
+        { role: 'assistant', content: 'First answer' },
+        userMsg,
+      ];
+      expect(getLastUserMessage(messages)).toBe(userMsg);
+    });
+
+    it('returns the last user message even if trailing assistant messages exist', () => {
+      const lastUserMsg: ChatMessage = { role: 'user', content: 'Tell me about DevEx' };
+      const messages: ChatMessage[] = [
+        { role: 'user', content: 'Hello' },
+        { role: 'assistant', content: 'Hi' },
+        lastUserMsg,
+        { role: 'assistant', content: 'DevEx is developer experience.' },
+      ];
+      expect(getLastUserMessage(messages)).toBe(lastUserMsg);
+    });
+  });
+
   describe('pruneMessages', () => {
     it('returns the same messages if within limits', () => {
       const messages: ChatMessage[] = [
@@ -136,6 +176,50 @@ describe('chat logic utilities', () => {
       expect(LINKEDIN_HIRE_REPLY.toLowerCase()).not.toMatch(/\b(me|my|i)\b/);
       expect(groundedLinkedInHireAnswer('What is your email?')).toBeNull();
       expect(groundedLinkedInHireAnswer('Can I download a CV?')).toBeNull();
+    });
+  });
+
+  describe('ChatMessageSchema & ChatRequestSchema', () => {
+    it('validates correct chat message objects and trims whitespace', () => {
+      const res = ChatMessageSchema.safeParse({ role: 'user', content: '  Hello  ' });
+      expect(res.success).toBe(true);
+      if (res.success) {
+        expect(res.data.content).toBe('Hello');
+      }
+    });
+
+    it('rejects empty or overly long message content', () => {
+      const emptyRes = ChatMessageSchema.safeParse({ role: 'user', content: '   ' });
+      expect(emptyRes.success).toBe(false);
+
+      const tooLongRes = ChatMessageSchema.safeParse({
+        role: 'user',
+        content: 'x'.repeat(MAX_MESSAGE_CONTENT_LENGTH + 1),
+      });
+      expect(tooLongRes.success).toBe(false);
+    });
+
+    it('validates request objects with valid messages array', () => {
+      const validReq = ChatRequestSchema.safeParse({
+        messages: [{ role: 'user', content: 'Test prompt' }],
+      });
+      expect(validReq.success).toBe(true);
+
+      const invalidReq = ChatRequestSchema.safeParse({ messages: [] });
+      expect(invalidReq.success).toBe(false);
+    });
+  });
+
+  describe('sseTextStream', () => {
+    it('streams text as SSE payload chunk followed by [DONE]', async () => {
+      const stream = sseTextStream('Hello world');
+      const reader = stream.getReader();
+      const { value, done } = await reader.read();
+      expect(done).toBe(false);
+      const text = new TextDecoder().decode(value);
+      expect(text).toBe('data: {"response":"Hello world"}\n\ndata: [DONE]\n\n');
+      const next = await reader.read();
+      expect(next.done).toBe(true);
     });
   });
 });

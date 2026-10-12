@@ -4,7 +4,7 @@
 
 - **Mission:** A personal portfolio website for Alexander Härenstam, showcasing professional journey, skills, projects, and publications. Built with a focus on speed, SEO, and modern web standards.
 - **Stack:**
-  - **Framework:** Astro (v4+)
+  - **Framework:** Astro 7
 - **Collaboration:** This site is co-created by humans and AI. It is intentionally optimized for consumption by both humans and AI agents (AEO/GEO).
   - **Runtime & Deployment:** Cloudflare Workers + Assets (Unified Workers-First architecture)
   - **Language:** TypeScript (Strict mode)
@@ -22,7 +22,7 @@
 - `src/pages/`: Route-level components.
 - `src/styles/`: Global and shared CSS styles.
 - `src/data/`: Static data used across the site.
-- `context/`: Background information about the author.
+- `context/`: Author background. Start at [`context/identity.md`](context/identity.md).
 - `scripts/`: Build and release automation scripts.
 - `.Jules/`: Jules scheduled-agent journals only. Never create `.Aurora`, `.jules`, `.Pruning`, `.Janitor`, `.Nova`, `.FixtureRefresher`, `.GripTight`, `.ObservabilityClerk`, or `.StuntDouble` at repo root. If a prompt names one of those paths, write under `.Jules/` instead.
 
@@ -73,6 +73,7 @@ cp .dev.vars.example .dev.vars # Configure local environment variables
 - **NEVER** add or preserve a parallel manual production deploy step in CI when Cloudflare Git auto-deploy already owns production releases.
 - **NEVER** design automation that depends on direct writes back to protected `main` for release metadata.
 - **NEVER** create Jules agent journal folders at the repository root. Journals live only under `.Jules/`.
+- **NEVER** ship visitor UI that fails `.agents/skills/elevated-taste/SKILL.md` anti-slop.
 
 ## 5. AI Agent Skills
 
@@ -85,6 +86,7 @@ Project-specific AI agent skills are defined in the `.agents/skills/` directory.
 - Automated Quality Assurance
 - Persona & Context Alignment
 - Context7 Documentation Retrieval
+- Elevated Taste (respect look-and-feel, raise craft, no AI slop)
 
 Refer to the individual `SKILL.md` files in each skill folder for detailed guidance.
 

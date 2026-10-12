@@ -55,7 +55,8 @@ const flagsEntry = await getEntry('flags', 'config');
       border-color var(--theme-transition);
   }
 
-  .box:hover {
+  .box:hover,
+  .box:focus-within {
     transform: translateY(-4px);
     border-color: var(--accent-regular);
     box-shadow:
@@ -67,7 +68,8 @@ const flagsEntry = await getEntry('flags', 'config');
     .box {
       transition: none;
     }
-    .box:hover {
+    .box:hover,
+    .box:focus-within {
       transform: none;
     }
   }

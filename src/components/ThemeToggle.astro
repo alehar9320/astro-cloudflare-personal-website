@@ -12,6 +12,10 @@ import Icon from './Icon.astro';
 <style>
   button {
     display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
     border: 0;
     border-radius: 999rem;
     padding: 0;
@@ -30,12 +34,11 @@ import Icon from './Icon.astro';
 
   button:active {
     background-color: var(--gray-800);
-    transform: scale(0.96);
   }
 
   button:focus-visible {
     outline: 2px solid var(--accent-regular);
-    outline-offset: 4px;
+    outline-offset: -2px;
   }
 
   .icon {
