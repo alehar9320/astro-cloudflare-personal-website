@@ -336,10 +336,10 @@ const DEV_WORD =
   /\b(?:scrape|redaction|context|shorthand|regex|lint|eslint|prettier|posthog|tsconfig|wrangler|dependabot|deps?|bump|workflow|refactor|fixture|mock|stub|ssr|kv)\b/i;
 /** "CI" only as an uppercase whole word, so visitor words that contain "ci" are never hit. */
 const DEV_WORD_UPPER = /\bCI\b/;
-/* Optimization (⚡ Bolt): Hoist PR_MATCH_REGEX and SPACES_REGEX to avoid dynamic RegExp instantiations on edge changelog title processing.
+/* Optimization (⚡ Bolt): Hoist LAST_PR_REGEX and MULTI_SPACES_REGEX to avoid dynamic RegExp instantiations on edge changelog title processing.
    Benchmark: Eliminates redundant regex creation during visitor title mapping. */
-/** Every `(#N)` group; the lookup uses the LAST one, which is the squash PR (earlier ones are issue refs). */
-const PR_MATCH_REGEX = /\(#(\d+)\)/g;
+/** Extracts the LAST `(#N)` group (the squash PR) in a single regex match without matchAll iterator allocations. */
+const LAST_PR_REGEX = /.*\(#(\d+)\)/;
 const MULTI_SPACES_REGEX = /\s{2,}/g;
 
 /**
@@ -371,10 +371,9 @@ const BULLET_PREFIX = /^[-*+]\s+/;
 export function mappedVisitorTitle(raw: string): string | undefined {
   const trimmed = raw.trim();
   if (!trimmed) return undefined;
-  let lastPr: string | undefined;
-  for (const match of trimmed.matchAll(PR_MATCH_REGEX)) lastPr = match[1];
-  if (lastPr) {
-    const byPr = BY_PR.get(Number(lastPr));
+  const prMatch = trimmed.match(LAST_PR_REGEX);
+  if (prMatch) {
+    const byPr = BY_PR.get(Number(prMatch[1]));
     if (byPr) return byPr;
   }
   const bySubject = BY_SUBJECT.get(stripChangelogChrome(trimmed).toLowerCase());
@@ -449,14 +448,13 @@ export function toVisitorReleaseBody(body: string): string {
 
     hadBullets = true;
     const message = trimmed.replace(BULLET_PREFIX, '');
-    if (
-      !INTERNAL_CHANGELOG_ITEM.test(message) &&
-      !DEV_ONLY_ITEM.test(message) &&
-      !isDevShapedUnmappedLine(message)
-    ) {
-      const title = toVisitorChangelogTitle(message);
-      if (!INLINE_ISSUE_REF.test(title)) result.push(`- ${title}`);
-    }
+    if (INTERNAL_CHANGELOG_ITEM.test(message) || DEV_ONLY_ITEM.test(message)) continue;
+
+    const mapped = mappedVisitorTitle(message);
+    if (!mapped && isDevShapedLine(message)) continue;
+
+    const title = mapped ?? toVisitorChangelogTitle(message);
+    if (!INLINE_ISSUE_REF.test(title)) result.push(`- ${title}`);
   }
 
   if (result.length === 0) {

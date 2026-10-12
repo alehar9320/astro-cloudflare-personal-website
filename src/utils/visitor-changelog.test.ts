@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import {
   INTERNAL_CHANGELOG_ITEM,
+  mappedVisitorTitle,
   stripChangelogChrome,
   toVisitorChangelogTitle,
   toVisitorRelease,
@@ -11,6 +12,23 @@ import {
 import { buildWhatsNewGlance } from './whats-new-glance';
 
 describe('visitor-changelog utilities', () => {
+  describe('mappedVisitorTitle', () => {
+    it('returns undefined for empty input', () => {
+      expect(mappedVisitorTitle('')).toBeUndefined();
+      expect(mappedVisitorTitle('   ')).toBeUndefined();
+    });
+
+    it('extracts the last PR number using single-pass LAST_PR_REGEX match', () => {
+      expect(mappedVisitorTitle('fix(chat): name the message field (#891) (#943)')).toBe(
+        'Screen readers now announce the chat message field'
+      );
+    });
+
+    it('returns undefined for unmapped PR numbers and subjects', () => {
+      expect(mappedVisitorTitle('feat: unmapped custom change (#99999)')).toBeUndefined();
+    });
+  });
+
   describe('stripChangelogChrome', () => {
     it('handles empty and whitespace-only strings', () => {
       expect(stripChangelogChrome('')).toBe('');
