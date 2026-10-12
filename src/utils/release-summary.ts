@@ -7,21 +7,40 @@ const BANNED_NAME = /\b(palette|oracle|scribe|sentinel|vantage|bolt|jules)\b/gi;
 const SHA_ONE = /\b[a-f0-9]{7,40}\b/i;
 const SHA_ALL = /\b[a-f0-9]{7,40}\b/gi;
 const CONVENTIONAL = /\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/i;
+/** Global variant for stripping every conventional prefix (`.replace` with `/g`); keep `CONVENTIONAL` non-global for stateless `.test`. */
+const CONVENTIONAL_ALL = /\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/gi;
 const ENGINEERING_LEAK =
   /\bexec summary\b|\bof the latest github release\b|cloudflare:workers|\bnode stub\b|\bsessionstorage\b|\bdo not paint\b|\bexec box\b|\bon \/whats-new\b|\balias\b/i;
 const VISITOR_VERB =
   /^(open|tap|see|read|view|show|visit|browse|get|use|download|contact|inline)\b/i;
 
+/**
+ * Evaluates whether a release item message is visitor-facing.
+ * Checks that the message starts with an action verb and does not contain engineering leaks.
+ * @param message - Raw message string from release body.
+ * @returns True if visitor-facing, false otherwise.
+ */
 export function isVisitorFacingBullet(message: string): boolean {
   const text = message.trim();
   if (!text || ENGINEERING_LEAK.test(text)) return false;
   return VISITOR_VERB.test(text);
 }
 
+/**
+ * Generates KV store cache key for a given release tag.
+ * @param tag - Git release tag name.
+ * @returns Formatted KV cache key.
+ */
 export function releaseSummaryKey(tag: string): string {
   return `${RELEASE_SUMMARY_KEY_PREFIX}${tag}`;
 }
 
+/**
+ * Constructs LLM prompt for generating executive release summaries.
+ * @param tag - Git release tag name.
+ * @param notes - Release notes body text.
+ * @returns Complete prompt string for Workers AI model.
+ */
 export function releaseSummaryPrompt(tag: string, notes: string): string {
   return `Write exactly three plain-English sentences for a hiring manager about this GitHub release.
 Say what a visitor can now see or do. Use only facts in the notes.
@@ -36,32 +55,86 @@ Notes:
 ${notes}`;
 }
 
-function sentenceCount(text: string): number {
-  return text
-    .split(/(?<=[.!?])\s+/)
-    .map((part) => part.trim())
-    .filter((part) => part.length > 0).length;
+/**
+ * Counts non-empty sentences in a string using single-pass character traversal.
+ * Avoids regex lookbehind splitting and array allocations on edge runtimes.
+ *
+ * @param text - Input string to analyze.
+ * @returns The number of sentences detected.
+ */
+export function sentenceCount(text: string): number {
+  let count = 0;
+  let inSentence = false;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    const isPunct = char === '.' || char === '!' || char === '?';
+
+    if (isPunct) {
+      const next = text[i + 1];
+      const isSentenceEnd =
+        next === undefined || next === ' ' || next === '\t' || next === '\n' || next === '\r';
+      if (isSentenceEnd && inSentence) {
+        count++;
+        inSentence = false;
+      }
+    } else if (char !== ' ' && char !== '\t' && char !== '\n' && char !== '\r') {
+      inSentence = true;
+    }
+  }
+
+  if (inSentence) {
+    count++;
+  }
+
+  return count;
 }
 
+/* Optimization (⚡ Bolt): Hoist static regexes to avoid dynamic RegExp construction on edge release summary validation.
+   Benchmark: Eliminates redundant regex compilations and memory allocations per summary check. */
+const METRIC_TOKENS_REGEX = /\b\d+(?:\.\d+)?x\b|\b\d+%\b|\broi\b|\bmillion\b|\bbillion\b/gi;
+const PR_PAREN_NUM_REGEX = /\(#\d+\)/g;
+const HASH_NUM_REGEX = /#\d+/g;
+const ISSUE_NUM_REGEX = /\bissue number\s+\d+\b/gi;
+const PUNCT_SPACES_REGEX = /\s+([.,;:])/g;
+const LEADING_PUNCT_REGEX = /^[\s:;\-]+/;
+const MULTI_SPACES_REGEX = /\s{2,}/g;
+
+const ISSUE_NUMBER_TEST = /\bissue number\b/i;
+const COMMIT_HASH_TEST = /\bcommit hash\b/i;
+const HASH_ISSUE_TEST = /\B#\d+\b/;
+
 function metricTokens(text: string): string[] {
-  const matches = text.match(/\b\d+(?:\.\d+)?x\b|\b\d+%\b|\broi\b|\bmillion\b|\bbillion\b/gi);
+  const matches = text.match(METRIC_TOKENS_REGEX);
   return matches ? matches.map((token) => token.toLowerCase()) : [];
 }
 
+/**
+ * Strips agent names, git SHAs, issue numbers, and conventional commit prefixes.
+ * @param text - Raw text string to sanitize.
+ * @returns Cleaned text string.
+ */
 export function stripExecBanned(text: string): string {
   return text
     .replace(BANNED_NAME, '')
     .replace(SHA_ALL, '')
-    .replace(/\(#\d+\)/g, '')
-    .replace(/#\d+/g, '')
-    .replace(/\bissue number\s+\d+\b/gi, '')
-    .replace(/\b(?:feat|fix|chore|docs|refactor|test|style|perf|build|ci):\s*/gi, '')
-    .replace(/\s+([.,;:])/g, '$1')
-    .replace(/^[\s:;\-]+/, '')
-    .replace(/\s{2,}/g, ' ')
+    .replace(PR_PAREN_NUM_REGEX, '')
+    .replace(HASH_NUM_REGEX, '')
+    .replace(ISSUE_NUM_REGEX, '')
+    .replace(CONVENTIONAL_ALL, '')
+    .replace(PUNCT_SPACES_REGEX, '$1')
+    .replace(LEADING_PUNCT_REGEX, '')
+    .replace(MULTI_SPACES_REGEX, ' ')
     .trim();
 }
 
+/**
+ * Validates generated release summary against safety and grounding rules.
+ * Ensures sentence count is 2-4 sentences, no git leak/agent tokens, and metrics match source notes.
+ * @param summary - Candidate summary string.
+ * @param source - Source release text for grounding checks.
+ * @returns True if summary passes safety rules, false otherwise.
+ */
 export function isSafeReleaseSummary(summary: string, source: string): boolean {
   const text = summary.trim();
   if (!text) return false;
@@ -69,9 +142,9 @@ export function isSafeReleaseSummary(summary: string, source: string): boolean {
   if (count < 2 || count > 4) return false;
   if (
     SHA_ONE.test(text) ||
-    /\bissue number\b/i.test(text) ||
-    /\bcommit hash\b/i.test(text) ||
-    /\B#\d+\b/.test(text) ||
+    ISSUE_NUMBER_TEST.test(text) ||
+    COMMIT_HASH_TEST.test(text) ||
+    HASH_ISSUE_TEST.test(text) ||
     CONVENTIONAL.test(text) ||
     ENGINEERING_LEAK.test(text)
   ) {
@@ -84,13 +157,19 @@ export function isSafeReleaseSummary(summary: string, source: string): boolean {
   return true;
 }
 
+/**
+ * Sanitizes and validates candidate release summary text against source release notes.
+ * @param summary - Raw summary output from AI model.
+ * @param source - Source release text to verify grounding.
+ * @returns Sanitized summary string, or null if validation fails.
+ */
 export function prepareReleaseSummary(summary: string, source: string): string | null {
   const original = summary.trim();
   if (
     SHA_ONE.test(original) ||
-    /\bissue number\b/i.test(original) ||
-    /\bcommit hash\b/i.test(original) ||
-    /\B#\d+\b/.test(original) ||
+    ISSUE_NUMBER_TEST.test(original) ||
+    COMMIT_HASH_TEST.test(original) ||
+    HASH_ISSUE_TEST.test(original) ||
     CONVENTIONAL.test(original)
   ) {
     return null;
@@ -99,6 +178,12 @@ export function prepareReleaseSummary(summary: string, source: string): string |
   return isSafeReleaseSummary(text, source) ? text : null;
 }
 
+/**
+ * Extracts and trims response string from AI model output payload.
+ * Handles string output or structured objects containing response property.
+ * @param result - Raw response object or string from AI model call.
+ * @returns Extracted text string or empty string.
+ */
 export function parseModelText(result: unknown): string {
   if (typeof result === 'string') return result.trim();
   if (!result || typeof result !== 'object') return '';
@@ -106,6 +191,13 @@ export function parseModelText(result: unknown): string {
   return typeof row.response === 'string' ? row.response.trim() : '';
 }
 
+/**
+ * Generates deterministic fallback release summary from release items when AI model is unavailable.
+ * @param tag - Git release tag name.
+ * @param body - Release body text.
+ * @param title - Optional release title, defaulting to tag.
+ * @returns Grounded fallback release summary string.
+ */
 export function groundedReleaseSummary(tag: string, body: string, title = tag): string {
   const items = splitReleaseBody(body)
     .map((item) => stripExecBanned(item.message.trim()))
