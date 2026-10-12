@@ -3106,3 +3106,18 @@ describe('page and feed descriptions describe the page, not the hire CTA', () =>
     expect(page).toMatch(/\.timeline h3 a\s*\{[^}]*color:\s*inherit;/);
   });
 });
+
+describe('product manifesto stays dark (Nick)', () => {
+  it('keeps enable_product_manifesto false and /experimental/manifesto/ redirects to /404/', () => {
+    const flags = JSON.parse(readFileSync('src/content/flags/config.json', 'utf8')) as {
+      enable_product_manifesto: boolean;
+    };
+    expect(flags.enable_product_manifesto).toBe(false);
+
+    const manifesto = readFileSync('src/pages/experimental/manifesto.astro', 'utf8');
+    expect(manifesto).toContain(
+      "if (!flags?.data.enable_product_manifesto) return Astro.redirect('/404/')"
+    );
+    expect(manifesto).toContain("Astro.redirect('/404/')");
+  });
+});
