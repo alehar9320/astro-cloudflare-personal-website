@@ -112,3 +112,42 @@ describe('footer dark mode and hire attributes stay unchanged', () => {
     expect(footer.match(/data-hire-surface=/g)).toHaveLength(1);
   });
 });
+
+/**
+ * Lightest pixel of the rendered dark-mode footer background under the © line (text hidden),
+ * worst page per width on /, /biography/, /work/ and /contact/ (Chrome, DPR 1).
+ */
+const WORST_DARK_COPYRIGHT_BACKGROUND: Record<string, string> = {
+  '375': '#060d0c',
+  '390': '#060d0c',
+  '768': '#382c35', // /biography/, overall worst
+  '1024': '#1e1e24',
+  '1280': '#031012',
+};
+
+describe('footer © line contrast in dark mode', () => {
+  it('pins the dark © line to --gray-300 and leaves light mode on the footer --gray-400', () => {
+    expect(footer).toMatch(/<p class="copyright">&copy; \{currentYear\} Alexander Härenstam<\/p>/);
+    expect(footer).toMatch(
+      /:global\(:root\.theme-dark\) footer \.copyright\s*\{\s*color:\s*var\(--gray-300\);\s*\}/
+    );
+    expect(footer).toMatch(/footer\s*\{[^}]*color:\s*var\(--gray-400\);/);
+    expect(footer).not.toMatch(/(?<!theme-dark\)\s)footer \.copyright\s*\{/);
+  });
+
+  it.each(Object.entries(WORST_DARK_COPYRIGHT_BACKGROUND))(
+    '© line at %spx clears 4.5:1 on its worst-case dark background',
+    (_w, bg) => {
+      expect(contrast(token(darkBlock, '--gray-300'), bg)).toBeGreaterThanOrEqual(4.5);
+    }
+  );
+
+  it('the old dark © color (--gray-400) did not clear 4.5:1', () => {
+    const worst = Math.min(
+      ...Object.values(WORST_DARK_COPYRIGHT_BACKGROUND).map((bg) =>
+        contrast(token(darkBlock, '--gray-400'), bg)
+      )
+    );
+    expect(worst).toBeLessThan(4.5);
+  });
+});
