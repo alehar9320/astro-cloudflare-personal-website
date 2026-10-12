@@ -59,3 +59,9 @@ Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
 - [Insight 1: Applying a hardware-accelerated scale transform (`transform: scale(1.04)`) on `PortfolioPreview` images creates depth and hover responsiveness without triggering layout shifts (CLS=0).]
 - [Insight 2: Gating image scale transitions behind `portfolio_zoom_v1` and `@media (prefers-reduced-motion: no-preference)` respects accessibility while isolating new UI enhancements.]
 - [Delta: 14 lines. Guardrails: All verification steps passed.]
+
+## 2026-10-11 - Footer Link Color Transition | Signal: Competitive/UX | Lean Implementation: CSS Color Transition
+
+- [Insight 1: Footer navigation links lacked explicit color transitions on hover/focus, which reduced interactive clarity.]
+- [Insight 2: Adding `color var(--theme-transition)` alongside `text-decoration-color` provides high-contrast interactive feedback.]
+- [Delta: 5 lines. Guardrails: All passed autonomously.]

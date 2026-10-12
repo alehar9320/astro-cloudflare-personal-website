@@ -59,11 +59,14 @@ const currentYear = new Date().getFullYear();
     color: var(--gray-400);
     text-decoration: 1px solid underline transparent;
     text-underline-offset: 0.25em;
-    transition: text-decoration-color var(--theme-transition);
+    transition:
+      color var(--theme-transition),
+      text-decoration-color var(--theme-transition);
   }
 
   footer a:hover,
   footer a:focus-visible {
+    color: var(--gray-200);
     text-decoration-color: currentColor;
   }
 
