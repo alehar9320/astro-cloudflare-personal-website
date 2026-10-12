@@ -2775,8 +2775,9 @@ describe('identity copy', () => {
 
   it('gives the IFS case one onward read to the copilots case (next-case)', () => {
     const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
-    const linkAt = slug.indexOf(
-      'href="/work/ai-coding-copilots/">Next: Internal AI coding copilots'
+    // Whitespace-tolerant: Prettier may wrap the link text onto its own line.
+    const linkAt = slug.search(
+      /href="\/work\/ai-coding-copilots\/"\s*>\s*Next:\s+Internal AI coding copilots/
     );
     const mainEnd = slug.indexOf('</main>');
     expect(linkAt).toBeGreaterThan(-1);
