@@ -7,6 +7,7 @@ import Icon from '../../components/Icon.astro';
 import NotFoundContent from '../../components/NotFoundContent.astro';
 import Pill from '../../components/Pill.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import { safeJsonLd } from '../../utils/safe-json-ld';
 
 interface Props {
   entry?: CollectionEntry<'work'>;
@@ -54,13 +55,7 @@ const schema = entry
               : entry.id === 'user-behavior-analytics'
                 ? 'User behavior analytics | Product Manager, Developer Experience at IFS'
                 : `${entry.data.title} | Alexander Härenstam`,
-          description:
-            entry.id === 'ifs-design-system' ||
-            entry.id === 'ai-coding-copilots' ||
-            entry.id === 'user-behavior-analytics' ||
-            entry.id === 'master-thesis'
-              ? `${entry.data.description.trim()} Get in touch on LinkedIn.`
-              : entry.data.description,
+          description: entry.data.metaDescription,
           breadcrumb: {
             '@type': 'BreadcrumbList',
             itemListElement: [
@@ -88,13 +83,7 @@ const schema = entry
         {
           '@type': 'CreativeWork',
           name: entry.data.title,
-          description:
-            entry.id === 'ifs-design-system' ||
-            entry.id === 'ai-coding-copilots' ||
-            entry.id === 'user-behavior-analytics' ||
-            entry.id === 'master-thesis'
-              ? `${entry.data.description.trim()} Get in touch on LinkedIn.`
-              : entry.data.description,
+          description: entry.data.metaDescription,
           datePublished: entry.data.publishDate.toISOString(),
           author: {
             '@id': 'https://me.alehar.workers.dev/#person',
@@ -109,9 +98,7 @@ const schema = entry
 const shareTitle = entry
   ? `${entry.data.title} | Product Manager, Developer Experience at IFS`
   : undefined;
-const shareDescription = entry
-  ? `Product Manager, Developer Experience at IFS. ${entry.data.description.trim()} Get in touch on LinkedIn.`
-  : '404 Error — this page was not found';
+const shareDescription = entry ? entry.data.metaDescription : '404 Error — this page was not found';
 const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
 ---
 
@@ -121,7 +108,7 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
   ogTitle={shareTitle}
   robots={robots}
 >
-  {schema && <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />}
+  {schema && <script is:inline type="application/ld+json" set:html={safeJsonLd(schema)} />}
   {
     entry ? (
       <div class="stack gap-20">
@@ -181,6 +168,13 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
                 />
               )}
             </div>
+            {entry.id === 'ifs-design-system' && (
+              <p class="next-case">
+                <a href="/work/ai-coding-copilots/">
+                  Next: Internal AI coding copilots <Icon icon="arrow-right" />
+                </a>
+              </p>
+            )}
           </main>
         </div>
         <ContactCTA />
@@ -206,6 +200,17 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
     min-height: 44px;
     min-width: 44px;
     box-sizing: border-box;
+  }
+
+  .next-case {
+    margin-top: 2.5rem;
+  }
+
+  .next-case a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    min-height: 44px;
   }
 
   .details {
@@ -321,6 +326,7 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
   }
 
   .back-link,
+  .next-case a,
   .content :global(a) {
     text-decoration: 1px solid underline transparent;
     text-underline-offset: 0.25em;
@@ -329,12 +335,15 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
 
   .back-link:hover,
   .back-link:focus-visible,
+  .next-case a:hover,
+  .next-case a:focus-visible,
   .content :global(a:hover),
   .content :global(a:focus-visible) {
     text-decoration-color: currentColor;
   }
 
   .back-link:focus-visible,
+  .next-case a:focus-visible,
   .content :global(a:focus-visible) {
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;

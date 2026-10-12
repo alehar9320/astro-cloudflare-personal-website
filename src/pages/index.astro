@@ -1,8 +1,12 @@
 ---
+import { getEntry } from 'astro:content';
 import CallToAction from '../components/CallToAction.astro';
 import Hero from '../components/Hero.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
+import { safeJsonLd } from '../utils/safe-json-ld';
 
+const flagsEntry = await getEntry('flags', 'config');
+const isProofSlideEnabled = flagsEntry?.data.enable_proof_slide_v1 ?? false;
 const linkedinHref = 'https://www.linkedin.com/in/alehar/';
 
 const schema = {
@@ -13,7 +17,8 @@ const schema = {
       '@id': 'https://me.alehar.workers.dev/#person',
       name: 'Alexander Härenstam',
       jobTitle: 'Product Manager, Developer Experience at IFS',
-      description: 'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.',
+      description:
+        'Product Manager, Developer Experience at IFS. Design systems, developer platforms, and Industrial AI copilots.',
       url: 'https://me.alehar.workers.dev/',
       sameAs: [
         'https://www.linkedin.com/in/alehar/',
@@ -44,7 +49,8 @@ const schema = {
       url: 'https://me.alehar.workers.dev/',
       name: 'Alexander Härenstam | Product Manager, Developer Experience at IFS',
       publisher: { '@id': 'https://me.alehar.workers.dev/#person' },
-      description: 'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.',
+      description:
+        'Personal site of Alexander Härenstam, Product Manager, Developer Experience at IFS: work, biography, and recent changes to the site.',
     },
     {
       '@type': 'WebPage',
@@ -52,7 +58,8 @@ const schema = {
       url: 'https://me.alehar.workers.dev/',
       name: 'Alexander Härenstam | Product Manager, Developer Experience at IFS',
       about: { '@id': 'https://me.alehar.workers.dev/#person' },
-      description: 'Product Manager, Developer Experience at IFS. Get in touch on LinkedIn.',
+      description:
+        'Alexander Härenstam, Product Manager, Developer Experience at IFS. Design systems, developer platforms, and Industrial AI copilots.',
       primaryImageOfPage: {
         '@type': 'ImageObject',
         url: 'https://me.alehar.workers.dev/assets/portrait.png',
@@ -64,10 +71,10 @@ const schema = {
 
 <BaseLayout
   title="Alexander Härenstam | Product Manager, Developer Experience at IFS"
-  description="Product Manager, Developer Experience at IFS. Get in touch on LinkedIn."
+  description="Alexander Härenstam, Product Manager, Developer Experience at IFS. Design systems, developer platforms, and Industrial AI copilots."
   ogTitle="Product Manager, Developer Experience at IFS"
 >
-  <script is:inline type="application/ld+json" set:html={JSON.stringify(schema)} />
+  <script is:inline type="application/ld+json" set:html={safeJsonLd(schema)} />
   <main id="main-content" class="wrapper stack first-screen">
     <header class="hero">
       <div class="hero-copy">
@@ -87,7 +94,11 @@ const schema = {
           </div>
         </Hero>
         <section class="proof" aria-label="Proof">
-          <a class="proof-card" href="/work/ifs-design-system/">
+          <a
+            class="proof-card"
+            class:list={[{ 'proof-slide': isProofSlideEnabled }]}
+            href="/work/ifs-design-system/"
+          >
             <p class="proof-eyebrow">IFS Design System</p>
             <p class="proof-outcome">Took the design system from first version to IFS Cloud.</p>
             <p class="proof-chips">
@@ -230,7 +241,16 @@ const schema = {
     min-height: 44px;
     min-width: 44px;
     box-sizing: border-box;
-    transition: color var(--theme-transition);
+    transition:
+      color var(--theme-transition),
+      transform var(--theme-transition);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .proof-slide:hover .proof-affordance,
+    .proof-slide:focus-visible .proof-affordance {
+      transform: translateX(3px);
+    }
   }
 
   @media (min-width: 50em) {

@@ -3,7 +3,7 @@
 <div align="center">
 
 [![Built with Astro](https://img.shields.io/badge/Astro-0C1120?style=flat&logo=astro&logoColor=white)](https://astro.build/)
-[![Deployed on Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=flat&logo=cloudflare&logoColor=white)](https://pages.cloudflare.com/)
+[![Deployed on Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=flat&logo=cloudflare&logoColor=white)](https://workers.cloudflare.com/)
 [![Tested with Vitest](https://img.shields.io/badge/Tested_with-Vitest-FCC72B?style=flat&logo=vitest&logoColor=white)](https://vitest.dev/)
 [![Code Style: Prettier](https://img.shields.io/badge/code_style-prettier-ff69b4.svg?style=flat&logo=prettier)](https://github.com/prettier/prettier)
 [![GitHub Actions Workflow Status](https://img.shields.io/github/actions/workflow/status/alehar9320/astro-cloudflare-personal-website/ci.yml?style=flat&logo=githubactions&logoColor=white)](https://github.com/alehar9320/astro-cloudflare-personal-website/actions)
@@ -17,7 +17,7 @@ Welcome to the repository for my personal website! I'm **Alexander Härenstam**,
 
 **🌍 Live Site:** [https://me.alehar.workers.dev](https://me.alehar.workers.dev)
 
-This website serves as my digital portfolio, showcasing my professional journey, skills, projects, and publications.
+A personal site for visitors (hiring managers first). Home is a docked digital twin: an AI with Alexander's context. It can get things wrong. It is not him. Work, biography, and what's new sit beside the chat. Hire path is LinkedIn only: [alehar](https://www.linkedin.com/in/alehar/). No public email. No CV PDF.
 
 ## 🚀 Technologies
 
@@ -30,7 +30,7 @@ This project is built with a modern web stack designed for speed, SEO, and devel
 ## 🛠 Features
 
 - **Responsive Design**: Fast and accessible UI mapped to look great on desktop, tablet, and mobile devices.
-- **Professional Portfolio**: Highlights my work experience, including my role at IFS, Ericsson, and other ventures.
+- **Professional Portfolio**: IFS now; Ericsson 2014–2016 stays on this README. Cases live on the site.
 - **Skills & Education**: A detailed breakdown of my technical, design, and product management skills, backed by my academic background from Chalmers University of Technology.
 - **SEO Optimized**: Standard Astro best practices with fast load times and clean, accessible HTML out of the box.
 
@@ -89,15 +89,16 @@ Navigate to `http://localhost:4321` in your browser to view the site as you make
 
 This project is structured to be deployed primarily on **Cloudflare Workers + Assets**. Push changes to the `main` branch connected to your Cloudflare Git integration and Cloudflare will automatically build using `npm run build` and deploy the output directory (`./dist/`). GitHub Actions handles quality checks plus GitHub release creation; it does not manually deploy production in parallel or push generated release files back to protected `main`.
 
-Render is also supported as a **Node web service**. The repo includes a [render.yaml](./render.yaml) Blueprint that uses:
+Render (`render.yaml`, `RENDER=true`) is a **Jules test environment**. It is not a second production and not a failover. See [ADR 0001](docs/adr/0001-cloudflare-production-render-jules.md).
 
-- `npm install && npm run build`
-- `npm run start`
-- `NODE_VERSION=22.12.0`
+## Docs
 
-At build time, Render sets `RENDER=true`, which switches Astro to the standalone Node adapter. The Astro config also binds the server to `0.0.0.0`, which Render requires for health checks to pass.
+- [AGENTS.md](AGENTS.md) — how agents start a task and the high-priority never-list
+- [docs/](docs/) — ADRs, MCP, Zod
+- [Wiki](https://github.com/alehar9320/astro-cloudflare-personal-website/wiki) — map only (not visitor copy)
+- GitHub Releases — canonical changelog (`/whats-new/` is the visitor rewrite of recent ships)
 
-If you deploy on Render, configure any required secrets in the Render dashboard environment settings. Do not commit or mirror local `.env` values into the repository.
+GitHub Pages is off on purpose. Do not publish a second public site.
 
 ## 📬 Contact & Connect
 

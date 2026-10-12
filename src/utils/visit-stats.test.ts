@@ -218,6 +218,52 @@ describe('parseVisitGlance', () => {
     expect(glance?.pageviews).toBe(100);
     expect(glance?.uniqueVisitors).toBe(15);
   });
+
+  it('maps custom-ordered columns by header name, keeping positions when a header is not a string', () => {
+    const glance = parseVisitGlance({
+      columns: [
+        null,
+        'unique_visitors',
+        'first_seen',
+        'pageviews_7d',
+        'unique_visitors_7d',
+        'pageviews',
+      ],
+      results: [[null, 42, '2026-08-14T07:03:00.000Z', 10, 5, 200]],
+    });
+    expect(glance?.pageviews).toBe(200);
+    expect(glance?.uniqueVisitors).toBe(42);
+    expect(glance?.pageviews7d).toBe(10);
+    expect(glance?.uniqueVisitors7d).toBe(5);
+  });
+
+  it('handles Date instances and invalid Date objects for first_seen', () => {
+    const validDateGlance = parseVisitGlance({
+      results: [
+        {
+          pageviews: 50,
+          unique_visitors: 10,
+          first_seen: new Date('2026-08-14T07:03:00.000Z'),
+          pageviews_7d: 10,
+          unique_visitors_7d: 5,
+        },
+      ],
+    });
+    expect(validDateGlance?.firstSeen).toBe('2026-08-14T07:03:00.000Z');
+
+    const invalidDateGlance = parseVisitGlance({
+      results: [
+        {
+          pageviews: 50,
+          unique_visitors: 10,
+          first_seen: new Date('invalid'),
+          pageviews_7d: 10,
+          unique_visitors_7d: 5,
+        },
+      ],
+    });
+    expect(invalidDateGlance).toBeNull();
+  });
 });
 
 describe('formatFirstSeen', () => {
