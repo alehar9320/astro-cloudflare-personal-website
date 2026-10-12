@@ -65,9 +65,3 @@ Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
 - [Insight 1: Footer navigation links lacked explicit color transitions on hover/focus, which reduced interactive clarity.]
 - [Insight 2: Adding `color var(--theme-transition)` alongside `text-decoration-color` provides high-contrast interactive feedback.]
 - [Delta: 5 lines. Guardrails: All passed autonomously.]
-
-## 2026-10-12 - Onward Case Navigation | Signal: User Journey | Lean Implementation: Next Case Plain Text Link
-
-- [Insight 1: Providing a clear onward read link at the end of case studies helps users discover related case studies directly without returning to the main work listing.]
-- [Insight 2: Styling onward links consistently with `.back-link` and maintaining >=44px touch targets ensures strong UX and accessibility without adding card complexity or motion.]
-- [Delta: ~20 lines across 2 files. Guardrails: All passed autonomously.]
