@@ -53,10 +53,18 @@ const currentYear = new Date().getFullYear();
     text-align: center;
     color: var(--gray-400);
     font-size: var(--text-sm);
+    /* Light mode: one step darker than the footer text so every link clears
+       WCAG AA 4.5:1 on the darkest pixel of the footer background image
+       (worst case #e9e0e8). Dark mode keeps --gray-400. */
+    --footer-link-rest: var(--gray-300);
+  }
+
+  :global(:root.theme-dark) footer {
+    --footer-link-rest: var(--gray-400);
   }
 
   footer a {
-    color: var(--gray-400);
+    color: var(--footer-link-rest);
     text-decoration: 1px solid underline transparent;
     text-underline-offset: 0.25em;
     transition:
@@ -107,6 +115,13 @@ const currentYear = new Date().getFullYear();
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
     border-radius: 0.25rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    footer a,
+    .version-link {
+      transition: none;
+    }
   }
 
   .separator {
