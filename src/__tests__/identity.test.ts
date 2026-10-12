@@ -2775,12 +2775,13 @@ describe('identity copy', () => {
 
   it('gives the IFS case one onward read to the copilots case (next-case)', () => {
     const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
-    const m = slug.match(
-      /href="\/work\/ai-coding-copilots\/">\s*Next: Internal AI coding copilots/
+    // Whitespace-tolerant: Prettier may wrap the link text onto its own line.
+    const linkAt = slug.search(
+      /href="\/work\/ai-coding-copilots\/"\s*>\s*Next:\s+Internal AI coding copilots/
     );
     const mainEnd = slug.indexOf('</main>');
-    expect(m).not.toBeNull();
-    expect(m!.index!).toBeLessThan(mainEnd);
+    expect(linkAt).toBeGreaterThan(-1);
+    expect(linkAt).toBeLessThan(mainEnd);
     expect(slug).toContain("entry.id === 'ifs-design-system' && (");
     expect(slug).toContain('class="next-case"');
     expect(slug.indexOf('<ContactCTA />')).toBeGreaterThan(mainEnd);
