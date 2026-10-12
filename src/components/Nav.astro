@@ -43,13 +43,13 @@ const iconLinks: {
   },
 ];
 
+let currentPathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
+if (currentPathname.at(0) !== '/') currentPathname = '/' + currentPathname;
+if (currentPathname.at(-1) !== '/') currentPathname += '/';
+
 /** Test if a link is pointing to the current page. */
-const isCurrentPage = (href: string) => {
-  let pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
-  if (pathname.at(0) !== '/') pathname = '/' + pathname;
-  if (pathname.at(-1) !== '/') pathname += '/';
-  return pathname === href || (href !== '/' && pathname.startsWith(href));
-};
+const isCurrentPage = (href: string) =>
+  currentPathname === href || (href !== '/' && currentPathname.startsWith(href));
 ---
 
 <nav aria-label="Main">

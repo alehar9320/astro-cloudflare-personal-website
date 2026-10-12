@@ -65,3 +65,9 @@ Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
 - [Insight 1: Footer navigation links lacked explicit color transitions on hover/focus, which reduced interactive clarity.]
 - [Insight 2: Adding `color var(--theme-transition)` alongside `text-decoration-color` provides high-contrast interactive feedback.]
 - [Delta: 5 lines. Guardrails: All passed autonomously.]
+
+## 2026-10-12 - Hoist Pathname Normalization | Signal: Technical/Performance | Lean Implementation: Hoisted Top-Level Constant
+
+- [Insight 1: Repeatedly normalizing `Astro.url.pathname` inside loop callbacks causes redundant string allocations and regex replacements during SSR rendering.]
+- [Insight 2: Hoisting string normalization to component script top-level optimizes navigation link matching without impacting behavior or styling.]
+- [Delta: 5 lines. Guardrails: All passed autonomously.]
