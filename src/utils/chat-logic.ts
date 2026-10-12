@@ -118,11 +118,15 @@ export function groundedCannedAnswer(lastUserMessage: string): string | null {
   return groundedDesignSystemAnswer(lastUserMessage) ?? groundedLinkedInHireAnswer(lastUserMessage);
 }
 
+/* Optimization (⚡ Bolt): Hoist TextEncoder instance to module level to avoid re-instantiating
+   TextEncoder on every SSE stream response creation. */
+const TEXT_ENCODER = new TextEncoder();
+
 export function sseTextStream(text: string): ReadableStream<Uint8Array> {
   const body = `data: ${JSON.stringify({ response: text })}\n\ndata: [DONE]\n\n`;
   return new ReadableStream({
     start(controller) {
-      controller.enqueue(new TextEncoder().encode(body));
+      controller.enqueue(TEXT_ENCODER.encode(body));
       controller.close();
     },
   });
