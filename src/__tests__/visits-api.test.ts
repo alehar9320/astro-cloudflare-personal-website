@@ -106,6 +106,33 @@ describe('visits API', () => {
     expect(errorSpy).toHaveBeenCalledWith({ event: 'visits_count_hidden' });
   });
 
+  it('returns 204 and logs when project ID or query host configuration is invalid', async () => {
+    const bindings = workerEnv as VisitEnv;
+    bindings.POSTHOG_PERSONAL_API_KEY = 'test-key';
+    const errorSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+
+    // Invalid project ID
+    bindings.POSTHOG_PROJECT_ID = 'invalid_id';
+    let response = await GET({} as Parameters<typeof GET>[0]);
+    expect(response.status).toBe(204);
+    expect(errorSpy).toHaveBeenCalledWith({ event: 'visits_invalid_project_id' });
+
+    // Non-HTTPS query host
+    bindings.POSTHOG_PROJECT_ID = '12345';
+    bindings.POSTHOG_QUERY_HOST = 'http://insecure.posthog.com';
+    errorSpy.mockClear();
+    response = await GET({} as Parameters<typeof GET>[0]);
+    expect(response.status).toBe(204);
+    expect(errorSpy).toHaveBeenCalledWith({ event: 'visits_invalid_host' });
+
+    // Malformed query host URL
+    bindings.POSTHOG_QUERY_HOST = 'not-a-valid-url';
+    errorSpy.mockClear();
+    response = await GET({} as Parameters<typeof GET>[0]);
+    expect(response.status).toBe(204);
+    expect(errorSpy).toHaveBeenCalledWith({ event: 'visits_invalid_host' });
+  });
+
   it('returns 200 with visit glance data on valid response', async () => {
     const bindings = workerEnv as VisitEnv;
     bindings.POSTHOG_PERSONAL_API_KEY = 'test-key';
