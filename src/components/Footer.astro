@@ -55,12 +55,14 @@ const currentYear = new Date().getFullYear();
     font-size: var(--text-sm);
     /* Light mode: one step darker than the footer text so every link clears
        WCAG AA 4.5:1 on the darkest pixel of the footer background image
-       (worst case #e9e0e8). Dark mode keeps --gray-400. */
+       (worst case #e9e0e8). */
     --footer-link-rest: var(--gray-300);
   }
 
+  /* Dark mode: one step lighter (#a3acc8) so every link clears 4.5:1 on the
+     lightest pixel of the dark footer background (worst case #362e36, 5.80:1). */
   :global(:root.theme-dark) footer {
-    --footer-link-rest: var(--gray-400);
+    --footer-link-rest: var(--gray-300);
   }
 
   /* Dark mode: the © line is one step lighter (--gray-300) so it clears 4.5:1 on the
