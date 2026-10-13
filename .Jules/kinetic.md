@@ -50,3 +50,15 @@ Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hi
   - Glass Blur: `16px`
   - Affordance: `translateY(-4px)`
   - Glow: `hsla(210, 100%, 45%, 0.3)`
+
+## 2026-10-24 - Glassmorphic Refinement for Whats-New Cards
+
+- **Signal:** `/whats-new/` changelog containers (.this-week and .last-30) lacked depth and high-contrast border fallbacks.
+- **Action:**
+  - Upgraded `.this-week` and `.last-30` in `src/pages/whats-new.astro` with `backdrop-filter: blur(16px) saturate(140%)` for frosted glass depth.
+  - Aligned container borders with Northern Lights design tokens (`hsla(var(--gray-999-basis), 0.12)`).
+  - Added explicit `@media (forced-colors: active)` fallback with `border-color: CanvasText` to preserve structural outlines in Windows High Contrast Mode.
+  - Added `@media (prefers-reduced-transparency: reduce)` fallback to opaque background.
+- **Tokens/Styles Added:**
+  - Glass Filter: `blur(16px) saturate(140%)`
+  - Translucent Border: `hsla(var(--gray-999-basis), 0.12)`
