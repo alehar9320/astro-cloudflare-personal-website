@@ -29,6 +29,10 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
+    // Fail loudly instead of skipping assertions if the schema is missing or not a Zod object.
+    if (!schema || !('safeParse' in schema)) {
+      throw new Error('flags collection must define a Zod object schema');
+    }
     const result = schema.safeParse(flagsFixture);
     expect(result.success).toBe(true);
 
@@ -41,6 +45,10 @@ describe('content.config', () => {
 
   it('validates work schema with sample data', () => {
     const { schema } = collections.work;
+    // Fail loudly instead of skipping assertions if the schema is missing or not a Zod object.
+    if (!schema || !('safeParse' in schema)) {
+      throw new Error('work collection must define a Zod object schema');
+    }
     const sampleWork = {
       title: 'Sample Work',
       description: 'A sample description',
