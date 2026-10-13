@@ -298,6 +298,11 @@ export function resetOkrSnapshotCache(): void {
   inflight = null;
 }
 
+function warnSnapshotFailed(where: string, err: unknown): void {
+  const name = err instanceof Error ? err.name : typeof err;
+  console.warn({ event: 'okr_snapshot_failed', where, name, message: failReason(err) });
+}
+
 function hasNoData(snapshot: OkrSnapshot): boolean {
   const metrics = Object.values(snapshot.metrics);
   return metrics.length === 0 || metrics.some((m) => m.value === null);
@@ -324,7 +329,12 @@ async function loadSnapshot(): Promise<OkrSnapshot> {
   const cache = getCache();
   try {
     const hit = await cache?.match(CACHE_KEY);
-    if (hit) return (await hit.json()) as OkrSnapshot;
+    if (hit) {
+      // Ignore a cached snapshot with any 'No data yet' (e.g. one stored by an
+      // earlier build): only healthy snapshots may be served for the hour.
+      const cached = (await hit.json()) as OkrSnapshot;
+      if (cached?.metrics && !hasNoData(cached)) return cached;
+    }
   } catch {
     // Cache API miss or unavailable (no-op on *.workers.dev); build below.
   }
@@ -349,14 +359,14 @@ export async function getOkrSnapshot(): Promise<OkrSnapshot> {
   if (memo && Date.now() < memo.expiresAt) return memo.snapshot;
   if (inflight) return inflight;
   const pending = loadSnapshot()
-    .catch(
-      (err) =>
-        ({
-          metrics: {},
-          generatedAt: new Date().toISOString(),
-          error: `load:${failReason(err)}`,
-        }) as OkrSnapshot
-    )
+    .catch((err) => {
+      warnSnapshotFailed('load', err);
+      return {
+        metrics: {},
+        generatedAt: new Date().toISOString(),
+        error: `load:${failReason(err)}`,
+      } as OkrSnapshot;
+    })
     .then((snapshot) => {
       const ttl = hasNoData(snapshot) ? NO_DATA_TTL_MS : SNAPSHOT_TTL_MS;
       memo = { snapshot, expiresAt: Date.now() + ttl };
