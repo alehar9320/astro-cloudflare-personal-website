@@ -1,0 +1,374 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../../components/Hero.astro';
+---
+
+<BaseLayout
+  title="Lab - Northern Lights Aurora Waves"
+  description="Interactive HTML5 Canvas lab experiment featuring fluid wave superposition and spatial light refraction."
+>
+  <main id="main-content" class="wrapper stack gap-8 lab-main">
+    <Hero
+      title="Aurora Waves Lab"
+      tagline="Interactive math-driven Northern Lights ribbons with vector light refraction."
+      align="start"
+    />
+
+    <div class="interactive-lab-container card">
+      <div class="canvas-wrapper">
+        <canvas
+          id="aurora-lab-canvas"
+          class="aurora-canvas"
+          tabindex="0"
+          aria-label="Interactive Northern Lights wave visual. Move pointer or touch to refract wave ribbons. Press spacebar to pulse wave amplitude."
+        ></canvas>
+      </div>
+
+      <div class="controls-bar">
+        <button id="toggle-anim-btn" type="button" class="control-btn">
+          <span class="btn-icon" aria-hidden="true">⏸</span>
+          <span class="btn-text">Pause Animation</span>
+        </button>
+        <button id="pulse-wave-btn" type="button" class="control-btn">
+          <span class="btn-icon" aria-hidden="true">⚡</span>
+          <span class="btn-text">Pulse Waves (Space)</span>
+        </button>
+        <div class="status-indicator" role="status" aria-live="polite">
+          <span class="indicator-dot"></span>
+          <span id="fps-counter">60 FPS</span>
+        </div>
+      </div>
+    </div>
+  </main>
+</BaseLayout>
+
+<script>
+  import {
+    AURORA_COLOR_PALETTE,
+    calculateRefractionOffset,
+    computeWaveY,
+    type PointerCoordinates,
+    type WaveParameters,
+  } from '../../utils/aurora-wave';
+
+  const canvas = document.getElementById('aurora-lab-canvas') as HTMLCanvasElement | null;
+  const toggleBtn = document.getElementById('toggle-anim-btn') as HTMLButtonElement | null;
+  const pulseBtn = document.getElementById('pulse-wave-btn') as HTMLButtonElement | null;
+  const fpsCounter = document.getElementById('fps-counter');
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let animationFrameId: number;
+    let isPlaying = !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    let pointer: PointerCoordinates | null = null;
+    let pulseFactor = 1.0;
+    let frameCount = 0;
+    let fpsTime = performance.now();
+
+    const waves: WaveParameters[] = [
+      {
+        baseY: 0.3,
+        harmonics: [
+          { frequency: 0.008, amplitude: 25, speed: 0.8, phaseOffset: 0 },
+          { frequency: 0.015, amplitude: 12, speed: -0.6, phaseOffset: 1.2 },
+        ],
+      },
+      {
+        baseY: 0.5,
+        harmonics: [
+          { frequency: 0.006, amplitude: 35, speed: 0.5, phaseOffset: 2.1 },
+          { frequency: 0.012, amplitude: 18, speed: 0.9, phaseOffset: 0.4 },
+        ],
+      },
+      {
+        baseY: 0.7,
+        harmonics: [
+          { frequency: 0.01, amplitude: 20, speed: -0.7, phaseOffset: 3.5 },
+          { frequency: 0.02, amplitude: 8, speed: 1.1, phaseOffset: 1.8 },
+        ],
+      },
+    ];
+
+    const resize = () => {
+      if (!canvas) return;
+      const rect = canvas.parentElement?.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      const displayWidth = Math.floor(rect?.width || 600);
+      const displayHeight = Math.floor(rect?.height || 360);
+
+      canvas.width = displayWidth * dpr;
+      canvas.height = displayHeight * dpr;
+      if (ctx) {
+        ctx.scale(dpr, dpr);
+      }
+    };
+
+    const triggerPulse = () => {
+      pulseFactor = 2.2;
+    };
+
+    const renderFrame = (currentTime: number) => {
+      if (!ctx || !canvas) return;
+
+      const displayWidth = canvas.width / Math.min(window.devicePixelRatio || 1, 2);
+      const displayHeight = canvas.height / Math.min(window.devicePixelRatio || 1, 2);
+
+      // Dampen pulse back to normal
+      pulseFactor += (1.0 - pulseFactor) * 0.05;
+
+      // FPS tracking
+      frameCount++;
+      if (currentTime - fpsTime >= 1000) {
+        if (fpsCounter) {
+          fpsCounter.textContent = `${Math.round((frameCount * 1000) / (currentTime - fpsTime))} FPS`;
+        }
+        frameCount = 0;
+        fpsTime = currentTime;
+      }
+
+      const elapsed = currentTime * 0.001;
+
+      // Clear canvas with dark marine trail
+      ctx.fillStyle = 'rgba(13, 27, 42, 0.92)';
+      ctx.fillRect(0, 0, displayWidth, displayHeight);
+
+      // Adapt step size for mobile vs desktop for optimal 60fps
+      const step = displayWidth < 600 ? 8 : 4;
+
+      waves.forEach((wave, waveIdx) => {
+        const color = AURORA_COLOR_PALETTE[waveIdx % AURORA_COLOR_PALETTE.length];
+        const baseYPx = wave.baseY * displayHeight;
+
+        ctx.beginPath();
+        ctx.moveTo(0, displayHeight);
+
+        for (let x = 0; x <= displayWidth; x += step) {
+          const rawY = computeWaveY(x, elapsed, {
+            baseY: baseYPx,
+            harmonics: wave.harmonics.map((h) => ({
+              ...h,
+              amplitude: h.amplitude * pulseFactor,
+            })),
+          });
+
+          const refraction = calculateRefractionOffset(x, rawY, pointer, 130, 30);
+          const drawX = x + refraction.dx;
+          const drawY = rawY + refraction.dy;
+
+          if (x === 0) {
+            ctx.lineTo(drawX, drawY);
+          } else {
+            ctx.lineTo(drawX, drawY);
+          }
+        }
+
+        ctx.lineTo(displayWidth, displayHeight);
+        ctx.closePath();
+
+        const gradient = ctx.createLinearGradient(0, baseYPx - 50, 0, displayHeight);
+        gradient.addColorStop(0, color);
+        gradient.addColorStop(1, 'rgba(13, 27, 42, 0)');
+
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      });
+
+      if (isPlaying) {
+        animationFrameId = requestAnimationFrame(renderFrame);
+      }
+    };
+
+    const handlePointerMove = (e: MouseEvent | TouchEvent) => {
+      if (!canvas) return;
+      const rect = canvas.getBoundingClientRect();
+      let clientX = 0;
+      let clientY = 0;
+
+      if ('touches' in e && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else if ('clientX' in e) {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+
+      pointer = {
+        x: clientX - rect.left,
+        y: clientY - rect.top,
+      };
+
+      if (!isPlaying) {
+        renderFrame(performance.now());
+      }
+    };
+
+    const handlePointerLeave = () => {
+      pointer = null;
+      if (!isPlaying) {
+        renderFrame(performance.now());
+      }
+    };
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        triggerPulse();
+        if (!isPlaying) renderFrame(performance.now());
+      }
+    };
+
+    // Event Listeners
+    window.addEventListener('resize', resize);
+    canvas.addEventListener('mousemove', handlePointerMove);
+    canvas.addEventListener('mouseleave', handlePointerLeave);
+    canvas.addEventListener('touchstart', handlePointerMove, { passive: true });
+    canvas.addEventListener('touchmove', handlePointerMove, { passive: true });
+    canvas.addEventListener('touchend', handlePointerLeave);
+    canvas.addEventListener('keydown', handleKeyDown);
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', () => {
+        isPlaying = !isPlaying;
+        const textSpan = toggleBtn.querySelector('.btn-text');
+        const iconSpan = toggleBtn.querySelector('.btn-icon');
+        if (textSpan) textSpan.textContent = isPlaying ? 'Pause Animation' : 'Play Animation';
+        if (iconSpan) iconSpan.textContent = isPlaying ? '⏸' : '▶';
+
+        if (isPlaying) {
+          animationFrameId = requestAnimationFrame(renderFrame);
+        } else {
+          cancelAnimationFrame(animationFrameId);
+        }
+      });
+    }
+
+    if (pulseBtn) {
+      pulseBtn.addEventListener('click', () => {
+        triggerPulse();
+        if (!isPlaying) renderFrame(performance.now());
+      });
+    }
+
+    // Initial setup
+    resize();
+    renderFrame(performance.now());
+
+    // Clean up listeners and animation loops on Astro page navigation
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        isPlaying = false;
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+        if (canvas) {
+          canvas.removeEventListener('mousemove', handlePointerMove);
+          canvas.removeEventListener('mouseleave', handlePointerLeave);
+          canvas.removeEventListener('touchstart', handlePointerMove);
+          canvas.removeEventListener('touchmove', handlePointerMove);
+          canvas.removeEventListener('touchend', handlePointerLeave);
+          canvas.removeEventListener('keydown', handleKeyDown);
+        }
+      },
+      { once: true }
+    );
+  }
+</script>
+
+<style>
+  .lab-main {
+    margin-top: 2rem;
+  }
+
+  .interactive-lab-container {
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .canvas-wrapper {
+    position: relative;
+    width: 100%;
+    height: 380px;
+    background: #0d1b2a;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid rgba(0, 242, 254, 0.15);
+  }
+
+  .aurora-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    outline: none;
+    cursor: crosshair;
+  }
+
+  .aurora-canvas:focus-visible {
+    box-shadow: 0 0 0 2px var(--accent-regular);
+  }
+
+  .controls-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .control-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    background: var(--gray-900);
+    color: var(--gray-200);
+    border: 1px solid var(--gray-700);
+    border-radius: 0.5rem;
+    font-size: var(--text-sm);
+    font-weight: 500;
+    cursor: pointer;
+    transition:
+      background-color 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .control-btn:hover {
+    background: var(--gray-800);
+    border-color: var(--accent-regular);
+    color: var(--gray-0);
+  }
+
+  .status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: var(--text-xs);
+    color: var(--gray-400);
+    font-family: var(--font-mono, monospace);
+  }
+
+  .indicator-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #00f2fe;
+    box-shadow: 0 0 8px #00f2fe;
+  }
+
+  @media (forced-colors: active) {
+    .interactive-lab-container,
+    .canvas-wrapper {
+      border-color: CanvasText;
+    }
+  }
+
+  @media (max-width: 600px) {
+    .canvas-wrapper {
+      height: 280px;
+    }
+  }
+</style>
