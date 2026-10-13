@@ -41,3 +41,9 @@
 - **O(1) Column Map Lookups:** Refactored `parseVisitGlance` to construct a `Map<string, number>` (`columnMap`) once per payload when column headers exist, converting linear `Array.prototype.indexOf` searches ($O(N)$) per row field into $O(1)$ Map lookups while preserving index positioning for non-string header elements.
 - **Zero-Allocation Period Iteration:** Replaced tuple array allocations (`[['DoD', ...], ...]`) in `formatColophonVisits` and `formatColophonVisitsTitle` with direct indexed loop iteration over static `PERIOD_KEYS` and `PERIOD_FIELDS`.
 - **Verification:** Added Vitest unit tests in `src/utils/visit-stats.test.ts` verifying custom-ordered column map lookups and non-string header handling. All tests pass cleanly.
+
+## 2026-10-18 - Hoisted Intl.DateTimeFormat & Single-Pass PR Regex Extraction
+
+- **Allocation & CPU Overhead Reduction:** Hoisted `Intl.DateTimeFormat` instances (`STOCKHOLM_EN_CA_FORMATTER` and `STOCKHOLM_EN_GB_FORMATTER`) in `src/utils/whats-new-glance.ts` to module constants, avoiding repeated locale parsing and object instantiation per `formatLatestUpdatesDate` invocation on edge SSR requests.
+- **Single-Pass Regex Extraction:** Refactored `mappedVisitorTitle` in `src/utils/visitor-changelog.ts` to use a greedy regex (`LAST_PR_MATCH_REGEX = /.*\(#(\d+)\)/`) to extract the final squash PR number in a single pass without `matchAll` iterator or match array allocations.
+- **Verification:** Added unit tests in `src/__tests__/whats-new-glance.test.ts` and `src/utils/visitor-changelog.test.ts` verifying date formatting and single-pass PR extraction behavior. All 529 tests pass cleanly.
