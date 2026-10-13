@@ -65,3 +65,9 @@ Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
 - [Insight 1: Footer navigation links lacked explicit color transitions on hover/focus, which reduced interactive clarity.]
 - [Insight 2: Adding `color var(--theme-transition)` alongside `text-decoration-color` provides high-contrast interactive feedback.]
 - [Delta: 5 lines. Guardrails: All passed autonomously.]
+
+## 2026-10-13 - CallToAction Hover Micro-Optimization | Signal: Technical/Performance | Lean Implementation: CSS GPU Hardware Acceleration Hint
+
+- [Insight 1: Specifying `will-change: transform` on CallToAction hover/focus state under `@media (prefers-reduced-motion: no-preference)` promotes element rendering to GPU compositor layers prior to interaction.]
+- [Insight 2: Restricting `will-change` strictly to hover/focus states inside no-preference media queries prevents excessive memory allocation while ensuring smooth 60fps lift transitions.]
+- [Delta: 1 line. Guardrails: All verification pipeline steps passed autonomously.]
