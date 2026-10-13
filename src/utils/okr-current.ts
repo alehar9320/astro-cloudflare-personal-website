@@ -12,15 +12,11 @@ export type OkrMetric = {
   valueLabel: string;
   source: 'GitHub' | 'PostHog';
   updatedAt: string | null;
-  /** TEMP diagnostic (#1727): short failure code, never a secret. */
-  reason?: string;
 };
 
 export type OkrSnapshot = {
   metrics: Record<string, OkrMetric>;
   generatedAt: string;
-  /** TEMP diagnostic (#1727). */
-  error?: string;
 };
 
 type OkrEnv = {
@@ -153,7 +149,7 @@ function settle(
   if (result.status === 'rejected') {
     const reason = failReason(result.reason);
     console.warn({ event: 'okr_metric_failed', id, source, reason });
-    return { ...empty(id, source), reason };
+    return empty(id, source);
   }
   const { value, valueLabel } = result.value;
   return { id, value, valueLabel, source, updatedAt: value === null ? null : updatedAt };
@@ -192,12 +188,14 @@ async function posthogQuery(
   host: string,
   projectId: string,
   key: string,
-  query: unknown
+  query: unknown,
+  signal: AbortSignal
 ): Promise<unknown> {
-  const res = await timedFetch(`${host}/api/projects/${projectId}/query/`, {
+  const res = await fetch(`${host}/api/projects/${projectId}/query/`, {
     method: 'POST',
     headers: { Authorization: `Bearer ${key}`, 'content-type': 'application/json' },
     body: JSON.stringify({ query }),
+    signal,
   });
   if (!res.ok) throw new Error(`posthog ${res.status}`);
   return res.json();
@@ -225,7 +223,7 @@ async function posthogMetrics(bindings: OkrEnv): Promise<OkrMetric[]> {
   const ids = ['KR1.1', 'KR1.2', 'KR2.2'];
   const unconfigured = (reason: string) => {
     console.warn({ event: 'okr_source_unconfigured', source: 'PostHog', reason });
-    return ids.map((id) => ({ ...empty(id, 'PostHog'), reason }));
+    return ids.map((id) => empty(id, 'PostHog'));
   };
   const key = bindings.POSTHOG_PERSONAL_API_KEY?.trim();
   const projectId = (bindings.POSTHOG_PROJECT_ID || DEFAULT_PROJECT_ID).trim();
@@ -243,27 +241,18 @@ async function posthogMetrics(bindings: OkrEnv): Promise<OkrMetric[]> {
     const n = firstCell(payload);
     return { value: n, valueLabel: String(n) };
   };
-  // One query at a time (Nick-approved): PostHog may reject concurrent queries per key.
-  const settled = async <T>(run: () => Promise<T>): Promise<PromiseSettledResult<T>> => {
-    try {
-      return { status: 'fulfilled', value: await run() };
-    } catch (reason) {
-      return { status: 'rejected', reason };
-    }
-  };
-  const visitors = await settled(() =>
-    posthogQuery(host, projectId, key, hogql(KR11_HOGQL)).then(count)
-  );
-  const bounce = await settled(() =>
-    posthogQuery(host, projectId, key, KR12_WEB_OVERVIEW).then((payload) => {
+  // One shared ~5 s PostHog deadline (same budget as /api/visits); the three
+  // queries run concurrently inside it and each settles on its own.
+  const controller = new AbortController();
+  const deadline = setTimeout(() => controller.abort(), UPSTREAM_TIMEOUT_MS);
+  const [visitors, bounce, hire] = await Promise.allSettled([
+    posthogQuery(host, projectId, key, hogql(KR11_HOGQL), controller.signal).then(count),
+    posthogQuery(host, projectId, key, KR12_WEB_OVERVIEW, controller.signal).then((payload) => {
       const b = bounceRate(payload);
       return { value: b, valueLabel: formatPercent(b) };
-    })
-  );
-  const hire = await settled(() =>
-    posthogQuery(host, projectId, key, hogql(KR22_HOGQL)).then(count)
-  );
-
+    }),
+    posthogQuery(host, projectId, key, hogql(KR22_HOGQL), controller.signal).then(count),
+  ]).finally(() => clearTimeout(deadline));
   const updatedAt = new Date().toISOString();
   return [
     settle('KR1.1', 'PostHog', visitors, updatedAt),
@@ -317,10 +306,10 @@ async function buildSnapshot(): Promise<OkrSnapshot> {
     for (const m of [...ph, ...gh]) metrics[m.id] = m;
     return { metrics, generatedAt: new Date().toISOString() };
   } catch (err) {
+    warnSnapshotFailed('build', err);
     return {
       metrics: {},
       generatedAt: new Date().toISOString(),
-      error: `build:${failReason(err)}`,
     };
   }
 }
@@ -364,7 +353,6 @@ export async function getOkrSnapshot(): Promise<OkrSnapshot> {
       return {
         metrics: {},
         generatedAt: new Date().toISOString(),
-        error: `load:${failReason(err)}`,
       } as OkrSnapshot;
     })
     .then((snapshot) => {

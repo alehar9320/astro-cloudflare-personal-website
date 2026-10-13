@@ -260,7 +260,9 @@ describe('identity copy', () => {
     expect(data).toContain("baselineLabel: '0'");
     expect(data).toContain("targetLabel: '5'");
     expect(data).toContain("baselineLabel: '25'");
-    expect(data).toContain('median ≥ 8 / week through Dec');
+    expect(data).toContain("targetLabel: '≥ 8 / week'");
+    expect(data).toContain("baselineLabel: 'Not set'");
+    expect(data).toContain("label: 'Changes waiting for review'");
     expect(data).toContain('Hire tracking in PostHog — live');
     expect(data).toContain('Hire path stays LinkedIn only');
     expect(footer).toContain('href="/okr/"');

@@ -266,5 +266,41 @@ describe('okr-current snapshot', () => {
       expect(JSON.stringify(warn.mock.calls)).toContain('no key');
       warn.mockRestore();
     });
+
+    it('ignores a cached No data yet snapshot and rebuilds it', async () => {
+      const stale = {
+        metrics: {
+          'KR1.1': {
+            id: 'KR1.1',
+            value: null,
+            valueLabel: 'No data yet',
+            source: 'PostHog',
+            updatedAt: null,
+          },
+        },
+        generatedAt: '2026-10-13T11:00:00Z',
+      };
+      const cache = {
+        match: vi.fn(async () => new Response(JSON.stringify(stale))),
+        put: vi.fn(async () => {}),
+      };
+      vi.stubGlobal('caches', { default: cache });
+      const snap = await getOkrSnapshot();
+      expect(fetchMock).toHaveBeenCalledTimes(7);
+      expect(snap.metrics['KR1.1'].valueLabel).toBe('7');
+      expect(cache.put).toHaveBeenCalledTimes(1);
+    });
+
+    it('logs okr_snapshot_failed and still returns a snapshot when building throws', async () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const spy = vi.spyOn(Promise, 'all').mockImplementationOnce(() => {
+        throw new TypeError('boom');
+      });
+      const snap = await getOkrSnapshot();
+      expect(snap.metrics).toEqual({});
+      expect(JSON.stringify(warn.mock.calls)).toContain('okr_snapshot_failed');
+      spy.mockRestore();
+      warn.mockRestore();
+    });
   });
 });

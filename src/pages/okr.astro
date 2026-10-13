@@ -21,12 +21,7 @@ const meta =
   <div class="stack gap-20">
     <main id="main-content" class="okr-page stack gap-8">
       <Hero title="Site success" tagline={lede} align="start" />
-      <p
-        class="okr-meta"
-        data-okr-error={snapshot.error}
-        data-okr-count={Object.keys(snapshot.metrics).length}
-        data-okr-generated={snapshot.generatedAt}
-      >
+      <p class="okr-meta">
         {meta}
       </p>
       {
@@ -39,11 +34,7 @@ const meta =
               const updatedAt = metric?.updatedAt ?? null;
               const updatedLabel = updatedAt ? formatUpdated(updatedAt) : '';
               return (
-                <article
-                  class="kr"
-                  aria-labelledby={`${kr.id}-label`}
-                  data-okr-reason={metric?.reason}
-                >
+                <article class="kr" aria-labelledby={`${kr.id}-label`}>
                   <p class="kr-head">
                     <span id={`${kr.id}-label`}>{kr.label}</span>
                     <span class="kr-window">{kr.window}</span>

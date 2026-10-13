@@ -103,10 +103,10 @@ export const OBJECTIVES: readonly Objective[] = [
     results: [
       {
         id: 'KR3.1',
-        label: 'PRs merged to main',
+        label: 'Changes shipped',
         window: '7 days',
         baselineLabel: '25',
-        targetLabel: 'median ≥ 8 / week through Dec',
+        targetLabel: '≥ 8 / week',
         baseline: 25,
         target: 8,
         direction: 'none',
@@ -114,9 +114,9 @@ export const OBJECTIVES: readonly Objective[] = [
       },
       {
         id: 'KR3.2',
-        label: 'Open PRs',
+        label: 'Changes waiting for review',
         window: 'now',
-        baselineLabel: '—',
+        baselineLabel: 'Not set',
         targetLabel: '≤ 25',
         baseline: null,
         target: 25,
@@ -124,9 +124,9 @@ export const OBJECTIVES: readonly Objective[] = [
       },
       {
         id: 'KR3.3',
-        label: 'PRs closed without merging',
+        label: 'Changes dropped before shipping',
         window: '30 days',
-        baselineLabel: '—',
+        baselineLabel: 'Not set',
         targetLabel: '< 10%',
         baseline: null,
         target: 10,
