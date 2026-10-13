@@ -16,7 +16,12 @@ export type OkrMetric = {
   reason?: string;
 };
 
-export type OkrSnapshot = { metrics: Record<string, OkrMetric>; generatedAt: string };
+export type OkrSnapshot = {
+  metrics: Record<string, OkrMetric>;
+  generatedAt: string;
+  /** TEMP diagnostic (#1727). */
+  error?: string;
+};
 
 type OkrEnv = {
   GITHUB_TOKEN?: string;
@@ -306,8 +311,12 @@ async function buildSnapshot(): Promise<OkrSnapshot> {
     const metrics: Record<string, OkrMetric> = {};
     for (const m of [...ph, ...gh]) metrics[m.id] = m;
     return { metrics, generatedAt: new Date().toISOString() };
-  } catch {
-    return { metrics: {}, generatedAt: new Date().toISOString() };
+  } catch (err) {
+    return {
+      metrics: {},
+      generatedAt: new Date().toISOString(),
+      error: `build:${failReason(err)}`,
+    };
   }
 }
 
@@ -340,7 +349,14 @@ export async function getOkrSnapshot(): Promise<OkrSnapshot> {
   if (memo && Date.now() < memo.expiresAt) return memo.snapshot;
   if (inflight) return inflight;
   const pending = loadSnapshot()
-    .catch(() => ({ metrics: {}, generatedAt: new Date().toISOString() }) as OkrSnapshot)
+    .catch(
+      (err) =>
+        ({
+          metrics: {},
+          generatedAt: new Date().toISOString(),
+          error: `load:${failReason(err)}`,
+        }) as OkrSnapshot
+    )
     .then((snapshot) => {
       const ttl = hasNoData(snapshot) ? NO_DATA_TTL_MS : SNAPSHOT_TTL_MS;
       memo = { snapshot, expiresAt: Date.now() + ttl };

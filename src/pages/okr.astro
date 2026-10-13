@@ -21,7 +21,13 @@ const meta =
   <div class="stack gap-20">
     <main id="main-content" class="okr-page stack gap-8">
       <Hero title="Site success" tagline={lede} align="start" />
-      <p class="okr-meta">{meta}</p>
+      <p
+        class="okr-meta"
+        data-okr-error={snapshot.error}
+        data-okr-count={Object.keys(snapshot.metrics).length}
+      >
+        {meta}
+      </p>
       {
         OBJECTIVES.map((objective) => (
           <section class="objective" aria-labelledby={objective.id}>
