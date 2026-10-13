@@ -26,6 +26,18 @@ Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
 
 ---
 
+## HARD ABORT — glass on static cards / /whats-new/ (owner lock 2026-10-13)
+
+Read this before scouting. It overrides any idea below.
+
+- Never add `backdrop-filter`, blur, frosted glass, or any other glass treatment to static, non-interactive cards.
+- Never add `backdrop-filter`, blur, or glass treatment anywhere on `/whats-new/` (`src/pages/whats-new.astro`).
+- If the idea adds glass, stop and exit the cycle without opening a PR. Do not downscope into a sibling glass pass.
+
+Closed as farm: #1721, #1697, #1590.
+
+---
+
 ## HARD ABORT — CallToAction glass farm
 
 Read this before scouting. If the idea is more glassmorphism, backdrop-filter, glow tokens, sheen, translateY hover, or micro-states on `CallToAction.astro` or the hire CTA, ABORT the cycle. Do not downscope into a sibling glass pass on the same button. Do not open a PR.
