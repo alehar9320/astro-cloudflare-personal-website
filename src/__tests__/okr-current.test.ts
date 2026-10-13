@@ -4,6 +4,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import {
   closeRate,
   formatPercent,
+  formatUpdated,
   getOkrSnapshot,
   NO_DATA_TTL_MS,
   resetOkrSnapshotCache,
@@ -16,6 +17,18 @@ describe('okr-current snapshot', () => {
     expect(closeRate(0, 0)).toBeNull();
     expect(formatPercent(closeRate(44, 394))).toBe('90.0%');
     expect(formatPercent(null)).toBe('No data yet');
+  });
+
+  it('formats Updated in Stockholm time with a short zone, no RangeError (#okr-data)', () => {
+    expect(() => formatUpdated(new Date().toISOString())).not.toThrow();
+    expect(formatUpdated(new Date().toISOString())).toMatch(/ CES?T$/);
+    expect(formatUpdated('2026-10-13T13:41:00Z')).toBe('13 Oct 2026, 15:41 CEST');
+    expect(formatUpdated('2026-10-13T13:49:00Z')).toBe('13 Oct 2026, 15:49 CEST');
+    expect(formatUpdated('2026-12-01T08:05:00Z')).toBe('1 Dec 2026, 09:05 CET');
+    expect(formatUpdated('not a date')).toBe('');
+    const page = readFileSync('src/pages/okr.astro', 'utf8');
+    expect(page).toContain('formatUpdated(updatedAt)');
+    expect(page).not.toContain('dateStyle');
   });
 
   it('locks recipes, hourly cache, timeout, and fail-open (#okr-data)', () => {

@@ -3,17 +3,11 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
 import { OBJECTIVES } from '../data/okr-h2-2026';
-import { getOkrSnapshot } from '../utils/okr-current';
+import { formatUpdated, getOkrSnapshot } from '../utils/okr-current';
 
 export const prerender = false;
 
 const snapshot = await getOkrSnapshot();
-const updatedFormat = new Intl.DateTimeFormat('en-GB', {
-  timeZone: 'Europe/Stockholm',
-  dateStyle: 'medium',
-  timeStyle: 'short',
-  timeZoneName: 'short',
-});
 
 const pageTitle = 'Site success | Product Manager, Developer Experience at IFS';
 const dek = 'How this site is measured through the end of 2026. Progress against real baselines.';
@@ -36,6 +30,7 @@ const meta =
               const metric = snapshot.metrics[kr.id];
               const source = metric?.source ?? (kr.id.startsWith('KR3') ? 'GitHub' : 'PostHog');
               const updatedAt = metric?.updatedAt ?? null;
+              const updatedLabel = updatedAt ? formatUpdated(updatedAt) : '';
               return (
                 <article class="kr" aria-labelledby={`${kr.id}-label`}>
                   <p class="kr-head">
@@ -58,12 +53,9 @@ const meta =
                   </dl>
                   <p class="kr-meta">
                     {kr.window} · Source: {source} ·{' '}
-                    {updatedAt ? (
+                    {updatedAt && updatedLabel ? (
                       <>
-                        Updated{' '}
-                        <time datetime={updatedAt}>
-                          {updatedFormat.format(new Date(updatedAt))}
-                        </time>
+                        Updated <time datetime={updatedAt}>{updatedLabel}</time>
                       </>
                     ) : (
                       'Updated —'

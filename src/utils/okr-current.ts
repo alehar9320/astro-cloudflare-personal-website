@@ -61,6 +61,32 @@ export function formatPercent(n: number | null): string {
   return `${n.toFixed(1)}%`;
 }
 
+const UPDATED_FORMAT_OPTIONS: Intl.DateTimeFormatOptions = {
+  timeZone: 'Europe/Stockholm',
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+  hourCycle: 'h23',
+  timeZoneName: 'short',
+};
+
+/**
+ * Stockholm time with a short zone, e.g. '13 Oct 2026, 15:41 CEST'. Explicit fields
+ * only: dateStyle/timeStyle cannot be combined with timeZoneName (RangeError).
+ * Returns '' when the value cannot be formatted, so the page shows 'Updated —'.
+ */
+export function formatUpdated(iso: string): string {
+  try {
+    const date = new Date(iso);
+    if (Number.isNaN(date.getTime())) return '';
+    return new Intl.DateTimeFormat('en-GB', UPDATED_FORMAT_OPTIONS).format(date);
+  } catch {
+    return '';
+  }
+}
+
 function readEnv(): OkrEnv {
   try {
     if (env && typeof env === 'object') return env as OkrEnv;
