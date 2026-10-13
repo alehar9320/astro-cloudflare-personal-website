@@ -191,6 +191,13 @@ const schema = {
     box-shadow: var(--shadow-sm);
   }
 
+  @media (forced-colors: active) {
+    .this-week,
+    .last-30 {
+      border-color: CanvasText;
+    }
+  }
+
   .this-week h2,
   .last-30 h2 {
     font-size: var(--text-xl);
