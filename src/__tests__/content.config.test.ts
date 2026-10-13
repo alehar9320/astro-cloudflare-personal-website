@@ -29,36 +29,40 @@ describe('content.config', () => {
 
   it('validates flags fixture against schema', async () => {
     const { schema } = collections.flags;
-    if (schema && 'safeParse' in schema) {
-      const result = schema.safeParse(flagsFixture);
-      expect(result.success).toBe(true);
+    // Fail loudly instead of skipping assertions if the schema is missing or not a Zod object.
+    if (!schema || !('safeParse' in schema)) {
+      throw new Error('flags collection must define a Zod object schema');
+    }
+    const result = schema.safeParse(flagsFixture);
+    expect(result.success).toBe(true);
 
-      if (result.success) {
-        // Use toMatchObject to ensure all fixture properties are correctly validated
-        // while allowing for Zod-injected default values.
-        expect(result.data).toMatchObject(flagsFixture);
-      }
+    if (result.success) {
+      // Use toMatchObject to ensure all fixture properties are correctly validated
+      // while allowing for Zod-injected default values.
+      expect(result.data).toMatchObject(flagsFixture);
     }
   });
 
   it('validates work schema with sample data', () => {
     const { schema } = collections.work;
-    if (schema && 'safeParse' in schema) {
-      const sampleWork = {
-        title: 'Sample Work',
-        description: 'A sample description',
-        metaDescription: 'A sample case meta description.',
-        publishDate: '2025-01-01',
-        tags: ['tag1', 'tag2'],
-        img: '/assets/sample.jpg',
-        img_alt: 'Sample alt text',
-      };
-      const result = schema.safeParse(sampleWork);
-      expect(result.success).toBe(true);
-      if (result.success) {
-        expect(result.data.title).toBe(sampleWork.title);
-        expect(result.data.publishDate).toBeInstanceOf(Date);
-      }
+    // Fail loudly instead of skipping assertions if the schema is missing or not a Zod object.
+    if (!schema || !('safeParse' in schema)) {
+      throw new Error('work collection must define a Zod object schema');
+    }
+    const sampleWork = {
+      title: 'Sample Work',
+      description: 'A sample description',
+      metaDescription: 'A sample case meta description.',
+      publishDate: '2025-01-01',
+      tags: ['tag1', 'tag2'],
+      img: '/assets/sample.jpg',
+      img_alt: 'Sample alt text',
+    };
+    const result = schema.safeParse(sampleWork);
+    expect(result.success).toBe(true);
+    if (result.success) {
+      expect(result.data.title).toBe(sampleWork.title);
+      expect(result.data.publishDate).toBeInstanceOf(Date);
     }
   });
 });
