@@ -209,35 +209,79 @@ function getCache(): Cache | null {
   }
 }
 
-/** Builds (or reads the hourly cached) snapshot. Never throws. */
-export async function getOkrSnapshot(): Promise<OkrSnapshot> {
-  const cache = getCache();
-  try {
-    const hit = await cache?.match(CACHE_KEY);
-    if (hit) return (await hit.json()) as OkrSnapshot;
-  } catch {
-    // Cache miss path below.
-  }
-  let snapshot: OkrSnapshot;
+export const SNAPSHOT_TTL_MS = 3_600_000;
+export const NO_DATA_TTL_MS = 60_000;
+
+/**
+ * Module-scope cache (per isolate). `caches.default` is a no-op on *.workers.dev,
+ * so this is the layer that actually stops every page load from hitting GitHub
+ * and PostHog. Snapshots with any 'No data yet' metric are kept for 60 s only.
+ */
+let memo: { snapshot: OkrSnapshot; expiresAt: number } | null = null;
+let inflight: Promise<OkrSnapshot> | null = null;
+
+/** Test hook: forget the in-memory snapshot and any in-flight build. */
+export function resetOkrSnapshotCache(): void {
+  memo = null;
+  inflight = null;
+}
+
+function hasNoData(snapshot: OkrSnapshot): boolean {
+  const metrics = Object.values(snapshot.metrics);
+  return metrics.length === 0 || metrics.some((m) => m.value === null);
+}
+
+async function buildSnapshot(): Promise<OkrSnapshot> {
   try {
     const bindings = readEnv();
     const now = new Date();
     const [gh, ph] = await Promise.all([githubMetrics(bindings, now), posthogMetrics(bindings)]);
     const metrics: Record<string, OkrMetric> = {};
     for (const m of [...ph, ...gh]) metrics[m.id] = m;
-    snapshot = { metrics, generatedAt: new Date().toISOString() };
+    return { metrics, generatedAt: new Date().toISOString() };
   } catch {
     return { metrics: {}, generatedAt: new Date().toISOString() };
   }
+}
+
+async function loadSnapshot(): Promise<OkrSnapshot> {
+  const cache = getCache();
   try {
-    await cache?.put(
-      CACHE_KEY,
-      new Response(JSON.stringify(snapshot), {
-        headers: { 'content-type': 'application/json', 'Cache-Control': CACHE_CONTROL },
-      })
-    );
+    const hit = await cache?.match(CACHE_KEY);
+    if (hit) return (await hit.json()) as OkrSnapshot;
   } catch {
-    // Caching is best-effort.
+    // Cache API miss or unavailable (no-op on *.workers.dev); build below.
+  }
+  const snapshot = await buildSnapshot();
+  if (!hasNoData(snapshot)) {
+    try {
+      await cache?.put(
+        CACHE_KEY,
+        new Response(JSON.stringify(snapshot), {
+          headers: { 'content-type': 'application/json', 'Cache-Control': CACHE_CONTROL },
+        })
+      );
+    } catch {
+      // Extra layer only; best-effort.
+    }
   }
   return snapshot;
+}
+
+/** Hourly cached snapshot (memory → Cache API → upstream). Never throws. */
+export async function getOkrSnapshot(): Promise<OkrSnapshot> {
+  if (memo && Date.now() < memo.expiresAt) return memo.snapshot;
+  if (inflight) return inflight;
+  const pending = loadSnapshot()
+    .catch(() => ({ metrics: {}, generatedAt: new Date().toISOString() }) as OkrSnapshot)
+    .then((snapshot) => {
+      const ttl = hasNoData(snapshot) ? NO_DATA_TTL_MS : SNAPSHOT_TTL_MS;
+      memo = { snapshot, expiresAt: Date.now() + ttl };
+      return snapshot;
+    })
+    .finally(() => {
+      if (inflight === pending) inflight = null;
+    });
+  inflight = pending;
+  return pending;
 }
