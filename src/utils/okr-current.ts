@@ -128,36 +128,56 @@ async function githubCount(q: string, token: string): Promise<number> {
   return body.total_count;
 }
 
+/** Short, secret-free reason for a failed upstream call (status, timeout, shape). */
+function failReason(err: unknown): string {
+  if (err instanceof Error) {
+    if (err.name === 'AbortError') return 'timeout';
+    return err.message.slice(0, 80);
+  }
+  return 'unknown';
+}
+
+function settle(
+  id: string,
+  source: OkrMetric['source'],
+  result: PromiseSettledResult<{ value: number | null; valueLabel: string }>,
+  updatedAt: string
+): OkrMetric {
+  if (result.status === 'rejected') {
+    console.warn({ event: 'okr_metric_failed', id, source, reason: failReason(result.reason) });
+    return empty(id, source);
+  }
+  const { value, valueLabel } = result.value;
+  return { id, value, valueLabel, source, updatedAt: value === null ? null : updatedAt };
+}
+
 async function githubMetrics(bindings: OkrEnv, now: Date): Promise<OkrMetric[]> {
   const ids = ['KR3.1', 'KR3.2', 'KR3.3'];
   const token = bindings.GITHUB_TOKEN?.trim();
-  if (!token) return ids.map((id) => empty(id, 'GitHub'));
-  try {
-    const since7 = isoDaysAgo(7, now);
-    const since30 = isoDaysAgo(30, now);
-    const [merged7, open, closedUnmerged30, merged30] = await Promise.all([
-      githubCount(`${REPO}+is:pr+is:merged+base:main+merged:%3E%3D${since7}`, token),
-      githubCount(`${REPO}+is:pr+is:open`, token),
-      githubCount(`${REPO}+is:pr+is:closed+is:unmerged+closed:%3E%3D${since30}`, token),
-      githubCount(`${REPO}+is:pr+is:merged+merged:%3E%3D${since30}`, token),
-    ]);
-    const updatedAt = new Date().toISOString();
-    const rate = closeRate(merged30, closedUnmerged30);
-    return [
-      { id: 'KR3.1', value: merged7, valueLabel: String(merged7), source: 'GitHub', updatedAt },
-      { id: 'KR3.2', value: open, valueLabel: String(open), source: 'GitHub', updatedAt },
-      {
-        id: 'KR3.3',
-        value: rate,
-        valueLabel: formatPercent(rate),
-        source: 'GitHub',
-        updatedAt: rate === null ? null : updatedAt,
-      },
-    ];
-  } catch {
-    console.error({ event: 'okr_github_failed' });
+  if (!token) {
+    console.warn({ event: 'okr_source_unconfigured', source: 'GitHub', reason: 'no token' });
     return ids.map((id) => empty(id, 'GitHub'));
   }
+  const since7 = isoDaysAgo(7, now);
+  const since30 = isoDaysAgo(30, now);
+  const count = (n: number) => ({ value: n, valueLabel: String(n) });
+  const [merged7, open, rate] = await Promise.allSettled([
+    githubCount(`${REPO}+is:pr+is:merged+base:main+merged:%3E%3D${since7}`, token).then(count),
+    githubCount(`${REPO}+is:pr+is:open`, token).then(count),
+    Promise.all([
+      githubCount(`${REPO}+is:pr+is:merged+merged:%3E%3D${since30}`, token),
+      githubCount(`${REPO}+is:pr+is:closed+is:unmerged+closed:%3E%3D${since30}`, token),
+    ]).then(([merged30, closedUnmerged30]) => {
+      const r = closeRate(merged30, closedUnmerged30);
+      return { value: r, valueLabel: formatPercent(r) };
+    }),
+  ]);
+  const updatedAt = new Date().toISOString();
+  return [
+    settle('KR3.1', 'GitHub', merged7, updatedAt),
+    settle('KR3.2', 'GitHub', open, updatedAt),
+    settle('KR3.3', 'GitHub', rate, updatedAt),
+  ];
 }
 
 async function posthogQuery(
@@ -188,42 +208,47 @@ function firstCell(payload: unknown): number {
 function bounceRate(payload: unknown): number {
   const results = (payload as { results?: { key?: string; value?: unknown }[] })?.results;
   const item = Array.isArray(results) ? results.find((r) => r?.key === 'bounce rate') : undefined;
-  if (typeof item?.value !== 'number' || !Number.isFinite(item.value)) throw new Error('shape');
+  if (typeof item?.value !== 'number' || !Number.isFinite(item.value))
+    throw new Error('posthog shape');
   return item.value;
 }
 
 async function posthogMetrics(bindings: OkrEnv): Promise<OkrMetric[]> {
   const ids = ['KR1.1', 'KR1.2', 'KR2.2'];
+  const unconfigured = (reason: string) => {
+    console.warn({ event: 'okr_source_unconfigured', source: 'PostHog', reason });
+    return ids.map((id) => empty(id, 'PostHog'));
+  };
   const key = bindings.POSTHOG_PERSONAL_API_KEY?.trim();
   const projectId = (bindings.POSTHOG_PROJECT_ID || DEFAULT_PROJECT_ID).trim();
   let host: string;
   try {
     const parsed = new URL((bindings.POSTHOG_QUERY_HOST || DEFAULT_QUERY_HOST).trim());
-    if (parsed.protocol !== 'https:') throw new Error('host');
+    if (parsed.protocol !== 'https:') return unconfigured('host not https');
     host = parsed.origin;
   } catch {
-    return ids.map((id) => empty(id, 'PostHog'));
+    return unconfigured('invalid host');
   }
-  if (!key || !/^\d+$/.test(projectId)) return ids.map((id) => empty(id, 'PostHog'));
-  try {
-    const [visitors, overview, hire] = await Promise.all([
-      posthogQuery(host, projectId, key, hogql(KR11_HOGQL)),
-      posthogQuery(host, projectId, key, KR12_WEB_OVERVIEW),
-      posthogQuery(host, projectId, key, hogql(KR22_HOGQL)),
-    ]);
-    const updatedAt = new Date().toISOString();
-    const v = firstCell(visitors);
-    const b = bounceRate(overview);
-    const h = firstCell(hire);
-    return [
-      { id: 'KR1.1', value: v, valueLabel: String(v), source: 'PostHog', updatedAt },
-      { id: 'KR1.2', value: b, valueLabel: formatPercent(b), source: 'PostHog', updatedAt },
-      { id: 'KR2.2', value: h, valueLabel: String(h), source: 'PostHog', updatedAt },
-    ];
-  } catch {
-    console.error({ event: 'okr_posthog_failed' });
-    return ids.map((id) => empty(id, 'PostHog'));
-  }
+  if (!key) return unconfigured('no key');
+  if (!/^\d+$/.test(projectId)) return unconfigured('invalid project id');
+  const count = (payload: unknown) => {
+    const n = firstCell(payload);
+    return { value: n, valueLabel: String(n) };
+  };
+  const [visitors, bounce, hire] = await Promise.allSettled([
+    posthogQuery(host, projectId, key, hogql(KR11_HOGQL)).then(count),
+    posthogQuery(host, projectId, key, KR12_WEB_OVERVIEW).then((payload) => {
+      const b = bounceRate(payload);
+      return { value: b, valueLabel: formatPercent(b) };
+    }),
+    posthogQuery(host, projectId, key, hogql(KR22_HOGQL)).then(count),
+  ]);
+  const updatedAt = new Date().toISOString();
+  return [
+    settle('KR1.1', 'PostHog', visitors, updatedAt),
+    settle('KR1.2', 'PostHog', bounce, updatedAt),
+    settle('KR2.2', 'PostHog', hire, updatedAt),
+  ];
 }
 
 function getCache(): Cache | null {

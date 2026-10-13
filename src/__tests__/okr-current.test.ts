@@ -231,5 +231,40 @@ describe('okr-current snapshot', () => {
       });
       expect((await getOkrSnapshot()).metrics['KR3.2'].valueLabel).toBe('3');
     });
+
+    it('fails one metric on its own and warns without secrets', async () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      const base = fetchMock.getMockImplementation()!;
+      fetchMock.mockImplementation(async (url: string, init?: RequestInit) => {
+        const body = String(init?.body ?? '');
+        if (body.includes('LinkedIn hire')) return new Response('slow', { status: 504 });
+        if (url.includes('is:open')) throw Object.assign(new Error('x'), { name: 'AbortError' });
+        return base(url, init);
+      });
+      const snap = await getOkrSnapshot();
+      expect(snap.metrics['KR1.1']).toMatchObject({ valueLabel: '7', source: 'PostHog' });
+      expect(snap.metrics['KR1.1'].updatedAt).not.toBeNull();
+      expect(snap.metrics['KR1.2'].valueLabel).toBe('50.0%');
+      expect(snap.metrics['KR2.2']).toMatchObject({ valueLabel: 'No data yet', updatedAt: null });
+      expect(snap.metrics['KR3.1'].valueLabel).toBe('3');
+      expect(snap.metrics['KR3.2'].valueLabel).toBe('No data yet');
+      expect(snap.metrics['KR3.3'].valueLabel).toBe('50.0%');
+      const logged = JSON.stringify(warn.mock.calls);
+      expect(logged).toContain('"id":"KR2.2"');
+      expect(logged).toContain('posthog 504');
+      expect(logged).toContain('"id":"KR3.2"');
+      expect(logged).toContain('timeout');
+      expect(logged).not.toContain('test-key');
+      expect(logged).not.toContain('test-token');
+      warn.mockRestore();
+    });
+
+    it('warns when a source is unconfigured', async () => {
+      const warn = vi.spyOn(console, 'warn').mockImplementation(() => {});
+      delete bindings.POSTHOG_PERSONAL_API_KEY;
+      await getOkrSnapshot();
+      expect(JSON.stringify(warn.mock.calls)).toContain('no key');
+      warn.mockRestore();
+    });
   });
 });
