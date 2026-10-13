@@ -1,7 +1,8 @@
-# ADR 0001: Cloudflare as production, Render as Jules test env
+# 0001. Cloudflare as Production, Render as Jules Test Env
 
-- Status: Accepted
-- Date: 2026-08-24
+- **Status:** Accepted
+- **Date:** 2026-08-24
+- **Deciders:** Alexander Härenstam
 
 ## Context
 
@@ -11,8 +12,15 @@ The site can build two ways: Cloudflare Workers (static + `@astrojs/cloudflare`)
 
 Production is Cloudflare Workers only. Render is a test environment for Google Jules (Node server via `render.yaml`). It is not a second prod and not a failover.
 
-## Consequences
+## Consequences & Tradeoffs
 
 - Ship and operate prod on the Cloudflare Worker (`wrangler.jsonc`, `src/cloudflare-worker.ts`).
 - Keep the Render Node path for Jules debugging only; expect AI/KV and other Workers bindings to be absent or stubbed there (`src/env/cloudflare-workers.node.ts`).
 - Docs and ops language should call Cloudflare production and Render the Jules test env.
+
+## Directives for AI Agents
+
+- **Do:** Treat Cloudflare Workers (`wrangler.jsonc`, `src/cloudflare-worker.ts`) as the primary production runtime.
+- **Do:** Use Render (`render.yaml`) exclusively as a test/debugging environment for Google Jules.
+- **Don't:** Assume Workers AI, KV, or Cloudflare bindings exist on Render Node environment.
+- **Don't:** Treat Render as a production or failover target.

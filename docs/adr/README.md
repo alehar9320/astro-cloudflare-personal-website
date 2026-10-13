@@ -4,10 +4,11 @@ This directory contains Architecture Decision Records (ADRs) for Alexander Häre
 
 ## Index
 
-| ADR                                                           | Title                                              | Status   | Date       | Deciders            |
-| :------------------------------------------------------------ | :------------------------------------------------- | :------- | :--------- | :------------------ |
-| [0001](0001-cloudflare-production-render-jules.md)            | Cloudflare as production, Render as Jules test env | Accepted | 2026-08-24 | Alexander Härenstam |
-| [0002](0002-static-prerendering-cloudflare-assets-binding.md) | Static Output and Cloudflare Workers Entrypoint    | Accepted | 2026-10-11 | Alexander Härenstam |
+| ADR                                                                     | Title                                                   | Status   | Date       | Deciders                      |
+| :---------------------------------------------------------------------- | :------------------------------------------------------ | :------- | :--------- | :---------------------------- |
+| [0001](0001-cloudflare-production-render-jules.md)                      | Cloudflare as production, Render as Jules test env      | Accepted | 2026-08-24 | Alexander Härenstam           |
+| [0002](0002-static-prerendering-cloudflare-assets-binding.md)           | Static Output and Cloudflare Workers Entrypoint         | Accepted | 2026-10-11 | Alexander Härenstam           |
+| [0003](0003-content-collections-schema-validation-and-feature-flags.md) | Content Collections Schema Validation and Feature Flags | Accepted | 2026-10-18 | Autonomous Architect (Archie) |
 
 ## ADR Governance
 
