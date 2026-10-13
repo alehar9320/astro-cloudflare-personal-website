@@ -53,3 +53,7 @@ Action: Hoisted `Intl.DateTimeFormat` in `src/utils/visit-stats.ts`, `TextEncode
 2026-10-12 - Hoist Static RegExp in safeJsonLd
 Learning: Declaring inline RegExp literals inside repeatedly invoked utility functions like `safeJsonLd` forces V8 / JavaScript engines to re-allocate and re-compile RegExp instances on every call during SSR and static page generation. Hoisting `LESS_THAN_REGEX` to module scope eliminates object creation and compilation overhead per JSON-LD serialization.
 Action: Hoisted `LESS_THAN_REGEX` to module scope in `src/utils/safe-json-ld.ts`.
+
+2026-10-13 - Single-Pass Greedy Regex for Last PR Extraction & Hoisted Date Formatters
+Learning: Using `matchAll` to find the last PR number on a changelog line allocates an iterator and multiple RegExpExecArray match objects per function call. Using a greedy regex (`/.*\(#(\d+)\)/`) performs single-pass extraction of the last PR number in group 1 with zero iterator allocations. Furthermore, repeatedly instantiating `Intl.DateTimeFormat` inside `formatLatestUpdatesDate` triggers redundant locale parsing and object allocations per SSR render. Hoisting formatters to module-level constants eliminates object setup and reduces GC pressure on edge Workers.
+Action: Updated `mappedVisitorTitle` in `src/utils/visitor-changelog.ts` to use `LAST_PR_REGEX.exec(trimmed)` and hoisted `Intl.DateTimeFormat` instances in `src/utils/whats-new-glance.ts`.
