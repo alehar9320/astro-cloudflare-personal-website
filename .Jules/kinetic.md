@@ -34,7 +34,7 @@ Read this before scouting. It overrides any idea below.
 - Never add `backdrop-filter`, blur, or glass treatment anywhere on `/whats-new/` (`src/pages/whats-new.astro`).
 - If the idea adds glass, stop and exit the cycle without opening a PR. Do not downscope into a sibling glass pass.
 
-Closed as farm: #1721, #1697, #1590.
+Glass attempts farmed (not merged): #1721, #1697, #1590.
 
 ---
 
