@@ -110,7 +110,7 @@ export const OBJECTIVES: readonly Objective[] = [
         baseline: 25,
         target: 8,
         direction: 'none',
-        note: "August's 200 merges in 30 days was a farm spike — target is steady weeks, not that peak",
+        note: "August's 200-merge month was an outlier; the goal is a steady pace.",
       },
       {
         id: 'KR3.2',

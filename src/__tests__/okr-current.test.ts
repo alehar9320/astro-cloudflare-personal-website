@@ -26,6 +26,12 @@ describe('okr-current snapshot', () => {
     expect(formatUpdated('2026-10-13T13:49:00Z')).toBe('13 Oct 2026, 15:49 CEST');
     expect(formatUpdated('2026-12-01T08:05:00Z')).toBe('1 Dec 2026, 09:05 CET');
     expect(formatUpdated('not a date')).toBe('');
+    expect(formatUpdated('')).toBe('');
+    expect(formatUpdated(undefined as unknown as string)).toBe('');
+    expect(formatUpdated(Symbol('x') as unknown as string)).toBe('');
+    expect(formatUpdated(new Date('2026-07-01T10:00:00Z').toISOString())).toBe(
+      '1 Jul 2026, 12:00 CEST'
+    );
     const page = readFileSync('src/pages/okr.astro', 'utf8');
     expect(page).toContain('formatUpdated(updatedAt)');
     expect(page).not.toContain('dateStyle');
@@ -118,6 +124,112 @@ describe('okr-current snapshot', () => {
       vi.advanceTimersByTime(2000);
       await getOkrSnapshot();
       expect(fetchMock.mock.calls.length).toBeGreaterThan(calls);
+    });
+
+    it('fails open per source when bindings are missing or invalid', async () => {
+      delete bindings.GITHUB_TOKEN;
+      bindings.POSTHOG_QUERY_HOST = 'http://insecure.example';
+      const snap = await getOkrSnapshot();
+      expect(fetchMock).not.toHaveBeenCalled();
+      for (const id of ['KR1.1', 'KR1.2', 'KR2.2', 'KR3.1', 'KR3.2', 'KR3.3']) {
+        expect(snap.metrics[id].valueLabel).toBe('No data yet');
+        expect(snap.metrics[id].updatedAt).toBeNull();
+      }
+      resetOkrSnapshotCache();
+      bindings.POSTHOG_QUERY_HOST = 'not a url';
+      await getOkrSnapshot();
+      resetOkrSnapshotCache();
+      delete bindings.POSTHOG_QUERY_HOST;
+      bindings.POSTHOG_PROJECT_ID = 'abc';
+      await getOkrSnapshot();
+      expect(fetchMock).not.toHaveBeenCalled();
+      delete bindings.POSTHOG_PROJECT_ID;
+    });
+
+    it('treats unexpected upstream shapes as No data yet', async () => {
+      fetchMock.mockImplementation(
+        async () => new Response(JSON.stringify({ results: [{ key: 'other' }] }), { status: 200 })
+      );
+      const snap = await getOkrSnapshot();
+      expect(snap.metrics['KR3.1'].valueLabel).toBe('No data yet');
+      expect(snap.metrics['KR1.2'].valueLabel).toBe('No data yet');
+      resetOkrSnapshotCache();
+      fetchMock.mockImplementation(
+        async () => new Response(JSON.stringify({ results: 'x' }), { status: 200 })
+      );
+      const snap2 = await getOkrSnapshot();
+      expect(snap2.metrics['KR1.1'].valueLabel).toBe('No data yet');
+    });
+
+    it('reports a null close rate when nothing closed in 30 days', async () => {
+      fetchMock.mockImplementation(async (url: string, init?: RequestInit) => {
+        const body = String(init?.body ?? '');
+        const payload = url.startsWith('https://api.github.com/')
+          ? { total_count: 0 }
+          : body.includes('WebOverviewQuery')
+            ? { results: [{ key: 'bounce rate', value: 40 }] }
+            : { results: [[2]] };
+        return new Response(JSON.stringify(payload), { status: 200 });
+      });
+      const snap = await getOkrSnapshot();
+      expect(snap.metrics['KR3.3']).toMatchObject({ value: null, valueLabel: 'No data yet' });
+      expect(snap.metrics['KR3.3'].updatedAt).toBeNull();
+      expect(snap.metrics['KR1.2'].valueLabel).toBe('40.0%');
+    });
+
+    it('aborts an upstream call after 3000 ms', async () => {
+      fetchMock.mockImplementation(
+        (_url: string, init?: RequestInit) =>
+          new Promise((_resolve, reject) => {
+            init?.signal?.addEventListener('abort', () => reject(new Error('aborted')));
+          })
+      );
+      const pending = getOkrSnapshot();
+      await vi.advanceTimersByTimeAsync(3000);
+      const snap = await pending;
+      expect(snap.metrics['KR3.2'].valueLabel).toBe('No data yet');
+      expect(snap.metrics['KR1.1'].valueLabel).toBe('No data yet');
+    });
+
+    it('uses the Cache API as an extra layer for healthy snapshots only', async () => {
+      const store = new Map<string, Response>();
+      const cache = {
+        match: vi.fn(async (key: string) => store.get(key)?.clone()),
+        put: vi.fn(async (key: string, res: Response) => {
+          store.set(key, res);
+        }),
+      };
+      vi.stubGlobal('caches', { default: cache });
+      const first = await getOkrSnapshot();
+      expect(cache.put).toHaveBeenCalledTimes(1);
+      expect(cache.put.mock.calls[0][0]).toBe('https://me.alehar.workers.dev/__okr-snapshot-v1');
+      expect(cache.put.mock.calls[0][1].headers.get('Cache-Control')).toBe('max-age=3600');
+      resetOkrSnapshotCache();
+      const second = await getOkrSnapshot();
+      expect(fetchMock).toHaveBeenCalledTimes(7);
+      expect(second).toEqual(first);
+    });
+
+    it('survives a throwing Cache API', async () => {
+      vi.stubGlobal('caches', {
+        default: {
+          match: async () => {
+            throw new Error('boom');
+          },
+          put: async () => {
+            throw new Error('boom');
+          },
+        },
+      });
+      const snap = await getOkrSnapshot();
+      expect(snap.metrics['KR3.2'].valueLabel).toBe('3');
+      resetOkrSnapshotCache();
+      vi.stubGlobal('caches', {
+        get default() {
+          throw new Error('no cache');
+        },
+      });
+      expect((await getOkrSnapshot()).metrics['KR3.2'].valueLabel).toBe('3');
     });
   });
 });
