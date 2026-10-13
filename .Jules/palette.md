@@ -12,6 +12,12 @@ Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
 
 ---
 
+## 2026-10-13 - Forced-Colors Container and Chip Border Fallbacks
+
+**Learning:** Translucent CSS variable borders (`border: 1px solid var(--gray-800)`) on card containers (`.this-week`, `.last-30` in `whats-new.astro` and `.proof-card` in `work.astro`) and chip badges (`.ds-proof :global(li)` in `work/[...slug].astro`) can lose visual definition in Windows High Contrast / Forced Colors mode when OS themes strip background gradients and custom translucent overlays. Declaring `border-color: CanvasText;` within `@media (forced-colors: active)` preserves crisp container and badge boundaries.
+
+**Action:** Added `@media (forced-colors: active) { border-color: CanvasText; }` fallbacks to `.this-week` / `.last-30` in `src/pages/whats-new.astro`, `.proof-card` in `src/pages/work.astro`, and `.ds-proof :global(li)` in `src/pages/work/[...slug].astro`.
+
 ## 2026-10-12 - Skip-Link Target & Forced-Colors Borders for Manifesto Page
 
 **Learning:** Standalone or experimental page layouts must include `id="main-content"` on their primary `<main>` element to ensure the global "Skip to content" keyboard navigation link (`href="#main-content"`) works consistently site-wide. Furthermore, card containers using custom CSS variable borders require explicit `border-color: CanvasText;` fallbacks within `@media (forced-colors: active)` to preserve structural container boundaries in Windows High Contrast mode.
