@@ -44,3 +44,9 @@ Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
 - Insight: Micro-interactions on primary CTA/affordance links provide tactile feedback and signal interactivity, increasing user engagement.
 - User Target: Delight & Affordance
 - Abort Triggers: None (verified via test and build pipeline).
+
+## 2026-10-13 - Proof Card Affordance Slide Alignment | Signal: Competitive | Lean Implementation: Extended subtle translateX(3px) on hover/focus-visible to proof card affordance in roadmap.astro under enable_proof_slide_v1.
+
+- Insight: Aligning proof card hover micro-interactions across pages maintains visual consistency and signals interactivity to visitors.
+- User Target: Delight & Consistency
+- Abort Triggers: None (verified via test and build pipeline).
