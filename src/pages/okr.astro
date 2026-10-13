@@ -32,7 +32,11 @@ const meta =
               const updatedAt = metric?.updatedAt ?? null;
               const updatedLabel = updatedAt ? formatUpdated(updatedAt) : '';
               return (
-                <article class="kr" aria-labelledby={`${kr.id}-label`}>
+                <article
+                  class="kr"
+                  aria-labelledby={`${kr.id}-label`}
+                  data-okr-reason={metric?.reason}
+                >
                   <p class="kr-head">
                     <span id={`${kr.id}-label`}>{kr.label}</span>
                     <span class="kr-window">{kr.window}</span>

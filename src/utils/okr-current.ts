@@ -12,6 +12,8 @@ export type OkrMetric = {
   valueLabel: string;
   source: 'GitHub' | 'PostHog';
   updatedAt: string | null;
+  /** TEMP diagnostic (#1727): short failure code, never a secret. */
+  reason?: string;
 };
 
 export type OkrSnapshot = { metrics: Record<string, OkrMetric>; generatedAt: string };
@@ -26,7 +28,7 @@ type OkrEnv = {
 export const NO_DATA = 'No data yet';
 const CACHE_KEY = 'https://me.alehar.workers.dev/__okr-snapshot-v1';
 const CACHE_CONTROL = 'max-age=3600';
-const UPSTREAM_TIMEOUT_MS = 3000;
+const UPSTREAM_TIMEOUT_MS = 5000; // matches /api/visits (Nick-approved change from the spec's 3000)
 const REPO = 'repo:alehar9320/astro-cloudflare-personal-website';
 const USER_AGENT = 'alehar9320-astro-cloudflare-personal-website';
 const DEFAULT_PROJECT_ID = '171414';
@@ -144,8 +146,9 @@ function settle(
   updatedAt: string
 ): OkrMetric {
   if (result.status === 'rejected') {
-    console.warn({ event: 'okr_metric_failed', id, source, reason: failReason(result.reason) });
-    return empty(id, source);
+    const reason = failReason(result.reason);
+    console.warn({ event: 'okr_metric_failed', id, source, reason });
+    return { ...empty(id, source), reason };
   }
   const { value, valueLabel } = result.value;
   return { id, value, valueLabel, source, updatedAt: value === null ? null : updatedAt };
@@ -217,7 +220,7 @@ async function posthogMetrics(bindings: OkrEnv): Promise<OkrMetric[]> {
   const ids = ['KR1.1', 'KR1.2', 'KR2.2'];
   const unconfigured = (reason: string) => {
     console.warn({ event: 'okr_source_unconfigured', source: 'PostHog', reason });
-    return ids.map((id) => empty(id, 'PostHog'));
+    return ids.map((id) => ({ ...empty(id, 'PostHog'), reason }));
   };
   const key = bindings.POSTHOG_PERSONAL_API_KEY?.trim();
   const projectId = (bindings.POSTHOG_PROJECT_ID || DEFAULT_PROJECT_ID).trim();
@@ -235,14 +238,27 @@ async function posthogMetrics(bindings: OkrEnv): Promise<OkrMetric[]> {
     const n = firstCell(payload);
     return { value: n, valueLabel: String(n) };
   };
-  const [visitors, bounce, hire] = await Promise.allSettled([
-    posthogQuery(host, projectId, key, hogql(KR11_HOGQL)).then(count),
+  // One query at a time (Nick-approved): PostHog may reject concurrent queries per key.
+  const settled = async <T>(run: () => Promise<T>): Promise<PromiseSettledResult<T>> => {
+    try {
+      return { status: 'fulfilled', value: await run() };
+    } catch (reason) {
+      return { status: 'rejected', reason };
+    }
+  };
+  const visitors = await settled(() =>
+    posthogQuery(host, projectId, key, hogql(KR11_HOGQL)).then(count)
+  );
+  const bounce = await settled(() =>
     posthogQuery(host, projectId, key, KR12_WEB_OVERVIEW).then((payload) => {
       const b = bounceRate(payload);
       return { value: b, valueLabel: formatPercent(b) };
-    }),
-    posthogQuery(host, projectId, key, hogql(KR22_HOGQL)).then(count),
-  ]);
+    })
+  );
+  const hire = await settled(() =>
+    posthogQuery(host, projectId, key, hogql(KR22_HOGQL)).then(count)
+  );
+
   const updatedAt = new Date().toISOString();
   return [
     settle('KR1.1', 'PostHog', visitors, updatedAt),

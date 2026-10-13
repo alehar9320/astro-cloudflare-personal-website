@@ -43,7 +43,7 @@ describe('okr-current snapshot', () => {
     expect(src).toContain('__okr-snapshot-v1');
     expect(src).toContain('max-age=3600');
     expect(src).toContain('AbortController');
-    expect(src).toContain('3000');
+    expect(src).toContain('5000');
     expect(src).toContain("'me.alehar.workers.dev'");
     expect(src).toContain("!= 'Linux'");
     expect(src).toContain('Contact card — Get in touch / LinkedIn hire');
@@ -177,7 +177,7 @@ describe('okr-current snapshot', () => {
       expect(snap.metrics['KR1.2'].valueLabel).toBe('40.0%');
     });
 
-    it('aborts an upstream call after 3000 ms', async () => {
+    it('aborts an upstream call after 5000 ms', async () => {
       fetchMock.mockImplementation(
         (_url: string, init?: RequestInit) =>
           new Promise((_resolve, reject) => {
@@ -185,7 +185,7 @@ describe('okr-current snapshot', () => {
           })
       );
       const pending = getOkrSnapshot();
-      await vi.advanceTimersByTimeAsync(3000);
+      await vi.advanceTimersByTimeAsync(5000 * 3);
       const snap = await pending;
       expect(snap.metrics['KR3.2'].valueLabel).toBe('No data yet');
       expect(snap.metrics['KR1.1'].valueLabel).toBe('No data yet');
