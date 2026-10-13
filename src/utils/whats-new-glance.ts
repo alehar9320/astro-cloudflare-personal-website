@@ -60,6 +60,22 @@ export type WhatsNewGlance = {
 const LATEST_MAX_LINES = 3;
 const SITE_TIME_ZONE = 'Europe/Stockholm';
 
+/* Optimization (⚙️ Engine): Hoist Intl.DateTimeFormat instances to module level to avoid
+   expensive repeated instantiation and options parsing on edge SSR requests. */
+const STOCKHOLM_EN_CA_FORMATTER = new Intl.DateTimeFormat('en-CA', {
+  day: '2-digit',
+  month: '2-digit',
+  timeZone: SITE_TIME_ZONE,
+  year: 'numeric',
+});
+
+const STOCKHOLM_EN_GB_FORMATTER = new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric',
+  month: 'short',
+  timeZone: SITE_TIME_ZONE,
+  year: 'numeric',
+});
+
 type Theme = {
   heading: string;
   test: RegExp;
@@ -173,18 +189,8 @@ function keptLinesOf(rawRelease: SiteRelease): string[] {
 
 export function formatLatestUpdatesDate(publishedMs: number): { datetime: string; label: string } {
   const date = new Date(publishedMs);
-  const datetime = new Intl.DateTimeFormat('en-CA', {
-    day: '2-digit',
-    month: '2-digit',
-    timeZone: SITE_TIME_ZONE,
-    year: 'numeric',
-  }).format(date);
-  const human = new Intl.DateTimeFormat('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    timeZone: SITE_TIME_ZONE,
-    year: 'numeric',
-  }).format(date);
+  const datetime = STOCKHOLM_EN_CA_FORMATTER.format(date);
+  const human = STOCKHOLM_EN_GB_FORMATTER.format(date);
   return { datetime, label: `Last updated ${human}` };
 }
 
