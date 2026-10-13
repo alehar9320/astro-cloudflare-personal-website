@@ -1,4 +1,4 @@
-# 0002. Static Output and Cloudflare Workers Entrypoint
+# ADR 0002: Static Output and Cloudflare Workers Entrypoint
 
 - **Status:** Accepted
 - **Date:** 2026-10-11
