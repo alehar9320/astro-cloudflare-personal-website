@@ -249,16 +249,10 @@ describe('identity copy', () => {
     expect(page).toContain('Baseline');
     expect(page).toContain('Current');
     expect(page).toContain('Target');
-    expect(page).toContain('H2 2026 · baselines frozen 29 Aug 2026 · current refreshed weekly');
     expect(page).not.toContain('mailto:');
     expect(page).not.toContain('Open-to');
     expect(page).not.toContain('career OKR');
     expect(data).toContain("baselineLabel: '297'");
-    expect(data).toContain("currentLabel: '447'");
-    expect(data).toContain("currentLabel: '84.3%'");
-    expect(data).toContain("currentLabel: '0'");
-    expect(data).toContain("currentLabel: '48'");
-    expect(data).toContain('2026-08-30 ~15:40 CEST');
     expect(data).not.toContain('Current === Baseline');
     expect(data).toContain("targetLabel: '400'");
     expect(data).toContain("baselineLabel: '82.5%'");
@@ -274,6 +268,23 @@ describe('identity copy', () => {
     expect(footer).toContain('https://www.linkedin.com/in/alehar/');
     expect(home).not.toContain('href="/roadmap/"');
     expect(home).not.toContain('href="/okr/"');
+    expect(page).toContain('export const prerender = false');
+    expect(page).toContain('getOkrSnapshot');
+    expect(page).toContain(
+      'H2 2026 · baselines frozen 29 Aug 2026 · currents update hourly from GitHub and PostHog'
+    );
+    expect(page).toContain('class="kr-meta"');
+    expect(page).toContain('<time datetime=');
+    expect(page).toContain('No data yet');
+    expect(page).not.toContain('kr-bar');
+    expect(page).not.toContain("fetch('/api/okr-current')");
+    expect(data).toContain("id: 'KR3.2'");
+    expect(data).toContain("id: 'KR3.3'");
+    expect(data).toContain("targetLabel: '≤ 25'");
+    expect(data).toContain("targetLabel: '< 10%'");
+    expect(data).toContain('Never hand-type a current value');
+    expect(data).not.toMatch(/currentLabel:/);
+    expect(data).not.toMatch(/\bcurrent:\s*\d/);
   });
 
   it('ships /this-site/ as the twin explainer and keeps Upcoming omitted from that page', () => {
