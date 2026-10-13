@@ -56,15 +56,13 @@ const schema = {
   <div class="stack gap-20">
     <main id="main-content" class="upcoming-page stack gap-8">
       <Hero title="What's next" tagline={lede} align="start" />
-      {
-        upcoming.length > 0 && (
-          <ul class="upcoming-list">
-            {upcoming.map((line) => (
-              <li>{line}</li>
-            ))}
-          </ul>
-        )
-      }
+      {upcoming.length > 0 && (
+        <ul class="upcoming-list">
+          {upcoming.map((line) => (
+            <li>{line}</li>
+          ))}
+        </ul>
+      )}
       <section class="proof" aria-label="Past proof">
         <a class="proof-card" href="/work/ifs-design-system/">
           <p class="proof-eyebrow">IFS Design System</p>

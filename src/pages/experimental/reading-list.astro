@@ -43,15 +43,13 @@ const books = [
       </p>
     </Hero>
     <div class="grid">
-      {
-        books.map(({ title, author, framing }) => (
-          <div class="card">
-            <strong>{title}</strong>
-            <p class="author">{author}</p>
-            <p class="framing">{framing}</p>
-          </div>
-        ))
-      }
+      {books.map(({ title, author, framing }) => (
+        <div class="card">
+          <strong>{title}</strong>
+          <p class="author">{author}</p>
+          <p class="framing">{framing}</p>
+        </div>
+      ))}
     </div>
     <div class="actions">
       <CallToAction

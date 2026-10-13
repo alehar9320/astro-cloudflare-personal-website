@@ -16,54 +16,52 @@ const meta = 'H2 2026 · baselines frozen 29 Aug 2026 · current refreshed weekl
     <main id="main-content" class="okr-page stack gap-8">
       <Hero title="Site success" tagline={lede} align="start" />
       <p class="okr-meta">{meta}</p>
-      {
-        OBJECTIVES.map((objective) => (
-          <section class="objective" aria-labelledby={objective.id}>
-            <h2 id={objective.id}>{objective.title}</h2>
-            {objective.results.map((kr) => {
-              const pct = progressTowardTarget(kr);
-              return (
-                <article class="kr" aria-labelledby={`${kr.id}-label`}>
-                  <p class="kr-head">
-                    <span id={`${kr.id}-label`}>{kr.label}</span>
-                    <span class="kr-window">{kr.window}</span>
-                  </p>
-                  <dl class="kr-cols">
-                    <div>
-                      <dt>Baseline</dt>
-                      <dd>{kr.baselineLabel}</dd>
-                    </div>
-                    <div>
-                      <dt>Current</dt>
-                      <dd>{kr.currentLabel}</dd>
-                    </div>
-                    <div>
-                      <dt>Target</dt>
-                      <dd>{kr.targetLabel}</dd>
-                    </div>
-                  </dl>
-                  {pct !== null && (
-                    <div
-                      class="kr-bar"
-                      role="progressbar"
-                      aria-valuemin="0"
-                      aria-valuemax="100"
-                      aria-valuenow={Math.round(pct)}
-                      aria-label={`${kr.label} progress`}
-                    >
-                      <span class="kr-bar-fill" style={`width: ${Math.min(100, pct)}%`} />
-                    </div>
-                  )}
-                  {kr.note && <p class="kr-note">{kr.note}</p>}
-                </article>
-              );
-            })}
-            {objective.supporting.map((line) => (
-              <p class="kr-support">{line}</p>
-            ))}
-          </section>
-        ))
-      }
+      {OBJECTIVES.map((objective) => (
+        <section class="objective" aria-labelledby={objective.id}>
+          <h2 id={objective.id}>{objective.title}</h2>
+          {objective.results.map((kr) => {
+            const pct = progressTowardTarget(kr);
+            return (
+              <article class="kr" aria-labelledby={`${kr.id}-label`}>
+                <p class="kr-head">
+                  <span id={`${kr.id}-label`}>{kr.label}</span>
+                  <span class="kr-window">{kr.window}</span>
+                </p>
+                <dl class="kr-cols">
+                  <div>
+                    <dt>Baseline</dt>
+                    <dd>{kr.baselineLabel}</dd>
+                  </div>
+                  <div>
+                    <dt>Current</dt>
+                    <dd>{kr.currentLabel}</dd>
+                  </div>
+                  <div>
+                    <dt>Target</dt>
+                    <dd>{kr.targetLabel}</dd>
+                  </div>
+                </dl>
+                {pct !== null && (
+                  <div
+                    class="kr-bar"
+                    role="progressbar"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                    aria-valuenow={Math.round(pct)}
+                    aria-label={`${kr.label} progress`}
+                  >
+                    <span class="kr-bar-fill" style={`width: ${Math.min(100, pct)}%`} />
+                  </div>
+                )}
+                {kr.note && <p class="kr-note">{kr.note}</p>}
+              </article>
+            );
+          })}
+          {objective.supporting.map((line) => (
+            <p class="kr-support">{line}</p>
+          ))}
+        </section>
+      ))}
     </main>
     <ContactCTA />
   </div>
