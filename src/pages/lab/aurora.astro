@@ -1,0 +1,241 @@
+---
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+---
+
+<BaseLayout
+  title="Aurora Refraction Lab | Alexander Härenstam"
+  description="Experimental Northern Lights light refraction canvas with dynamic wave superposition math."
+>
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero
+      title="Northern Lights Aurora Refraction"
+      tagline="Interactive spatial refraction canvas leveraging multi-harmonic sine wave superposition."
+      align="start"
+    />
+
+    <section class="lab-container">
+      <div class="controls">
+        <button
+          id="toggle-anim-btn"
+          type="button"
+          class="action-btn"
+          aria-label="Pause or play aurora animation"
+        >
+          Pause Animation
+        </button>
+        <span id="anim-status" class="status-badge" role="status">Status: Active</span>
+      </div>
+
+      <div class="canvas-wrapper">
+        <canvas id="aurora-lab-canvas"></canvas>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  import { calculateAuroraWave, refractColor } from '../../utils/aurora-math';
+
+  const canvas = document.getElementById('aurora-lab-canvas') as HTMLCanvasElement | null;
+  const toggleBtn = document.getElementById('toggle-anim-btn') as HTMLButtonElement | null;
+  const statusBadge = document.getElementById('anim-status') as HTMLElement | null;
+
+  if (canvas) {
+    const ctx = canvas.getContext('2d');
+    let animationFrameId: number;
+    let isPlaying = true;
+    let startTime = performance.now();
+
+    const mediaQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+    if (mediaQuery.matches) {
+      isPlaying = false;
+      if (statusBadge) statusBadge.textContent = 'Status: Paused (Reduced Motion)';
+      if (toggleBtn) toggleBtn.textContent = 'Play Animation';
+    }
+
+    const resize = () => {
+      if (!canvas || !canvas.parentElement) return;
+      const rect = canvas.parentElement.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      if (ctx) {
+        ctx.scale(dpr, dpr);
+      }
+    };
+
+    const draw = (now: number) => {
+      if (!ctx || !canvas || !canvas.parentElement) return;
+      const width = canvas.parentElement.clientWidth;
+      const height = canvas.parentElement.clientHeight;
+
+      ctx.clearRect(0, 0, width, height);
+
+      // Deep marine base gradient background
+      const baseGradient = ctx.createLinearGradient(0, 0, 0, height);
+      baseGradient.addColorStop(0, 'rgba(10, 25, 47, 0.95)');
+      baseGradient.addColorStop(1, 'rgba(5, 15, 30, 0.98)');
+      ctx.fillStyle = baseGradient;
+      ctx.fillRect(0, 0, width, height);
+
+      const elapsed = now - startTime;
+      const step = Math.max(4, Math.floor(width / 150));
+
+      // Draw multiple refracted aurora curtains
+      const curtainCount = 3;
+      for (let c = 0; c < curtainCount; c++) {
+        const curtainOffsetY = height * (0.3 + c * 0.2);
+        const curtainAmp = 30 + c * 15;
+        const curtainSpeed = 0.0008 + c * 0.0003;
+
+        ctx.beginPath();
+        ctx.moveTo(0, height);
+
+        for (let x = 0; x <= width; x += step) {
+          const wave = calculateAuroraWave(x + c * 200, elapsed, {
+            baseAmplitude: curtainAmp,
+            speed: curtainSpeed,
+            harmonics: 3,
+          });
+          const y = curtainOffsetY + wave;
+          if (x === 0) ctx.lineTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+
+        ctx.lineTo(width, height);
+        ctx.closePath();
+
+        const normalizedDisp = Math.sin(elapsed * 0.001 + c * 1.5);
+        ctx.fillStyle = refractColor(normalizedDisp, 0.25 - c * 0.05);
+        ctx.fill();
+
+        // Highlighting top refracted stroke
+        ctx.beginPath();
+        for (let x = 0; x <= width; x += step) {
+          const wave = calculateAuroraWave(x + c * 200, elapsed, {
+            baseAmplitude: curtainAmp,
+            speed: curtainSpeed,
+            harmonics: 3,
+          });
+          const y = curtainOffsetY + wave;
+          if (x === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
+        }
+        ctx.strokeStyle = refractColor(normalizedDisp, 0.6);
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+
+      if (isPlaying) {
+        animationFrameId = requestAnimationFrame(draw);
+      }
+    };
+
+    const handleToggle = () => {
+      isPlaying = !isPlaying;
+      if (isPlaying) {
+        startTime = performance.now();
+        if (statusBadge) statusBadge.textContent = 'Status: Active';
+        if (toggleBtn) toggleBtn.textContent = 'Pause Animation';
+        animationFrameId = requestAnimationFrame(draw);
+      } else {
+        cancelAnimationFrame(animationFrameId);
+        if (statusBadge) statusBadge.textContent = 'Status: Paused';
+        if (toggleBtn) toggleBtn.textContent = 'Play Animation';
+      }
+    };
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', handleToggle);
+    }
+
+    const handleVisibilityChange = () => {
+      if (document.hidden && isPlaying) {
+        cancelAnimationFrame(animationFrameId);
+      } else if (!document.hidden && isPlaying) {
+        animationFrameId = requestAnimationFrame(draw);
+      }
+    };
+
+    window.addEventListener('resize', resize);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    resize();
+    if (isPlaying) {
+      animationFrameId = requestAnimationFrame(draw);
+    } else {
+      draw(startTime);
+    }
+
+    // Teardown listener on page transition
+    document.addEventListener(
+      'astro:before-swap',
+      () => {
+        isPlaying = false;
+        cancelAnimationFrame(animationFrameId);
+        window.removeEventListener('resize', resize);
+        document.removeEventListener('visibilitychange', handleVisibilityChange);
+        if (toggleBtn) toggleBtn.removeEventListener('click', handleToggle);
+      },
+      { once: true }
+    );
+  }
+</script>
+
+<style>
+  .lab-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .action-btn {
+    background: rgba(10, 25, 47, 0.8);
+    border: 1px solid rgba(0, 242, 254, 0.3);
+    color: var(--gray-100);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-size: var(--text-sm);
+    cursor: pointer;
+    transition:
+      background 0.2s ease,
+      border-color 0.2s ease;
+  }
+
+  .action-btn:hover,
+  .action-btn:focus-visible {
+    background: rgba(10, 25, 47, 1);
+    border-color: rgba(0, 242, 254, 0.8);
+    outline: none;
+  }
+
+  .status-badge {
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+  }
+
+  .canvas-wrapper {
+    width: 100%;
+    height: 450px;
+    position: relative;
+    border-radius: 0.75rem;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: var(--gray-999);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.37);
+  }
+
+  canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+</style>
