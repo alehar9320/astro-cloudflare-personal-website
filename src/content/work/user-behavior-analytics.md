@@ -19,12 +19,12 @@ At IFS I worked on user behavior analytics for IFS Cloud: capturing usage so pro
 
 ## Problem
 
-Product teams need to see what customers actually do so IFS Cloud roadmap decisions rest on that usage.
+Product teams need clear visibility into feature usage so IFS Cloud roadmap decisions rest on customer needs rather than assumptions.
 
 ## Approach
 
-As Product Manager, Developer Experience at IFS, I worked on user behavior analytics for IFS Cloud: capturing usage so product teams can see what customers actually do.
+As Product Manager, Developer Experience at IFS, I worked on user behavior analytics: capturing usage telemetry so product teams can see what customers actually do.
 
 ## Outcome
 
-Usage telemetry so IFS Cloud roadmap decisions rest on how people actually use the product.
+Usage telemetry grounds IFS Cloud features in genuine customer needs, preventing over-engineering and optimizing development resources.
