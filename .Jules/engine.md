@@ -41,3 +41,9 @@
 - **O(1) Column Map Lookups:** Refactored `parseVisitGlance` to construct a `Map<string, number>` (`columnMap`) once per payload when column headers exist, converting linear `Array.prototype.indexOf` searches ($O(N)$) per row field into $O(1)$ Map lookups while preserving index positioning for non-string header elements.
 - **Zero-Allocation Period Iteration:** Replaced tuple array allocations (`[['DoD', ...], ...]`) in `formatColophonVisits` and `formatColophonVisitsTitle` with direct indexed loop iteration over static `PERIOD_KEYS` and `PERIOD_FIELDS`.
 - **Verification:** Added Vitest unit tests in `src/utils/visit-stats.test.ts` verifying custom-ordered column map lookups and non-string header handling. All tests pass cleanly.
+
+## 2026-10-18 - Single-Pass Greedy Regex PR Extraction & Hoisted Date Formatters
+
+- **Single-Pass Greedy PR Extraction:** Refactored `mappedVisitorTitle` in `src/utils/visitor-changelog.ts` to use a greedy regex (`LAST_PR_REGEX = /.*\(#(\d+)\)/`) for extracting the final PR number in a single `exec` pass, eliminating iterator and match array allocations from `matchAll`.
+- **Hoisted Intl.DateTimeFormat Utilities:** Hoisted `DATETIME_FORMATTER` (`en-CA`) and `HUMAN_DATE_FORMATTER` (`en-GB`) instances in `src/utils/whats-new-glance.ts` to module scope, avoiding repeated instantiation and locale option parsing per call on edge SSR requests.
+- **Verification:** Passed all 526 Vitest unit tests, ESLint, Prettier format check, and production build verification.
