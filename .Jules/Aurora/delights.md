@@ -44,3 +44,9 @@ Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
 - Insight: Micro-interactions on primary CTA/affordance links provide tactile feedback and signal interactivity, increasing user engagement.
 - User Target: Delight & Affordance
 - Abort Triggers: None (verified via test and build pipeline).
+
+## 2026-10-14 - CTA Icon Flight | Signal: Competitive & Behavioral | Lean Implementation: Added subtle translate(2px, -2px) and rotate(6deg) on hover/focus-visible to embedded SVG icons in CallToAction.astro under enable_cta_icon_flight_v1.
+
+- Insight: Micro-interactions on primary call-to-action buttons (such as paper-plane-tilt in ContactCTA) give feedback that encourages conversion and delights users.
+- User Target: Joy & Affordance
+- Abort Triggers: None (verified via full test and build pipeline).
