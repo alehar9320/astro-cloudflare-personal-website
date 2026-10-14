@@ -142,12 +142,67 @@ const schema = {
   }
 
   .timeline {
+    position: relative;
     list-style: none;
     margin: 0;
-    padding: 0;
+    padding: 0 0 0 1.25rem;
     display: flex;
     flex-direction: column;
     gap: 2rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.4rem;
+    bottom: 0.4rem;
+    width: 2px;
+    background: linear-gradient(
+      180deg,
+      var(--accent-regular) 0%,
+      hsla(var(--gray-999-basis), 0.25) 100%
+    );
+    border-radius: 1px;
+  }
+
+  .timeline > li {
+    position: relative;
+  }
+
+  .timeline > li::before {
+    content: '';
+    position: absolute;
+    left: calc(-1.25rem - 5px);
+    top: 0.45rem;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: hsla(var(--gray-999-basis), 0.9);
+    border: 2px solid var(--accent-regular);
+    box-shadow: 0 0 8px var(--accent-overlay);
+    transition:
+      transform var(--theme-transition),
+      background-color var(--theme-transition),
+      border-color var(--theme-transition);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .timeline > li:hover::before,
+    .timeline > li:focus-within::before {
+      transform: scale(1.25);
+      background-color: var(--accent-regular);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .timeline::before {
+      background: CanvasText;
+    }
+    .timeline > li::before {
+      border-color: CanvasText;
+      background-color: Canvas;
+    }
   }
 
   .timeline a[href='/work/ifs-design-system/'] {
