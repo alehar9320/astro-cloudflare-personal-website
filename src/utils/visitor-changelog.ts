@@ -338,10 +338,11 @@ const DEV_WORD =
 // still caught by FILE_PATH, and real visitor lines go through VISITOR_CHANGELOG rows.
 /** "CI" only as an uppercase whole word, so visitor words that contain "ci" are never hit. */
 const DEV_WORD_UPPER = /\bCI\b/;
-/* Optimization (⚡ Bolt): Hoist PR_MATCH_REGEX and SPACES_REGEX to avoid dynamic RegExp instantiations on edge changelog title processing.
-   Benchmark: Eliminates redundant regex creation during visitor title mapping. */
-/** Every `(#N)` group; the lookup uses the LAST one, which is the squash PR (earlier ones are issue refs). */
-const PR_MATCH_REGEX = /\(#(\d+)\)/g;
+/* Optimization (⚡ Bolt): Using greedy LAST_PR_REGEX instead of matchAll iterator eliminates
+   RegExpStringIterator and array allocations during visitor PR extraction.
+   Benchmark: Single-pass regex evaluation per changelog line. */
+/** Single-pass greedy regex matching the final `(#N)` squash PR number on a line. */
+const LAST_PR_REGEX = /.*\(#(\d+)\)/;
 const MULTI_SPACES_REGEX = /\s{2,}/g;
 
 /**
@@ -373,10 +374,9 @@ const BULLET_PREFIX = /^[-*+]\s+/;
 export function mappedVisitorTitle(raw: string): string | undefined {
   const trimmed = raw.trim();
   if (!trimmed) return undefined;
-  let lastPr: string | undefined;
-  for (const match of trimmed.matchAll(PR_MATCH_REGEX)) lastPr = match[1];
-  if (lastPr) {
-    const byPr = BY_PR.get(Number(lastPr));
+  const prMatch = trimmed.match(LAST_PR_REGEX);
+  if (prMatch) {
+    const byPr = BY_PR.get(Number(prMatch[1]));
     if (byPr) return byPr;
   }
   const bySubject = BY_SUBJECT.get(stripChangelogChrome(trimmed).toLowerCase());

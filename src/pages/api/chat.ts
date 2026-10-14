@@ -147,7 +147,10 @@ export const POST: APIRoute = async ({ request }) => {
 
   const ip = request.headers.get('cf-connecting-ip') || 'anonymous';
   const hourlyKey = `chat-hourly:${ip}`;
-  const dailyKey = `chat-daily:${utcDateKey()}`;
+  /* Optimization (⚡ Bolt): Reusing a single `now = new Date()` timestamp across utcDateKey and
+     dailyPutOptions eliminates redundant Date object allocations per API request on edge runtime. */
+  const requestTime = new Date();
+  const dailyKey = `chat-daily:${utcDateKey(requestTime)}`;
 
   let hourlyCount = 0;
   let dailyCount = 0;
@@ -191,7 +194,7 @@ export const POST: APIRoute = async ({ request }) => {
       dailyCount += 1;
       await Promise.all([
         store.put(hourlyKey, hourlyCount.toString(), { expirationTtl: 3600 }),
-        store.put(dailyKey, dailyCount.toString(), dailyPutOptions()),
+        store.put(dailyKey, dailyCount.toString(), dailyPutOptions(requestTime)),
       ]);
     }
 

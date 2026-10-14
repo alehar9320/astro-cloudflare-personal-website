@@ -53,3 +53,7 @@ Action: Hoisted `Intl.DateTimeFormat` in `src/utils/visit-stats.ts`, `TextEncode
 2026-10-12 - Hoist Static RegExp in safeJsonLd
 Learning: Declaring inline RegExp literals inside repeatedly invoked utility functions like `safeJsonLd` forces V8 / JavaScript engines to re-allocate and re-compile RegExp instances on every call during SSR and static page generation. Hoisting `LESS_THAN_REGEX` to module scope eliminates object creation and compilation overhead per JSON-LD serialization.
 Action: Hoisted `LESS_THAN_REGEX` to module scope in `src/utils/safe-json-ld.ts`.
+
+2026-10-14 - Single-Pass Greedy PR Matching & Single Date Allocation in API
+Learning: Using `matchAll` iterator loops on strings generates `RegExpStringIterator` objects and dynamic match array allocations per line on edge runtimes. Replacing `matchAll` with a single-pass greedy regex (`/.*\(#(\d+)\)/`) extracts the final PR number in one pass. Additionally, reusing a single `new Date()` timestamp in API route handlers avoids redundant object allocations per request.
+Action: Refactored `mappedVisitorTitle` in `src/utils/visitor-changelog.ts` to use `LAST_PR_REGEX` and updated `src/pages/api/chat.ts` to reuse `requestTime = new Date()`.
