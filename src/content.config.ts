@@ -31,6 +31,7 @@ export const collections = {
       enable_social_bounce_v1: z.boolean().default(false),
       portfolio_zoom_v1: z.boolean().default(false),
       enable_proof_slide_v1: z.boolean().default(false),
+      enable_product_playbook: z.boolean().default(false),
     }),
   }),
 };

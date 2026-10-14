@@ -1,0 +1,119 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_product_playbook) return Astro.redirect('/404/');
+
+const linkedinHref = 'https://www.linkedin.com/in/alehar/';
+
+const plays = [
+  {
+    title: 'Continuous Discovery',
+    description: 'Anchor product direction on continuous customer signals and validated outcomes.',
+  },
+  {
+    title: 'Systemic Governance',
+    description:
+      'Scale quality and velocity through shared design system primitives and dev tools.',
+  },
+  {
+    title: 'AI Grounding',
+    description: 'Integrate copilot capabilities into domain workflows where context matters most.',
+  },
+];
+---
+
+<BaseLayout
+  title="Product Playbook | Product Manager, Developer Experience at IFS"
+  ogTitle="Product Playbook | Product Manager, Developer Experience at IFS"
+  description="Product execution principles across DevEx, design systems, and Industrial AI."
+  robots="noindex"
+>
+  <main id="main-content" role="main" class="wrapper stack gap-10">
+    <Hero title="Product Playbook" align="start">
+      <p class="lede">
+        Execution principles for building design systems, developer platforms, and Industrial AI.
+      </p>
+    </Hero>
+    <div class="grid">
+      {
+        plays.map(({ title, description }) => (
+          <div class="card">
+            <strong>{title}</strong>
+            <p>{description}</p>
+          </div>
+        ))
+      }
+    </div>
+    <div class="actions">
+      <CallToAction
+        href={linkedinHref}
+        target="_blank"
+        rel="noopener noreferrer"
+        data-hire-event="hire_cta_click"
+        data-hire-surface="now"
+      >
+        Get in touch
+      </CallToAction>
+      <p class="cta-hint">LinkedIn</p>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  .lede {
+    margin: 0;
+    color: var(--gray-200);
+    max-width: 46ch;
+  }
+
+  .grid {
+    display: grid;
+    gap: 1rem;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  }
+
+  .card {
+    padding: 1rem;
+    border: 1px solid var(--gray-800);
+    border-radius: 0.5rem;
+    background: var(--gradient-subtle);
+  }
+
+  .card strong {
+    display: block;
+    color: var(--gray-0);
+  }
+
+  .card p {
+    margin: 0.35rem 0 0;
+    color: var(--gray-200);
+  }
+
+  .actions {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+    margin-top: 0.5rem;
+    padding-bottom: var(--chat-fab-clearance);
+    padding-right: var(--chat-fab-clearance);
+  }
+
+  .cta-hint {
+    margin: 0;
+    font-size: var(--text-sm);
+    color: var(--gray-300);
+    font-weight: 400;
+  }
+
+  @media (min-width: 50em) {
+    .actions {
+      padding-bottom: 0;
+      padding-right: 0;
+    }
+  }
+</style>
