@@ -17,6 +17,7 @@ Astro content collections use Zod for schema validation. Always define strict sc
 
 ```typescript
 // src/content.config.ts
+import { defineCollection } from 'astro:content';
 import { z } from 'astro/zod';
 
 export const collections = {
