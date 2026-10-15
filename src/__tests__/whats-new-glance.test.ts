@@ -5,7 +5,12 @@ import { resolve } from 'node:path';
 import { LATEST_RELEASE_SNAPSHOT } from '../data/latest-release';
 import type { SiteRelease } from '../utils/github-releases';
 import { toVisitorChangelogTitle } from '../utils/visitor-changelog';
-import { buildWhatsNewGlance, isKeptVisitorLine } from '../utils/whats-new-glance';
+import {
+  buildWhatsNewGlance,
+  formatLatestUpdatesDate,
+  isKeptVisitorLine,
+  selectLatestUpdates,
+} from '../utils/whats-new-glance';
 
 const now = new Date('2026-08-20T18:00:00Z');
 
@@ -374,6 +379,35 @@ describe('whats-new Latest updates fallback (#1579)', () => {
       expect(line).not.toMatch(CODE_TOKEN);
       expect(line).not.toMatch(/scrape|vitest/i);
     }
+  });
+
+  it('correctly formats ISO date and human label via hoisted DateTimeFormatters', () => {
+    const formatted = formatLatestUpdatesDate(Date.parse('2026-09-01T12:00:00Z'));
+    expect(formatted.datetime).toBe('2026-09-01');
+    expect(formatted.label).toMatch(/^Last updated 1 Sep/);
+  });
+
+  it('selects latest updates correctly even when releases are passed unsorted', () => {
+    const olderRelease = release({
+      body: `- ${RAW_1223}`,
+      publishedAt: '2026-05-01T10:00:00Z',
+    });
+    const newerRelease = release({
+      body: `- ${RAW_1167}`,
+      publishedAt: '2026-07-01T10:00:00Z',
+    });
+    // Intentionally pass older release first
+    const selected = selectLatestUpdates([olderRelease, newerRelease]);
+    expect(selected?.datetime).toBe('2026-07-01');
+    expect(selected?.lines).toEqual(['What’s New now describes each update in plain language']);
+  });
+
+  it('handles releases with invalid or missing publishedAt timestamps in selectLatestUpdates', () => {
+    const invalidRelease = release({
+      body: `- ${RAW_1167}`,
+      publishedAt: 'invalid-date-string',
+    });
+    expect(selectLatestUpdates([invalidRelease])).toBeUndefined();
   });
 
   it('is absent when the 30-day window has lines, and when no release has a kept line', () => {
