@@ -50,3 +50,11 @@ Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hi
   - Glass Blur: `16px`
   - Affordance: `translateY(-4px)`
   - Glow: `hsla(210, 100%, 45%, 0.3)`
+
+## 2026-10-15 - Glassmorphic Proof Card Micro-Interaction on Roadmap
+
+- **Signal:** Proof card on `/roadmap/` was flat without glassmorphism depth or interactive affordance.
+- **Action:**
+  - Upgraded `.proof-card` in `src/pages/roadmap.astro` with frosted glass background (`backdrop-filter: blur(12px)`), subtle border (`1px solid var(--gray-800)`), and elevation on hover/focus-visible.
+  - Added hardware-accelerated `translateX(4px)` micro-interaction on `.proof-affordance` gated inside `@media (prefers-reduced-motion: no-preference)`.
+  - Added explicit high-contrast mode fallback border (`border-color: CanvasText`) within `@media (forced-colors: active)`.
