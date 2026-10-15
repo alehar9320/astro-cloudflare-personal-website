@@ -12,6 +12,12 @@ Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
 
 ---
 
+## 2026-10-13 - Forced-Colors Mode Structural Borders for Reading List Cards
+
+**Learning:** Card containers on standalone/experimental routes (such as `.card` in `reading-list.astro`) defined with translucent borders using dark variable fallbacks (`1px solid var(--gray-800)`) lose container outlines when viewed in Windows High Contrast / Forced-Colors mode. Adding explicit `border-color: CanvasText;` fallbacks inside `@media (forced-colors: active)` ensures card container boundaries remain clearly defined for high-contrast accessibility.
+
+**Action:** Added `@media (forced-colors: active)` border-color fallback for `.card` elements in `src/pages/experimental/reading-list.astro`.
+
 ## 2026-10-12 - Skip-Link Target & Forced-Colors Borders for Manifesto Page
 
 **Learning:** Standalone or experimental page layouts must include `id="main-content"` on their primary `<main>` element to ensure the global "Skip to content" keyboard navigation link (`href="#main-content"`) works consistently site-wide. Furthermore, card containers using custom CSS variable borders require explicit `border-color: CanvasText;` fallbacks within `@media (forced-colors: active)` to preserve structural container boundaries in Windows High Contrast mode.
