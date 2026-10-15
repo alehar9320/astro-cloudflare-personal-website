@@ -3,6 +3,7 @@ import { describe, expect, it } from 'vitest';
 import {
   INTERNAL_CHANGELOG_ITEM,
   isDevShapedLine,
+  mappedVisitorTitle,
   stripChangelogChrome,
   toVisitorChangelogTitle,
   toVisitorRelease,
@@ -36,6 +37,27 @@ describe('visitor-changelog utilities', () => {
       expect(
         stripChangelogChrome('Raise home Read the case 44x44 hit-box clear of dock (#817) (#999)')
       ).toBe('Raise home Read the case 44x44 hit-box clear of dock');
+    });
+  });
+
+  describe('mappedVisitorTitle', () => {
+    it('returns undefined for unmapped or empty lines', () => {
+      expect(mappedVisitorTitle('')).toBeUndefined();
+      expect(mappedVisitorTitle('   ')).toBeUndefined();
+      expect(mappedVisitorTitle('unmapped subject without known pr')).toBeUndefined();
+    });
+
+    it('extracts the last PR number in single pass and maps to title', () => {
+      expect(
+        mappedVisitorTitle(
+          'c884599 Raise home Read the case 44x44 hit-box clear of dock (#812) (#817)'
+        )
+      ).toBe('Home “Read the case” stays clear of the chat dock');
+    });
+
+    it('returns exact mapped title when given an already mapped title', () => {
+      const knownTitle = 'RSS feed of the work';
+      expect(mappedVisitorTitle(knownTitle)).toBe(knownTitle);
     });
   });
 

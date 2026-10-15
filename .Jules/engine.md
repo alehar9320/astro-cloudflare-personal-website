@@ -41,3 +41,10 @@
 - **O(1) Column Map Lookups:** Refactored `parseVisitGlance` to construct a `Map<string, number>` (`columnMap`) once per payload when column headers exist, converting linear `Array.prototype.indexOf` searches ($O(N)$) per row field into $O(1)$ Map lookups while preserving index positioning for non-string header elements.
 - **Zero-Allocation Period Iteration:** Replaced tuple array allocations (`[['DoD', ...], ...]`) in `formatColophonVisits` and `formatColophonVisitsTitle` with direct indexed loop iteration over static `PERIOD_KEYS` and `PERIOD_FIELDS`.
 - **Verification:** Added Vitest unit tests in `src/utils/visit-stats.test.ts` verifying custom-ordered column map lookups and non-string header handling. All tests pass cleanly.
+
+## 2026-10-18 - Hoisted DateTimeFormatters & Zero-Allocation Release Selection
+
+- **Hoisted DateTimeFormatters:** Hoisted `Intl.DateTimeFormat` instances to module scope constants in `src/utils/whats-new-glance.ts` (`EN_CA_DATETIME_FORMATTER` and `EN_GB_DATETIME_FORMATTER`), avoiding repeated formatter creation and locale parsing during SSR date calculations.
+- **Zero-Allocation Release Selection:** Refactored `selectLatestUpdates` from a multi-stage `.map().filter().sort()` pipeline into a single-pass `for...of` tracking loop that identifies the latest release with kept visitor lines without object or array allocations per item.
+- **Single-Pass Greedy Regex:** Refactored `mappedVisitorTitle` in `src/utils/visitor-changelog.ts` to use a greedy regex (`/.*\(#(\d+)\)/`) with `.exec()`, eliminating `matchAll` iterator/array allocations when extracting the final PR number.
+- **Verification:** Added Vitest unit tests in `src/__tests__/whats-new-glance.test.ts` and `src/utils/visitor-changelog.test.ts` covering date formatting, unsorted release selection, and PR number extraction. All tests pass cleanly.

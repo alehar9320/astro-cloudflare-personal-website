@@ -60,6 +60,22 @@ export type WhatsNewGlance = {
 const LATEST_MAX_LINES = 3;
 const SITE_TIME_ZONE = 'Europe/Stockholm';
 
+/* Optimization (⚙️ Engine): Hoist Intl.DateTimeFormat instances to module scope to eliminate
+   repeated formatter allocations and locale parsing on formatLatestUpdatesDate invocations. */
+const EN_CA_DATETIME_FORMATTER = new Intl.DateTimeFormat('en-CA', {
+  day: '2-digit',
+  month: '2-digit',
+  timeZone: SITE_TIME_ZONE,
+  year: 'numeric',
+});
+
+const EN_GB_DATETIME_FORMATTER = new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric',
+  month: 'short',
+  timeZone: SITE_TIME_ZONE,
+  year: 'numeric',
+});
+
 type Theme = {
   heading: string;
   test: RegExp;
@@ -173,18 +189,8 @@ function keptLinesOf(rawRelease: SiteRelease): string[] {
 
 export function formatLatestUpdatesDate(publishedMs: number): { datetime: string; label: string } {
   const date = new Date(publishedMs);
-  const datetime = new Intl.DateTimeFormat('en-CA', {
-    day: '2-digit',
-    month: '2-digit',
-    timeZone: SITE_TIME_ZONE,
-    year: 'numeric',
-  }).format(date);
-  const human = new Intl.DateTimeFormat('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    timeZone: SITE_TIME_ZONE,
-    year: 'numeric',
-  }).format(date);
+  const datetime = EN_CA_DATETIME_FORMATTER.format(date);
+  const human = EN_GB_DATETIME_FORMATTER.format(date);
   return { datetime, label: `Last updated ${human}` };
 }
 
@@ -192,18 +198,30 @@ export function formatLatestUpdatesDate(publishedMs: number): { datetime: string
  * "Latest updates" fallback (#1579): one date = one release. Walk releases newest first
  * (any age) and take up to 3 kept visitor lines from the first release that yields one.
  * Same toVisitorRelease / isKeptVisitorLine path as This week, so call (b) still holds.
+ *
+ * Optimization (⚙️ Engine): Replaced intermediate .map().filter().sort() array pipeline with
+ * a single-pass tracking loop to eliminate array and wrapper object allocations per release.
  */
 export function selectLatestUpdates(releases: SiteRelease[]): LatestUpdates | undefined {
-  const dated = releases
-    .map((release) => ({
-      publishedMs: release.publishedAt ? Date.parse(release.publishedAt) : Number.NaN,
-      release,
-    }))
-    .filter((entry) => !Number.isNaN(entry.publishedMs))
-    .sort((a, b) => b.publishedMs - a.publishedMs);
-  for (const { publishedMs, release } of dated) {
+  let bestPublishedMs = -Infinity;
+  let bestRelease: SiteRelease | undefined;
+  let bestLines: string[] = [];
+
+  for (const release of releases) {
+    if (!release.publishedAt) continue;
+    const publishedMs = Date.parse(release.publishedAt);
+    if (Number.isNaN(publishedMs) || publishedMs <= bestPublishedMs) continue;
+
     const lines = keptLinesOf(release);
-    if (lines.length > 0) return { ...formatLatestUpdatesDate(publishedMs), lines };
+    if (lines.length > 0) {
+      bestPublishedMs = publishedMs;
+      bestRelease = release;
+      bestLines = lines;
+    }
+  }
+
+  if (bestRelease && Number.isFinite(bestPublishedMs)) {
+    return { ...formatLatestUpdatesDate(bestPublishedMs), lines: bestLines };
   }
   return undefined;
 }
