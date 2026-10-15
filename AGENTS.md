@@ -90,6 +90,17 @@ Project-specific AI agent skills are defined in the `.agents/skills/` directory.
 
 Refer to the individual `SKILL.md` files in each skill folder for detailed guidance.
 
+### Superpowers (vendored skills + harness adapters)
+
+This repo also vendors the [Superpowers](https://github.com/obra/superpowers) skill set into `.agents/skills/` (pinned in `scripts/vendor-superpowers.mjs`) so all four harnesses can use it. See [docs/superpowers.md](docs/superpowers.md) for the full layout and update process.
+
+- **opencode** — discovers `.agents/skills/` natively; `.opencode/plugins/superpowers.js` injects the `using-superpowers` bootstrap and registers the skills path.
+- **pi** — `.pi/extensions/superpowers.ts` (registered via the `pi` field in `package.json`) injects the bootstrap and adds `.agents/skills` to skill discovery.
+- **Grok Build** — discovers project `.agents/skills/` natively. Its `SessionStart` hook is passive (it cannot inject context), so the bootstrap reaches Grok through this file and through the surfaced skill description.
+- **Google Jules** — has no skill or hook mechanism; it reads repo files and this `AGENTS.md`. Read `.agents/skills/using-superpowers/SKILL.md` first, then any matching `SKILL.md`, and do fan-out work inline.
+
+Harness tool mappings live in `.agents/skills/using-superpowers/references/*-tools.md`. The vendored skills are kept verbatim from upstream — never hand-edit them; bump the pin in `scripts/vendor-superpowers.mjs` and run `npm run vendor:superpowers`. Only the repo's own skills and the `using-superpowers` Platform Adaptation list are local edits (the vendor script re-applies the list).
+
 ## 6. Deployment & CI/CD
 
 - **CI:** GitHub Actions (`ci.yml`) runs linting, formatting checks, tests, and builds on every PR.

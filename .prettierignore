@@ -1,1 +1,18 @@
 worker-configuration.d.ts
+
+# Harness adapters for the vendored Superpowers skills (not part of the site build).
+.opencode/plugins/**
+.pi/**
+
+# Vendored Superpowers skills — kept verbatim from upstream; see
+# scripts/vendor-superpowers.mjs. The repo's own skills stay format-checked,
+# so skip only the vendored set.
+/.agents/skills/**
+!/.agents/skills/astro-architecture/**
+!/.agents/skills/context7/**
+!/.agents/skills/edge-engineering/**
+!/.agents/skills/elevated-taste/**
+!/.agents/skills/persona-alignment/**
+!/.agents/skills/quality-assurance/**
+!/.agents/skills/type-safety/**
+!/.agents/skills/vanilla-performance/**

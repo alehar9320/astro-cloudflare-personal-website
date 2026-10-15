@@ -94,6 +94,7 @@ Render (`render.yaml`, `RENDER=true`) is a **Jules test environment**. It is not
 ## Docs
 
 - [AGENTS.md](AGENTS.md) — how agents start a task and the high-priority never-list
+- [docs/superpowers.md](docs/superpowers.md) — vendored agent skills and harness wiring
 - [docs/](docs/) — ADRs, MCP, Zod
 - [Wiki](https://github.com/alehar9320/astro-cloudflare-personal-website/wiki) — map only (not visitor copy)
 - GitHub Releases — canonical changelog (`/whats-new/` is the visitor rewrite of recent ships)

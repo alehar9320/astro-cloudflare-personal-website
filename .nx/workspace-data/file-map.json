@@ -1,0 +1,589 @@
+{
+  "version": "6.0",
+  "nxVersion": "22.7.5",
+  "pathMappings": {},
+  "nxJsonPlugins": [
+    {
+      "name": "@nx/eslint/plugin",
+      "options": {
+        "targetName": "eslint:lint"
+      }
+    }
+  ],
+  "fileMap": {
+    "projectFileMap": {
+      "molecular-mars": [
+        {
+          "file": ".FixtureRefresher/sync.md",
+          "hash": "15878236952294502343"
+        },
+        {
+          "file": ".GripTight/security.md",
+          "hash": "7120738858050548934"
+        },
+        {
+          "file": ".Janitor/hygiene.md",
+          "hash": "11634611355227975639"
+        },
+        {
+          "file": ".Jules/apex.md",
+          "hash": "306588432464245985"
+        },
+        {
+          "file": ".Jules/docu.md",
+          "hash": "11058062587061338237"
+        },
+        {
+          "file": ".Jules/jules.md",
+          "hash": "12155990255727833850"
+        },
+        {
+          "file": ".Jules/oracle.md",
+          "hash": "3368869229723073213"
+        },
+        {
+          "file": ".Jules/palette.md",
+          "hash": "10832523200344853289"
+        },
+        {
+          "file": ".Jules/scribe.md",
+          "hash": "14215512911700991002"
+        },
+        {
+          "file": ".Jules/sentinel.md",
+          "hash": "1270532307373471290"
+        },
+        {
+          "file": ".Jules/vantage.md",
+          "hash": "6276397520017647611"
+        },
+        {
+          "file": ".Nova/devops.md",
+          "hash": "9909962002253572563"
+        },
+        {
+          "file": ".ObservabilityClerk/telemetry.md",
+          "hash": "1998290514110722955"
+        },
+        {
+          "file": ".Pruning/metrics.md",
+          "hash": "13075995153471746797"
+        },
+        {
+          "file": ".StuntDouble/coverage.md",
+          "hash": "4694319686175309672"
+        },
+        {
+          "file": ".agents/skills/astro-architecture/SKILL.md",
+          "hash": "362027902719001436"
+        },
+        {
+          "file": ".agents/skills/context7/SKILL.md",
+          "hash": "16496231932931415127"
+        },
+        {
+          "file": ".agents/skills/edge-engineering/SKILL.md",
+          "hash": "4665118880596619501"
+        },
+        {
+          "file": ".agents/skills/persona-alignment/SKILL.md",
+          "hash": "14060052626091011966"
+        },
+        {
+          "file": ".agents/skills/quality-assurance/SKILL.md",
+          "hash": "5626068703585801080"
+        },
+        {
+          "file": ".agents/skills/type-safety/SKILL.md",
+          "hash": "2882097311877630918"
+        },
+        {
+          "file": ".agents/skills/vanilla-performance/SKILL.md",
+          "hash": "15605093252491129840"
+        },
+        {
+          "file": ".aiconfig.md",
+          "hash": "9764530124481210768"
+        },
+        {
+          "file": ".clinerules",
+          "hash": "7871154396406575756"
+        },
+        {
+          "file": ".codex",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": ".dev.vars.example",
+          "hash": "5733531952387821887"
+        },
+        {
+          "file": ".github/copilot-instructions.md",
+          "hash": "10069457005800536370"
+        },
+        {
+          "file": ".github/dependabot.yml",
+          "hash": "13312268238030176535"
+        },
+        {
+          "file": ".github/workflows/ci.yml",
+          "hash": "16638942868047784364"
+        },
+        {
+          "file": ".github/workflows/dependabot-automerge.yml",
+          "hash": "17081029520454238837"
+        },
+        {
+          "file": ".gitignore",
+          "hash": "14977175323202698765"
+        },
+        {
+          "file": ".husky/pre-commit",
+          "hash": "11200534014804190460"
+        },
+        {
+          "file": ".jules/bolt.md",
+          "hash": "5733547895652236333"
+        },
+        {
+          "file": ".jules/prism.md",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": ".lintstagedrc.json",
+          "hash": "14783721374593837941"
+        },
+        {
+          "file": ".mergify.yml",
+          "hash": "5592259184901935150"
+        },
+        {
+          "file": ".node-version",
+          "hash": "541564060168964990"
+        },
+        {
+          "file": ".prettierignore",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": ".prettierrc.json",
+          "hash": "4587915944645637363"
+        },
+        {
+          "file": ".vscode/extensions.json",
+          "hash": "4591125310708873372"
+        },
+        {
+          "file": ".vscode/launch.json",
+          "hash": "1679638439007128934"
+        },
+        {
+          "file": ".vscode/settings.json",
+          "hash": "17426343161833086015"
+        },
+        {
+          "file": "AGENTS.md",
+          "hash": "10007284559699315960"
+        },
+        {
+          "file": "CHANGELOG.md",
+          "hash": "1087476717986489948"
+        },
+        {
+          "file": "LICENSE",
+          "hash": "3093764712445147027"
+        },
+        {
+          "file": "README.md",
+          "hash": "11306805344359293965"
+        },
+        {
+          "file": "SECURITY.md",
+          "hash": "9935875196574164268"
+        },
+        {
+          "file": "__tests__/release.spec.ts",
+          "hash": "3545136299018844107"
+        },
+        {
+          "file": "__tests__/sentry.client.config.spec.ts",
+          "hash": "10173864052268663013"
+        },
+        {
+          "file": "__tests__/sentry.server.config.spec.ts",
+          "hash": "7687299476268715433"
+        },
+        {
+          "file": "__tests__/stunt-double.spec.ts",
+          "hash": "18315228918589423234"
+        },
+        {
+          "file": "astro.config.mjs",
+          "hash": "3037388751169144163"
+        },
+        {
+          "file": "context/author-linkedin.md",
+          "hash": "14817945342687037068"
+        },
+        {
+          "file": "docs/inspirations.md",
+          "hash": "16208911618334792308"
+        },
+        {
+          "file": "docs/mcp.md",
+          "hash": "16157337082791607011"
+        },
+        {
+          "file": "eslint.config.mjs",
+          "hash": "1737769427840045093"
+        },
+        {
+          "file": "mcp_config.json",
+          "hash": "17174839935948796533"
+        },
+        {
+          "file": "nx.json",
+          "hash": "2361282553778974697"
+        },
+        {
+          "file": "package-lock.json",
+          "hash": "12012764398928498349"
+        },
+        {
+          "file": "package.json",
+          "hash": "2755075464495516730"
+        },
+        {
+          "file": "public/assets/at-work.jpg",
+          "hash": "1917420826041279689"
+        },
+        {
+          "file": "public/assets/backgrounds/bg-footer-dark-1440w.jpg",
+          "hash": "16401644724500548265"
+        },
+        {
+          "file": "public/assets/backgrounds/bg-footer-dark-800w.jpg",
+          "hash": "16843978741777629193"
+        },
+        {
+          "file": "public/assets/backgrounds/bg-footer-light-1440w.jpg",
+          "hash": "7552810081382475818"
+        },
+        {
+          "file": "public/assets/backgrounds/bg-footer-light-800w.jpg",
+          "hash": "2905638270983400002"
+        },
+        {
+          "file": "public/assets/backgrounds/bg-main-dark-1440w.jpg",
+          "hash": "16262724700950420565"
+        },
+        {
+          "file": "public/assets/backgrounds/bg-main-dark-800w.jpg",
+          "hash": "547677450599178743"
+        },
+        {
+          "file": "public/assets/backgrounds/bg-main-dark.svg",
+          "hash": "13821526943103197501"
+        },
+        {
+          "file": "public/assets/backgrounds/bg-main-light-1440w.jpg",
+          "hash": "51396496191466607"
+        },
+        {
+          "file": "public/assets/backgrounds/bg-main-light-800w.jpg",
+          "hash": "3913377406628651166"
+        },
+        {
+          "file": "public/assets/backgrounds/bg-main-light.svg",
+          "hash": "4006975163796119099"
+        },
+        {
+          "file": "public/assets/backgrounds/bg-subtle-1-dark-1440w.jpg",
+          "hash": "14341460282964180424"
+        },
+        {
+          "file": "public/assets/backgrounds/bg-subtle-1-dark-800w.jpg",
+          "hash": "3697025593086191311"
+        },
+        {
+          "file": "public/assets/backgrounds/bg-subtle-1-light-1440w.jpg",
+          "hash": "16190173863304867649"
+        },
+        {
+          "file": "public/assets/backgrounds/bg-subtle-1-light-800w.jpg",
+          "hash": "16106248136220339495"
+        },
+        {
+          "file": "public/assets/backgrounds/bg-subtle-2-dark-1440w.jpg",
+          "hash": "2268694862688873398"
+        },
+        {
+          "file": "public/assets/backgrounds/bg-subtle-2-dark-800w.jpg",
+          "hash": "9505878678249975465"
+        },
+        {
+          "file": "public/assets/backgrounds/bg-subtle-2-light-1440w.jpg",
+          "hash": "6982224475860035527"
+        },
+        {
+          "file": "public/assets/backgrounds/bg-subtle-2-light-800w.jpg",
+          "hash": "16482250022757843451"
+        },
+        {
+          "file": "public/assets/backgrounds/noise.png",
+          "hash": "502372005596228170"
+        },
+        {
+          "file": "public/assets/portrait.png",
+          "hash": "1980306082246875226"
+        },
+        {
+          "file": "public/assets/stock-1.jpg",
+          "hash": "8632458867078295301"
+        },
+        {
+          "file": "public/assets/stock-2.jpg",
+          "hash": "7243500485227938511"
+        },
+        {
+          "file": "public/assets/stock-3.jpg",
+          "hash": "17004528412632351686"
+        },
+        {
+          "file": "public/assets/stock-4.jpg",
+          "hash": "12802349703776974345"
+        },
+        {
+          "file": "public/favicon.ico",
+          "hash": "17029681233222342302"
+        },
+        {
+          "file": "public/favicon.svg",
+          "hash": "9875909904608765743"
+        },
+        {
+          "file": "render.yaml",
+          "hash": "8754527457569907528"
+        },
+        {
+          "file": "scripts/release.js",
+          "hash": "13363759049497909222"
+        },
+        {
+          "file": "sentry.client.config.ts",
+          "hash": "2999206077366863020"
+        },
+        {
+          "file": "sentry.server.config.ts",
+          "hash": "3993396577493936600"
+        },
+        {
+          "file": "src/__tests__/chat-api.test.ts",
+          "hash": "2533630746373158803"
+        },
+        {
+          "file": "src/__tests__/content.config.test.ts",
+          "hash": "35430056539894076"
+        },
+        {
+          "file": "src/__tests__/github-releases.test.ts",
+          "hash": "5569913529918244037"
+        },
+        {
+          "file": "src/__tests__/mocks/astro-content.ts",
+          "hash": "8391930266700210087"
+        },
+        {
+          "file": "src/__tests__/mocks/astro-loaders.ts",
+          "hash": "4190102419975642841"
+        },
+        {
+          "file": "src/__tests__/mocks/astro-zod.ts",
+          "hash": "2317021680842158591"
+        },
+        {
+          "file": "src/__tests__/mocks/cloudflare-workers.ts",
+          "hash": "3577960884688386675"
+        },
+        {
+          "file": "src/components/CallToAction.astro",
+          "hash": "996685547624019293"
+        },
+        {
+          "file": "src/components/Chat.astro",
+          "hash": "8068740144169020249"
+        },
+        {
+          "file": "src/components/ContactCTA.astro",
+          "hash": "15887971033402221720"
+        },
+        {
+          "file": "src/components/Footer.astro",
+          "hash": "11459208656057607598"
+        },
+        {
+          "file": "src/components/Grid.astro",
+          "hash": "12656582994423810299"
+        },
+        {
+          "file": "src/components/Hero.astro",
+          "hash": "7358131819650393331"
+        },
+        {
+          "file": "src/components/Icon.astro",
+          "hash": "78031092901426064"
+        },
+        {
+          "file": "src/components/IconPaths.ts",
+          "hash": "8607507898656305381"
+        },
+        {
+          "file": "src/components/MainHead.astro",
+          "hash": "597108887871835350"
+        },
+        {
+          "file": "src/components/Nav.astro",
+          "hash": "10558958780147816615"
+        },
+        {
+          "file": "src/components/NotFoundContent.astro",
+          "hash": "17118869800036447685"
+        },
+        {
+          "file": "src/components/Pill.astro",
+          "hash": "12628166010908276323"
+        },
+        {
+          "file": "src/components/PortfolioPreview.astro",
+          "hash": "9540470889619656312"
+        },
+        {
+          "file": "src/components/PostHog.astro",
+          "hash": "17107818465144921555"
+        },
+        {
+          "file": "src/components/Skills.astro",
+          "hash": "848529438182160411"
+        },
+        {
+          "file": "src/components/ThemeToggle.astro",
+          "hash": "1135960612680723332"
+        },
+        {
+          "file": "src/components/__tests__/IconPaths.test.ts",
+          "hash": "17693145213263248704"
+        },
+        {
+          "file": "src/content.config.ts",
+          "hash": "7918262441225438469"
+        },
+        {
+          "file": "src/content/flags.json",
+          "hash": "11674405049170489973"
+        },
+        {
+          "file": "src/content/work/ai-coding-copilots.md",
+          "hash": "15693503442985413543"
+        },
+        {
+          "file": "src/content/work/ifs-design-system.md",
+          "hash": "3688518805557731560"
+        },
+        {
+          "file": "src/content/work/lidkoping-stenhuggeri.md",
+          "hash": "14374489803274835491"
+        },
+        {
+          "file": "src/content/work/master-thesis.md",
+          "hash": "4533579655726802593"
+        },
+        {
+          "file": "src/content/work/user-behavior-analytics.md",
+          "hash": "9769723315377119120"
+        },
+        {
+          "file": "src/data/version.json",
+          "hash": "867730121626658382"
+        },
+        {
+          "file": "src/env.d.ts",
+          "hash": "3198510703276459123"
+        },
+        {
+          "file": "src/layouts/BaseLayout.astro",
+          "hash": "12084089451321115643"
+        },
+        {
+          "file": "src/pages/404.astro",
+          "hash": "8187731071948007183"
+        },
+        {
+          "file": "src/pages/about.astro",
+          "hash": "6864318894655307353"
+        },
+        {
+          "file": "src/pages/api/chat.ts",
+          "hash": "17661975729642702712"
+        },
+        {
+          "file": "src/pages/biography.astro",
+          "hash": "8930739728667077389"
+        },
+        {
+          "file": "src/pages/experimental/now.astro",
+          "hash": "5072047146934521008"
+        },
+        {
+          "file": "src/pages/index.astro",
+          "hash": "12488520644833387483"
+        },
+        {
+          "file": "src/pages/whats-new.astro",
+          "hash": "18244874291920808812"
+        },
+        {
+          "file": "src/pages/work.astro",
+          "hash": "7899028254127325510"
+        },
+        {
+          "file": "src/pages/work/[...slug].astro",
+          "hash": "17008200776564196417"
+        },
+        {
+          "file": "src/styles/global.css",
+          "hash": "640780228257013319"
+        },
+        {
+          "file": "src/utils/chat-stream.test.ts",
+          "hash": "11759284742011848119"
+        },
+        {
+          "file": "src/utils/chat-stream.ts",
+          "hash": "532367408435680596"
+        },
+        {
+          "file": "src/utils/github-releases.ts",
+          "hash": "6263154593723086707"
+        },
+        {
+          "file": "tsconfig.json",
+          "hash": "15710174595341603586"
+        },
+        {
+          "file": "vitest.config.ts",
+          "hash": "3832149415289457008"
+        },
+        {
+          "file": "worker-configuration.d.ts",
+          "hash": "8199383100431914060"
+        },
+        {
+          "file": "wrangler.jsonc",
+          "hash": "5183094849460023736"
+        }
+      ]
+    },
+    "nonProjectFiles": []
+  },
+  "externalNodesHash": "10206899656512130502"
+}

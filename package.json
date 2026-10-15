@@ -20,8 +20,20 @@
     "format:check": "prettier --check .",
     "prepare": "husky",
     "test": "vitest run",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "vendor:superpowers": "node scripts/vendor-superpowers.mjs"
   },
+  "pi": {
+    "extensions": [
+      "./.pi/extensions/superpowers.ts"
+    ],
+    "skills": [
+      "./.agents/skills"
+    ]
+  },
+  "keywords": [
+    "pi-package"
+  ],
   "dependencies": {
     "@astrojs/cloudflare": "^14.2.3",
     "@astrojs/node": "^11.1.4",
