@@ -8,6 +8,7 @@
 | 2025-03-24 | src/content/work/master-thesis.md | Improved grammatical phrasing in the concluding paragraph                                | Validated   |
 | 2025-03-30 | src/components/Chat.astro, src/utils/chat-logic.ts | Normalized 'IFS design system' to 'IFS Design System' title case for repository-wide terminology alignment | Validated   |
 | 2026-10-11 | src/ (visitor-facing copy)        | Scanned `src/content/**`, `src/pages/**`, and `src/components/**`; no visitor-facing typos found | Validated   |
+| 2026-10-15 | Repository-wide text & docs       | Executed linter pass across Markdown, comments, and strings; 0 typos found               | Validated   |
 
 ## Spelling Exceptions
 
