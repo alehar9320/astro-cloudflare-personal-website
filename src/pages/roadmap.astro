@@ -110,24 +110,54 @@ const schema = {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.4rem;
-    padding: 0;
+    padding: 1.25rem 1.5rem;
     text-decoration: none;
     color: inherit;
-    background: none;
-    border: 0;
-    box-shadow: none;
+    background: var(--gradient-subtle);
+    border: 1px solid var(--gray-800);
+    border-radius: 1.25rem;
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     max-width: 46ch;
+    transition:
+      border-color var(--theme-transition),
+      box-shadow var(--theme-transition),
+      transform var(--theme-transition);
+  }
+
+  .proof-card:hover,
+  .proof-card:focus-visible {
+    border-color: var(--gray-600);
+    box-shadow: var(--shadow-md);
   }
 
   .proof-card:focus-visible {
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
-    border-radius: 0.25rem;
   }
 
   .proof-card:hover .proof-affordance,
   .proof-card:focus-visible .proof-affordance {
     color: var(--gray-0);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .proof-card:hover,
+    .proof-card:focus-visible {
+      transform: translateY(-2px);
+    }
+
+    .proof-card:hover .proof-affordance,
+    .proof-card:focus-visible .proof-affordance {
+      transform: translateX(4px);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .proof-card {
+      border-color: CanvasText;
+    }
   }
 
   .proof-eyebrow {
@@ -167,7 +197,9 @@ const schema = {
     min-height: 44px;
     min-width: 44px;
     box-sizing: border-box;
-    transition: color var(--theme-transition);
+    transition:
+      color var(--theme-transition),
+      transform var(--theme-transition);
   }
 
   @media (min-width: 50em) {
