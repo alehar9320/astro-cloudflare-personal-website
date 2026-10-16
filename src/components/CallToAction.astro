@@ -21,10 +21,11 @@ const {
 
 const flagsEntry = await getEntry('flags', 'config');
 const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
+const isGlowEnabled = flagsEntry?.data.enable_cta_glow_v1 ?? false;
 ---
 
 <a
-  class:list={[{ tactile: isTactileEnabled }]}
+  class:list={[{ tactile: isTactileEnabled, glow: isGlowEnabled }]}
   href={href}
   target={target}
   rel={rel}
@@ -81,6 +82,13 @@ const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
     a:hover,
     a:focus-visible {
       transform: translateY(-2px);
+    }
+
+    a.glow:hover,
+    a.glow:focus-visible {
+      box-shadow:
+        var(--shadow-md),
+        0 0 16px var(--accent-overlay);
     }
   }
 

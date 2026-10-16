@@ -44,3 +44,9 @@ Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
 - Insight: Micro-interactions on primary CTA/affordance links provide tactile feedback and signal interactivity, increasing user engagement.
 - User Target: Delight & Affordance
 - Abort Triggers: None (verified via test and build pipeline).
+
+## 2026-10-13 - CallToAction Button Glow | Signal: Competitive | Lean Implementation: Added subtle cyan box-shadow glow on hover/focus-visible to CallToAction buttons under enable_cta_glow_v1.
+
+- Insight: Subtle glowing box-shadow on primary CTA buttons on hover provides rich feedback and elevates visual polish without causing layout shift.
+- User Target: Delight & Comfort
+- Abort Triggers: None (verified via Playwright video/screenshot and build pipeline).
