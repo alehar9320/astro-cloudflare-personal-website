@@ -44,3 +44,9 @@ Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
 - Insight: Micro-interactions on primary CTA/affordance links provide tactile feedback and signal interactivity, increasing user engagement.
 - User Target: Delight & Affordance
 - Abort Triggers: None (verified via test and build pipeline).
+
+## 2026-10-13 - Work Proof Card Slide | Signal: Competitive | Lean Implementation: Extended subtle translateX(3px) affordance slide on hover/focus-visible to the primary proof card on work.astro under enable_proof_slide_v1.
+
+- Insight: Harmonizing micro-interactions across routed pages provides consistent tactile affordances and delightful feedback on primary case study links.
+- User Target: Delight & Interactivity
+- Abort Triggers: None (verified via test and build pipeline).
