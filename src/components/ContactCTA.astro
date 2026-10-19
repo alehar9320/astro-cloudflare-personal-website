@@ -1,6 +1,10 @@
 ---
+import { getEntry } from 'astro:content';
 import CallToAction from './CallToAction.astro';
 import Icon from './Icon.astro';
+
+const flagsEntry = await getEntry('flags', 'config');
+const isContactTiltEnabled = flagsEntry?.data.enable_contact_tilt_v1 ?? false;
 ---
 
 <aside>
@@ -12,6 +16,7 @@ import Icon from './Icon.astro';
       rel="noopener noreferrer"
       data-hire-event="hire_cta_click"
       data-hire-surface="contact_cta"
+      class:list={[{ 'contact-tilt': isContactTiltEnabled }]}
     >
       Get in touch
       <Icon icon="paper-plane-tilt" size="1.2em" />
@@ -70,6 +75,17 @@ import Icon from './Icon.astro';
 
     .cta-stack {
       align-items: flex-end;
+    }
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .contact-tilt :global(svg) {
+      transition: transform var(--theme-transition);
+    }
+
+    .contact-tilt:hover :global(svg),
+    .contact-tilt:focus-visible :global(svg) {
+      transform: rotate(12deg) scale(1.1);
     }
   }
 

@@ -6,6 +6,8 @@ interface Props {
   target?: string;
   rel?: string;
   download?: boolean | string;
+  class?: string;
+  'class:list'?: unknown;
   'data-hire-event'?: string;
   'data-hire-surface'?: string;
 }
@@ -15,6 +17,8 @@ const {
   target,
   rel,
   download,
+  class: className,
+  'class:list': classList,
   'data-hire-event': dataHireEvent,
   'data-hire-surface': dataHireSurface,
 } = Astro.props;
@@ -24,7 +28,7 @@ const isTactileEnabled = flagsEntry?.data.enable_cta_tactile_v1 ?? false;
 ---
 
 <a
-  class:list={[{ tactile: isTactileEnabled }]}
+  class:list={[{ tactile: isTactileEnabled }, className, classList]}
   href={href}
   target={target}
   rel={rel}
