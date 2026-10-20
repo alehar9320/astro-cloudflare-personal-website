@@ -15,7 +15,7 @@ const currentYear = new Date().getFullYear();
         rel="noopener noreferrer">Sweden</a
       >
     </p>
-    <p>&copy; {currentYear} Alexander Härenstam</p>
+    <p class="copyright">&copy; {currentYear} Alexander Härenstam</p>
     <div class="colophon">
       <a href="/whats-new/">What's New</a>{' · '}<a href="/this-site/">This site</a>
       {' · '}<a href="/roadmap/">What's next</a>
@@ -63,6 +63,12 @@ const currentYear = new Date().getFullYear();
      lightest pixel of the dark footer background (worst case #362e36, 5.80:1). */
   :global(:root.theme-dark) footer {
     --footer-link-rest: var(--gray-300);
+  }
+
+  /* Dark mode: the © line is one step lighter (--gray-300) so it clears 4.5:1 on the
+     lightest pixel of the dark footer background. Light mode keeps --gray-400. */
+  :global(:root.theme-dark) footer .copyright {
+    color: var(--gray-300);
   }
 
   footer a {
