@@ -1,3 +1,19 @@
+## HARD ABORT — no duplicate filing (owner lock 2026-10-20)
+
+Read this before scouting. It overrides any idea below.
+
+- Before you start, search this journal for an entry about the same idea, component, file or feature flag dated in the last 30 days.
+- Also check for an existing branch or open PR for it: `git ls-remote --heads origin` and the open PR list.
+- If either exists, stop and exit the cycle without opening a PR. Do not restack, re-file, re-date, rename or downscope it into a sibling pass.
+
+Known repeats. Never file these again:
+
+- Proof-card slide (`enable_proof_slide_v1`) on any page. Already filed: #1719, #1754, #1758.
+- Any new micro-interaction on `CallToAction.astro` / `ContactCTA.astro` (icon flight, glow, paper-plane tilt; `enable_cta_*`, `enable_contact_tilt_v1`). Already filed: #1734, #1753, #1759.
+- Case back-link or case-navigation slide on `src/pages/work/[...slug].astro` (`enable_back_slide_v1`, `enable_case_nav_slide_v1`). Already filed: #1745, #1760.
+
+---
+
 ## HARD ABORT — inert pills (owner lock 2026-10-10)
 
 Read this before scouting. It overrides any idea below.

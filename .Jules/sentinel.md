@@ -1,3 +1,13 @@
+## HARD ABORT — no duplicate filing (owner lock 2026-10-20)
+
+Read this before scouting. It overrides any idea below.
+
+- Before you start, search this journal for an entry about the same idea, component, file or feature flag dated in the last 30 days.
+- Also check for an existing branch or open PR for it: `git ls-remote --heads origin` and the open PR list.
+- If either exists, stop and exit the cycle without opening a PR. Do not restack, re-file, re-date, rename or downscope it into a sibling pass.
+
+---
+
 ## 2025-05-22 - Zod Runtime Validation Implementation | **Vulnerability:** Unvalidated external data and environment variables could lead to runtime errors or security issues if malformed data is processed. | **Prevention:** Introduced Zod for runtime schema validation of GitHub API responses and PostHog environment variables. Updated AI agent guardrails to enforce Zod runtime validation as a standard practice for all external and untrusted data.
 
 ## 2026-05-23 - Mitigation of ws Uninitialized Memory Disclosure | **Vulnerability:** Uninitialized memory disclosure (GHSA-58qx-3vcg-4xpx) in the `ws` library (used transitively by Wrangler/Miniflare) when a TypedArray is passed as a reason to `websocket.close()`. | **Prevention:** Implemented a dependency override for `ws` to version `^8.20.1` in `package.json`, ensuring the patched version is used across the dependency tree.
