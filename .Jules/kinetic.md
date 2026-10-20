@@ -50,3 +50,12 @@ Prefer distinct motion craft on a live visitor surface that is not CTA glass. Hi
   - Glass Blur: `16px`
   - Affordance: `translateY(-4px)`
   - Glow: `hsla(210, 100%, 45%, 0.3)`
+
+## 2026-03-30 - Northern Lights Experience Timeline Connectors & Glow Nodes
+
+- **Signal:** Standard list bullets on the biography page (`src/pages/biography.astro`) lacked thematic alignment with the personal portfolio's Northern Lights visual identity.
+- **Action:**
+  - Added a Northern Lights linear gradient vertical connector line (`.timeline::before`) to visually bridge milestone entries.
+  - Replaced standard list bullets with glowing cyan pseudo-element nodes (`.timeline > li::before`).
+  - Implemented a hardware-accelerated scale transform (`transform: scale(1.25)`) on node focus and hover states inside `@media (prefers-reduced-motion: no-preference)`.
+  - Added high contrast mode compatibility via `@media (forced-colors: active)`.
