@@ -1,10 +1,12 @@
 ---
-import { getCollection } from 'astro:content';
+import { getCollection, getEntry } from 'astro:content';
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { safeJsonLd } from '../utils/safe-json-ld';
 
+const flagsEntry = await getEntry('flags', 'config');
+const isProofSlideEnabled = flagsEntry?.data.enable_proof_slide_v1 ?? false;
 const projects = await getCollection('work');
 const byId = new Map(projects.map((project) => [project.id, project]));
 const featuredOrder = ['ifs-design-system'] as const;
@@ -95,7 +97,11 @@ const schema = {
           .filter((project) => project.id === 'ifs-design-system')
           .map(() => (
             <section class="proof" aria-label="IFS Design System">
-              <a class="proof-card" href="/work/ifs-design-system/">
+              <a
+                class="proof-card"
+                class:list={[{ 'proof-slide': isProofSlideEnabled }]}
+                href="/work/ifs-design-system/"
+              >
                 <p class="proof-eyebrow">IFS Design System</p>
                 <p class="proof-outcome">From the first version to IFS Cloud.</p>
                 <p class="proof-chips">
@@ -175,12 +181,20 @@ const schema = {
     color: var(--gray-200);
   }
 
+  .proof-card:hover .proof-affordance,
+  .proof-card:focus-visible .proof-affordance {
+    color: var(--gray-0);
+  }
+
   .proof-affordance {
     margin: 0;
     font-size: var(--text-sm);
     color: var(--gray-300);
     text-decoration: underline;
     text-underline-offset: 0.2em;
+    transition:
+      color var(--theme-transition),
+      transform var(--theme-transition);
   }
 
   .earlier {
@@ -250,6 +264,11 @@ const schema = {
     .proof-card:focus-visible {
       transform: translateY(-2px);
       box-shadow: var(--shadow-md);
+    }
+
+    .proof-slide:hover .proof-affordance,
+    .proof-slide:focus-visible .proof-affordance {
+      transform: translateX(3px);
     }
   }
 
