@@ -171,20 +171,24 @@ function keptLinesOf(rawRelease: SiteRelease): string[] {
   return kept;
 }
 
+const ISO_DATE_FORMATTER = new Intl.DateTimeFormat('en-CA', {
+  day: '2-digit',
+  month: '2-digit',
+  timeZone: SITE_TIME_ZONE,
+  year: 'numeric',
+});
+
+const HUMAN_DATE_FORMATTER = new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric',
+  month: 'short',
+  timeZone: SITE_TIME_ZONE,
+  year: 'numeric',
+});
+
 export function formatLatestUpdatesDate(publishedMs: number): { datetime: string; label: string } {
   const date = new Date(publishedMs);
-  const datetime = new Intl.DateTimeFormat('en-CA', {
-    day: '2-digit',
-    month: '2-digit',
-    timeZone: SITE_TIME_ZONE,
-    year: 'numeric',
-  }).format(date);
-  const human = new Intl.DateTimeFormat('en-GB', {
-    day: 'numeric',
-    month: 'short',
-    timeZone: SITE_TIME_ZONE,
-    year: 'numeric',
-  }).format(date);
+  const datetime = ISO_DATE_FORMATTER.format(date);
+  const human = HUMAN_DATE_FORMATTER.format(date);
   return { datetime, label: `Last updated ${human}` };
 }
 
