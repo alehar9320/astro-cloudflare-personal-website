@@ -1,0 +1,47 @@
+---
+import CallToAction from '../../components/CallToAction.astro';
+import Hero from '../../components/Hero.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { getEntry } from 'astro:content';
+
+const flagsEntry = await getEntry('flags', 'config');
+if (!flagsEntry?.data.enable_devex_playbook) return Astro.redirect('/404/');
+---
+
+<BaseLayout title="DevEx Playbook" description="Developer Experience principles." robots="noindex">
+  <main id="main-content" class="wrapper stack gap-8">
+    <Hero title="DevEx Playbook" align="start">
+      <p>
+        Product Manager, Developer Experience at IFS. Principles for building high-velocity
+        developer platforms.
+      </p>
+    </Hero>
+    <ul>
+      <li><strong>Fast Feedback:</strong> Sub-second local loops & automated CI/CD pipelines.</li>
+      <li>
+        <strong>Golden Paths:</strong> Paved routes for security, testing, and deployment defaults.
+      </li>
+      <li>
+        <strong>Telemetry-Driven:</strong> Data-informed prioritization targeting developer friction.
+      </li>
+    </ul>
+    <CallToAction
+      href="https://www.linkedin.com/in/alehar/"
+      target="_blank"
+      rel="noopener noreferrer"
+      data-hire-event="hire_cta_click"
+      data-hire-surface="playbook"
+    >
+      Get in touch
+    </CallToAction>
+  </main>
+</BaseLayout>
+
+<style>
+  ul {
+    display: grid;
+    gap: 0.75rem;
+    padding-left: 1.25rem;
+    color: var(--gray-300);
+  }
+</style>
