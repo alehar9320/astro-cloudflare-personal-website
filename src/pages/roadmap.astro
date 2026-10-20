@@ -1,9 +1,13 @@
 ---
+import { getEntry } from 'astro:content';
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactCTA from '../components/ContactCTA.astro';
 import { safeJsonLd } from '../utils/safe-json-ld';
 import Hero from '../components/Hero.astro';
 import { UPCOMING, stillPromisesFlatten } from '../data/upcoming';
+
+const flagsEntry = await getEntry('flags', 'config');
+const isProofSlideEnabled = flagsEntry?.data.enable_proof_slide_v1 ?? false;
 
 const dek = "What's next on this site. Product Manager, Developer Experience at IFS.";
 const lede =
@@ -66,7 +70,11 @@ const schema = {
         )
       }
       <section class="proof" aria-label="Past proof">
-        <a class="proof-card" href="/work/ifs-design-system/">
+        <a
+          class="proof-card"
+          class:list={[{ 'proof-slide': isProofSlideEnabled }]}
+          href="/work/ifs-design-system/"
+        >
           <p class="proof-eyebrow">IFS Design System</p>
           <p class="proof-outcome">Took the design system from first version to IFS Cloud.</p>
           <p class="proof-chips">
@@ -167,7 +175,16 @@ const schema = {
     min-height: 44px;
     min-width: 44px;
     box-sizing: border-box;
-    transition: color var(--theme-transition);
+    transition:
+      color var(--theme-transition),
+      transform var(--theme-transition);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .proof-slide:hover .proof-affordance,
+    .proof-slide:focus-visible .proof-affordance {
+      transform: translateX(3px);
+    }
   }
 
   @media (min-width: 50em) {
