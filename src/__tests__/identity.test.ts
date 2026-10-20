@@ -327,6 +327,9 @@ describe('identity copy', () => {
     expect(cta).toContain('@media (hover: hover) and (prefers-reduced-motion: no-preference)');
     expect(cta).toContain('.contact-tilt :global(a:hover svg)');
     expect(cta).toContain('.contact-tilt :global(a:focus-visible svg)');
+    // One motion with the .tactile lift: a single ~8deg rotate, no scale (Nick 2026-10-20).
+    expect(cta).toContain('transform: rotate(8deg);');
+    expect(cta).not.toMatch(/contact-tilt[\s\S]*scale\(/);
     expect(callToAction).not.toContain('contact-tilt');
     expect(home).not.toContain('contact-tilt');
     expect(home).not.toContain('ContactCTA');

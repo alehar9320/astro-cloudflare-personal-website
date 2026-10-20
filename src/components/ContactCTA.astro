@@ -80,12 +80,12 @@ const isContactTiltEnabled = flagsEntry?.data.enable_contact_tilt_v1 ?? false;
   /* CallToAction renders the <a>, so reach it with :global() under ContactCTA's own wrapper. */
   @media (hover: hover) and (prefers-reduced-motion: no-preference) {
     .contact-tilt :global(a svg) {
-      transition: transform var(--theme-transition);
+      transition: transform 180ms ease-out;
     }
 
     .contact-tilt :global(a:hover svg),
     .contact-tilt :global(a:focus-visible svg) {
-      transform: rotate(12deg) scale(1.1);
+      transform: rotate(8deg);
     }
   }
 

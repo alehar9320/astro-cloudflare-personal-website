@@ -45,7 +45,7 @@ Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
 - User Target: Delight & Affordance
 - Abort Triggers: None (verified via test and build pipeline).
 
-## 2026-10-19 - Contact Paper Plane Tilt | Signal: Competitive | Lean Implementation: Added subtle rotate(12deg) scale(1.1) on hover/focus-visible to paper-plane icon in ContactCTA.astro under enable_contact_tilt_v1.
+## 2026-10-19 - Contact Paper Plane Tilt | Signal: Competitive | Lean Implementation: Added a subtle rotate(8deg), 180ms ease-out, on hover/focus-visible (no scale, so it reads as one response with the .tactile lift) to paper-plane icon in ContactCTA.astro under enable_contact_tilt_v1.
 
 - Insight: Micro-interactions on key call-to-action icons provide tactile feedback and increase perceived playfulness when getting in touch.
 - User Target: Joy & Comfort
