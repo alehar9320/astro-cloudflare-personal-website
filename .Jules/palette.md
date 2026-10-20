@@ -1,5 +1,19 @@
 # Palette 🎨 - UX & Accessibility Journal
 
+## HARD ABORT — home first-screen hover cap (owner lock 2026-10-12)
+
+- The home first screen has exactly three hover effects: the logo wobble, the Get in touch press, and the proof-card slide. That cap is full.
+- Never add, flag, or "polish" another hover, focus, or motion effect on the home first screen (`src/pages/index.astro`, `Nav.astro`, hero, CTA, proof cards). This includes social-icon bounce, link color transitions, glow, shimmer, tilt, and scale.
+- If your idea adds a hover effect there, stop and open no PR.
+
+## HARD ABORT — PortfolioPreview (owner lock 2026-10-12)
+
+- `src/components/PortfolioPreview.astro`, its two feature flags, and its tests are scheduled for deletion by an owner spec. Never polish, flag, test, zoom, or extend it. Stop and open no PR.
+
+## GUARD — worker-configuration.d.ts (Lead UX lock 2026-10-12)
+
+- Never commit a regenerated `worker-configuration.d.ts` unless the task is a deliberate types bump. Revert it (`git checkout -- worker-configuration.d.ts`) before opening a PR.
+
 ## GUARD — orphaned components (Lead UX lock 2026-10-11)
 
 Read this before proposing any visual or motion change to a component.
