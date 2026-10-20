@@ -65,3 +65,9 @@ Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
 - [Insight 1: Footer navigation links lacked explicit color transitions on hover/focus, which reduced interactive clarity.]
 - [Insight 2: Adding `color var(--theme-transition)` alongside `text-decoration-color` provides high-contrast interactive feedback.]
 - [Delta: 5 lines. Guardrails: All passed autonomously.]
+
+## 2026-10-12 - Header Social External Link Target | Signal: Technical/Accessibility | Lean Implementation: Standardized Target & Rel Attributes
+
+- [Insight 1: External social links in top navigation (`.social` in `Nav.astro`) lacked `target="_blank"` and `rel="noopener noreferrer"`, causing users to navigate away from their active browsing session.]
+- [Insight 2: Standardizing target and security rel attributes across top navigation social links maintains user browsing session context and prevents tab-nabbing vectors.]
+- [Delta: 8 lines. Guardrails: All passed autonomously.]

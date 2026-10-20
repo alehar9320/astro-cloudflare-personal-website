@@ -93,6 +93,8 @@ const isCurrentPage = (href: string) => {
           iconLinks.map(({ href, icon, label, event, surface }) => (
             <a
               href={href}
+              target="_blank"
+              rel="noopener noreferrer"
               class:list={['social', { 'social-bounce': isSocialBounceEnabled }]}
               data-hire-event={event}
               data-hire-surface={surface}
@@ -129,6 +131,8 @@ const isCurrentPage = (href: string) => {
           iconLinks.map(({ href, icon, label, event, surface }) => (
             <a
               href={href}
+              target="_blank"
+              rel="noopener noreferrer"
               class:list={['social', { 'social-bounce': isSocialBounceEnabled }]}
               data-hire-event={event}
               data-hire-surface={surface}

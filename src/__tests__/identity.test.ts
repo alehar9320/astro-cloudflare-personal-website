@@ -487,6 +487,8 @@ describe('identity copy', () => {
     expect(footer).toContain('https://www.linkedin.com/in/alehar/');
     expect(nav).toContain('https://github.com/alehar9320');
     expect(footer).toContain('https://github.com/alehar9320');
+    expect([...nav.matchAll(/target="_blank"/g)]).toHaveLength(2);
+    expect([...nav.matchAll(/rel="noopener noreferrer"/g)]).toHaveLength(2);
     expect(nav).not.toContain('mailto:');
     expect(footer).not.toContain('mailto:');
     expect(nav.toLowerCase()).not.toContain('alexander-harenstam-cv');
