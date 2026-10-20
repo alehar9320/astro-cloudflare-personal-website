@@ -38,7 +38,12 @@ describe('sentry.server.config', () => {
         dsn: 'https://example-dsn@sentry.io/123',
         environment: 'test',
         release: '1.0.0',
-        sendDefaultPii: false,
+        dataCollection: expect.objectContaining({
+          userInfo: false,
+          cookies: false,
+          httpBodies: [],
+          queues: false,
+        }),
         tracesSampleRate: 1.0,
       })
     );
