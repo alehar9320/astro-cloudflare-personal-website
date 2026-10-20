@@ -1,3 +1,15 @@
+## HARD ABORT — Vantage / Engine / Bolt tests-only and micro-optimizations (owner lock 2026-10-12)
+
+Read this before scouting. It overrides any idea below.
+
+- Never open a tests-only PR (new or expanded tests, coverage, mocks) with no visitor-facing change.
+- Never open a micro-optimization PR (hoisting `Intl` formatters, `Map` lookups, string slicing, refactors) with no measurable visitor-facing change.
+- If the change isn't visible to a visitor, stop and exit the cycle without opening a PR. Do not downscope into a sibling pass.
+
+Recent farm runs: #1698, #1690, #1689, #1585, #1567, #1565.
+
+---
+
 # ⚙️ Engine Journal
 
 ## 2025-05-14 - Centralized Chat Logic & Pruning
