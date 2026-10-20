@@ -1,5 +1,5 @@
 ---
-import { type CollectionEntry, getCollection, render } from 'astro:content';
+import { type CollectionEntry, getCollection, getEntry, render } from 'astro:content';
 
 import ContactCTA from '../../components/ContactCTA.astro';
 import Hero from '../../components/Hero.astro';
@@ -95,6 +95,9 @@ const schema = entry
     }
   : null;
 
+const flagsEntry = await getEntry('flags', 'config');
+const isBackSlideEnabled = flagsEntry?.data.enable_back_slide_v1 ?? false;
+
 const shareTitle = entry
   ? `${entry.data.title} | Product Manager, Developer Experience at IFS`
   : undefined;
@@ -115,7 +118,11 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
         <div class:list={['stack gap-15', { 'ds-first-page': entry.id === 'ifs-design-system' }]}>
           <header>
             <div class="wrapper stack gap-2">
-              <a class="back-link" href="/work/">
+              <a
+                class="back-link"
+                class:list={[{ 'back-slide': isBackSlideEnabled }]}
+                href="/work/"
+              >
                 <Icon icon="arrow-left" /> Work
               </a>
               <Hero title={entry.data.title} align="start">
@@ -331,6 +338,19 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
     text-decoration: 1px solid underline transparent;
     text-underline-offset: 0.25em;
     transition: text-decoration-color var(--theme-transition);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .back-slide {
+      transition:
+        text-decoration-color var(--theme-transition),
+        transform var(--theme-transition);
+    }
+
+    .back-slide:hover,
+    .back-slide:focus-visible {
+      transform: translateX(-3px);
+    }
   }
 
   .back-link:hover,

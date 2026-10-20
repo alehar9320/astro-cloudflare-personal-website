@@ -44,3 +44,9 @@ Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
 - Insight: Micro-interactions on primary CTA/affordance links provide tactile feedback and signal interactivity, increasing user engagement.
 - User Target: Delight & Affordance
 - Abort Triggers: None (verified via test and build pipeline).
+
+## 2026-10-15 - Case Back Link Slide | Signal: Competitive | Lean Implementation: Added subtle translateX(-3px) on hover/focus-visible to case study back link in [...slug].astro under enable_back_slide_v1.
+
+- Insight: Micro-interactions on navigation back-links provide directional tactile feedback, increasing navigation clarity and user delight.
+- User Target: Delight & Navigation Clarity
+- Abort Triggers: None (verified via test and build pipeline).
