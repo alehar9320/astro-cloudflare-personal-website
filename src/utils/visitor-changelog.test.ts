@@ -39,6 +39,20 @@ describe('visitor-changelog utilities', () => {
     });
   });
 
+  describe('mappedVisitorTitle single-pass greedy LAST_PR regex', () => {
+    it('extracts the last PR number when multiple issue refs exist in squash line', () => {
+      expect(toVisitorChangelogTitle('Refactor chat (#812) (#817)')).toBe(
+        'Home “Read the case” stays clear of the chat dock'
+      );
+    });
+
+    it('returns undefined gracefully when no PR number or mapped subject matches', () => {
+      expect(toVisitorChangelogTitle('f1a2b3c feat(nav): unknown change without PR')).toBe(
+        'Unknown change without PR'
+      );
+    });
+  });
+
   describe('toVisitorChangelogTitle', () => {
     it('returns empty string for empty input', () => {
       expect(toVisitorChangelogTitle('')).toBe('');

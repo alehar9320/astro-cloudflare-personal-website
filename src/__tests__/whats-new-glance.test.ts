@@ -5,7 +5,11 @@ import { resolve } from 'node:path';
 import { LATEST_RELEASE_SNAPSHOT } from '../data/latest-release';
 import type { SiteRelease } from '../utils/github-releases';
 import { toVisitorChangelogTitle } from '../utils/visitor-changelog';
-import { buildWhatsNewGlance, isKeptVisitorLine } from '../utils/whats-new-glance';
+import {
+  buildWhatsNewGlance,
+  formatLatestUpdatesDate,
+  isKeptVisitorLine,
+} from '../utils/whats-new-glance';
 
 const now = new Date('2026-08-20T18:00:00Z');
 
@@ -25,6 +29,13 @@ function kept(raw: string): boolean {
 }
 
 describe('whats-new glance', () => {
+  it('formats dates accurately for Stockholm timeZone with hoisted formatters', () => {
+    // 2026-08-15 22:30 UTC is 2026-08-16 00:30 in Stockholm (+2 DST)
+    const formatted = formatLatestUpdatesDate(Date.parse('2026-08-15T22:30:00Z'));
+    expect(formatted.datetime).toBe('2026-08-16');
+    expect(formatted.label).toBe('Last updated 16 Aug 2026');
+  });
+
   it('drops JSON-LD, GITHUB_TOKEN, empty notes, and twin-context-only lines', () => {
     expect(kept('feat: add Product Manager to the analytics JSON-LD WebPage name (#604)')).toBe(
       false
