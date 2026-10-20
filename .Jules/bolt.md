@@ -1,3 +1,17 @@
+## HARD ABORT — no duplicate filing (owner lock 2026-10-20)
+
+Read this before scouting. It overrides any idea below.
+
+- Before you start, search this journal for an entry about the same idea, component, file or feature flag dated in the last 30 days.
+- Also check for an existing branch or open PR for it: `git ls-remote --heads origin` and the open PR list.
+- If either exists, stop and exit the cycle without opening a PR. Do not restack, re-file, re-date, rename or downscope it into a sibling pass.
+
+Known repeats. Never file these again:
+
+- Single-pass last-PR extraction, PR regex tweaks, or hoisting `Intl.DateTimeFormat` in `src/utils/visitor-changelog.ts` / `src/utils/whats-new-glance.ts`. Filed seven times across Engine, Bolt and Titan: #1690, #1715, #1716, #1729, #1730, #1731, #1743.
+
+---
+
 2026-05-03 - LCP Optimization for Hero Images
 Learning: Above-the-fold images, such as the portrait hero on the home page and the main project image on work detail pages, are critical for Largest Contentful Paint (LCP). Explicitly setting fetchpriority="high" and decoding="async" ensures the browser prioritizes these assets, improving perceived and actual load performance.
 Action: Added fetchpriority="high" and decoding="async" to the hero images in src/pages/index.astro and src/pages/work/[...slug].astro.

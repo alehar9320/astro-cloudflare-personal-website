@@ -1,3 +1,17 @@
+## HARD ABORT — no duplicate filing (owner lock 2026-10-20)
+
+Read this before scouting. It overrides any idea below.
+
+- Before you start, search this journal for an entry about the same idea, component, file or feature flag dated in the last 30 days.
+- Also check for an existing branch or open PR for it: `git ls-remote --heads origin` and the open PR list.
+- If either exists, stop and exit the cycle without opening a PR. Do not restack, re-file, re-date, rename or downscope it into a sibling pass.
+
+Known repeats. Never file these again:
+
+- Unit tests for the direct-not-found helper / 404 routing. Already filed: #1737, #1749.
+
+---
+
 ## 2026-04-08 - Enforcing Mandatory Alt Text and Increasing Release Coverage | **Learning:** Accessibility must be enforced at the schema level to prevent regression, and API error states often represent significant coverage gaps. | **Action:** Removed `.optional()` from `img_alt` in `src/content.config.ts` and added a test case for non-OK GitHub API responses in `src/__tests__/github-releases.test.ts`.
 
 ## 2026-04-10 - Silencing Compiler Hints on JSON-LD Scripts | **Learning:** The Astro compiler treats scripts with attributes as processed by default; adding the `is:inline` directive for JSON-LD blocks clarifies intent and silences linting hints. | **Action:** Added `is:inline` to the `<script type="application/ld+json">` tags in `src/pages/about.astro` and `src/pages/work/[...slug].astro`.
