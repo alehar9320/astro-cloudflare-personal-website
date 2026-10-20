@@ -8,6 +8,7 @@
 | 2025-03-24 | src/content/work/master-thesis.md | Improved grammatical phrasing in the concluding paragraph                                | Validated   |
 | 2025-03-30 | src/components/Chat.astro, src/utils/chat-logic.ts | Normalized 'IFS design system' to 'IFS Design System' title case for repository-wide terminology alignment | Validated   |
 | 2026-10-11 | src/ (visitor-facing copy)        | Scanned `src/content/**`, `src/pages/**`, and `src/components/**`; no visitor-facing typos found | Validated   |
+| 2026-10-13 | docs/adr/                         | Normalized 'Prod' to 'Production' in ADR 0001 and aligned ADR 0002 title to '# ADR 0002:' header format | Validated   |
 
 ## Spelling Exceptions
 
