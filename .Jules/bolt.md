@@ -53,3 +53,7 @@ Action: Hoisted `Intl.DateTimeFormat` in `src/utils/visit-stats.ts`, `TextEncode
 2026-10-12 - Hoist Static RegExp in safeJsonLd
 Learning: Declaring inline RegExp literals inside repeatedly invoked utility functions like `safeJsonLd` forces V8 / JavaScript engines to re-allocate and re-compile RegExp instances on every call during SSR and static page generation. Hoisting `LESS_THAN_REGEX` to module scope eliminates object creation and compilation overhead per JSON-LD serialization.
 Action: Hoisted `LESS_THAN_REGEX` to module scope in `src/utils/safe-json-ld.ts`.
+
+2026-10-13 - Hoist Static RegExp in Chat Logic and Analytics
+Learning: Declaring inline RegExp literals inside repeatedly invoked runtime functions (`groundedLinkedInHireAnswer`, `isLinkedInHref`, `matchesHireContactCard`) causes JavaScript engines to re-instantiate and re-compile RegExp objects on every function call or DOM event execution. Hoisting static RegExp instances to module scope eliminates object allocation and compilation overhead during chat evaluations and analytics click handling.
+Action: Hoisted `CONTACT_WORD_REGEX` in `src/utils/chat-logic.ts` and `HTTP_PROTOCOL_REGEX` & `WHITESPACE_REGEX` in `src/utils/hire-analytics.ts`.

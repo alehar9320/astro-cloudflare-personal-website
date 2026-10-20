@@ -31,6 +31,12 @@ declare global {
   }
 }
 
+/* Optimization (⚡ Bolt): Hoist static RegExp instances to module scope to avoid re-instantiating
+   RegExp objects on every click event and card element check.
+   Benchmark: Eliminates redundant RegExp compilations during analytics event tracking. */
+const HTTP_PROTOCOL_REGEX = /^https?:\/\//i;
+const WHITESPACE_REGEX = /\s+/g;
+
 /**
  * Nick KR2.1 named action. Filter recipe (do not invent):
  * host me.alehar.workers.dev, PostHog 171414 (eu), exclude $os = Linux,
@@ -41,7 +47,7 @@ declare global {
  */
 function isLinkedInHref(href: string): boolean {
   try {
-    if (!/^https?:\/\//i.test(href.trim())) return false;
+    if (!HTTP_PROTOCOL_REGEX.test(href.trim())) return false;
     const host = new URL(href).hostname.toLowerCase();
     return host === 'linkedin.com' || host.endsWith('.linkedin.com');
   } catch {
@@ -51,7 +57,7 @@ function isLinkedInHref(href: string): boolean {
 
 export function matchesHireContactCard(el: Element): boolean {
   const href = el.getAttribute('href') ?? '';
-  const text = (el.textContent ?? '').replace(/\s+/g, ' ').trim();
+  const text = (el.textContent ?? '').replace(WHITESPACE_REGEX, ' ').trim();
   return isLinkedInHref(href) || text.includes('Get in touch');
 }
 

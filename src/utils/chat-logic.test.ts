@@ -171,6 +171,7 @@ describe('chat logic utilities', () => {
       expect(groundedLinkedInHireAnswer('How do I get in touch on LinkedIn?')).toBe(
         LINKEDIN_HIRE_REPLY
       );
+      expect(groundedLinkedInHireAnswer('contact details')).toBe(LINKEDIN_HIRE_REPLY);
       expect(groundedCannedAnswer('How do I get in touch?')).toBe(LINKEDIN_HIRE_REPLY);
       expect(LINKEDIN_HIRE_REPLY).toBe('Continue on LinkedIn: https://www.linkedin.com/in/alehar/');
       expect(LINKEDIN_HIRE_REPLY.toLowerCase()).not.toMatch(/\b(me|my|i)\b/);
