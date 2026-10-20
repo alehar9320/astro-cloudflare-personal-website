@@ -2,26 +2,37 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import ContactCTA from '../components/ContactCTA.astro';
 import Hero from '../components/Hero.astro';
-import { OBJECTIVES, progressTowardTarget } from '../data/okr-h2-2026';
+import { OBJECTIVES } from '../data/okr-h2-2026';
+import { formatUpdated, getOkrSnapshot } from '../utils/okr-current';
+
+export const prerender = false;
+
+const snapshot = await getOkrSnapshot();
 
 const pageTitle = 'Site success | Product Manager, Developer Experience at IFS';
 const dek = 'How this site is measured through the end of 2026. Progress against real baselines.';
 const lede =
   'How this site is measured through the end of 2026. Progress against baselines — not a career scoreboard.';
-const meta = 'H2 2026 · baselines frozen 29 Aug 2026 · current refreshed weekly';
+const meta =
+  'H2 2026 · baselines frozen 29 Aug 2026 · currents update hourly from GitHub and PostHog';
 ---
 
 <BaseLayout title={pageTitle} ogTitle={pageTitle} description={dek}>
   <div class="stack gap-20">
     <main id="main-content" class="okr-page stack gap-8">
       <Hero title="Site success" tagline={lede} align="start" />
-      <p class="okr-meta">{meta}</p>
+      <p class="okr-meta">
+        {meta}
+      </p>
       {
         OBJECTIVES.map((objective) => (
           <section class="objective" aria-labelledby={objective.id}>
             <h2 id={objective.id}>{objective.title}</h2>
             {objective.results.map((kr) => {
-              const pct = progressTowardTarget(kr);
+              const metric = snapshot.metrics[kr.id];
+              const source = metric?.source ?? (kr.id.startsWith('KR3') ? 'GitHub' : 'PostHog');
+              const updatedAt = metric?.updatedAt ?? null;
+              const updatedLabel = updatedAt ? formatUpdated(updatedAt) : '';
               return (
                 <article class="kr" aria-labelledby={`${kr.id}-label`}>
                   <p class="kr-head">
@@ -35,25 +46,23 @@ const meta = 'H2 2026 · baselines frozen 29 Aug 2026 · current refreshed weekl
                     </div>
                     <div>
                       <dt>Current</dt>
-                      <dd>{kr.currentLabel}</dd>
+                      <dd>{metric?.valueLabel ?? 'No data yet'}</dd>
                     </div>
                     <div>
                       <dt>Target</dt>
                       <dd>{kr.targetLabel}</dd>
                     </div>
                   </dl>
-                  {pct !== null && (
-                    <div
-                      class="kr-bar"
-                      role="progressbar"
-                      aria-valuemin="0"
-                      aria-valuemax="100"
-                      aria-valuenow={Math.round(pct)}
-                      aria-label={`${kr.label} progress`}
-                    >
-                      <span class="kr-bar-fill" style={`width: ${Math.min(100, pct)}%`} />
-                    </div>
-                  )}
+                  <p class="kr-meta">
+                    {kr.window} · Source: {source} ·{' '}
+                    {updatedAt && updatedLabel ? (
+                      <>
+                        Updated <time datetime={updatedAt}>{updatedLabel}</time>
+                      </>
+                    ) : (
+                      'Updated —'
+                    )}
+                  </p>
                   {kr.note && <p class="kr-note">{kr.note}</p>}
                 </article>
               );
@@ -114,9 +123,14 @@ const meta = 'H2 2026 · baselines frozen 29 Aug 2026 · current refreshed weekl
     color: var(--gray-0);
   }
 
-  .kr-window {
+  .kr-window,
+  .kr-meta {
     font-size: var(--text-sm);
     color: var(--gray-300);
+  }
+
+  .kr-meta {
+    margin: 0;
   }
 
   .kr-cols {
@@ -141,31 +155,6 @@ const meta = 'H2 2026 · baselines frozen 29 Aug 2026 · current refreshed weekl
     font-size: var(--text-md);
     color: var(--gray-0);
     overflow-wrap: anywhere;
-  }
-
-  .kr-bar {
-    display: block;
-    height: 0.25rem;
-    width: 100%;
-    background: hsla(var(--gray-999-basis), 0.12);
-    border-radius: 0.25rem;
-    overflow: hidden;
-  }
-
-  .kr-bar-fill {
-    display: block;
-    height: 100%;
-    background: var(--accent-regular);
-    border-radius: 0.25rem;
-  }
-
-  @media (forced-colors: active) {
-    .kr-bar {
-      border: 1px solid CanvasText;
-    }
-    .kr-bar-fill {
-      background-color: Highlight;
-    }
   }
 
   .kr-note,
