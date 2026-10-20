@@ -84,43 +84,38 @@ const schema = {
       <Hero title="Work" tagline="The IFS Design System case, then earlier work." align="start" />
       <div class="tldr-box">
         <p>
-          <strong>TL;DR:</strong>
-          {' '}<strong>Product Manager, Developer Experience</strong> at
-          {' '}<strong>IFS</strong>. Work across <strong>Industrial AI</strong>,{' '}
+          <strong>TL;DR:</strong> <strong>Product Manager, Developer Experience</strong> at{' '}
+          <strong>IFS</strong>. Work across <strong>Industrial AI</strong>,{' '}
           <strong>Developer Experience (DevEx)</strong>, and <strong>design systems</strong>.
         </p>
       </div>
-      {
-        featured
-          .filter((project) => project.id === 'ifs-design-system')
-          .map(() => (
-            <section class="proof" aria-label="IFS Design System">
-              <a class="proof-card" href="/work/ifs-design-system/">
-                <p class="proof-eyebrow">IFS Design System</p>
-                <p class="proof-outcome">From the first version to IFS Cloud.</p>
-                <p class="proof-chips">
-                  <span>Up to 2x faster delivery</span>
-                  <span aria-hidden="true">·</span>
-                  <span>Up to 30x ROI</span>
-                  <span aria-hidden="true">·</span>
-                  <span>Zeroheight runner-up</span>
-                </p>
-                <p class="proof-affordance">Read the case</p>
-              </a>
-            </section>
-          ))
-      }
+      {featured
+        .filter((project) => project.id === 'ifs-design-system')
+        .map(() => (
+          <section class="proof" aria-label="IFS Design System">
+            <a class="proof-card" href="/work/ifs-design-system/">
+              <p class="proof-eyebrow">IFS Design System</p>
+              <p class="proof-outcome">From the first version to IFS Cloud.</p>
+              <p class="proof-chips">
+                <span>Up to 2x faster delivery</span>
+                <span aria-hidden="true">·</span>
+                <span>Up to 30x ROI</span>
+                <span aria-hidden="true">·</span>
+                <span>Zeroheight runner-up</span>
+              </p>
+              <p class="proof-affordance">Read the case</p>
+            </a>
+          </section>
+        ))}
       <section class="earlier" aria-labelledby="earlier-work-heading">
         <h2 id="earlier-work-heading">Earlier work</h2>
         <ul>
-          {
-            earlier.map((project) => (
-              <li>
-                <a href={`/work/${project.id}/`}>{project.data.title}</a>
-                <p>{earlierBlurb[project.id]}</p>
-              </li>
-            ))
-          }
+          {earlier.map((project) => (
+            <li>
+              <a href={`/work/${project.id}/`}>{project.data.title}</a>
+              <p>{earlierBlurb[project.id]}</p>
+            </li>
+          ))}
         </ul>
       </section>
     </main>

@@ -24,20 +24,18 @@ const isZoomEnabled = flagsEntry?.data.portfolio_zoom_v1 ?? false;
   href={`/work/${id}`}
 >
   <span class="title">{data.title}</span>
-  {
-    data.img && (
-      /* Optimization (⚡ Bolt): Explicit width/height attributes reserve aspect ratio box, eliminating CLS during dynamic image loading. Benchmark: Reserves 1472x871 aspect ratio box (CLS=0). */
-      <img
-        src={data.img}
-        alt={data.img_alt || ''}
-        width="1472"
-        height="871"
-        loading={loading}
-        fetchpriority={fetchpriority}
-        decoding="async"
-      />
-    )
-  }
+  {data.img && (
+    /* Optimization (⚡ Bolt): Explicit width/height attributes reserve aspect ratio box, eliminating CLS during dynamic image loading. Benchmark: Reserves 1472x871 aspect ratio box (CLS=0). */
+    <img
+      src={data.img}
+      alt={data.img_alt || ''}
+      width="1472"
+      height="871"
+      loading={loading}
+      fetchpriority={fetchpriority}
+      decoding="async"
+    />
+  )}
 </a>
 
 <style>

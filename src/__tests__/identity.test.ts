@@ -66,7 +66,7 @@ describe('identity copy', () => {
 
   it('keeps spaces around TL;DR strong terms (Astro drops newline-only spaces)', () => {
     const work = sources.find((s) => s.path.endsWith('work.astro'))!.text;
-    expect(work).toContain("{' '}<strong>IFS</strong>");
+    expect(work).toMatch(/\{' '\}\s*<strong>IFS<\/strong>/);
   });
 
   it('keeps the chat FAB off Get in touch on a phone', () => {
@@ -2165,7 +2165,7 @@ describe('identity copy', () => {
     expect(now).not.toContain('replies from me');
     expect(now).toContain('Hero title="Product Manager, Developer Experience at IFS"');
     expect(now.replace(/\s+/g, ' ')).toContain('up to 2x faster delivery');
-    expect(now).toContain('up to 30x ROI');
+    expect(now).toMatch(/up\s+to\s+30x\s+ROI/);
     expect(now).not.toContain('Strategic Pulse');
     expect(now).not.toContain('Driving enterprise AI');
     expect(now).not.toContain('mailto:');

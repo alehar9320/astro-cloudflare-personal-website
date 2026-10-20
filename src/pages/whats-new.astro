@@ -98,70 +98,60 @@ const schema = {
     <main id="main-content" class="glance stack gap-8">
       <Hero title="What's New" tagline={dek} align="start" />
 
-      {
-        glance.thisWeek.length > 0 && (
-          <section class="this-week" aria-labelledby="this-week-heading">
-            <h2 id="this-week-heading">This week</h2>
-            <ul>
-              {glance.thisWeek.map((line) => (
-                <li>{line}</li>
-              ))}
-            </ul>
-          </section>
-        )
-      }
+      {glance.thisWeek.length > 0 && (
+        <section class="this-week" aria-labelledby="this-week-heading">
+          <h2 id="this-week-heading">This week</h2>
+          <ul>
+            {glance.thisWeek.map((line) => (
+              <li>{line}</li>
+            ))}
+          </ul>
+        </section>
+      )}
 
-      {
-        glance.latest && (
-          <section class="this-week" aria-labelledby="latest-updates-heading">
-            <h2 id="latest-updates-heading">Latest updates</h2>
-            <p class="latest-date">
-              <time datetime={glance.latest.datetime}>{glance.latest.label}</time>
-            </p>
-            <ul>
-              {glance.latest.lines.map((line) => (
-                <li>{line}</li>
-              ))}
-            </ul>
-          </section>
-        )
-      }
-
-      {
-        glance.groups.length > 0 && (
-          <section class="last-30" aria-labelledby="last-30-heading">
-            <h2 id="last-30-heading">Last 30 days</h2>
-            <div class="clusters">
-              {glance.groups.map((group) => (
-                <div class="group">
-                  <h3>{group.heading}</h3>
-                  <ul>
-                    {group.lines.map((line) => (
-                      <li>{line}</li>
-                    ))}
-                  </ul>
-                </div>
-              ))}
-            </div>
-          </section>
-        )
-      }
-
-      {
-        noVisitorUpdates && (
-          <p class="updates-unavailable" role="status">
-            {NO_VISITOR_UPDATES_COPY}
+      {glance.latest && (
+        <section class="this-week" aria-labelledby="latest-updates-heading">
+          <h2 id="latest-updates-heading">Latest updates</h2>
+          <p class="latest-date">
+            <time datetime={glance.latest.datetime}>{glance.latest.label}</time>
           </p>
-        )
-      }
+          <ul>
+            {glance.latest.lines.map((line) => (
+              <li>{line}</li>
+            ))}
+          </ul>
+        </section>
+      )}
 
-      {
-        releasesUnavailable && (
-          <p class="updates-unavailable" role="status">
-            {UPDATES_UNAVAILABLE_COPY}
-          </p>
-        )
-      }
+      {glance.groups.length > 0 && (
+        <section class="last-30" aria-labelledby="last-30-heading">
+          <h2 id="last-30-heading">Last 30 days</h2>
+          <div class="clusters">
+            {glance.groups.map((group) => (
+              <div class="group">
+                <h3>{group.heading}</h3>
+                <ul>
+                  {group.lines.map((line) => (
+                    <li>{line}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {noVisitorUpdates && (
+        <p class="updates-unavailable" role="status">
+          {NO_VISITOR_UPDATES_COPY}
+        </p>
+      )}
+
+      {releasesUnavailable && (
+        <p class="updates-unavailable" role="status">
+          {UPDATES_UNAVAILABLE_COPY}
+        </p>
+      )}
 
       <p class="history">
         <a

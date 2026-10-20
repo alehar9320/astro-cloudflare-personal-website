@@ -109,80 +109,75 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
   robots={robots}
 >
   {schema && <script is:inline type="application/ld+json" set:html={safeJsonLd(schema)} />}
-  {
-    entry ? (
-      <div class="stack gap-20">
-        <div class:list={['stack gap-15', { 'ds-first-page': entry.id === 'ifs-design-system' }]}>
-          <header>
-            <div class="wrapper stack gap-2">
-              <a class="back-link" href="/work/">
-                <Icon icon="arrow-left" /> Work
-              </a>
-              <Hero title={entry.data.title} align="start">
-                <div class="details">
-                  <div class="tags">
-                    {entry.data.tags.map((t: unknown) => (
-                      <Pill>{t}</Pill>
-                    ))}
-                  </div>
-                  <p class="description">{entry.data.description}</p>
+  {entry ? (
+    <div class="stack gap-20">
+      <div class:list={['stack gap-15', { 'ds-first-page': entry.id === 'ifs-design-system' }]}>
+        <header>
+          <div class="wrapper stack gap-2">
+            <a class="back-link" href="/work/">
+              <Icon icon="arrow-left" /> Work
+            </a>
+            <Hero title={entry.data.title} align="start">
+              <div class="details">
+                <div class="tags">
+                  {entry.data.tags.map((t: unknown) => (
+                    <Pill>{t}</Pill>
+                  ))}
                 </div>
-              </Hero>
-            </div>
-          </header>
-          <main id="main-content" class="wrapper">
+                <p class="description">{entry.data.description}</p>
+              </div>
+            </Hero>
+          </div>
+        </header>
+        <main id="main-content" class="wrapper">
+          <div
+            class:list={['stack gap-10 content', { 'ds-first': entry.id === 'ifs-design-system' }]}
+          >
+            {entry.data.img && entry.id !== 'ifs-design-system' && (
+              /* Optimization (⚡ Bolt): Explicit width and height attributes reserve intrinsic aspect ratio layout boxes prior to image download, eliminating CLS. Benchmark: Reserves 1472x871 aspect ratio box (CLS=0). */
+              <img
+                src={entry.data.img}
+                alt={entry.data.img_alt || ''}
+                width="1472"
+                height="871"
+                fetchpriority="high"
+                decoding="async"
+              />
+            )}
             <div
               class:list={[
-                'stack gap-10 content',
-                { 'ds-first': entry.id === 'ifs-design-system' },
+                'content',
+                { 'ds-proof': entry.id === 'ifs-design-system', 'earlier-case': earlierCase },
               ]}
             >
-              {entry.data.img && entry.id !== 'ifs-design-system' && (
-                /* Optimization (⚡ Bolt): Explicit width and height attributes reserve intrinsic aspect ratio layout boxes prior to image download, eliminating CLS. Benchmark: Reserves 1472x871 aspect ratio box (CLS=0). */
-                <img
-                  src={entry.data.img}
-                  alt={entry.data.img_alt || ''}
-                  width="1472"
-                  height="871"
-                  fetchpriority="high"
-                  decoding="async"
-                />
-              )}
-              <div
-                class:list={[
-                  'content',
-                  { 'ds-proof': entry.id === 'ifs-design-system', 'earlier-case': earlierCase },
-                ]}
-              >
-                {Content && <Content />}
-              </div>
-              {entry.data.img && entry.id === 'ifs-design-system' && (
-                /* Optimization (⚡ Bolt): Below-the-fold image uses loading="lazy" to defer fetch until scrolled into view, and explicit width/height to eliminate CLS. Benchmark: Defers 20KB fetch on load & reserve aspect ratio box (CLS=0). */
-                <img
-                  src={entry.data.img}
-                  alt={entry.data.img_alt || ''}
-                  width="1472"
-                  height="871"
-                  loading="lazy"
-                  decoding="async"
-                />
-              )}
+              {Content && <Content />}
             </div>
-            {entry.id === 'ifs-design-system' && (
-              <p class="next-case">
-                <a href="/work/ai-coding-copilots/">
-                  Next: Internal AI coding copilots <Icon icon="arrow-right" />
-                </a>
-              </p>
+            {entry.data.img && entry.id === 'ifs-design-system' && (
+              /* Optimization (⚡ Bolt): Below-the-fold image uses loading="lazy" to defer fetch until scrolled into view, and explicit width/height to eliminate CLS. Benchmark: Defers 20KB fetch on load & reserve aspect ratio box (CLS=0). */
+              <img
+                src={entry.data.img}
+                alt={entry.data.img_alt || ''}
+                width="1472"
+                height="871"
+                loading="lazy"
+                decoding="async"
+              />
             )}
-          </main>
-        </div>
-        <ContactCTA />
+          </div>
+          {entry.id === 'ifs-design-system' && (
+            <p class="next-case">
+              <a href="/work/ai-coding-copilots/">
+                Next: Internal AI coding copilots <Icon icon="arrow-right" />
+              </a>
+            </p>
+          )}
+        </main>
       </div>
-    ) : (
-      <NotFoundContent />
-    )
-  }
+      <ContactCTA />
+    </div>
+  ) : (
+    <NotFoundContent />
+  )}
 </BaseLayout>
 
 <style>
