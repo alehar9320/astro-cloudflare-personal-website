@@ -9,14 +9,13 @@ const isContactTiltEnabled = flagsEntry?.data.enable_contact_tilt_v1 ?? false;
 
 <aside>
   <h2>Get in touch on LinkedIn</h2>
-  <div class="cta-stack">
+  <div class:list={['cta-stack', { 'contact-tilt': isContactTiltEnabled }]}>
     <CallToAction
       href="https://www.linkedin.com/in/alehar/"
       target="_blank"
       rel="noopener noreferrer"
       data-hire-event="hire_cta_click"
       data-hire-surface="contact_cta"
-      class:list={[{ 'contact-tilt': isContactTiltEnabled }]}
     >
       Get in touch
       <Icon icon="paper-plane-tilt" size="1.2em" />
@@ -78,13 +77,14 @@ const isContactTiltEnabled = flagsEntry?.data.enable_contact_tilt_v1 ?? false;
     }
   }
 
-  @media (prefers-reduced-motion: no-preference) {
-    .contact-tilt :global(svg) {
+  /* CallToAction renders the <a>, so reach it with :global() under ContactCTA's own wrapper. */
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .contact-tilt :global(a svg) {
       transition: transform var(--theme-transition);
     }
 
-    .contact-tilt:hover :global(svg),
-    .contact-tilt:focus-visible :global(svg) {
+    .contact-tilt :global(a:hover svg),
+    .contact-tilt :global(a:focus-visible svg) {
       transform: rotate(12deg) scale(1.1);
     }
   }
