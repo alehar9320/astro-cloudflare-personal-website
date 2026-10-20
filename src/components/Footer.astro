@@ -53,17 +53,30 @@ const currentYear = new Date().getFullYear();
     text-align: center;
     color: var(--gray-400);
     font-size: var(--text-sm);
+    /* Light mode: one step darker than the footer text so every link clears
+       WCAG AA 4.5:1 on the darkest pixel of the footer background image
+       (worst case #e9e0e8). */
+    --footer-link-rest: var(--gray-300);
+  }
+
+  /* Dark mode: one step lighter (#a3acc8) so every link clears 4.5:1 on the
+     lightest pixel of the dark footer background (worst case #362e36, 5.80:1). */
+  :global(:root.theme-dark) footer {
+    --footer-link-rest: var(--gray-300);
   }
 
   footer a {
-    color: var(--gray-400);
+    color: var(--footer-link-rest);
     text-decoration: 1px solid underline transparent;
     text-underline-offset: 0.25em;
-    transition: text-decoration-color var(--theme-transition);
+    transition:
+      color var(--theme-transition),
+      text-decoration-color var(--theme-transition);
   }
 
   footer a:hover,
   footer a:focus-visible {
+    color: var(--gray-200);
     text-decoration-color: currentColor;
   }
 
@@ -104,6 +117,13 @@ const currentYear = new Date().getFullYear();
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
     border-radius: 0.25rem;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    footer a,
+    .version-link {
+      transition: none;
+    }
   }
 
   .separator {

@@ -483,7 +483,7 @@ describe('identity copy', () => {
     expect(nav).not.toContain('facebook.com');
     expect(footer).not.toContain('instagram.com');
     expect(footer).not.toContain('facebook.com');
-    expect(nav).toContain('https://www.linkedin.com/in/alehar');
+    expect(nav).toContain('https://www.linkedin.com/in/alehar/');
     expect(footer).toContain('https://www.linkedin.com/in/alehar/');
     expect(nav).toContain('https://github.com/alehar9320');
     expect(footer).toContain('https://github.com/alehar9320');
@@ -2697,6 +2697,13 @@ describe('identity copy', () => {
     expect(work).toContain("import ContactCTA from '../components/ContactCTA.astro';");
   });
 
+  it('keeps header Nav LinkedIn href with trailing slash (#1112)', () => {
+    const nav = readFileSync('src/components/Nav.astro', 'utf8');
+    expect(nav).toContain("href: 'https://www.linkedin.com/in/alehar/'");
+    expect(nav).not.toContain("href: 'https://www.linkedin.com/in/alehar',");
+    expect(nav).not.toContain('mailto:');
+  });
+
   it('keeps Biography Get in touch in chrome, not under education (#1103)', () => {
     const page = readFileSync('src/pages/biography.astro', 'utf8');
     const cta = readFileSync('src/components/ContactCTA.astro', 'utf8');
@@ -2764,6 +2771,20 @@ describe('identity copy', () => {
     expect(near).toContain('aria-label="Message"');
     expect(chat).toContain('id="chat-send"');
     expect(chat).toContain('aria-label="Send message"');
+  });
+
+  it('gives the IFS case one onward read to the copilots case (next-case)', () => {
+    const slug = readFileSync('src/pages/work/[...slug].astro', 'utf8');
+    // Whitespace-tolerant: Prettier may wrap the link text onto its own line.
+    const linkAt = slug.search(
+      /href="\/work\/ai-coding-copilots\/"\s*>\s*Next:\s+Internal AI coding copilots/
+    );
+    const mainEnd = slug.indexOf('</main>');
+    expect(linkAt).toBeGreaterThan(-1);
+    expect(linkAt).toBeLessThan(mainEnd);
+    expect(slug).toContain("entry.id === 'ifs-design-system' && (");
+    expect(slug).toContain('class="next-case"');
+    expect(slug.indexOf('<ContactCTA />')).toBeGreaterThan(mainEnd);
   });
 
   it('gives Biography copilots mention a continue to the copilots case', () => {
@@ -3097,5 +3118,20 @@ describe('page and feed descriptions describe the page, not the hire CTA', () =>
     expect(page).toContain('linkedin.com/in/alehar');
     expect(page).not.toContain('mailto:');
     expect(page).toMatch(/\.timeline h3 a\s*\{[^}]*color:\s*inherit;/);
+  });
+});
+
+describe('product manifesto stays dark (Nick)', () => {
+  it('keeps enable_product_manifesto false and /experimental/manifesto/ redirects to /404/', () => {
+    const flags = JSON.parse(readFileSync('src/content/flags/config.json', 'utf8')) as {
+      enable_product_manifesto: boolean;
+    };
+    expect(flags.enable_product_manifesto).toBe(false);
+
+    const manifesto = readFileSync('src/pages/experimental/manifesto.astro', 'utf8');
+    expect(manifesto).toContain(
+      "if (!flags?.data.enable_product_manifesto) return Astro.redirect('/404/')"
+    );
+    expect(manifesto).toContain("Astro.redirect('/404/')");
   });
 });

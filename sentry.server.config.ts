@@ -21,6 +21,7 @@ if (sentryDsn) {
       urlQueryParams: { deny: ['forwarded', '-ip', 'remote-', 'via', '-user'] },
       genAI: { inputs: false, outputs: false },
       databaseQueryData: false,
+      queues: false,
       graphQL: { document: false, variables: false },
     },
     tracesSampleRate: 1.0,

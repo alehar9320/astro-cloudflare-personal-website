@@ -48,6 +48,7 @@ describe('sentry.client.config', () => {
           userInfo: false,
           cookies: false,
           httpBodies: [],
+          queues: false,
         }),
         tracesSampleRate: 1.0,
       })
