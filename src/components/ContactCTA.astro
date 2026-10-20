@@ -1,11 +1,15 @@
 ---
+import { getEntry } from 'astro:content';
 import CallToAction from './CallToAction.astro';
 import Icon from './Icon.astro';
+
+const flagsEntry = await getEntry('flags', 'config');
+const isContactTiltEnabled = flagsEntry?.data.enable_contact_tilt_v1 ?? false;
 ---
 
 <aside>
   <h2>Get in touch on LinkedIn</h2>
-  <div class="cta-stack">
+  <div class:list={['cta-stack', { 'contact-tilt': isContactTiltEnabled }]}>
     <CallToAction
       href="https://www.linkedin.com/in/alehar/"
       target="_blank"
@@ -70,6 +74,18 @@ import Icon from './Icon.astro';
 
     .cta-stack {
       align-items: flex-end;
+    }
+  }
+
+  /* CallToAction renders the <a>, so reach it with :global() under ContactCTA's own wrapper. */
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .contact-tilt :global(a svg) {
+      transition: transform 180ms ease-out;
+    }
+
+    .contact-tilt :global(a:hover svg),
+    .contact-tilt :global(a:focus-visible svg) {
+      transform: rotate(8deg);
     }
   }
 

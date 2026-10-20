@@ -9,5 +9,6 @@
   "enable_cta_tactile_v1": true,
   "enable_social_bounce_v1": false,
   "portfolio_zoom_v1": true,
-  "enable_proof_slide_v1": true
+  "enable_proof_slide_v1": true,
+  "enable_contact_tilt_v1": true
 }
