@@ -27,7 +27,7 @@ const principles = [
 ---
 
 <BaseLayout title="Manifesto" description="Core product principles.">
-  <main class="wrapper stack gap-8" style="margin-top: 4rem;">
+  <main id="main-content" class="wrapper stack gap-8 manifesto-main">
     <Hero
       title="Product Manifesto"
       tagline="Simple primitives for building better products."
@@ -46,6 +46,9 @@ const principles = [
 </BaseLayout>
 
 <style>
+  .manifesto-main {
+    margin-top: 4rem;
+  }
   .grid {
     display: grid;
     gap: 2rem;
@@ -65,5 +68,11 @@ const principles = [
   .card p {
     color: var(--gray-300);
     line-height: 1.5;
+  }
+
+  @media (forced-colors: active) {
+    .card {
+      border-color: CanvasText;
+    }
   }
 </style>

@@ -109,6 +109,20 @@ const schema = {
         </section>
       )}
 
+      {glance.latest && (
+        <section class="this-week" aria-labelledby="latest-updates-heading">
+          <h2 id="latest-updates-heading">Latest updates</h2>
+          <p class="latest-date">
+            <time datetime={glance.latest.datetime}>{glance.latest.label}</time>
+          </p>
+          <ul>
+            {glance.latest.lines.map((line) => (
+              <li>{line}</li>
+            ))}
+          </ul>
+        </section>
+      )}
+
       {glance.groups.length > 0 && (
         <section class="last-30" aria-labelledby="last-30-heading">
           <h2 id="last-30-heading">Last 30 days</h2>
@@ -235,6 +249,11 @@ const schema = {
     .history {
       margin-top: 0.25rem;
     }
+  }
+
+  .latest-date {
+    color: var(--gray-300);
+    margin-bottom: 0.4rem;
   }
 
   .group h3 {

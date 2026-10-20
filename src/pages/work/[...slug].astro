@@ -164,6 +164,13 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
               />
             )}
           </div>
+          {entry.id === 'ifs-design-system' && (
+            <p class="next-case">
+              <a href="/work/ai-coding-copilots/">
+                Next: Internal AI coding copilots <Icon icon="arrow-right" />
+              </a>
+            </p>
+          )}
         </main>
       </div>
       <ContactCTA />
@@ -188,6 +195,17 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
     min-height: 44px;
     min-width: 44px;
     box-sizing: border-box;
+  }
+
+  .next-case {
+    margin-top: 2.5rem;
+  }
+
+  .next-case a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    min-height: 44px;
   }
 
   .details {
@@ -303,6 +321,7 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
   }
 
   .back-link,
+  .next-case a,
   .content :global(a) {
     text-decoration: 1px solid underline transparent;
     text-underline-offset: 0.25em;
@@ -311,12 +330,15 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
 
   .back-link:hover,
   .back-link:focus-visible,
+  .next-case a:hover,
+  .next-case a:focus-visible,
   .content :global(a:hover),
   .content :global(a:focus-visible) {
     text-decoration-color: currentColor;
   }
 
   .back-link:focus-visible,
+  .next-case a:focus-visible,
   .content :global(a:focus-visible) {
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;

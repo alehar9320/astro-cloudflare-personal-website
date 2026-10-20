@@ -6,6 +6,7 @@ import ThemeToggle from './ThemeToggle.astro';
 
 const flagsEntry = await getEntry('flags', 'config');
 const isLogoWobbleEnabled = flagsEntry?.data.enable_logo_wobble_v1 ?? false;
+const isSocialBounceEnabled = flagsEntry?.data.enable_social_bounce_v1 ?? false;
 
 /** Main menu items */
 const textLinks: { label: string; href: string; event?: string; surface?: string }[] = [
@@ -25,7 +26,7 @@ const iconLinks: {
 }[] = [
   {
     label: 'LinkedIn',
-    href: 'https://www.linkedin.com/in/alehar',
+    href: 'https://www.linkedin.com/in/alehar/',
     icon: 'linkedin-logo',
     event: 'linkedin_click',
     surface: 'nav',
@@ -87,7 +88,12 @@ const isCurrentPage = (href: string) => {
     <div class="menu-footer">
       <div class="socials">
         {iconLinks.map(({ href, icon, label, event, surface }) => (
-          <a href={href} class="social" data-hire-event={event} data-hire-surface={surface}>
+          <a
+            href={href}
+            class:list={['social', { 'social-bounce': isSocialBounceEnabled }]}
+            data-hire-event={event}
+            data-hire-surface={surface}
+          >
             <span class="sr-only">{label}</span>
             <Icon icon={icon} />
           </a>
@@ -114,7 +120,12 @@ const isCurrentPage = (href: string) => {
     <div class="menu-footer">
       <div class="socials">
         {iconLinks.map(({ href, icon, label, event, surface }) => (
-          <a href={href} class="social" data-hire-event={event} data-hire-surface={surface}>
+          <a
+            href={href}
+            class:list={['social', { 'social-bounce': isSocialBounceEnabled }]}
+            data-hire-event={event}
+            data-hire-surface={surface}
+          >
             <span class="sr-only">{label}</span>
             <Icon icon={icon} />
           </a>
@@ -570,6 +581,13 @@ const isCurrentPage = (href: string) => {
   }
 
   @media (prefers-reduced-motion: no-preference) {
+    .social-bounce :global(svg) {
+      transition: transform var(--theme-transition);
+    }
+    .social-bounce:hover :global(svg),
+    .social-bounce:focus-visible :global(svg) {
+      transform: translateY(-1px) scale(1.05);
+    }
     .logo-wobble:hover :global(svg) {
       animation: wobble 0.5s ease-in-out;
     }

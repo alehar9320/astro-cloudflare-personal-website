@@ -94,7 +94,8 @@ describe("unmapped dev-shaped squash lines are hidden (Matt's call (b))", () => 
       expect(shouldShowNoVisitorUpdates({ state, releases }, glance)).toBe(true);
       expect(shouldShowUpdatesUnavailable({ state, releases }, glance)).toBe(false);
     }
-    expect(NO_VISITOR_UPDATES_COPY).toBe('No new updates lately. The full history is on GitHub.');
+    expect(NO_VISITOR_UPDATES_COPY).toBe('No new updates lately.');
+    expect(NO_VISITOR_UPDATES_COPY).not.toMatch(/github/i);
     // A genuinely empty list is still neither (#1666).
     expect(shouldShowNoVisitorUpdates({ state: 'fresh', releases: [] }, glance)).toBe(false);
     expect(shouldShowUpdatesUnavailable({ state: 'fresh', releases: [] }, glance)).toBe(false);
@@ -123,6 +124,22 @@ describe("unmapped dev-shaped squash lines are hidden (Matt's call (b))", () => 
     expect(page.indexOf('{NO_VISITOR_UPDATES_COPY}')).toBeLessThan(
       page.indexOf('<p class="history">')
     );
+  });
+
+  it('all-filtered state has one GitHub pointer: the history link (Eden (c), #1699)', () => {
+    const loaded = { state: 'fresh' as const, releases: [rel('- chore: bump deps (#1)')] };
+    const empty = { groups: [], thisWeek: [] };
+    expect(shouldShowNoVisitorUpdates(loaded, empty)).toBe(true);
+    expect(shouldShowUpdatesUnavailable(loaded, empty)).toBe(false);
+    const page = readFileSync('src/pages/whats-new.astro', 'utf8');
+    const between = page.slice(
+      page.indexOf('{NO_VISITOR_UPDATES_COPY}'),
+      page.indexOf('<p class="history">')
+    );
+    // Only the fetch-failure block (mutually exclusive above) sits between them.
+    expect(between.replace(/releasesUnavailable[\s\S]*\}\s*$/, '')).not.toMatch(/github/i);
+    const visible = [NO_VISITOR_UPDATES_COPY, 'Full history on GitHub'].join(' ');
+    expect(visible.match(/GitHub/g)).toHaveLength(1);
   });
 
   it('lets an explicit visitor prefix like "New case:" through the Area: rule', () => {
