@@ -44,3 +44,9 @@ Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
 - Insight: Micro-interactions on primary CTA/affordance links provide tactile feedback and signal interactivity, increasing user engagement.
 - User Target: Delight & Affordance
 - Abort Triggers: None (verified via test and build pipeline).
+
+## 2026-10-13 - Case Navigation Slide | Signal: Competitive | Lean Implementation: Added subtle directional arrow translation (translateX(-3px) on back-link, translateX(3px) on next-case) on hover/focus-visible in work/[...slug].astro under enable_case_nav_slide_v1.
+
+- Insight: Micro-interactions on directional case study navigation links provide immediate tactile feedback and reinforce directional spatial orientation for visitors reading case studies.
+- User Target: Delight & Spatial Affordance
+- Abort Triggers: None (verified via test and build pipeline).

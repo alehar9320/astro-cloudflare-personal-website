@@ -1,5 +1,5 @@
 ---
-import { type CollectionEntry, getCollection, render } from 'astro:content';
+import { type CollectionEntry, getCollection, getEntry, render } from 'astro:content';
 
 import ContactCTA from '../../components/ContactCTA.astro';
 import Hero from '../../components/Hero.astro';
@@ -25,6 +25,9 @@ export async function getStaticPaths() {
 }
 
 const { entry } = Astro.props;
+const flagsEntry = await getEntry('flags', 'config');
+const isCaseNavSlideEnabled = flagsEntry?.data.enable_case_nav_slide_v1 ?? false;
+
 const earlierCase =
   !!entry &&
   [
@@ -115,7 +118,11 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
         <div class:list={['stack gap-15', { 'ds-first-page': entry.id === 'ifs-design-system' }]}>
           <header>
             <div class="wrapper stack gap-2">
-              <a class="back-link" href="/work/">
+              <a
+                class="back-link"
+                class:list={[{ 'case-nav-slide': isCaseNavSlideEnabled }]}
+                href="/work/"
+              >
                 <Icon icon="arrow-left" /> Work
               </a>
               <Hero title={entry.data.title} align="start">
@@ -170,7 +177,10 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
             </div>
             {entry.id === 'ifs-design-system' && (
               <p class="next-case">
-                <a href="/work/ai-coding-copilots/">
+                <a
+                  class:list={[{ 'case-nav-slide': isCaseNavSlideEnabled }]}
+                  href="/work/ai-coding-copilots/"
+                >
                   Next: Internal AI coding copilots <Icon icon="arrow-right" />
                 </a>
               </p>
@@ -348,6 +358,20 @@ const robots = entry?.id === 'lidkoping-stenhuggeri' ? 'noindex' : undefined;
     outline: 2px solid var(--accent-regular);
     outline-offset: 4px;
     border-radius: 0.25rem;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .case-nav-slide :global(svg) {
+      transition: transform var(--theme-transition);
+    }
+    .back-link.case-nav-slide:hover :global(svg),
+    .back-link.case-nav-slide:focus-visible :global(svg) {
+      transform: translateX(-3px);
+    }
+    .next-case .case-nav-slide:hover :global(svg),
+    .next-case .case-nav-slide:focus-visible :global(svg) {
+      transform: translateX(3px);
+    }
   }
 
   @media (max-width: 49.99em) {
