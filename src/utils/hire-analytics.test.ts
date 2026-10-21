@@ -146,6 +146,17 @@ describe('hire-analytics', () => {
     expect(window.dataLayer).toEqual([{ event: 'hire_cta_click', surface: 'nav' }]);
   });
 
+  it('records Contact card for LinkedIn confirm surface fab (#1117)', () => {
+    const capture = vi.fn();
+    window.posthog = { capture };
+    document.body.innerHTML =
+      '<a href="https://www.linkedin.com/in/alehar/" data-hire-event="linkedin_click"' +
+      ' data-hire-surface="fab">Continue on LinkedIn</a>';
+    document.querySelector('a')!.click();
+    expect(window.dataLayer).toEqual([{ event: 'linkedin_click', surface: 'fab' }]);
+    expect(capture).toHaveBeenCalledWith(HIRE_CONTACT_ACTION, { surface: 'fab' });
+  });
+
   it('records linkedin_click surface footer and Contact card for Footer LinkedIn (#1118)', () => {
     const capture = vi.fn();
     window.posthog = { capture };

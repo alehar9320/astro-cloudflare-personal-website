@@ -790,7 +790,8 @@ describe('identity copy', () => {
     expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
     expect(home).not.toContain('mailto:');
     expect(chat).not.toContain('mailto:');
-    expect(chat).not.toContain('data-hire-surface');
+    // Only the LinkedIn confirm primary carries a hire surface (fab, #1117).
+    expect(chat.match(/data-hire-surface/g) ?? []).toHaveLength(1);
   });
 
   it('keeps first paint identity and hire, docks chat until open', () => {
@@ -909,7 +910,8 @@ describe('identity copy', () => {
     expect(home).toContain('Hero title="Product Manager, Developer Experience at IFS"');
     expect(home).not.toContain('mailto:');
     expect(chat).not.toContain('mailto:');
-    expect(chat).not.toContain('data-hire-surface');
+    // Only the LinkedIn confirm primary carries a hire surface (fab, #1117).
+    expect(chat.match(/data-hire-surface/g) ?? []).toHaveLength(1);
   });
 
   it('docks the composer to the bottom edge and uses the stage, not a 62dvh sheet', () => {
@@ -968,7 +970,8 @@ describe('identity copy', () => {
     expect(chat).toContain("I'm an AI with his context.");
     expect(chat).not.toContain('Ask about the work');
     expect(chat).not.toContain('mailto:');
-    expect(chat).not.toContain('data-hire-surface');
+    // Only the LinkedIn confirm primary carries a hire surface (fab, #1117).
+    expect(chat.match(/data-hire-surface/g) ?? []).toHaveLength(1);
     expect(nav).toContain('hsla(var(--gray-999-basis), 0.9)');
     expect(nav).toContain('backdrop-filter: blur(40px) saturate(140%)');
     expect(home).toContain('https://www.linkedin.com/in/alehar/');
@@ -1007,7 +1010,8 @@ describe('identity copy', () => {
     expect(chat).not.toContain("location.href = '/work/");
     expect(chat).not.toContain('location.assign');
     expect(chat).not.toContain('Get in touch');
-    expect(chat).not.toContain('data-hire-surface');
+    // Only the LinkedIn confirm primary carries a hire surface (fab, #1117).
+    expect(chat.match(/data-hire-surface/g) ?? []).toHaveLength(1);
     expect(explore).toContain("title: 'IFS Design System'");
     expect(explore).toContain("line: 'From the first version to IFS Cloud.'");
     expect(explore).toContain("href: '/work/ifs-design-system/'");
@@ -2848,6 +2852,17 @@ describe('identity copy', () => {
     expect(slug.indexOf('<ContactCTA />')).toBeGreaterThan(headerEnd);
     expect(cta).toContain('https://www.linkedin.com/in/alehar/');
     expect(cta).not.toContain('mailto:');
+  });
+
+  it('locks chat LinkedIn confirm primary hire attrs (#1117)', () => {
+    const chat = readFileSync('src/components/Chat.astro', 'utf8');
+    expect(chat).toContain('function appendExploreCard');
+    expect(chat).toMatch(
+      /isLinkedIn[\s\S]{0,600}setAttribute\(\s*['"]data-hire-event['"]\s*,\s*['"]linkedin_click['"]\s*\)/
+    );
+    expect(chat).toMatch(
+      /isLinkedIn[\s\S]{0,800}setAttribute\(\s*['"]data-hire-surface['"]\s*,\s*['"]fab['"]\s*\)/
+    );
   });
 });
 
