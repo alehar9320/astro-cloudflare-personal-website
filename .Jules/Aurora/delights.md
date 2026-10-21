@@ -44,3 +44,9 @@ Wasted runs on orphaned components: #1683, #1125, #1339, #1351, #1363.
 - Insight: Micro-interactions on primary CTA/affordance links provide tactile feedback and signal interactivity, increasing user engagement.
 - User Target: Delight & Affordance
 - Abort Triggers: None (verified via test and build pipeline).
+
+## 2026-10-13 - Social Bounce Activation | Signal: Competitive | Lean Implementation: Enabled enable_social_bounce_v1 feature flag in src/content/flags/config.json to activate header social icon hover bounce micro-interaction.
+
+- Insight: Micro-interactions on header navigation controls provide immediate feedback and elevate perceived site responsiveness and polish.
+- User Target: Joy & Comfort
+- Abort Triggers: None (verified via test and build pipeline).
