@@ -1,35 +1,11 @@
 # Alexander Härenstam LinkedIn Profile
 
-0 notifications total
+> **Redacted public-profile scrape.** Logged-in and private LinkedIn UI (owner-only controls, private boxes and analytics, network suggestions, messaging, viewer follow state) was removed in #1639 and its follow-up. Everything under `context/` is locked by `src/__tests__/context-privacy.test.ts`.
 
-Skip to search
-
-Skip to main content
-
-Keyboard shortcuts
-Close jump menu
-Search
-Home
-My Network
-Jobs
-Messaging
-5
-5 new notifications
-Notifications
-Alexander Härenstam
-Me
-
-For Business
-Try Premium for SEK 0
-Alexander HärenstamStatus is online
 Alexander Härenstam
 (He/Him)
 Product @IFS | Developer Experience
 
-Resources
-
-Add profile section
-Open to
 Background Image
 
 Alexander Härenstam
@@ -43,48 +19,7 @@ IFS
 Chalmers University of Technology
 Greater Stockholm Metropolitan Area Contact info
 500+ connections
-Open to
 
-Add profile section
-
-Enhance profile
-
-Resources
-Open to work
-Product Manager, Frontend Web Developer, Business Analyst, Team Lead and Development Team Lead roles
-
-Show details
-
-Edit
-Tell non-profits you're interested in getting involved with your time and skills
-
-Get started
-
-Suggested for you
-Private to you Private to you
-
-Stand out to employers
-Enhance your profile, craft standout messages, and assess job fit with Premium.
-
-Try Premium for SEK 0
-1-month free trial. Cancel whenever. We’l remind you 7 days before your trial ends.
-
-Dismiss premium promotion
-
-Connect with a Product Manager to achieve your career goals
-Find people who can provide guidance and help you find potential opportunities.
-Search for people
-Analytics
-Private to you Private to you
-
-48 profile views
-Discover who's viewed your profile.
-7 post impressions
-Check out who's engaging with your posts.
-Past 7 days
-37 search appearances
-See how often you appear in search results.
-Show all analytics
 About
 I am a highly motivated professional with a strong track record in product management, business analysis, and software development. With a deep passion for innovation and a keen eye for emerging trends, I am driven to deliver exceptional results and contribute to the success of leading global firms.
 
@@ -135,15 +70,13 @@ info.ifs.com/moment-of-serviceBe your best in your Moment of Service. info.ifs.c
 Activity
 624 followers
 
-Create a post
-
 Posts
 
 Comments
 Loaded 9 Posts
 View Alexander Härenstam’s graphic link
 Alexander Härenstam
-• YouVerified • You
+• Verified
 Product @IFS | Developer Experience
 9mo • Edited • 9 months ago • Edited • Visible to anyone on or off LinkedIn
 
@@ -173,7 +106,7 @@ likelovesupport
 
 View Alexander Härenstam’s graphic link
 Alexander Härenstam
-• YouVerified • You
+• Verified
 Product @IFS | Developer Experience
 10mo • 10 months ago • Visible to anyone on or off LinkedIn
 
@@ -183,7 +116,6 @@ Consumer AI experiences are great, but it's when it's rolled out for hard-to-sol
 …more
 View Christian Pedersen’s graphic link
 Christian Pedersen
-• FollowingPremium • Following
 Chief Product Officer @ IFS | Leader in Industrial AI
 200+ AI-based capabilities now available in IFS Cloud 25R1! With hashtag#IndustrialAI and sustainability at its core, this new release incorporates agentic industrial AI capabilities that enable customers to rapidly drive value from Industrial AI at scale.
 
@@ -213,7 +145,7 @@ IFS is a double-digit growth company in the enterprise software industry.
 
 As Product Manager for Developer Experience at IFS, I set the strategy for the tools and platforms that empower internal engineering teams, global partners, and customers. The work translates to increased efficiency and accelerated time-to-market for the company's offerings.
 
-One key pillar has been the rollout of AI Coding Copilots; a strategic initiative driving business value in the size of several millions.IFS is a double-digit growth company in the enterprise software industry. As Product Manager for Developer Experience at IFS, I set the strategy for the tools and platforms that empower internal engineering teams, global partners, and customers. The work translates to increased efficiency and accelerated time-to-market for the company's offerings. One key pillar has been the rollout of AI Coding Copilots; a strategic initiative driving business value in the size of several millions.…see more
+One key pillar has been the rollout of AI Coding Copilots; a strategic initiative. IFS is a double-digit growth company in the enterprise software industry. As Product Manager for Developer Experience at IFS, I set the strategy for the tools and platforms that empower internal engineering teams, global partners, and customers. The work translates to increased efficiency and accelerated time-to-market for the company's offerings. One key pillar has been the rollout of AI Coding Copilots; a strategic initiative.…see more
 Product Manager - Product Experience (Design System)
 Apr 2022 - Feb 2025 · 2 yrs 1 mosApr 2022 to Feb 2025 · 2 yrs 1 mos
 Gothenburg, Västra Götaland County, Sweden · Hybrid
@@ -227,7 +159,7 @@ Scaling the IFS Design System: Took the platform from 0 to 1 with limited resour
 
 Spearheading the User Behavior Analytics Platform: This key capability for IFS Cloud ensures features are grounded in genuine customer needs, preventing over-engineering and optimizing development resources.
 
-These achievements were made possible through the dedication and talent of the incredible teams I've had the privilege to work with.IFS is a double-digit growth company in the enterprise software industry. As Product Manager for the company design system, I championed the tools and platforms that empowered internal engineering teams, global partners, and customers. The work by the team translated to increased efficiency and accelerated time-to-market for the IFS Cloud ecosystem. A proven track record of delivering quantifiable business value through platform innovation, including but not limited to: Scaling the IFS Design System: Took the platform from 0 to 1 with limited resources, enabling product teams to deliver new functionality 2x faster and generating a financial return of up to 30x the initial investment. This work was recognized as a runner-up in the prestigious Zeroheight Design System Awards. Spearheading the User Behavior Analytics Platform: This key capability for IFS Cloud ensures features are grounded in genuine customer needs, preventing over-engineering and optimizing development resources. These achievements were made possible through the dedication and talent of the incredible teams I've had the privilege to work with.…see more
+These achievements were made possible through the dedication and talent of the incredible teams I've had the privilege to work with. IFS is a double-digit growth company in the enterprise software industry. As Product Manager for the company design system, I championed the tools and platforms that empowered internal engineering teams, global partners, and customers. The work by the team translated to increased efficiency and accelerated time-to-market for the IFS Cloud ecosystem. A proven track record of delivering quantifiable business value through platform innovation, including but not limited to: Scaling the IFS Design System: Took the platform from 0 to 1 with limited resources, enabling product teams to deliver new functionality 2x faster and generating a financial return of up to 30x the initial investment. This work was recognized as a runner-up in the prestigious Zeroheight Design System Awards. Spearheading the User Behavior Analytics Platform: This key capability for IFS Cloud ensures features are grounded in genuine customer needs, preventing over-engineering and optimizing development resources. These achievements were made possible through the dedication and talent of the incredible teams I've had the privilege to work with.…see more
 UX-design, Technological Innovation and +3 skills
 IFS Design System
 Design and development resources for creating the highest quality end-to-end experiences in the enterprise software industry.
@@ -249,7 +181,7 @@ My thesis revolved around business model innovation, and the opportunities and b
 
 1. Academically mapping out what it means to transform a business with the help of digitalization.
 2. Studying a specific business case where digitalization was part of changing the business model.
-3. Identifying the gap between what theory stipulates and the business case at hand.Invativa is a specialist consulting company helping others create and improve their digital business. This is done by identifying how digital technology can be applied to improve the business model; digitalization. My thesis revolved around business model innovation, and the opportunities and barriers that digitalization creates. This was done by: 1) Academically mapping out what it means to transform a business with the help of digitalization. 2) Studying a specific business case where digitalization was part of changing the business model. 3) Identifying the gap between what theory stipulates and the business case at hand.…see more
+3. Identifying the gap between what theory stipulates and the business case at hand. Invativa is a specialist consulting company helping others create and improve their digital business. This is done by identifying how digital technology can be applied to improve the business model; digitalization. My thesis revolved around business model innovation, and the opportunities and barriers that digitalization creates. This was done by: 1) Academically mapping out what it means to transform a business with the help of digitalization. 2) Studying a specific business case where digitalization was part of changing the business model. 3) Identifying the gap between what theory stipulates and the business case at hand.…see more
    Ericsson logo
    Ericsson
    1 yr 3 mos
@@ -279,7 +211,7 @@ My thesis revolved around business model innovation, and the opportunities and b
 6. PWC - advanced Excel
 7. McKinsey&Company - case interview training
 8. IDI - emotional intelligence
-9. H&M - leadership.Activities and societies: I-Academy 2017. A training and development programme for Industrial Engineering and Management students in their 3rd to 5th year. Consists of six workshops during the spring. 1) NOVA - modern recruiting method 2) Trendie - future scenario planning 3) PWC - advanced Excel 4) McKinsey&Company - case interview training 5) IDI - emotional intelligence 6) H&M - leadership.
+9. H&M - leadership. Activities and societies: I-Academy 2017. A training and development programme for Industrial Engineering and Management students in their 3rd to 5th year. Consists of six workshops during the spring. 1) NOVA - modern recruiting method 2) Trendie - future scenario planning 3) PWC - advanced Excel 4) McKinsey&Company - case interview training 5) IDI - emotional intelligence 6) H&M - leadership.
    Through a combination of an advanced level of business management and economics in relation to engineering knowledge, students are trained in analyzing, understanding and skilfully managing innovation processes in companies and other areas of society. The programme focuses on how and why companies innovate to compete and how companies can reap financial returns from their investments in innovation.
    Chalmers University of Technology logo
    Chalmers University of Technology
@@ -325,13 +257,6 @@ Product Management
 Design Thinking
 2 endorsements
 Show all 50 skills
-Recommendations
-
-Received
-Given
-You haven't received a recommendation yet
-Try asking one of your connections to recommend you
-Ask for a recommendation
 Publications
 Business Model Innovation for a digital future (Master Thesis)
 Chalmers University of Technology · Jan 1, 2017
@@ -382,85 +307,14 @@ Groups
 Newsletters
 Schools
 Cassie Kozyrkov
-· 2ndSecond degree connection
 CEO, Google's first Chief Decision Scientist, AI Adviser, Decision Strategist, Keynote Speaker (makecassietalk.com), LinkedIn Top Voice
 688,604 followers
-
-Following
 Marc Randolph
-· 3rdThird degree connection
 Netflix Co-Founder, Entrepreneur, Mentor & Investor
 386,22 followers
-
-Following
 Show all Top Voices
 Profile language
 Svenska
 
 Public profile & URL
 ww.linkedin.com/in/alehar
-
-Who your viewers also viewed
-Private to you Private to you
-
-Product Manager at IFS
-
-View
-Software Developer at SeenThis
-
-View
-Program Manager at IFS
-
-View
-Technology Manager at IFS
-
-View
-People you may know
-From your industry
-
-Pete Trainor
-CEO-Tested Technology Transformation Executive | Enterprise AI & Operating Model Redesign | Board & Governance Experience
-
-Connect
-Fredrik Luvö
-System Developer at Specter AB
-
-Connect
-Johan Andtbacka
-Product Architect på IFS
-
-Connect
-Tommy Gatland
-Senior konsulent på Sharecat
-
-Connect
-Malin Pekkari
-Head of AI Operations
-
-Connect
-Show all
-You might like
-Pages for you
-
-Rootcode logo
-Rootcode
-Information Technology & Services
-67,095 followers
-
-1 connection works here
-
-Follow
-MillenniumIT ESP logo
-MillenniumIT ESP
-IT Services and IT Consulting
-70,693 followers70693 followers
-
-4 connections follow this page
-
-Follow
-Show all
-Alexander HärenstamStatus is online
-MessagingYou are on the messaging overlay. Press enter to open the list of conversations.
-
-Compose message
-You are on the messaging overlay. Press enter to open the list of conversations.

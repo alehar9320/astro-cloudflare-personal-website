@@ -13,6 +13,140 @@ export type VisitorChangelogEntry = {
 /** Known shipped PRs on this site. Do not invent work that is not in the feed. */
 export const VISITOR_CHANGELOG: readonly VisitorChangelogEntry[] = [
   {
+    pr: 864,
+    subject: 'Fix biography IFS Design System proof link hit target and mobile dock clearance',
+    title: 'The IFS Design System link on Biography is easier to tap, including on phones',
+  },
+  {
+    pr: 825,
+    subject: 'Quiet Contact hire line to LinkedIn; no twin-mouth',
+    title: 'Contact names one hire path: LinkedIn',
+  },
+  {
+    pr: 823,
+    subject: 'Cold-land Work/case so shared proof is a real site entry',
+    title: 'Case pages opened from a shared link now show a way back to Work on phones',
+  },
+  {
+    pr: 819,
+    subject: 'What’s New: denser desktop Last-30 so lines clear composer',
+    title: 'What’s New fits more updates above the chat dock on desktop',
+  },
+  {
+    pr: 817,
+    subject: 'Raise home Read the case 44x44 hit-box clear of dock',
+    title: 'Home “Read the case” stays clear of the chat dock',
+  },
+  {
+    pr: 815,
+    subject: 'Keep home Read the case clear of the docked composer',
+    title: 'Home “Read the case” stays clear of the chat dock',
+  },
+  {
+    pr: 1167,
+    subject: 'What’s New: hiring visitors read outcome lines, not eng shorthand',
+    title: 'What’s New now describes each update in plain language',
+  },
+  {
+    pr: 945,
+    subject: "in-sentence What's New link to /whats-new/",
+    title: 'The “This site” page now links to What’s New',
+  },
+  {
+    pr: 1020,
+    subject:
+      'Hiring managers on the copilots case get a continue to IFS Design System proof, not a circular stub',
+    title: 'The AI coding copilots case now ends with a link to the IFS Design System case',
+  },
+  {
+    pr: 1019,
+    subject: 'quiet open welcome h2 to AI twin',
+    title: 'Open chat shows a quieter “AI twin” heading',
+  },
+  {
+    pr: 1107,
+    subject: 'drop in-body LinkedIn; keep chrome ContactCTA',
+    title: 'Biography ends with a single LinkedIn link',
+  },
+  {
+    pr: 1116,
+    subject: 'Analytics: Get in touch from chrome only',
+    title: 'The user behavior analytics case ends with a single LinkedIn link',
+  },
+  {
+    pr: 1110,
+    subject: 'Copilots: Get in touch from chrome only',
+    title: 'The AI coding copilots case ends with a single LinkedIn link',
+  },
+  {
+    pr: 1109,
+    subject: 'drop in-body hire-cta; keep chrome ContactCTA',
+    title: 'Work ends with a single LinkedIn link',
+  },
+  {
+    pr: 1642,
+    subject: 'drop thesis in-body Get in touch; add 404 to HireSurface',
+    title: 'The master thesis case ends with a single LinkedIn link',
+  },
+  {
+    pr: 983,
+    subject:
+      'Visitors on the IFS Design System case take Get in touch from chrome, not a second primary under the H1',
+    title: 'The IFS Design System case ends with a single LinkedIn link',
+  },
+  {
+    pr: 1034,
+    subject: 'link copilots mention to the case',
+    title: 'Biography links the AI coding copilots mention to its case',
+  },
+  {
+    pr: 1035,
+    subject: 'link M.Sc. row to master-thesis case',
+    title: 'Biography links the M.Sc. entry to the master thesis case',
+  },
+  {
+    pr: 1635,
+    subject: 'align leftover hire hint to LinkedIn',
+    title: 'The 404 page hint now just says LinkedIn',
+  },
+  // Vera 6098150386: real visitor changes that Matt's call (b) would otherwise hide. Eden FINAL.
+  {
+    pr: 943,
+    subject: 'name the message field for screen readers',
+    title: 'Screen readers now announce the chat message field',
+  },
+  {
+    pr: 1033,
+    subject: 'remove theme-toggle tactile press scale',
+    title: 'The theme toggle no longer shrinks when pressed',
+  },
+  {
+    pr: 1223,
+    subject: '44px Menu button hit target',
+    title: 'The Menu button is easier to tap on phones',
+  },
+  {
+    pr: 1634,
+    subject: 'start desktop open stage below the header nav',
+    title: 'With chat open on a laptop, the header nav links stay clickable',
+  },
+  {
+    pr: 939,
+    subject: 'Give laptop open chat a conversation stage under the header',
+    title: 'On a laptop, open chat sits under the header instead of covering the whole page',
+  },
+  {
+    pr: 1643,
+    subject: 'case meta descriptions describe the case, not the hire CTA',
+    title: 'Shared Work case links now preview what each case is about',
+  },
+  {
+    pr: 1644,
+    subject: 'page and feed descriptions describe the page, not the hire CTA',
+    title:
+      'Shared links to Home, Biography, Work and Contact, and the RSS feed, now describe the page itself',
+  },
+  {
     pr: 524,
     subject: 'rewrite What’s New for visitors',
     title: 'What’s New rewritten for visitors',
@@ -173,14 +307,45 @@ const BY_PR = new Map(VISITOR_CHANGELOG.map((entry) => [entry.pr, entry.title]))
 const BY_SUBJECT = new Map(
   VISITOR_CHANGELOG.map((entry) => [entry.subject.toLowerCase(), entry.title])
 );
+/** Titles from VISITOR_CHANGELOG, so a second toVisitorRelease pass still knows a line is mapped. */
+const MAPPED_TITLES = new Set(VISITOR_CHANGELOG.map((entry) => entry.title.toLowerCase()));
 
 const SHA_PREFIX = /^[a-f0-9]{7,40}\s+/i;
 const CONVENTIONAL_PREFIX =
   /^(feat|fix|chore|docs|refactor|test|style|perf|build|ci)(\([^)]+\))?:\s*/i;
-const PR_SUFFIX = /\s*\(#(\d+)\)\s*$/;
+const PR_SUFFIX = /(?:\s*\(#\d+\))+\s*$/;
+/** Dev-only lines What's New must not show: docs/context-only commits and scrape/redaction wording. */
+const DEV_ONLY_ITEM =
+  /^(?:[a-f0-9]{7,40}\s+)?docs(?:\((?:context|readme|agents)\))?!?:|\bscrape\b|\bredaction\b/i;
+/** A #NNN ref still left after the trailing (#PR) is stripped (e.g. "(#1639 follow-up)", "/work/ #1109 nits"). */
+const INLINE_ISSUE_REF = /#\d+/;
+/**
+ * Matt's call (b), #1163: an UNMAPPED line is dev-shaped (hidden) when it still has a
+ * conventional prefix or an "Area:" prefix (e.g. "What’s New:", "Analytics:"), or a code token:
+ * #NNN, a file path, backticks, or dev words. Mapped VISITOR_CHANGELOG rows always render.
+ */
+const AREA_PREFIX = /^(?:[\p{L}\d’'&/-]+\s){0,2}[\p{L}\d’'&/-]+:\s/u;
+/** Visitor-surface prefixes that may look like "Area:" but name a visitor thing (Johan 6098040346). */
+// Page names count too (Vera 6098150386). What’s New: is deliberately absent, so #1167's raw
+// subject stays hidden.
+const VISITOR_PREFIX =
+  /^(?:(?:new|updated)\s+(?:case|case study|page|post|project|section|talk)s?|home|biography|work|contact|this site):\s/i;
+const FILE_PATH =
+  /`|\b[\w-]+\.(?:ts|tsx|js|mjs|cjs|astro|md|mdx|json|css|ya?ml|toml|html)\b|(?:^|\s)\.?\/?(?:src|public|scripts|context|docs|tests?)\/|(?:^|\s)\/[\w.-]+\//i;
+const DEV_WORD =
+  /\b(?:scrape|redaction|shorthand|regex|lint|eslint|prettier|posthog|tsconfig|wrangler|dependabot|deps?|bump|refactor|fixture|mock|stub|ssr|kv)\b/i;
+// Matt (#1163): bare 'workflow'/'context' are not dev words on their own; context/ paths are
+// still caught by FILE_PATH, and real visitor lines go through VISITOR_CHANGELOG rows.
+/** "CI" only as an uppercase whole word, so visitor words that contain "ci" are never hit. */
+const DEV_WORD_UPPER = /\bCI\b/;
+/* Optimization (⚡ Bolt): Hoist PR_MATCH_REGEX and SPACES_REGEX to avoid dynamic RegExp instantiations on edge changelog title processing.
+   Benchmark: Eliminates redundant regex creation during visitor title mapping. */
+/** Every `(#N)` group; the lookup uses the LAST one, which is the squash PR (earlier ones are issue refs). */
+const PR_MATCH_REGEX = /\(#(\d+)\)/g;
+const MULTI_SPACES_REGEX = /\s{2,}/g;
 
 /**
- * Strip SHA, conventional-commit type, and trailing (#123) from a changelog line.
+ * Strip SHA, conventional-commit type, and all trailing (#123) suffixes from a changelog line.
  */
 export function stripChangelogChrome(raw: string): string {
   return raw
@@ -188,7 +353,7 @@ export function stripChangelogChrome(raw: string): string {
     .replace(SHA_PREFIX, '')
     .replace(CONVENTIONAL_PREFIX, '')
     .replace(PR_SUFFIX, '')
-    .replace(/\s{2,}/g, ' ')
+    .replace(MULTI_SPACES_REGEX, ' ')
     .trim();
 }
 
@@ -197,8 +362,49 @@ function titleCaseFirst(text: string): string {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-const INTERNAL_CHANGELOG_ITEM =
-  /\bjules\b|\bagent[- ]farm\b|\bjohan nits\b|\bengine\b|\bbolt\b|\bgoogle-labs-jules\b|\bprune\b|\bparser\b/i;
+export const INTERNAL_CHANGELOG_ITEM =
+  /\b(palette|oracle|scribe|sentinel|vantage|bolt|jules|kinetic|engine|prism|apex|aurora|janitor|observabilityclerk|stuntdouble|stunt[- ]double|archie)\b|\bcontent:\s*|[🎨🔮✍️🛡️🔍⚡🐱⚙️👩‍🚀👨‍💼❤️🧹📋🎭🏛️🧑‍🎓]|\bagent[- ]farm\b|\bgoogle-labs-jules\b|\bjohan nits\b|\bprune\b|\bparser\b|\bunit[- ]test\b|\bcoverage\b|\bvisitor[- ]changelog\b|\btest[- ]only\b|\bvitest\b|\bplaywright\b|\bposthog\b|\b(?:hire|tap) tracking\b/i;
+const BULLET_PREFIX = /^[-*+]\s+/;
+
+/**
+ * The VISITOR_CHANGELOG title for a raw line (by its LAST `(#N)`, then by subject), or for a line
+ * that already is a mapped title. Undefined when the line is unmapped.
+ */
+export function mappedVisitorTitle(raw: string): string | undefined {
+  const trimmed = raw.trim();
+  if (!trimmed) return undefined;
+  let lastPr: string | undefined;
+  for (const match of trimmed.matchAll(PR_MATCH_REGEX)) lastPr = match[1];
+  if (lastPr) {
+    const byPr = BY_PR.get(Number(lastPr));
+    if (byPr) return byPr;
+  }
+  const bySubject = BY_SUBJECT.get(stripChangelogChrome(trimmed).toLowerCase());
+  if (bySubject) return bySubject;
+  return MAPPED_TITLES.has(trimmed.toLowerCase()) ? trimmed : undefined;
+}
+
+/**
+ * Matt's call (b): true when an UNMAPPED line still reads as an engineering squash (conventional or
+ * "Area:" prefix, #NNN, file path, backticks, dev words). Mapped lines are never dev-shaped.
+ */
+export function isDevShapedUnmappedLine(raw: string): boolean {
+  return !mappedVisitorTitle(raw) && isDevShapedLine(raw);
+}
+
+/** The dev-shape check alone, ignoring VISITOR_CHANGELOG (so tests can treat a mapped line as unmapped). */
+export function isDevShapedLine(raw: string): boolean {
+  const noSha = raw.trim().replace(SHA_PREFIX, '');
+  if (CONVENTIONAL_PREFIX.test(noSha)) return true;
+  if (AREA_PREFIX.test(noSha) && !VISITOR_PREFIX.test(noSha)) return true;
+  const subject = stripChangelogChrome(raw);
+  return (
+    INLINE_ISSUE_REF.test(subject) ||
+    FILE_PATH.test(subject) ||
+    DEV_WORD.test(subject) ||
+    DEV_WORD_UPPER.test(subject)
+  );
+}
 
 /**
  * Visitor sentence for a changelog item. Lookup known shipped PRs, else sanitize.
@@ -208,16 +414,10 @@ export function toVisitorChangelogTitle(raw: string): string {
   const trimmed = raw.trim();
   if (!trimmed) return trimmed;
 
-  const prMatch = trimmed.match(/\(#(\d+)\)/);
-  if (prMatch) {
-    const mapped = BY_PR.get(Number(prMatch[1]));
-    if (mapped) return mapped;
-  }
+  const mapped = mappedVisitorTitle(trimmed);
+  if (mapped) return mapped;
 
   const subject = stripChangelogChrome(trimmed);
-  const bySubject = BY_SUBJECT.get(subject.toLowerCase());
-  if (bySubject) return bySubject;
-
   if (subject === trimmed) return trimmed;
   if (!subject) return titleCaseFirst(trimmed.replace(SHA_PREFIX, '').trim());
   return titleCaseFirst(subject);
@@ -225,21 +425,51 @@ export function toVisitorChangelogTitle(raw: string): string {
 
 /**
  * Rewrite a GitHub release body so list items are visitor copy, not SHA + feat + (#PR).
+ * Optimization: Uses pointer-based line scanning (`indexOf('\n', startPos)`) and a single-pass
+ * transformation loop to eliminate `body.split('\n')` array allocations and dual iteration overhead on edge SSR requests.
  */
 export function toVisitorReleaseBody(body: string): string {
-  const items = body
-    .split('\n')
-    .map((line) => line.trim())
-    .filter((line) => /^[-*+]\s+/.test(line))
-    .map((line) => line.replace(/^[-*+]\s+/, ''))
-    .filter((message) => !INTERNAL_CHANGELOG_ITEM.test(message));
+  const result: string[] = [];
+  let startPos = 0;
+  let hadBullets = false;
+  const len = body.length;
 
-  if (items.length === 0) {
-    const trimmed = body.trim();
-    return trimmed ? toVisitorChangelogTitle(trimmed) : '';
+  while (startPos < len) {
+    let nextNewline = body.indexOf('\n', startPos);
+    if (nextNewline === -1) {
+      nextNewline = len;
+    }
+
+    let line = body.slice(startPos, nextNewline);
+    if (line.endsWith('\r')) {
+      line = line.slice(0, -1);
+    }
+    startPos = nextNewline + 1;
+
+    const trimmed = line.trim();
+    if (!BULLET_PREFIX.test(trimmed)) continue;
+
+    hadBullets = true;
+    const message = trimmed.replace(BULLET_PREFIX, '');
+    if (
+      !INTERNAL_CHANGELOG_ITEM.test(message) &&
+      !DEV_ONLY_ITEM.test(message) &&
+      !isDevShapedUnmappedLine(message)
+    ) {
+      const title = toVisitorChangelogTitle(message);
+      if (!INLINE_ISSUE_REF.test(title)) result.push(`- ${title}`);
+    }
   }
 
-  return items.map((message) => `- ${toVisitorChangelogTitle(message)}`).join('\n');
+  if (result.length === 0) {
+    if (hadBullets) return '';
+    const trimmed = body.trim();
+    return trimmed && !INTERNAL_CHANGELOG_ITEM.test(trimmed)
+      ? toVisitorChangelogTitle(trimmed)
+      : '';
+  }
+
+  return result.join('\n');
 }
 
 /**
