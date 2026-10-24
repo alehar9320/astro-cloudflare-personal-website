@@ -29,7 +29,7 @@
     "@sentry/cloudflare": "^10.75.3",
     "astro": "^7.3.8",
     "posthog-js": "^1.438.7",
-    "wrangler": "^4.127.1",
+    "wrangler": "^4.151.1",
     "zod": "^4.6.5"
   },
   "devDependencies": {
