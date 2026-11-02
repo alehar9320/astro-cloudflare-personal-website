@@ -1,6 +1,7 @@
 ---
 import '../styles/global.css';
 import PostHog from './PostHog.astro';
+import { withBrandName } from '../utils/share-title';
 
 interface Props {
   title?: string | undefined;
@@ -19,7 +20,7 @@ const {
   canonicalUrl: canonicalUrlProp,
   robots,
 } = Astro.props;
-const shareTitle = ogTitle ?? title;
+const shareTitle = withBrandName(ogTitle ?? title);
 const shareImage = 'https://me.alehar.workers.dev/assets/portrait.png';
 const liveOrigin = 'https://me.alehar.workers.dev';
 const canonicalUrl = canonicalUrlProp ?? new URL(Astro.url.pathname, liveOrigin).href;
@@ -32,21 +33,27 @@ const shareUrl = shareUrlProp ?? canonicalUrl;
 <meta name="generator" content={Astro.generator} />
 <meta name="referrer" content="strict-origin-when-cross-origin" />
 {robots && <meta name="robots" content={robots} />}
-<title>{title}</title>
+<title>{withBrandName(title)}</title>
 
 <!-- Open Graph / Facebook -->
 <meta property="og:type" content="website" />
+<meta property="og:site_name" content="Alexander Härenstam" />
 <meta property="og:url" content={shareUrl} />
 <link rel="canonical" href={canonicalUrl} />
 <meta property="og:title" content={shareTitle} />
 <meta property="og:image" content={shareImage} />
+<meta property="og:image:width" content="800" />
+<meta property="og:image:height" content="800" />
+<meta property="og:image:type" content="image/png" />
+<meta property="og:image:alt" content="Alexander Härenstam" />
 
 <!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:card" content="summary" />
 <meta name="twitter:url" content={shareUrl} />
 <meta name="twitter:title" content={shareTitle} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={shareImage} />
+<meta name="twitter:image:alt" content="Alexander Härenstam" />
 
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 <link rel="icon" href="/favicon.ico" />
