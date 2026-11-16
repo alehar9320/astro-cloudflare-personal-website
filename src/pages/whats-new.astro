@@ -19,6 +19,7 @@ import {
 
 interface Bindings {
   GITHUB_TOKEN?: string;
+  CHAT_STORE?: KVNamespace;
 }
 
 function readEnv(): Bindings {
@@ -31,11 +32,13 @@ function readEnv(): Bindings {
 }
 
 const token = readEnv().GITHUB_TOKEN?.trim();
-// A failed GitHub fetch is not "nothing shipped": serve the isolate's last good list or the
-// build-time snapshot, else a neutral line. Only a genuinely empty list uses the old snapshot.
-const loaded = await loadWhatsNewReleases({ token });
-const fetchFailed =
-  loaded.state === 'stale' || loaded.state === 'snapshot' || loaded.state === 'error';
+const kv = readEnv().CHAT_STORE;
+// A failed GitHub fetch is not "nothing shipped": serve the isolate's last good list, the
+// CHAT_STORE KV list or the build-time snapshot, else a neutral line. Only a genuinely empty
+// list uses the old snapshot.
+const loaded = await loadWhatsNewReleases({ token, kv });
+// Only "nothing to fall back to" skips caching; stale/snapshot/KV lists render a dated page.
+const fetchFailed = loaded.state === 'error';
 if (fetchFailed) Astro.response.headers.set('Cache-Control', 'no-store');
 const baseReleases =
   loaded.releases.length > 0 ? loaded.releases : fetchFailed ? [] : [LATEST_RELEASE_SNAPSHOT];

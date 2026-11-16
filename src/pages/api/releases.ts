@@ -1,8 +1,8 @@
 import type { APIRoute } from 'astro';
 import { env } from 'cloudflare:workers';
-import { LATEST_RELEASE_SNAPSHOT } from '../../data/latest-release';
-import { fetchGitHubReleases, type SiteRelease } from '../../utils/github-releases';
+import type { SiteRelease } from '../../utils/github-releases';
 import { toVisitorRelease } from '../../utils/visitor-changelog';
+import { loadWhatsNewReleases } from '../../utils/whats-new-releases';
 
 // toVisitorRelease formats each release using toVisitorChangelogTitle
 
@@ -19,6 +19,7 @@ export const prerender = false;
 
 export interface ReleasesEnv {
   GITHUB_TOKEN?: string;
+  CHAT_STORE?: KVNamespace;
 }
 
 function readEnv(): ReleasesEnv {
@@ -38,13 +39,13 @@ export const GET: APIRoute = async () => {
   try {
     const bindings = readEnv();
     const token = bindings.GITHUB_TOKEN?.trim();
-    const fetched = await fetchGitHubReleases(fetch, undefined, token ? { token } : undefined);
-    const baseReleases = fetched.length > 0 ? fetched : [LATEST_RELEASE_SNAPSHOT];
-    return new Response(JSON.stringify(visitorReleases(baseReleases)), { headers: jsonHeaders });
+    const kv = bindings.CHAT_STORE;
+    // Same loader as /whats-new/ (#1776): isolate memory, CHAT_STORE KV, GitHub, build
+    // snapshot. Nothing to serve is [], never the hardcoded Aug 15 stub.
+    const loaded = await loadWhatsNewReleases({ token, kv });
+    return new Response(JSON.stringify(visitorReleases(loaded.releases)), { headers: jsonHeaders });
   } catch (error: unknown) {
     console.error({ event: 'releases_api_error', error: String(error) });
-    return new Response(JSON.stringify(visitorReleases([LATEST_RELEASE_SNAPSHOT])), {
-      headers: jsonHeaders,
-    });
+    return new Response(JSON.stringify([]), { headers: jsonHeaders });
   }
 };

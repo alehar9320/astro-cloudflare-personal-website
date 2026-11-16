@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { LATEST_RELEASE_SNAPSHOT } from '../data/latest-release';
@@ -7,6 +8,9 @@ import { buildWhatsNewGlance } from '../utils/whats-new-glance';
 import {
   FRESH_MS,
   loadWhatsNewReleases,
+  RELEASES_KV_FRESH_MS,
+  RELEASES_KV_KEY,
+  RELEASES_KV_TTL_SECONDS,
   parseReleasesSnapshot,
   resetWhatsNewReleasesMemory,
   shouldShowUpdatesUnavailable,
@@ -27,6 +31,20 @@ const apiRelease = {
   tag_name: '2026.10.09.0900',
 };
 const SNAPSHOT: SiteRelease[] = parseReleasesSnapshot([apiRelease]);
+
+const OLD: SiteRelease[] = parseReleasesSnapshot([
+  { ...apiRelease, published_at: '2026-08-15T17:20:18Z' },
+]);
+
+/** In-memory stand-in for the CHAT_STORE KV binding. */
+function memoryKv(initial: Record<string, string> = {}) {
+  const store = new Map(Object.entries(initial));
+  const get = vi.fn(async (key: string) => store.get(key) ?? null);
+  const put = vi.fn(async (key: string, value: string) => {
+    store.set(key, value);
+  });
+  return { get, put, kv: { get, put } as unknown as KVNamespace };
+}
 
 const rateLimited = async () => jsonResponse({ message: 'API rate limit exceeded' }, 403);
 
@@ -103,21 +121,137 @@ describe('What’s New releases: a failed GitHub fetch is not an empty list (#15
     expect(unavailable).toBe(false);
   });
 
-  it('shows the unavailable line when the snapshot is too old to fill either section', async () => {
-    const old = parseReleasesSnapshot([{ ...apiRelease, published_at: '2026-08-15T17:20:18Z' }]);
+  function expectAug15LatestOnly(loaded: WhatsNewReleases) {
+    const { glance, unavailable } = render(loaded);
+    expect(unavailable).toBe(false);
+    expect(glance.latest?.datetime).toBe('2026-08-15');
+    expect(glance.latest?.label).toBe('Last updated 15 Aug 2026');
+    expect(glance.groups).toEqual([]);
+    expect(glance.thisWeek).toEqual([]);
+  }
+
+  it("under snapshot, Latest updates still renders its date and the can't-load banner stays hidden (supersedes #1579)", async () => {
     const loaded = await loadWhatsNewReleases({
       fetchImpl: vi.fn(rateLimited),
       now: NOW,
-      snapshot: old,
+      snapshot: OLD,
     });
     expect(loaded.state).toBe('snapshot');
-    const { glance, unavailable } = render(loaded);
-    expect(unavailable).toBe(true);
-    // #1579: the old snapshot still feeds a dated Latest updates fallback above that line.
-    expect(glance.latest?.datetime).toBe('2026-08-15');
-    expect(glance.latest?.lines).toEqual([
-      'On a laptop, open chat sits under the header instead of covering the whole page',
-    ]);
+    expectAug15LatestOnly(loaded);
+  });
+
+  it("under stale, Latest updates still renders its date and the can't-load banner stays hidden", async () => {
+    await loadWhatsNewReleases({
+      fetchImpl: vi.fn(async () =>
+        jsonResponse([{ ...apiRelease, published_at: '2026-08-15T17:20:18Z' }])
+      ),
+      now: NOW,
+      snapshot: [],
+    });
+    const loaded = await loadWhatsNewReleases({
+      fetchImpl: vi.fn(rateLimited),
+      now: NOW + FRESH_MS + 1,
+      snapshot: [],
+    });
+    expect(loaded.state).toBe('stale');
+    expect(loaded.releases).toEqual(OLD);
+    expectAug15LatestOnly(loaded);
+  });
+
+  it("under a KV hit (cached), Latest updates still renders its date and the can't-load banner stays hidden", async () => {
+    const { kv } = memoryKv({
+      [RELEASES_KV_KEY]: JSON.stringify({
+        storedAt: NOW - RELEASES_KV_FRESH_MS - 1,
+        releases: OLD,
+      }),
+    });
+    const loaded = await loadWhatsNewReleases({
+      fetchImpl: vi.fn(rateLimited),
+      kv,
+      now: NOW,
+      snapshot: [],
+    });
+    expect(loaded).toEqual({ state: 'cached', releases: OLD });
+    expectAug15LatestOnly(loaded);
+  });
+
+  it('a successful fetch writes CHAT_STORE and a later failing fetch serves it as cached', async () => {
+    const { get, kv, put } = memoryKv();
+    const first = await loadWhatsNewReleases({
+      fetchImpl: vi.fn(async () => jsonResponse([apiRelease])),
+      kv,
+      now: NOW,
+      snapshot: [],
+    });
+    expect(first.state).toBe('fresh');
+    expect(put).toHaveBeenCalledTimes(1);
+    expect(put).toHaveBeenCalledWith(
+      'whats-new-releases:v1',
+      JSON.stringify({ storedAt: NOW, releases: first.releases }),
+      { expirationTtl: 86400 }
+    );
+    expect(RELEASES_KV_KEY).toBe('whats-new-releases:v1');
+    expect(RELEASES_KV_TTL_SECONDS).toBe(86400);
+
+    resetWhatsNewReleasesMemory();
+    const later = await loadWhatsNewReleases({
+      fetchImpl: vi.fn(rateLimited),
+      kv,
+      now: NOW + RELEASES_KV_FRESH_MS + 1,
+      snapshot: [],
+    });
+    expect(later).toEqual({ state: 'cached', releases: first.releases });
+    // Only the releases key is touched in the shared store.
+    for (const [key] of [...get.mock.calls, ...put.mock.calls]) {
+      expect(key).toBe(RELEASES_KV_KEY);
+    }
+  });
+
+  it('within the 10-minute KV freshness window, GitHub is not called', async () => {
+    const { kv } = memoryKv({
+      [RELEASES_KV_KEY]: JSON.stringify({ storedAt: NOW, releases: SNAPSHOT }),
+    });
+    const fetchImpl = vi.fn(async () => jsonResponse([apiRelease]));
+    const loaded = await loadWhatsNewReleases({
+      fetchImpl,
+      kv,
+      now: NOW + RELEASES_KV_FRESH_MS - 1,
+      snapshot: [],
+    });
+    expect(loaded).toEqual({ state: 'cached', releases: SNAPSHOT });
+    expect(fetchImpl).not.toHaveBeenCalled();
+  });
+
+  it.each([
+    ['invalid JSON', '{not json'],
+    ['an empty list', JSON.stringify({ storedAt: NOW, releases: [] })],
+  ])('treats %s in KV as a miss and never writes a failed list', async (_, raw) => {
+    const { kv, put } = memoryKv({ [RELEASES_KV_KEY]: raw });
+    const loaded = await loadWhatsNewReleases({
+      fetchImpl: vi.fn(rateLimited),
+      kv,
+      now: NOW,
+      snapshot: [],
+    });
+    expect(loaded).toEqual({ state: 'error', releases: [] });
+    expect(render(loaded).unavailable).toBe(true);
+    expect(put).not.toHaveBeenCalled();
+  });
+
+  it('adds no cached or out-of-date chip or badge', () => {
+    expect(UPDATES_UNAVAILABLE_COPY).toBe(
+      "Recent updates can't load right now. The full history is on GitHub."
+    );
+    const page = readFileSync('src/pages/whats-new.astro', 'utf8');
+    expect(page).toMatch(
+      /<p class="latest-date">\s*<time datetime=\{glance\.latest\.datetime\}>\{glance\.latest\.label\}<\/time>\s*<\/p>/
+    );
+    const start = page.indexOf(
+      '<section class="this-week" aria-labelledby="latest-updates-heading"'
+    );
+    expect(start).toBeGreaterThan(-1);
+    const latestSection = page.slice(start, page.indexOf('</section>', start));
+    expect(latestSection).not.toMatch(/cached|may be out of date/i);
   });
 
   it('works on *.workers.dev, where caches.default is a no-op', async () => {
